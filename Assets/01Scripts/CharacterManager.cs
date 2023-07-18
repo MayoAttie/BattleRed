@@ -8,8 +8,8 @@ public class CharacterManager : MonoBehaviour
     Animator aniController;
     [SerializeField] JoyStickController joyStick;    // 조이스틱 객체
     public CharacterController controller;      // 캐릭터 컨트롤 콜라이더
-    public Transform groundCheck;
-    public LayerMask groundMask;
+    public Transform groundCheck;               // 지면 체크를 위한 위치 정보를 저장하는 변수
+    public LayerMask groundMask;                // 지면을 나타내는 레이어 정보를 저장하는 변수
     Vector3 velocity;
     bool isGrounded;                            // 지면인지 체크
     bool isJump;
@@ -22,26 +22,52 @@ public class CharacterManager : MonoBehaviour
     private void Awake()
     {
         aniController = gameObject.GetComponent<Animator>();
-        AniControllerConvert(0);
     }
 
     void Update()
     {
+        clsCharacter = GameManager.Instance.characterCls;
         JoyStickGetPos();
         MoveCharacterFunction();
         JumpCharacterFunction();
+
+        Debug.Log(clsCharacter.getState());
+        CharacterStateActor();  // 캐릭터 애니메이터 제어 함수
     }
 
-    void CharacterStateActor()
+    // 캐릭터 애니메이터 제어 함수
+    public void CharacterStateActor()
     {
-        switch(clsCharacter.getState())
-        {
-            case CharacterClass.e_NONE:
-                break;
+        
 
+        switch (clsCharacter.getState())
+        {
+            case CharacterClass.eCharactgerState.e_Idle:
+                aniController.SetInteger("Controller", 0);
+                break;
+            case CharacterClass.eCharactgerState.e_WALK:
+                aniController.SetInteger("Controller", -1);
+                break;
+            case CharacterClass.eCharactgerState.e_RUN:
+                break;
+            case CharacterClass.eCharactgerState.e_JUMP:
+                aniController.SetInteger("Controller", 1);
+                break;
+            case CharacterClass.eCharactgerState.e_AVOID:
+                break;
+            case CharacterClass.eCharactgerState.e_ATTACK:
+                break;
+            case CharacterClass.eCharactgerState.e_HIT:
+                break;
+            case CharacterClass.eCharactgerState.e_DEAD: 
+                break;
+            default:
+                aniController.SetInteger("Controller", -1);
+                break;
         }
     }
 
+    // 워크 애니메이션 함수
     void MoveCharacterFunction()
     {
         // 애니메이션을 실행할 때 필요한 파라미터 설정
@@ -59,23 +85,22 @@ public class CharacterManager : MonoBehaviour
         Vector3 move = transform.right * xPos + transform.forward * zPos;
         controller.Move(move * 5 * Time.deltaTime);
 
-        // 애니메이션 컨트롤러 파라미터 변경
+        // x,y 값이 0에 가까우면, 이동을 멈추고 iDle상태로 바꿈
         if (Mathf.Approximately(zPos, 0f) && Mathf.Approximately(xPos, 0f))
-        {
-            AniControllerConvert(0); // 이동 중이 아니므로 0번 값으로 변경
-        }
-        else
-        {
-            AniControllerConvert(-1); // 이동 중이므로 -1로 변경
-        }
+            clsCharacter.setState(CharacterClass.eCharactgerState.e_Idle);
+
     }
 
+    // 조이스틱 컨트롤러, xy좌표 값 Get 함수
     void JoyStickGetPos()
-    {
+    {   
         zPos = joyStick.GetVerticalValue();
         xPos = joyStick.GetHorizontalValue();
+
+        clsCharacter.setState(CharacterClass.eCharactgerState.e_WALK);
     }
 
+    // 점프버튼 함수
     public void JumpCommand()
     {
         if (isGrounded)
@@ -84,30 +109,22 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
+    // 점프 애니메이션 함수
     void JumpCharacterFunction()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-
+        Debug.Log(isGrounded);
         if (isGrounded && isJump)
         {
-            AniControllerConvert(-1);
-            aniController.SetInteger("Jumping", 1); // 점프 동작 실행
+            clsCharacter.setState(CharacterClass.eCharactgerState.e_JUMP);
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             isJump = false;
         }
-        else
-        {
-            AniControllerConvert(0);
-            aniController.SetInteger("Jumping", 0); // 지면으로 내려왔으므로 점프 동작 중지
-        }
+
 
         velocity.y += gravity * Time.deltaTime;
 
         controller.Move(velocity * Time.deltaTime);
     }
 
-    void AniControllerConvert(int num)
-    {
-        aniController.SetInteger("Controller", num);
-    }
 }

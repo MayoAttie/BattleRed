@@ -415,7 +415,7 @@ MonoBehaviour:
   onButtonUp:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1246118146}
+      - m_Target: {fileID: 0}
         m_MethodName: test_
         m_Mode: 1
         m_Arguments:
@@ -768,7 +768,7 @@ MonoBehaviour:
   onButtonUp:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1246118146}
+      - m_Target: {fileID: 0}
         m_MethodName: test_
         m_Mode: 1
         m_Arguments:
@@ -3616,7 +3616,7 @@ GameObject:
   - component: {fileID: 1246118147}
   - component: {fileID: 1246118146}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3631,7 +3631,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1246118145}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff3c6a09a0935574ebd0789f14466f90, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b941061b02e39a4183b07f3d405984c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &1246118147
@@ -5044,7 +5044,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   joyStick: {fileID: 1036929354}
   controller: {fileID: 2091906847}
-  groundCheck: {fileID: 776099233}
+  groundCheck: {fileID: 123540197}
   groundMask:
     serializedVersion: 2
     m_Bits: 256
