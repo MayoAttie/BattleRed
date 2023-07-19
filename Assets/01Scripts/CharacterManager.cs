@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static TouchPadController;
 
 public class CharacterManager : MonoBehaviour
 {
     CharacterClass clsCharacter;
     Animator aniController;
-    [SerializeField] JoyStickController joyStick;    // 조이스틱 객체
     public CharacterController controller;      // 캐릭터 컨트롤 콜라이더
     public Transform groundCheck;               // 지면 체크를 위한 위치 정보를 저장하는 변수
     public LayerMask groundMask;                // 지면을 나타내는 레이어 정보를 저장하는 변수
@@ -14,10 +14,12 @@ public class CharacterManager : MonoBehaviour
     bool isGrounded;                            // 지면인지 체크
     bool isJump;
     public float jumpHeight = 3f;               // 점프 높이
-    float groundDistance = 0.4f;
-    float zPos;
-    float xPos;
-    public float gravity = -9.18f;
+    float groundDistance = 0.4f;                // 지면과의 거리
+    float zPos;                                 // 제어용 좌표 값
+    float xPos;                                 // 제어용 좌표 값
+    float yPos;                                 // 제어용 좌표 값
+    float rotationSpeed = 100f;                   // 캐릭터 회전 속도
+    public float gravity = -9.18f;              // 중력
 
     private void Awake()
     {
@@ -27,7 +29,8 @@ public class CharacterManager : MonoBehaviour
     void Update()
     {
         clsCharacter = GameManager.Instance.characterCls;
-        JoyStickGetPos();
+        ControllerGetInputData();
+        RotateCharacter();
         MoveCharacterFunction();
         JumpCharacterFunction();
 
@@ -92,13 +95,14 @@ public class CharacterManager : MonoBehaviour
     }
 
     // 조이스틱 컨트롤러, xy좌표 값 Get 함수
-    void JoyStickGetPos()
-    {   
-        zPos = joyStick.GetVerticalValue();
-        xPos = joyStick.GetHorizontalValue();
-
+    void ControllerGetInputData()
+    {
+        zPos = JoyStickController.Instance.GetVerticalValue();
+        xPos = JoyStickController.Instance.GetHorizontalValue();
+        
         clsCharacter.setState(CharacterClass.eCharactgerState.e_WALK);
     }
+    
 
     // 점프버튼 함수
     public void JumpCommand()
@@ -126,5 +130,44 @@ public class CharacterManager : MonoBehaviour
 
         controller.Move(velocity * Time.deltaTime);
     }
+
+
+
+    private void RotateCharacter()
+    {
+
+        Vector2 vec_inputDirection = TouchPadController.Instance.GetDirection();
+
+
+
+        Debug.Log(nameof(vec_inputDirection) + ":" + vec_inputDirection);
+
+        // 캐릭터의 방향을 터치 입력에 따라 회전시킵니다.
+        if (vec_inputDirection != Vector2.zero)
+        {
+            // 현재 터치 입력에 대한 각도를 계산합니다.
+            float targetAngle = Mathf.Atan2(vec_inputDirection.x, vec_inputDirection.y) * Mathf.Rad2Deg;
+
+            // 캐릭터의 현재 회전 각도를 가져옵니다.
+            float currentAngle = transform.eulerAngles.y;
+            Debug.Log(nameof(currentAngle) + ":" + currentAngle);
+
+            // 목표 각도와 현재 각도의 차이를 계산합니다.
+            float angleDifference = Mathf.DeltaAngle(currentAngle, targetAngle);
+
+            // 보정된 회전 각도 계산: 회전 각도가 -180도에서 180도 사이가 되도록 보정합니다.
+            if (Mathf.Abs(angleDifference) > 180f)
+            {
+                angleDifference -= Mathf.Sign(angleDifference) * 360f;
+            }
+
+            // 회전 속도에 따라 적절한 회전 각도를 구합니다.
+            float rotationStep = Mathf.Sign(angleDifference) * Mathf.Min(Mathf.Abs(angleDifference), rotationSpeed * Time.deltaTime);
+
+            // 회전 각도를 적용하여 캐릭터를 회전시킵니다.
+            transform.rotation = Quaternion.Euler(0f, currentAngle + rotationStep, 0f);
+        }
+    }
+
 
 }

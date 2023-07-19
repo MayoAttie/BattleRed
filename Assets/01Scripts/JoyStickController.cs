@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class JoyStickController : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
+public class JoyStickController : Singleton<JoyStickController>, IDragHandler, IPointerUpHandler, IPointerDownHandler
 {
     private Image joystickBgImage;  // 조이스틱 배경 이미지
     private Image joystickImage;    // 조이스틱 이미지
