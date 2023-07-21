@@ -1,30 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using UnityEngine;
 
 
-public class CharacterManager : MonoBehaviour
+public class CharacterManager : Singleton<CharacterManager>
 {
     protected CharacterClass clsCharacter;
     protected Animator aniController;
+    protected bool isBattle;
 
-
-    private void Awake()
+    protected virtual void Awake()
     {
-        aniController = gameObject.GetComponent<Animator>();
+        isBattle = false;
+        aniController = gameObject.transform.GetChild(0).GetComponent<Animator>();
     }
-    private void Start()
-    {
-    }
-
-    void Update()
+    virtual protected void Start()
     {
     }
-    private void LateUpdate()
+
+    protected virtual void Update()
     {
         clsCharacter = GameManager.Instance.characterCls;
-        CharacterStateActor();  // 캐릭터 애니메이터 제어 함수
-            
+        Debug.Log(nameof(clsCharacter.getState)+":" + clsCharacter.getState()) ;
+        CharacterStateActor();
+    }
+    protected virtual void LateUpdate()
+    {
     }
 
     // 캐릭터 애니메이터 제어 함수
@@ -47,6 +49,7 @@ public class CharacterManager : MonoBehaviour
             case CharacterClass.eCharactgerState.e_AVOID:
                 break;
             case CharacterClass.eCharactgerState.e_ATTACK:
+                isBattle = true;
                 break;
             case CharacterClass.eCharactgerState.e_HIT:
                 break;
@@ -59,5 +62,26 @@ public class CharacterManager : MonoBehaviour
     }
 
 
+    public void SetCharacterClass(CharacterClass cls)
+    {
+        clsCharacter = cls;
+    }
+    public CharacterClass GetCharacterClass()
+    {
+        return clsCharacter;
+    }
 
+    public void AnimatorFloatValueSetter(float zPos, float xPos)
+    {
+        aniController.SetFloat("zPos", zPos);
+        aniController.SetFloat("xPos", xPos);
+    }
+
+    public bool getIsBattle()
+    {
+        return isBattle;
+    }
+
+    public void SetIsBattle(bool b) { isBattle = b; }
+    public bool GetIsBattle() { return isBattle; }
 }
