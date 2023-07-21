@@ -4,6 +4,15 @@ using UnityEngine.EventSystems;
 using System.Collections;
 public class TouchPadController : Singleton<TouchPadController>, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
+    public enum e_TouchSlideDic
+    {
+        None,
+        Right,
+        Left,
+        Up,
+        Down,
+        Max
+    }
 
     public float smoothing;
 
@@ -12,6 +21,7 @@ public class TouchPadController : Singleton<TouchPadController>, IPointerDownHan
     private Vector2 smoothDirection;
     private bool touched;
     private int pointerID;
+    private e_TouchSlideDic slideDic;
 
     void Awake()
     {
@@ -48,9 +58,16 @@ public class TouchPadController : Singleton<TouchPadController>, IPointerDownHan
         }
     }
 
-    public Vector2 GetDirection()
+    public e_TouchSlideDic GetDirectionHorizontal()
     {
         smoothDirection = Vector2.MoveTowards(smoothDirection, direction, smoothing);
-        return smoothDirection;
+        if (smoothDirection.x > 0.9)
+            slideDic = e_TouchSlideDic.Right;
+        else if (smoothDirection.x < -0.9)
+            slideDic = e_TouchSlideDic.Left;
+        else
+            slideDic = e_TouchSlideDic.None;
+
+        return slideDic;
     }
 }

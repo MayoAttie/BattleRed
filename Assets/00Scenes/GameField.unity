@@ -3899,7 +3899,7 @@ MonoBehaviour:
   onButtonUp:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2091906848}
+      - m_Target: {fileID: 2091906845}
         m_MethodName: JumpCommand
         m_Mode: 1
         m_Arguments:
@@ -5085,6 +5085,23 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 123540196}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2091906845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2091906844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2df618c08b52304584a1fe630bf3c0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 2091906847}
+  groundCheck: {fileID: 123540197}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!54 &2091906846
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5131,10 +5148,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 138fb883e2546b64d8ab0ded999d6cbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 2091906847}
-  groundCheck: {fileID: 123540197}
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 256
-  jumpHeight: 3
-  gravity: -9.18
