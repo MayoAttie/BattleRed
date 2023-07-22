@@ -2809,6 +2809,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 925834348}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &958260787 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 151532, guid: 52aaefe2acfbf5f43ad6f0eae91161da,
+    type: 3}
+  m_PrefabInstance: {fileID: 123540196}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &958260788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958260787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d3feca9a9ba7df4687265efdd3d7f10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -3764,7 +3782,7 @@ MonoBehaviour:
   groundCheck: {fileID: 1283036921}
   groundMask:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 4294967295
 --- !u!114 &1283036920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3804,6 +3822,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c8d6397bd98cd24b9f4b146ab8da284, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nAtkLevel: 0
 --- !u!1 &1284123362
 GameObject:
   m_ObjectHideFlags: 0
@@ -5123,10 +5142,25 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: bb37e935cca327247aa85f512def0e6d, type: 2}
+    - target: {fileID: 1781815169971260043, guid: 29c774dacdcc73240b0c71228fdc6f2c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 2338319710486688380, guid: 29c774dacdcc73240b0c71228fdc6f2c,
         type: 3}
       propertyPath: m_Name
       value: PT_Wooden_Bridge_02 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2338319710486688380, guid: 29c774dacdcc73240b0c71228fdc6f2c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2764921732895710073, guid: 29c774dacdcc73240b0c71228fdc6f2c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2856273374464784700, guid: 29c774dacdcc73240b0c71228fdc6f2c,
         type: 3}

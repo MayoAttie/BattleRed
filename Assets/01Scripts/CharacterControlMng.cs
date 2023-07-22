@@ -12,13 +12,17 @@ public class CharacterControlMng : MonoBehaviour
     bool isGrounded;                            // 지면인지 체크
     bool isJump;
     float jumpHeight = 2f;                      // 점프 높이
-    float groundDistance = 1.2f;                // 지면과의 거리
+    float groundDistance = 1.4f;                // 지면과의 거리
     float zPos;                                 // 제어용 좌표 값
     float xPos;                                 // 제어용 좌표 값
     float rotationSpeed = 100f;                 // 캐릭터 회전 속도
     float gravity = -9.18f;                     // 중력
     bool isBattle;
     CharacterManager characMng;
+    private void Awake()
+    {
+        isBattle = false;   
+    }
 
     void Start()
     {
@@ -29,34 +33,40 @@ public class CharacterControlMng : MonoBehaviour
     private void Update()
     {
         isBattle = characMng.getIsBattle();
+        GravityFunc();
         ControllerGetInputData();
         RotateCharacter();
-        MoveCharacterFunction();
+        if(isBattle)
+        {
+            groundDistance = 5f;
+            RunCharacterFunction();
+        }
+        else
+        {
+            groundDistance = 1.4f;
+            MoveCharacterFunction();
+        }
         JumpCharacterFunction();
+
     }
 
     // 조이스틱 컨트롤러, xy좌표 값 Get 함수
     void ControllerGetInputData()
     {
-        if (isBattle)
-            return;
         zPos = JoyStickController.Instance.GetVerticalValue();
         xPos = JoyStickController.Instance.GetHorizontalValue();
+        Debug.Log(nameof(zPos)+":" +zPos);
+        Debug.Log(nameof(xPos) + ":" + xPos);
 
-        characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_WALK);
+
+        if (!isBattle)
+            characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_WALK);
 
     }
 
-
-
-    // 워크 애니메이션 함수
-    void MoveCharacterFunction()
+    //중력함수
+    void GravityFunc()
     {
-        if (isBattle)
-            return;
-        // 애니메이션을 실행할 때 필요한 파라미터 설정
-        characMng.AnimatorFloatValueSetter(zPos, xPos);
-
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
         if (isGrounded && velocity.y < 0)
@@ -66,6 +76,17 @@ public class CharacterControlMng : MonoBehaviour
 
         // 중력 적용
         velocity.y += gravity * Time.deltaTime;
+    }
+
+
+    // 워크 애니메이션 함수
+    void MoveCharacterFunction()
+    {
+
+        // 애니메이션을 실행할 때 필요한 파라미터 설정
+        characMng.AnimatorFloatValueSetter(zPos, xPos);
+
+        GravityFunc();
 
         // 객체 이동
         Vector3 move = transform.right * xPos + transform.forward * zPos;
@@ -77,12 +98,11 @@ public class CharacterControlMng : MonoBehaviour
             characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_Idle);
         }
     }
+   
 
     // 점프버튼 함수
     public void JumpCommand()
     {
-        if (isBattle)
-            return;
         if (isGrounded)
         {
             isJump = true;
@@ -93,7 +113,7 @@ public class CharacterControlMng : MonoBehaviour
     void JumpCharacterFunction()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-        Debug.Log(isGrounded);
+        Debug.Log(nameof(isGrounded)+":"+isGrounded);
         if (isGrounded && isJump)
         {
             characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_JUMP);
@@ -108,7 +128,7 @@ public class CharacterControlMng : MonoBehaviour
     }
 
 
-
+    // 캐릭터 회전 함수
     private void RotateCharacter()
     {
 
@@ -121,6 +141,24 @@ public class CharacterControlMng : MonoBehaviour
         else if (touchDic == e_TouchSlideDic.Left)
         {
             transform.Rotate(Vector3.up, -rotationSpeed * Time.deltaTime);
+        }
+    }
+
+
+    private void RunCharacterFunction()
+    {
+
+        GravityFunc();
+
+        // 객체 이동
+        Vector3 move = transform.right * xPos + transform.forward * zPos;
+        controller.Move((move * 15 + velocity) * Time.deltaTime); // 중력이 적용된 이동
+        characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_RUN);
+
+        // x,y 값이 0에 가까우면, 이동을 멈추고 iDle상태로 바꿈
+        if (Mathf.Approximately(zPos, 0f) && Mathf.Approximately(xPos, 0f))
+        {
+            characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_ATTACK);
         }
     }
 
