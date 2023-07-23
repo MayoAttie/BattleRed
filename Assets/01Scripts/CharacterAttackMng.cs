@@ -61,7 +61,7 @@ public class CharacterAttackMng : Subject, Observer
         NotifyAtkLevel((e_AttackLevel)nAtkLevel);   // 바뀐 공격 상태를 캐릭터 매니저에 알림
         characMng.GetCharacterClass().setState(eCharactgerState.e_ATTACK);
         characMng.SetIsBattle(true);
-
+        Invoke("OffBattleMode", 8f);
     }
 
 

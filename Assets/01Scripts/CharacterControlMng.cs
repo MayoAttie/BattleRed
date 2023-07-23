@@ -18,6 +18,9 @@ public class CharacterControlMng : MonoBehaviour
     float rotationSpeed = 100f;                 // 캐릭터 회전 속도
     float gravity = -9.18f;                     // 중력
     bool isBattle;
+    int nBlinkNumber = 2;                       // 회피기 숫자
+    float fBliknkCoolTime = 3.0f;               // 회피기 충전 주기
+    private Coroutine blinkCoolTimeCoroutine;   // Coroutine 객체를 저장할 변수
     CharacterManager characMng;
     private void Awake()
     {
@@ -150,16 +153,67 @@ public class CharacterControlMng : MonoBehaviour
 
         GravityFunc();
 
+        // 조이스틱 입력 값을 이용하여 방향을 계산하여 캐릭터를 회전시킴
+        //if (!Mathf.Approximately(zPos, 0f) || !Mathf.Approximately(xPos, 0f))
+        //{
+        //    Vector3 moveDirection = new Vector3(xPos, 0f, zPos).normalized;
+        //    Quaternion lookRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
+        //    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10f);
+        //}
+
         // 객체 이동
         Vector3 move = transform.right * xPos + transform.forward * zPos;
-        controller.Move((move * 15 + velocity) * Time.deltaTime); // 중력이 적용된 이동
+        controller.Move((move * 1 + velocity) * Time.deltaTime); // 중력이 적용된 이동
+
         characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_RUN);
 
-        // x,y 값이 0에 가까우면, 이동을 멈추고 iDle상태로 바꿈
+        // x,y 값이 0에 가까우면, 이동을 멈추고 ATTACK 상태로 바꿈
         if (Mathf.Approximately(zPos, 0f) && Mathf.Approximately(xPos, 0f))
         {
             characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_ATTACK);
         }
+    }
+    /*
+     * Right
+     * zPos : -0.02040684
+     * xPos : 0.9997918
+     * 
+     * Left
+     * zPos : 0.0146737
+     * xPos : 0.9998923
+     * 
+     * Up
+     * zPos : 0.999939
+     * xPos : 0.003517823
+     * 
+     * Down
+     * zPos : -0.9999886
+     * xPos : 0.00477788
+     */
+    private void ActTumblin()
+    {
+        if (nBlinkNumber <= 0)
+        {
+            // 코루틴이 실행 중이지 않은 경우에만 코루틴을 시작.
+            if (blinkCoolTimeCoroutine == null)
+            {
+                blinkCoolTimeCoroutine = StartCoroutine(BlinkCoolTimeReset());
+            }
+        }
+        else
+        {
+            
+        }
+    }
+
+
+    IEnumerator BlinkCoolTimeReset()
+    {
+        yield return new WaitForSeconds(nBlinkNumber);
+        nBlinkNumber = 2;
+
+        // 코루틴이 끝났으므로, Coroutine 변수를 null로 초기.
+        blinkCoolTimeCoroutine = null;
     }
 
 }
