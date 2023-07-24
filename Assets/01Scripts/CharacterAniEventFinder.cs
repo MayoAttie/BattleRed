@@ -14,5 +14,15 @@ public class CharacterAniEventFinder : Subject
         NotifyAttackEventStart();
     }
 
+    public void GetBlinkEnd()
+    {
+        NotifyGetBlinkEnd();
+    }
+
+    public void GetBlinkStart()
+    {
+        NotifyGetBlinkStart();
+    }
+
 
 }

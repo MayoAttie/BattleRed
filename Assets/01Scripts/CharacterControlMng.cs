@@ -3,32 +3,64 @@ using System.Collections.Generic;
 using UnityEngine;
 using static TouchPadController;
 
-public class CharacterControlMng : MonoBehaviour
+public class CharacterControlMng : Subject, Observer
 {
+    #region 변수
     [SerializeField] CharacterController controller;      // 캐릭터 컨트롤러
     [SerializeField] Transform groundCheck;               // 지면 체크를 위한 위치 정보를 저장하는 변수
     [SerializeField] LayerMask groundMask;                // 지면을 나타내는 레이어 정보를 저장하는 변수
+
+
     Vector3 velocity;
     bool isGrounded;                            // 지면인지 체크
-    bool isJump;
+    bool isJump;                                // 점프중인지 체크
+    bool isBlinking;                            // 회피중인지 체크
+    bool isBattle;                              // 전투중인지 체크
+    bool isBlinkCoolTimeFleg;                   // 쿨타임 코루틴함수 제어 플래그
+    [SerializeField]bool isBlinkStart;                          // 블링크 애니메이션이 시작되었는지 체크
+
     float jumpHeight = 2f;                      // 점프 높이
     float groundDistance = 1.4f;                // 지면과의 거리
     float zPos;                                 // 제어용 좌표 값
     float xPos;                                 // 제어용 좌표 값
     float rotationSpeed = 100f;                 // 캐릭터 회전 속도
     float gravity = -9.18f;                     // 중력
-    bool isBattle;
-    int nBlinkNumber = 2;                       // 회피기 숫자
     float fBliknkCoolTime = 3.0f;               // 회피기 충전 주기
-    private Coroutine blinkCoolTimeCoroutine;   // Coroutine 객체를 저장할 변수
-    CharacterManager characMng;
+    
+    [SerializeField]int nBlinkNumber = 2;                       // 회피기 숫자
+    Coroutine blinkCoolTimeCoroutine;           // Coroutine 객체를 저장할 변수
+    CharacterManager characMng;                 // 캐릭터 매니저 싱글턴
+    CharacterAniEventFinder eventInputer;
+    [SerializeField]e_BlinkPos blinkpos;
+    #endregion
+
+
+    #region 구조체
+    public enum e_BlinkPos
+    {
+        None,
+        Front,
+        Back,
+        Right,
+        Left,
+        Max
+    }
+    #endregion
+
+
     private void Awake()
     {
-        isBattle = false;   
+        isBlinkCoolTimeFleg = false;
+        isJump       = false;
+        isBlinking   = false;
+        isBattle     = false;
+        blinkpos = e_BlinkPos.None;
+        eventInputer = gameObject.transform.GetChild(0).GetComponent<CharacterAniEventFinder>();
     }
 
     void Start()
     {
+        eventInputer.Attach(this);
         characMng = CharacterManager.Instance;
     }
 
@@ -36,18 +68,27 @@ public class CharacterControlMng : MonoBehaviour
     private void Update()
     {
         isBattle = characMng.getIsBattle();
+        // 코루틴이 실행 중이지 않은 경우에만 코루틴을 시작.
+        if (blinkCoolTimeCoroutine == null && nBlinkNumber<=0)
+        {
+            blinkCoolTimeCoroutine = StartCoroutine(BlinkCoolTimeReset());
+        }
+
         GravityFunc();
         ControllerGetInputData();
         RotateCharacter();
-        if(isBattle)
+        if(!isBlinking)
         {
-            groundDistance = 5f;
-            RunCharacterFunction();
-        }
-        else
-        {
-            groundDistance = 1.4f;
-            MoveCharacterFunction();
+            if(isBattle)
+            {
+                groundDistance = 5f;
+                RunCharacterFunction();
+            }
+            else
+            {
+                groundDistance = 1.4f;
+                MoveCharacterFunction();
+            }
         }
         JumpCharacterFunction();
 
@@ -61,9 +102,14 @@ public class CharacterControlMng : MonoBehaviour
         Debug.Log(nameof(zPos)+":" +zPos);
         Debug.Log(nameof(xPos) + ":" + xPos);
 
+        if(!isBlinking)
+        {
+            if (!isBattle)
+                characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_WALK);
+            else
+                characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_RUN);
 
-        if (!isBattle)
-            characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_WALK);
+        }
 
     }
 
@@ -151,69 +197,168 @@ public class CharacterControlMng : MonoBehaviour
     private void RunCharacterFunction()
     {
 
+        characMng.AnimatorFloatValueSetter(zPos, xPos);
         GravityFunc();
 
-        // 조이스틱 입력 값을 이용하여 방향을 계산하여 캐릭터를 회전시킴
-        //if (!Mathf.Approximately(zPos, 0f) || !Mathf.Approximately(xPos, 0f))
-        //{
-        //    Vector3 moveDirection = new Vector3(xPos, 0f, zPos).normalized;
-        //    Quaternion lookRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
-        //    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10f);
-        //}
+        if (Mathf.Abs(xPos - 1f) < 0.03f)
+        {
+            // 오른쪽으로 방향 전환
+            transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+        }
+        if (Mathf.Abs(xPos + 1f) < 0.03f)
+        {
+            // 왼쪽으로 방향 전환
+            transform.rotation = Quaternion.Euler(0f, -90f, 0f);
+        }
+        if (Mathf.Abs(zPos + 1f) < 0.03f)
+        {
+            // 뒤쪽으로 방향 전환
+            transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+        }
+        
 
         // 객체 이동
         Vector3 move = transform.right * xPos + transform.forward * zPos;
         controller.Move((move * 1 + velocity) * Time.deltaTime); // 중력이 적용된 이동
 
-        characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_RUN);
 
         // x,y 값이 0에 가까우면, 이동을 멈추고 ATTACK 상태로 바꿈
         if (Mathf.Approximately(zPos, 0f) && Mathf.Approximately(xPos, 0f))
         {
+            // 대기 모드 전환을 위한 함수 호출
+            var instance = gameObject.GetComponent<CharacterAttackMng>();
+            instance.OffBattleMode();
             characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_ATTACK);
         }
     }
-    /*
-     * Right
-     * zPos : -0.02040684
-     * xPos : 0.9997918
-     * 
-     * Left
-     * zPos : 0.0146737
-     * xPos : 0.9998923
-     * 
-     * Up
-     * zPos : 0.999939
-     * xPos : 0.003517823
-     * 
-     * Down
-     * zPos : -0.9999886
-     * xPos : 0.00477788
-     */
+
     private void ActTumblin()
     {
-        if (nBlinkNumber <= 0)
+        if (isBlinkStart)
+            return;
+
+        // 앞점멸
+        if (Mathf.Abs(zPos - 1f) < 0.05f)
         {
-            // 코루틴이 실행 중이지 않은 경우에만 코루틴을 시작.
-            if (blinkCoolTimeCoroutine == null)
-            {
-                blinkCoolTimeCoroutine = StartCoroutine(BlinkCoolTimeReset());
-            }
+            blinkpos = e_BlinkPos.Front;
+            // zPos 방향으로 1만큼 이동
+            Vector3 moveDirection = transform.forward * 1f;
+            controller.Move(moveDirection);
+        }
+        // 뒷점멸
+        else if (Mathf.Abs(zPos + 1f) < 0.05f)
+        {
+            blinkpos = e_BlinkPos.Back;
+            // zPos 방향으로 -1만큼 이동
+            Vector3 moveDirection = -transform.forward * 1f;
+            controller.Move(moveDirection);
+        }
+        // 우점멸
+        else if (Mathf.Abs(xPos - 1f) < 0.05f)
+        {
+            blinkpos = e_BlinkPos.Right;
+            // xPos 방향으로 1만큼 이동
+            Vector3 moveDirection = transform.right * 1f;
+            controller.Move(moveDirection);
+        }
+        // 좌점멸
+        else if (Mathf.Abs(xPos + 1f) < 0.05f)
+        {
+            blinkpos = e_BlinkPos.Left;
+            // xPos 방향으로 -1만큼 이동
+            Vector3 moveDirection = -transform.right * 1f;
+            controller.Move(moveDirection);
+        }
+        // 디폴트는 앞점멸
+        else
+        {
+            blinkpos = e_BlinkPos.Front;
+            // zPos 방향으로 1만큼 이동
+            Vector3 moveDirection = transform.forward * 1f;
+            controller.Move(moveDirection);
+        }
+        characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_AVOID);
+        // 옵저버에게 블링크 값 넘기기
+        NotifyBlinkValue(blinkpos);
+    }
+
+    // 블링크 쿨타임 초기화
+    IEnumerator BlinkCoolTimeReset()
+    {
+        if (!isBlinkCoolTimeFleg)
+        {
+            isBlinkCoolTimeFleg = true;
+            yield return new WaitForSeconds(fBliknkCoolTime);
+            nBlinkNumber = 2;
+
+            // 코루틴이 끝났으므로, Coroutine 변수를 null로 초기.
+            blinkCoolTimeCoroutine = null;
+            isBlinkCoolTimeFleg = false;
+        }
+    }
+
+    // 블링크 버튼 클릭 이벤트 함수
+    public void BlinkClickEvent()
+    {
+        if (isBlinkStart)
+            return;
+        if (nBlinkNumber > 0)
+        {
+            isBlinking = true;
+            nBlinkNumber--;
+            ActTumblin();
+        }
+    }
+
+
+
+    #region 옵저버 패턴
+
+    public void AttackEventNotify(int num){}
+
+    public void AttackEventStartNotify(){}
+
+    public void AtkLevelNotify(CharacterAttackMng.e_AttackLevel level){}
+
+    public void BlinkValueNotify(e_BlinkPos value){}
+
+    public void GetBlinkEndNotify() // 블링크 종료됨을 Get하여, 반영
+    {
+        Debug.Log(nameof(GetBlinkEndNotify));
+        isBlinking = false;
+        isBlinkStart = false;
+        blinkpos = e_BlinkPos.None;
+
+        // 캐릭터 상태 변경
+        if (isBattle)
+        {
+            // xz 인풋값 확인 후, 행동 결정
+            if (Mathf.Approximately(zPos, 0f) && Mathf.Approximately(xPos, 0f))
+                characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_ATTACK);
+            //전투 중이라면, Attack으로
+            else
+                characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_RUN);
+
         }
         else
         {
-            
+            // xz 인풋값 확인 후, 행동 결정
+            if (Mathf.Approximately(zPos, 0f) && Mathf.Approximately(xPos, 0f))
+                characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_Idle);
+            //전투 중이라면, Attack으로
+            else
+                characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_WALK);
+
         }
+
+
     }
 
-
-    IEnumerator BlinkCoolTimeReset()
+    public void GetBlinkStartNotify()
     {
-        yield return new WaitForSeconds(nBlinkNumber);
-        nBlinkNumber = 2;
-
-        // 코루틴이 끝났으므로, Coroutine 변수를 null로 초기.
-        blinkCoolTimeCoroutine = null;
+        isBlinkStart = true;    
     }
+
+    #endregion
 
 }

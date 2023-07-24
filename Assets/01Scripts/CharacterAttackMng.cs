@@ -6,6 +6,17 @@ using static CharacterClass;
 
 public class CharacterAttackMng : Subject, Observer
 {
+    #region 변수
+    CharacterManager characMng;
+    [SerializeField]int nAtkLevel;
+    CharacterAniEventFinder eventInputer;
+    bool isBattle;
+    bool isAnimationIng;
+    bool isClick;
+
+    #endregion
+
+    #region 구조체
     public enum e_AttackLevel
     {
         None = 99,
@@ -16,12 +27,8 @@ public class CharacterAttackMng : Subject, Observer
         Max
     }
 
-    CharacterManager characMng;
-    [SerializeField]int nAtkLevel;
-    CharacterAniEventFinder eventInputer;
-    bool isBattle;
-    bool isAnimationIng;
-    bool isClick;
+    #endregion
+
 
     private void Awake()
     {
@@ -53,6 +60,9 @@ public class CharacterAttackMng : Subject, Observer
     // 버튼으로 호출되는 공격 함수
     public void CharaceterAttackCheck()
     {
+        //if (characMng.GetCharacterClass().getState() == CharacterClass.eCharactgerState.e_AVOID)
+        //    return;
+
         isClick = true;
         if (isAnimationIng) // 애니메이션 동작중일 경우 리턴
             return;
@@ -68,6 +78,9 @@ public class CharacterAttackMng : Subject, Observer
 
     void ReturnIdle(int num)
     {
+        //if (characMng.GetCharacterClass().getState() == CharacterClass.eCharactgerState.e_AVOID)
+        //    return;
+
         if (isClick)  // 버튼 클릭 여부 확인 후, 공격 루프
         {
             nAtkLevel = num + 1;
@@ -95,7 +108,7 @@ public class CharacterAttackMng : Subject, Observer
         isAnimationIng = true;  // 애니메이션 동작 시작
     }
 
-    void OffBattleMode()        // 대기상태 시간 체크 후 아이들로 초기화
+    public void OffBattleMode()        // 대기상태 시간 체크 후 아이들로 초기화
     {
         if (isClick)
             return;
@@ -112,4 +125,10 @@ public class CharacterAttackMng : Subject, Observer
 
 
     public void AtkLevelNotify(e_AttackLevel level) {}//사용안함
+
+    public void BlinkValueNotify(CharacterControlMng.e_BlinkPos value){}
+
+    public void GetBlinkEndNotify(){}
+
+    public void GetBlinkStartNotify(){}
 }

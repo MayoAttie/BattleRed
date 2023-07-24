@@ -38,4 +38,27 @@ public abstract class Subject : MonoBehaviour
             tmp.AtkLevelNotify(level);
         }
     }
+
+    public void NotifyBlinkValue(CharacterControlMng.e_BlinkPos value)
+    {
+        foreach (Observer tmp in _observers)
+        {
+            tmp.BlinkValueNotify(value);
+        }
+    }
+    public void NotifyGetBlinkEnd()
+    {
+        foreach (Observer tmp in _observers)
+        {
+            tmp.GetBlinkEndNotify();
+        }
+    }
+
+    public void NotifyGetBlinkStart()
+    {
+        foreach (Observer tmp in _observers)
+        {
+            tmp.GetBlinkStartNotify();
+        }
+    }
 }

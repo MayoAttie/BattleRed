@@ -10,11 +10,13 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     private Animator aniController;
     private bool isBattle;
     private CharacterAttackMng.e_AttackLevel atkLevel;
+    private CharacterControlMng.e_BlinkPos blinkValue;
 
     private void Awake()
     {
         isBattle = false;
         gameObject.GetComponent<CharacterAttackMng>().Attach(this);
+        gameObject.GetComponent<CharacterControlMng>().Attach(this);
         aniController = gameObject.transform.GetChild(0).GetComponent<Animator>();
     }
     private void Start()
@@ -45,14 +47,22 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
                 aniController.SetInteger("Controller", -1);
                 break;
             case CharacterClass.eCharactgerState.e_RUN:
-                aniController.SetInteger("Controller", 104);
+                aniController.SetInteger("Controller", -1);
                 break;
             case CharacterClass.eCharactgerState.e_JUMP:
                 aniController.SetInteger("Controller", 1);
                 break;
-            case CharacterClass.eCharactgerState.e_AVOID:
+            case CharacterClass.eCharactgerState.e_AVOID:   // 블링크 값에 따라서, 애니메이션 제어
+                if (blinkValue == CharacterControlMng.e_BlinkPos.Front)
+                    aniController.SetInteger("Controller", 11);
+                else if (blinkValue == CharacterControlMng.e_BlinkPos.Left)
+                    aniController.SetInteger("Controller", 12);
+                else if (blinkValue == CharacterControlMng.e_BlinkPos.Right)
+                    aniController.SetInteger("Controller", 13);
+                else if (blinkValue == CharacterControlMng.e_BlinkPos.Back)
+                    aniController.SetInteger("Controller", 14);
                 break;
-            case CharacterClass.eCharactgerState.e_ATTACK:
+            case CharacterClass.eCharactgerState.e_ATTACK:  // 공격 상태에 따라서, 애니메이션 제어
                 isBattle = true;
                 if (atkLevel == CharacterAttackMng.e_AttackLevel.AttackMode)
                     aniController.SetInteger("Controller", 100);
@@ -103,10 +113,19 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     public void AttackEventNotify(int num){}
 
     public void AttackEventStartNotify(){}
+    public void GetBlinkEndNotify(){}
 
     public void AtkLevelNotify(CharacterAttackMng.e_AttackLevel level)
     {   //어택 매니저의 공격 프로세스 레벨을 받음.
         atkLevel = level;
     }
+
+    public void BlinkValueNotify(CharacterControlMng.e_BlinkPos value)
+    {   // 컨트롤 매니저의 블링크 값을 받음.
+        blinkValue = value;
+    }
+
+    public void GetBlinkStartNotify(){}
+
     #endregion
 }
