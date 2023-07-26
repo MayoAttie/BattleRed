@@ -22,8 +22,10 @@ public class CharacterControlMng : Subject, Observer
 
     float jumpHeight = 2f;                      // 점프 높이
     float groundDistance = 1.4f;                // 지면과의 거리
-    public float zPos;                                 // 제어용 좌표 값
-    public float xPos;                                 // 제어용 좌표 값
+    public float zPos;                          // 제어용 좌표 값
+    public float xPos;                          // 제어용 좌표 값
+    public float runX;                          // 달리기 제어용 변수
+    public float runZ;                          // 달리기 제어용 변수
     float rotationSpeed = 100f;                 // 캐릭터 회전 속도
     float gravity = -9.18f;                     // 중력
     float fBliknkCoolTime = 3.0f;               // 회피기 충전 주기
@@ -82,12 +84,12 @@ public class CharacterControlMng : Subject, Observer
         {
             if(isBattle)
             {
-                groundDistance = 4f;
+                groundDistance = 6f;
                 RunCharacterFunction();
             }
             else
             {
-                groundDistance = 6f;
+                groundDistance = 4f;
                 MoveCharacterFunction();
             }
         }
@@ -100,6 +102,7 @@ public class CharacterControlMng : Subject, Observer
     {
         zPos = JoyStickController.Instance.GetVerticalValue();
         xPos = JoyStickController.Instance.GetHorizontalValue();
+
         Debug.Log(nameof(zPos)+":" +zPos);
         Debug.Log(nameof(xPos) + ":" + xPos);
 
@@ -132,6 +135,8 @@ public class CharacterControlMng : Subject, Observer
     // 워크 애니메이션 함수
     void MoveCharacterFunction()
     {
+        if (isBattle)
+            return;
 
         // 애니메이션을 실행할 때 필요한 파라미터 설정
         characMng.AnimatorFloatValueSetter(zPos, xPos);

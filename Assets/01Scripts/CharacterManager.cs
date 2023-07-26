@@ -12,6 +12,11 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     private CharacterAttackMng.e_AttackLevel atkLevel;
     private CharacterControlMng.e_BlinkPos blinkValue;
 
+    private float xPos;
+    private float zPos;
+    private float runX;
+    private float runZ;
+
     public CharacterClass.eCharactgerState clsState;
 
     private void Awake()
@@ -32,6 +37,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         clsCharacter = GameManager.Instance.characterCls;
         Debug.Log(nameof(clsCharacter.getState)+":" + clsCharacter.getState()) ;
         CharacterStateActor();
+        FloatAnimatorValueFunc();
+
     }
     private void LateUpdate()
     {
@@ -98,8 +105,29 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
     public void AnimatorFloatValueSetter(float zPos, float xPos)
     {
+        this.xPos = xPos;
+        this.zPos= zPos;
+        runX = xPos;
+        runZ = zPos;
+
+    }
+
+    private void FloatAnimatorValueFunc()
+    {
+        if(!isBattle)
+        {
+            runX= 0f;
+            runZ= 0f;
+        }
+        else
+        {
+            zPos = 0f;
+            xPos = 0f;
+        }
         aniController.SetFloat("zPos", zPos);
         aniController.SetFloat("xPos", xPos);
+        aniController.SetFloat("RunX", runX);
+        aniController.SetFloat("RunZ", runZ);
     }
 
     public bool getIsBattle()

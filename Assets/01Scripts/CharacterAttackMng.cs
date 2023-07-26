@@ -60,17 +60,15 @@ public class CharacterAttackMng : Subject, Observer
     // 버튼으로 호출되는 공격 함수
     public void CharaceterAttackCheck()
     {
-        //if (characMng.GetCharacterClass().getState() == CharacterClass.eCharactgerState.e_AVOID)
-        //    return;
 
         isClick = true;
+        characMng.SetIsBattle(true);
         if (isAnimationIng) // 애니메이션 동작중일 경우 리턴
             return;
         nAtkLevel++;
         // 애니메이션 제어
         NotifyAtkLevel((e_AttackLevel)nAtkLevel);   // 바뀐 공격 상태를 캐릭터 매니저에 알림
         characMng.GetCharacterClass().setState(eCharactgerState.e_ATTACK);
-        characMng.SetIsBattle(true);
         Invoke("OffBattleMode", 8f);
     }
 
