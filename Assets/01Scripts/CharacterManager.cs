@@ -12,6 +12,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     private CharacterAttackMng.e_AttackLevel atkLevel;
     private CharacterControlMng.e_BlinkPos blinkValue;
 
+    public CharacterClass.eCharactgerState clsState;
+
     private void Awake()
     {
         isBattle = false;
@@ -26,6 +28,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
     private void Update()
     {
+        clsState= clsCharacter.getState();
         clsCharacter = GameManager.Instance.characterCls;
         Debug.Log(nameof(clsCharacter.getState)+":" + clsCharacter.getState()) ;
         CharacterStateActor();

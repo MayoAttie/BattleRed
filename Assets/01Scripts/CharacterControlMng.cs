@@ -15,14 +15,15 @@ public class CharacterControlMng : Subject, Observer
     bool isGrounded;                            // 지면인지 체크
     bool isJump;                                // 점프중인지 체크
     bool isBlinking;                            // 회피중인지 체크
-    bool isBattle;                              // 전투중인지 체크
+    public bool isBattle;                              // 전투중인지 체크
     bool isBlinkCoolTimeFleg;                   // 쿨타임 코루틴함수 제어 플래그
     [SerializeField]bool isBlinkStart;                          // 블링크 애니메이션이 시작되었는지 체크
+    bool isConsecutiveBlink;                    //
 
     float jumpHeight = 2f;                      // 점프 높이
     float groundDistance = 1.4f;                // 지면과의 거리
-    float zPos;                                 // 제어용 좌표 값
-    float xPos;                                 // 제어용 좌표 값
+    public float zPos;                                 // 제어용 좌표 값
+    public float xPos;                                 // 제어용 좌표 값
     float rotationSpeed = 100f;                 // 캐릭터 회전 속도
     float gravity = -9.18f;                     // 중력
     float fBliknkCoolTime = 3.0f;               // 회피기 충전 주기
@@ -81,12 +82,12 @@ public class CharacterControlMng : Subject, Observer
         {
             if(isBattle)
             {
-                groundDistance = 5f;
+                groundDistance = 4f;
                 RunCharacterFunction();
             }
             else
             {
-                groundDistance = 1.4f;
+                groundDistance = 6f;
                 MoveCharacterFunction();
             }
         }
@@ -193,7 +194,7 @@ public class CharacterControlMng : Subject, Observer
         }
     }
 
-
+    //달리기 애니메이션 함수
     private void RunCharacterFunction()
     {
 
@@ -215,7 +216,7 @@ public class CharacterControlMng : Subject, Observer
             // 뒤쪽으로 방향 전환
             transform.rotation = Quaternion.Euler(0f, 180f, 0f);
         }
-        
+
 
         // 객체 이동
         Vector3 move = transform.right * xPos + transform.forward * zPos;
@@ -236,6 +237,7 @@ public class CharacterControlMng : Subject, Observer
     {
         if (isBlinkStart)
             return;
+
 
         // 앞점멸
         if (Mathf.Abs(zPos - 1f) < 0.05f)
@@ -277,9 +279,9 @@ public class CharacterControlMng : Subject, Observer
             Vector3 moveDirection = transform.forward * 1f;
             controller.Move(moveDirection);
         }
+        NotifyBlinkValue(blinkpos);
         characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_AVOID);
         // 옵저버에게 블링크 값 넘기기
-        NotifyBlinkValue(blinkpos);
     }
 
     // 블링크 쿨타임 초기화
@@ -302,7 +304,7 @@ public class CharacterControlMng : Subject, Observer
     {
         if (isBlinkStart)
             return;
-        if (nBlinkNumber > 0)
+        if (nBlinkNumber > 0 && !isBlinking)
         {
             isBlinking = true;
             nBlinkNumber--;
@@ -325,32 +327,9 @@ public class CharacterControlMng : Subject, Observer
     public void GetBlinkEndNotify() // 블링크 종료됨을 Get하여, 반영
     {
         Debug.Log(nameof(GetBlinkEndNotify));
+        blinkpos = e_BlinkPos.None;
         isBlinking = false;
         isBlinkStart = false;
-        blinkpos = e_BlinkPos.None;
-
-        // 캐릭터 상태 변경
-        if (isBattle)
-        {
-            // xz 인풋값 확인 후, 행동 결정
-            if (Mathf.Approximately(zPos, 0f) && Mathf.Approximately(xPos, 0f))
-                characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_ATTACK);
-            //전투 중이라면, Attack으로
-            else
-                characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_RUN);
-
-        }
-        else
-        {
-            // xz 인풋값 확인 후, 행동 결정
-            if (Mathf.Approximately(zPos, 0f) && Mathf.Approximately(xPos, 0f))
-                characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_Idle);
-            //전투 중이라면, Attack으로
-            else
-                characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_WALK);
-
-        }
-
 
     }
 
