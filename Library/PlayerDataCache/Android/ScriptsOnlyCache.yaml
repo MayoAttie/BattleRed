@@ -17,12 +17,8 @@ ScriptsOnlyBuild:
     UnityEditor.Graphs.dll:
     - UnityEditor.Graphs.AnimationBlendTree.Graph
     - UnityEditor.Graphs.AnimationBlendTree.GraphGUI
-    - UnityEditor.Graphs.AnimationStateMachine.AnyStateNode
     - UnityEditor.Graphs.AnimationStateMachine.Graph
     - UnityEditor.Graphs.AnimationStateMachine.GraphGUI
-    - UnityEditor.Graphs.AnimationStateMachine.StateEditor
-    - UnityEditor.Graphs.AnimationStateMachine.StateMachineNode
-    - UnityEditor.Graphs.AnimationStateMachine.StateNode
     - UnityEditor.Graphs.AnimatorControllerTool
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
@@ -304,7 +300,7 @@ ScriptsOnlyBuild:
     className: RectMask2D
   - hash:
       serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+      Hash: 486303cfa3e541ee0d9fb094636adb3e
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: CharacterManager
@@ -520,7 +516,7 @@ ScriptsOnlyBuild:
     className: BeforeAfterTestCommandState
   - hash:
       serializedVersion: 2
-      Hash: e8ad0eae4c9f947d1372f80c64813903
+      Hash: 08364f4cd075fe27de7b97f544f00faf
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: CharacterControlMng
@@ -653,4 +649,4 @@ ScriptsOnlyBuild:
   platform: 13
   scenePathNames:
   - Assets/00Scenes/GameField.unity
-  playerPath: C:/programming/Project/BattleRed/BattleRed_v1.0.0.1.apk
+  playerPath: C:/programming/Project/BattleRed/BattleRed_v1.0.0.2.apk

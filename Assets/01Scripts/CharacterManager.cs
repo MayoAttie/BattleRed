@@ -82,6 +82,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
                     aniController.SetInteger("Controller", 102);
                 else if (atkLevel == CharacterAttackMng.e_AttackLevel.Attack3)
                     aniController.SetInteger("Controller", 103);
+                else if (atkLevel == CharacterAttackMng.e_AttackLevel.Brock)
+                    aniController.SetInteger("Controller", 99);
                 break;
             case CharacterClass.eCharactgerState.e_HIT:
                 break;
@@ -157,6 +159,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     }
 
     public void GetBlinkStartNotify(){}
+
+    public void GetBrockEndNotify(){}
 
     #endregion
 }

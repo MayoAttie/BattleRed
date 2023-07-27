@@ -131,6 +131,7 @@ public class CharacterControlMng : Subject, Observer
         velocity.y += gravity * Time.deltaTime;
     }
 
+    #region 걷기
 
     // 워크 애니메이션 함수
     void MoveCharacterFunction()
@@ -153,7 +154,10 @@ public class CharacterControlMng : Subject, Observer
             characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_Idle);
         }
     }
-   
+    #endregion
+
+
+    #region 점프
 
     // 점프버튼 함수
     public void JumpCommand()
@@ -163,6 +167,7 @@ public class CharacterControlMng : Subject, Observer
             isJump = true;
         }
     }
+
 
     // 점프 애니메이션 함수
     void JumpCharacterFunction()
@@ -181,7 +186,9 @@ public class CharacterControlMng : Subject, Observer
 
         controller.Move(velocity * Time.deltaTime);
     }
+    #endregion
 
+    #region 회전
 
     // 캐릭터 회전 함수
     private void RotateCharacter()
@@ -198,6 +205,9 @@ public class CharacterControlMng : Subject, Observer
             transform.Rotate(Vector3.up, -rotationSpeed * Time.deltaTime);
         }
     }
+    #endregion
+
+    #region 달리기
 
     //달리기 애니메이션 함수
     private void RunCharacterFunction()
@@ -206,21 +216,29 @@ public class CharacterControlMng : Subject, Observer
         characMng.AnimatorFloatValueSetter(zPos, xPos);
         GravityFunc();
 
-        if (Mathf.Abs(xPos - 1f) < 0.03f)
+        if (Mathf.Abs(xPos - 1f) < 0.04f)
         {
-            // 오른쪽으로 방향 전환
-            transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+            // 오른쪽으로 방향 전환 (90도 회전)
+            Quaternion targetRotation = Quaternion.Euler(0f, transform.eulerAngles.y + 90f, 0f);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
-        if (Mathf.Abs(xPos + 1f) < 0.03f)
+        else if (Mathf.Abs(xPos + 1f) < 0.04f)
         {
-            // 왼쪽으로 방향 전환
-            transform.rotation = Quaternion.Euler(0f, -90f, 0f);
+            // 왼쪽으로 방향 전환 (90도 회전)
+            Quaternion targetRotation = Quaternion.Euler(0f, transform.eulerAngles.y - 90f, 0f);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
-        if (Mathf.Abs(zPos + 1f) < 0.03f)
+        else if (Mathf.Abs(zPos + 1f) < 0.02f)
         {
-            // 뒤쪽으로 방향 전환
-            transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+            // 이동 멈추기
+            xPos = 0f;
+            zPos = 0f;
+
+            var instance = gameObject.GetComponent<CharacterAttackMng>();
+            instance.ShildAct();
+            characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_ATTACK);
         }
+
 
 
         // 객체 이동
@@ -237,6 +255,9 @@ public class CharacterControlMng : Subject, Observer
             characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_ATTACK);
         }
     }
+    #endregion
+
+    #region 회피기
 
     private void ActTumblin()
     {
@@ -317,6 +338,8 @@ public class CharacterControlMng : Subject, Observer
         }
     }
 
+    #endregion
+
 
 
     #region 옵저버 패턴
@@ -342,6 +365,8 @@ public class CharacterControlMng : Subject, Observer
     {
         isBlinkStart = true;    
     }
+
+    public void GetBrockEndNotify(){}
 
     #endregion
 

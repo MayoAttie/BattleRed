@@ -24,5 +24,10 @@ public class CharacterAniEventFinder : Subject
         NotifyGetBlinkStart();
     }
 
+    public void GetBrockEnd()
+    {
+        NotifyGetBrockEnd();
+    }
+
 
 }
