@@ -103,8 +103,8 @@ public class CharacterControlMng : Subject, Observer
         zPos = JoyStickController.Instance.GetVerticalValue();
         xPos = JoyStickController.Instance.GetHorizontalValue();
 
-        Debug.Log(nameof(zPos)+":" +zPos);
-        Debug.Log(nameof(xPos) + ":" + xPos);
+        //Debug.Log(nameof(zPos)+":" +zPos);
+        //Debug.Log(nameof(xPos) + ":" + xPos);
 
         if(!isBlinking)
         {
@@ -216,19 +216,19 @@ public class CharacterControlMng : Subject, Observer
         characMng.AnimatorFloatValueSetter(zPos, xPos);
         GravityFunc();
 
-        if (Mathf.Abs(xPos - 1f) < 0.04f)
+        if (Mathf.Abs(xPos - 1f) < 0.1f)
         {
             // 오른쪽으로 방향 전환 (90도 회전)
             Quaternion targetRotation = Quaternion.Euler(0f, transform.eulerAngles.y + 90f, 0f);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
-        else if (Mathf.Abs(xPos + 1f) < 0.04f)
+        else if (Mathf.Abs(xPos + 1f) < 0.1f)
         {
             // 왼쪽으로 방향 전환 (90도 회전)
             Quaternion targetRotation = Quaternion.Euler(0f, transform.eulerAngles.y - 90f, 0f);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
-        else if (Mathf.Abs(zPos + 1f) < 0.02f)
+        else if (Mathf.Abs(zPos + 1f) < 0.06f)
         {
             // 이동 멈추기
             xPos = 0f;

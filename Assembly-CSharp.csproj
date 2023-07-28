@@ -63,6 +63,7 @@
     <Compile Include="Assets\01Scripts\CharacterClass.cs" />
     <Compile Include="Assets\01Scripts\CharacterControlMng.cs" />
     <Compile Include="Assets\01Scripts\CharacterManager.cs" />
+    <Compile Include="Assets\01Scripts\Element.cs" />
     <Compile Include="Assets\01Scripts\ElementManager.cs" />
     <Compile Include="Assets\01Scripts\GameManager.cs" />
     <Compile Include="Assets\01Scripts\JoyStickController.cs" />
@@ -70,7 +71,6 @@
     <Compile Include="Assets\01Scripts\Patterns\Singleton.cs" />
     <Compile Include="Assets\01Scripts\Patterns\Subject.cs" />
     <Compile Include="Assets\01Scripts\TouchPadController.cs" />
-    <Compile Include="Assets\01Scripts\test.cs" />
     <Compile Include="Assets\02Assets\UJoystick\Content\Script\Core\bl_Joystick.cs" />
     <Compile Include="Assets\02Assets\UJoystick\Content\Script\Internal\bl_JoystickUtils.cs" />
     <Compile Include="Assets\02Assets\UJoystick\Example\Scrips\bl_ControllerExample.cs" />
