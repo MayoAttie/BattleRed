@@ -64,9 +64,10 @@
     <Compile Include="Assets\01Scripts\CharacterControlMng.cs" />
     <Compile Include="Assets\01Scripts\CharacterManager.cs" />
     <Compile Include="Assets\01Scripts\Element.cs" />
-    <Compile Include="Assets\01Scripts\ElementManager.cs" />
+    <Compile Include="Assets\01Scripts\Element_Interaction.cs" />
     <Compile Include="Assets\01Scripts\GameManager.cs" />
     <Compile Include="Assets\01Scripts\JoyStickController.cs" />
+    <Compile Include="Assets\01Scripts\Objects.cs" />
     <Compile Include="Assets\01Scripts\Patterns\Observer.cs" />
     <Compile Include="Assets\01Scripts\Patterns\Singleton.cs" />
     <Compile Include="Assets\01Scripts\Patterns\Subject.cs" />

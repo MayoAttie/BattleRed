@@ -23,12 +23,12 @@ public class CharacterAttackMng : Subject, Observer
     public enum e_AttackLevel
     {
         None = 99,
-        Brock,
-        AttackMode,
-        Attack1,
-        Attack2,
-        Attack3,
-        Max
+        Brock,              //100
+        AttackMode,         //101
+        Attack1,            //102
+        Attack2,            //103
+        Attack3,            //104
+        Max                 //105
     }
 
     #endregion
@@ -41,7 +41,7 @@ public class CharacterAttackMng : Subject, Observer
         isAnimationIng = false;
         isClick = false;
         nAtkLevel = 101;
-        eventInputer = gameObject.transform.GetChild(0).GetComponent<CharacterAniEventFinder>();
+        eventInputer = gameObject.GetComponent<CharacterAniEventFinder>();
     }
 
     void Start()
@@ -56,7 +56,7 @@ public class CharacterAttackMng : Subject, Observer
         if (!isBattle)
             return;
 
-        if (nAtkLevel > (int)e_AttackLevel.Max)
+        if (nAtkLevel >= (int)e_AttackLevel.Max)
             nAtkLevel = (int)e_AttackLevel.AttackMode;
 
         if (AttackModeChecker == null && nAtkLevel == (int)e_AttackLevel.AttackMode)
@@ -64,7 +64,7 @@ public class CharacterAttackMng : Subject, Observer
 
 
     }
-    #region 공격
+    #region 평타 공격
 
     // 버튼으로 호출되는 공격 함수
     public void CharaceterAttackCheck()
@@ -111,6 +111,13 @@ public class CharacterAttackMng : Subject, Observer
         isAnimationIng = true;  // 애니메이션 동작 시작
     }
     #endregion
+
+    #region 스킬 공격
+
+
+    #endregion
+
+    #region 기타 함수
 
     public void OffBattleMode()        // 대기상태 시간 체크 후 아이들로 초기화
     {
@@ -174,16 +181,20 @@ public class CharacterAttackMng : Subject, Observer
         nAtkLevel = (int)e_AttackLevel.Brock;
         NotifyAtkLevel((e_AttackLevel)nAtkLevel);
         isBrock = true;
+        FlagValueReset();
+    }
+
+    public void FlagValueReset()
+    {
         if (isAnimationIng)
             isAnimationIng = false;
         if (isClick)
             isClick = false;
     }
+    #endregion
 
 
-
-
-
+    #region 옵저버패턴
     public void AtkLevelNotify(e_AttackLevel level) {}//사용안함
 
     public void BlinkValueNotify(CharacterControlMng.e_BlinkPos value){}
@@ -209,4 +220,5 @@ public class CharacterAttackMng : Subject, Observer
         Debug.Log(nameof(isBrock) + ":" + isBrock);
 
     }
+    #endregion
 }

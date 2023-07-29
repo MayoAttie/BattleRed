@@ -36,6 +36,9 @@ public class CameraController : MonoBehaviour
     [Tooltip("Camera pitch limitations")]
     public LimitsInfo PitchLimits = new LimitsInfo { Minimum = -60.0f, Maximum = 60.0f };
 
+    [Tooltip("캐릭터 위에서의 원하는 높이")]
+    public float DesiredHeight = 2.0f;
+
     #endregion
 
     #region Structs
@@ -76,7 +79,6 @@ public class CameraController : MonoBehaviour
     {
         if (Target == null) return;
 
-        // 캐릭터가 회전한 각도만큼 카메라도 회전하도록 적용
         float characterYaw = Target.eulerAngles.y;
         transform.rotation = Quaternion.Euler(transform.eulerAngles.x, characterYaw, transform.eulerAngles.z);
 
@@ -87,15 +89,19 @@ public class CameraController : MonoBehaviour
         RayCast(startPos, endPos, ref result, RayTrace.Thickness);
         var resultDistance = Vector3.Distance(Target.position, result);
 
+        // 캐릭터 위에 원하는 높이를 계산.
+        var desiredPosition = result + Vector3.up * DesiredHeight;
+
         if (resultDistance <= _distance)    // closest collision
         {
-            transform.position = result;
+            transform.position = desiredPosition;
             _distance = resultDistance;
         }
         else
         {
             _distance = Mathf.Lerp(_distance, resultDistance, LerpSpeed);
-            transform.position = startPos - transform.forward * _distance;
+            // 카메라의 위치를 지면 위에서 원하는 높이만큼 보간하여 조정.
+            transform.position = startPos - transform.forward * _distance + Vector3.up * DesiredHeight;
         }
     }
 

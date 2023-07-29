@@ -11,6 +11,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     private bool isBattle;
     private CharacterAttackMng.e_AttackLevel atkLevel;
     private CharacterControlMng.e_BlinkPos blinkValue;
+    private Element.e_Element element;
 
     private float xPos;
     private float zPos;
@@ -24,7 +25,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         isBattle = false;
         gameObject.GetComponent<CharacterAttackMng>().Attach(this);
         gameObject.GetComponent<CharacterControlMng>().Attach(this);
-        aniController = gameObject.transform.GetChild(0).GetComponent<Animator>();
+        aniController = gameObject.GetComponent<Animator>();
     }
     private void Start()
     {
@@ -96,24 +97,6 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     }
 
 
-    public void SetCharacterClass(CharacterClass cls)
-    {
-        clsCharacter = cls;
-    }
-    public CharacterClass GetCharacterClass()
-    {
-        return clsCharacter;
-    }
-
-    public void AnimatorFloatValueSetter(float zPos, float xPos)
-    {
-        this.xPos = xPos;
-        this.zPos= zPos;
-        runX = xPos;
-        runZ = zPos;
-
-    }
-
     private void FloatAnimatorValueFunc()
     {
         if(!isBattle)
@@ -132,6 +115,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         aniController.SetFloat("RunZ", runZ);
     }
 
+    #region 게터세터
     public bool getIsBattle()
     {
         return isBattle;
@@ -140,7 +124,29 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     public void SetIsBattle(bool b) { isBattle = b; }
     public bool GetIsBattle() { return isBattle; }
 
-    
+    public Element.e_Element GetElement()
+    {
+        return element;
+    }
+
+    public void SetCharacterClass(CharacterClass cls)
+    {
+        clsCharacter = cls;
+    }
+    public CharacterClass GetCharacterClass()
+    {
+        return clsCharacter;
+    }
+
+    public void AnimatorFloatValueSetter(float zPos, float xPos)
+    {
+        this.xPos = xPos;
+        this.zPos = zPos;
+        runX = xPos;
+        runZ = zPos;
+
+    }
+    #endregion
 
     #region 옵저버 패턴
     public void AttackEventNotify(int num){}

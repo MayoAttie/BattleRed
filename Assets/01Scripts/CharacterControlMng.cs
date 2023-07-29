@@ -58,7 +58,7 @@ public class CharacterControlMng : Subject, Observer
         isBlinking   = false;
         isBattle     = false;
         blinkpos = e_BlinkPos.None;
-        eventInputer = gameObject.transform.GetChild(0).GetComponent<CharacterAniEventFinder>();
+        eventInputer = gameObject.GetComponent<CharacterAniEventFinder>();
     }
 
     void Start()
@@ -156,7 +156,6 @@ public class CharacterControlMng : Subject, Observer
     }
     #endregion
 
-
     #region 점프
 
     // 점프버튼 함수
@@ -176,11 +175,10 @@ public class CharacterControlMng : Subject, Observer
         Debug.Log(nameof(isGrounded)+":"+isGrounded);
         if (isGrounded && isJump)
         {
+            gameObject.GetComponent<CharacterAttackMng>().FlagValueReset();
             characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_JUMP);
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             isJump = false;
         }
-
 
         velocity.y += gravity * Time.deltaTime;
 

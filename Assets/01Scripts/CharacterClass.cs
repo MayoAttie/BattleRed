@@ -28,9 +28,9 @@ public class CharacterClass
     int nLevel;
     float fSpeed;
     eCharactgerState eCharacState;
-    eElement eCharacElement;
+    Element.e_Element eCharacElement;
 
-    public CharacterClass(int nCurrentHp, int nMaxHp, int nCurrentExp, int nMaxExp, int nAttack, int nDefense, int nLevel, float fSpeed, eCharactgerState eCharacState, eElement eCharacElement)
+    public CharacterClass(int nCurrentHp, int nMaxHp, int nCurrentExp, int nMaxExp, int nAttack, int nDefense, int nLevel, float fSpeed, eCharactgerState eCharacState, Element.e_Element eCharacElement)
     {
         this.nCurrentHp = nCurrentHp;
         this.nMaxHp = nMaxHp;
