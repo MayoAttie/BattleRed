@@ -14,6 +14,9 @@ public class ButtonClass : MonoBehaviour
     public UnityEngine.Events.UnityEvent onButtonDown;
     public UnityEngine.Events.UnityEvent onButtonUp;
 
+    [Tooltip("이미지를 Filled 상태로 변경할지 선택합니다.")]
+    public bool ImageFilledSet;
+
     private void Awake()
     {
         // 버튼에 클릭 이벤트 리스너 등록
@@ -49,6 +52,15 @@ public class ButtonClass : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        if(ImageFilledSet == true)
+        {
+            // 이미지 타입을 Filled로 변경
+            inside.type = Image.Type.Filled;
+        }
+    }
+
     private void OnClick()
     {
         // 버튼이 눌릴 때 호출되는 이벤트
@@ -65,5 +77,14 @@ public class ButtonClass : MonoBehaviour
     {
         // 버튼이 눌려있던 상태에서 뗄 때 호출되는 이벤트
         onButtonUp.Invoke();
+    }
+
+    // 버튼의 내부 이미지의 FillAmount 값을 조정하는 함수
+    public void SetInsideImageFillAmount(float fillAmount)
+    {
+        if (inside != null && inside.type == Image.Type.Filled)
+        {
+            inside.fillAmount = fillAmount;
+        }
     }
 }

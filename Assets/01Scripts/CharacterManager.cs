@@ -1,24 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+using System.Reflection;
 using UnityEngine;
-
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class CharacterManager : Singleton<CharacterManager>, Observer
 {
-    private CharacterClass clsCharacter;
-    private Animator aniController;
-    private bool isBattle;
-    private CharacterAttackMng.e_AttackLevel atkLevel;
-    private CharacterControlMng.e_BlinkPos blinkValue;
-    private Element.e_Element element;
+    private CharacterClass clsCharacter;        // 캐릭터 데이터 클래스
+    private Animator aniController;             // 캐릭터 제어 애니메이터
+    private bool isBattle;                      // 전투 체크 변수
+    private CharacterAttackMng.e_AttackLevel atkLevel;  // 공격 단계 변수
+    private CharacterControlMng.e_BlinkPos blinkValue;  // 회피기 방향 변수
+    [SerializeField]private Element.e_Element element;                  // 선택한 원소 변수
 
-    private float xPos;
-    private float zPos;
-    private float runX;
-    private float runZ;
+    private float xPos;                         // 캐릭터 애니메이션 플로트 변수
+    private float zPos;                         // 캐릭터 애니메이션 플로트 변수
+    private float runX;                         // 캐릭터 애니메이션 플로트 변수
+    private float runZ;                         // 캐릭터 애니메이션 플로트 변수
+    [SerializeField] GameObject SatelliteObj;   // 원소 체크용 위성 객체
 
     public CharacterClass.eCharactgerState clsState;
+    bool isClickedCoolCheck;                    // 버튼 쿨타임 코루틴 객체
 
     private void Awake()
     {
@@ -26,6 +30,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         gameObject.GetComponent<CharacterAttackMng>().Attach(this);
         gameObject.GetComponent<CharacterControlMng>().Attach(this);
         aniController = gameObject.GetComponent<Animator>();
+        SatelliteObj.gameObject.SetActive(false);
     }
     private void Start()
     {
@@ -39,11 +44,9 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         Debug.Log(nameof(clsCharacter.getState)+":" + clsCharacter.getState()) ;
         CharacterStateActor();
         FloatAnimatorValueFunc();
+        SatelliteParticleColorSwitch();
+    }
 
-    }
-    private void LateUpdate()
-    {
-    }
 
     // 캐릭터 애니메이터 제어 함수
     public void CharacterStateActor()
@@ -114,6 +117,89 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         aniController.SetFloat("RunX", runX);
         aniController.SetFloat("RunZ", runZ);
     }
+
+
+    public void ElementSwitch()
+    {
+        if (isClickedCoolCheck)
+            return;
+
+        SatelliteObj.SetActive(true);
+        int index = (int)element;
+        index++;    // 원소 값 증가
+        index %= (int)Element.e_Element.Max;    // 범위 모듈러 조정
+
+        if ((Element.e_Element)index == Element.e_Element.None) //원소가 범위를 벗어날 경우 재배치
+            index = (int)Element.e_Element.Fire;
+
+
+        element = (Element.e_Element)index;
+
+        // ElementSwitchButton 오브젝트를 이름으로 정확히 찾아서 ButtonClass 컴포넌트를 가져옴
+        GameObject elementSwitchButton = GameObject.Find("ElementSwitchButton");
+        if (elementSwitchButton != null)
+        {
+            ButtonClass btncls = elementSwitchButton.GetComponent<ButtonClass>();
+            
+            StartCoroutine(ButtonClickedCoolTime(2f, btncls));
+        }
+    }
+
+    IEnumerator ButtonClickedCoolTime(float time, ButtonClass ClickedBtnCls)
+    {
+        isClickedCoolCheck = true;
+        float elapsedTime = 0f;
+        float fillAmountStart = 0f;
+        float fillAmountEnd = 1f;
+        float duration = time;
+
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            float currentFillAmount = Mathf.Lerp(fillAmountStart, fillAmountEnd, t);
+            ClickedBtnCls.SetInsideImageFillAmount(currentFillAmount);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        ClickedBtnCls.SetInsideImageFillAmount(fillAmountEnd);
+
+        SatelliteObj.SetActive(false);
+        isClickedCoolCheck = false;
+    }
+
+    void OffSatellite()
+    {
+        SatelliteObj.SetActive(false);
+    }
+
+    void SatelliteParticleColorSwitch()
+    {
+
+        ParticleSystem eff = SatelliteObj.transform.GetChild(0).GetComponent<ParticleSystem>();
+        var mainModule = eff.main; // eff 파티클 시스템의 메인 모듈에 접근
+
+        switch (element)
+        {
+            case Element.e_Element.Fire:
+                mainModule.startColor = Color.red; // 붉은색
+                break;
+            case Element.e_Element.Water:
+                mainModule.startColor = Color.blue; // 파란색
+                break;
+            case Element.e_Element.Plant:
+                mainModule.startColor = Color.green; // 녹색
+                break;
+            case Element.e_Element.Lightning:
+                mainModule.startColor = new Color(0.5f, 0f, 0.5f); // 자주색 (RGB: 128, 0, 128)
+                break;
+            case Element.e_Element.Wind:
+                mainModule.startColor = Color.cyan; // 하늘색
+                break;
+        }
+    }
+
 
     #region 게터세터
     public bool getIsBattle()
