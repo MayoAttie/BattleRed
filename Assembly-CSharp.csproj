@@ -58,17 +58,20 @@
   <ItemGroup>
     <Compile Include="Assets\01Scripts\ButtonClass.cs" />
     <Compile Include="Assets\01Scripts\CameraController.cs" />
-    <Compile Include="Assets\01Scripts\CharacterAniEventFinder.cs" />
-    <Compile Include="Assets\01Scripts\CharacterAttackMng.cs" />
-    <Compile Include="Assets\01Scripts\CharacterClass.cs" />
-    <Compile Include="Assets\01Scripts\CharacterControlMng.cs" />
-    <Compile Include="Assets\01Scripts\CharacterManager.cs" />
+    <Compile Include="Assets\01Scripts\Character\CharacterAniEventFinder.cs" />
+    <Compile Include="Assets\01Scripts\Character\CharacterAttackMng.cs" />
+    <Compile Include="Assets\01Scripts\Character\CharacterClass.cs" />
+    <Compile Include="Assets\01Scripts\Character\CharacterControlMng.cs" />
+    <Compile Include="Assets\01Scripts\Character\CharacterManager.cs" />
     <Compile Include="Assets\01Scripts\Element.cs" />
     <Compile Include="Assets\01Scripts\Element_Interaction.cs" />
     <Compile Include="Assets\01Scripts\GameManager.cs" />
     <Compile Include="Assets\01Scripts\Item.cs" />
     <Compile Include="Assets\01Scripts\JoyStickController.cs" />
-    <Compile Include="Assets\01Scripts\Monster.cs" />
+    <Compile Include="Assets\01Scripts\Monster\MobCactusAttack.cs" />
+    <Compile Include="Assets\01Scripts\Monster\Monster.cs" />
+    <Compile Include="Assets\01Scripts\Monster\MonsterAttack.cs" />
+    <Compile Include="Assets\01Scripts\Monster\MonsterManager.cs" />
     <Compile Include="Assets\01Scripts\Objects.cs" />
     <Compile Include="Assets\01Scripts\Patterns\Observer.cs" />
     <Compile Include="Assets\01Scripts\Patterns\Singleton.cs" />

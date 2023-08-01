@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Objects : MonoBehaviour
+public class Objects
 {
     private string sTag;
     private string sName;

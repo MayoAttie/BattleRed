@@ -36,4 +36,7 @@ public class Item : Objects
     public int GetItemCount() { return this.nItemCount;}
     #endregion
 
+    virtual public void MonsterAttackStart()
+    { }
+
 }
