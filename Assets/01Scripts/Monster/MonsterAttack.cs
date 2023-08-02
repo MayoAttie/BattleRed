@@ -6,6 +6,7 @@ public class MonsterAttack : MonoBehaviour
 {
     Monster monsterObj;
     Animator animator;
+    List<Transform> TargetList;
     private void Awake()
     {
     }
@@ -36,6 +37,7 @@ public class MonsterAttack : MonoBehaviour
     {
         monsterObj = monster;
     }
+
     public Animator GetAnimator()
     {
         return animator;
@@ -44,6 +46,8 @@ public class MonsterAttack : MonoBehaviour
     {
         this.animator = animator;
     }
+
+
     #endregion
 
     public virtual void MonsterAttackStart()    // 공격 시작함수
@@ -51,7 +55,10 @@ public class MonsterAttack : MonoBehaviour
         Debug.Log("monsterAttack parents Func");
     }
 
-
+    public void TargetInputter(List<Transform> targets)
+    {
+        TargetList = targets;
+    }
 
 
 }

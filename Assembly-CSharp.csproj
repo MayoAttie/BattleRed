@@ -63,6 +63,7 @@
     <Compile Include="Assets\01Scripts\Character\CharacterClass.cs" />
     <Compile Include="Assets\01Scripts\Character\CharacterControlMng.cs" />
     <Compile Include="Assets\01Scripts\Character\CharacterManager.cs" />
+    <Compile Include="Assets\01Scripts\CharacterViewRange.cs" />
     <Compile Include="Assets\01Scripts\Element.cs" />
     <Compile Include="Assets\01Scripts\Element_Interaction.cs" />
     <Compile Include="Assets\01Scripts\GameManager.cs" />

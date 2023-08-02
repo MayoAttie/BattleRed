@@ -366,6 +366,10 @@ public class CharacterControlMng : Subject, Observer
 
     public void GetBrockEndNotify(){}
 
+    public void GetEnemyFindNotify(List<Transform> findList)
+    {
+    }
+
     #endregion
 
 }

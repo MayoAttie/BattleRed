@@ -254,5 +254,9 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
     public void GetBrockEndNotify(){}
 
+    public void GetEnemyFindNotify(List<Transform> findList)
+    {
+    }
+
     #endregion
 }

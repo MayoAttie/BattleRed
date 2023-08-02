@@ -73,4 +73,12 @@ public abstract class Subject : MonoBehaviour
             tmp.GetBrockEndNotify();
         }
     }
+
+    public void NotifyGetEnemyFind(List<Transform> findList)
+    {
+        foreach(Observer tmp in _observers)
+        {
+            tmp.GetEnemyFindNotify(findList);
+        }
+    }
 }

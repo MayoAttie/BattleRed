@@ -220,5 +220,9 @@ public class CharacterAttackMng : Subject, Observer
         Debug.Log(nameof(isBrock) + ":" + isBrock);
 
     }
+
+    public void GetEnemyFindNotify(List<Transform> findList)
+    {
+    }
     #endregion
 }

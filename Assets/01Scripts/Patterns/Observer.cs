@@ -13,5 +13,7 @@ public interface Observer
     void GetBlinkStartNotify();
 
     void GetBrockEndNotify();   // 방어 애니메이션 종료 알림
+
+    void GetEnemyFindNotify(List<Transform> findList);
 }
 

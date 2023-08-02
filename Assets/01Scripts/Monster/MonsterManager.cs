@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MonsterManager : MonoBehaviour
+public class MonsterManager : MonoBehaviour, Observer
 {
 
     Monster monster;            // 몬스터 데이터 클래스파일
@@ -12,17 +12,19 @@ public class MonsterManager : MonoBehaviour
     float fPosZ;                // 이동제어 용 실수 변수
     bool isBattle;              // 전투 체크 변수
     public Monster.e_MonsterState state;
+    List<Transform> taretList;
     private void Awake()
     {
         MobAnimator = gameObject.GetComponent<Animator>();
+        gameObject.GetComponent<CharacterViewRange>().Attach(this);
         monster = new Monster();
+        monster.SetName("Cactus");
     }
 
     void Start()
     {
         state = Monster.e_MonsterState.Attack;
         monster.SetMonsterState(state);
-
         MonsterAtkDivider();
     }
 
@@ -73,6 +75,11 @@ public class MonsterManager : MonoBehaviour
     }
 
 
+    void Patrol()
+    {
+        
+    }
+
 
     #region 게터세터
     public void SetMonsterClass(Monster monsterCls)
@@ -90,7 +97,51 @@ public class MonsterManager : MonoBehaviour
         fPosZ = posZ;
     }
 
+
     #endregion
+
+    #region 옵저버 패턴
+
+    public void AttackEventNotify(int num)
+    {
+    }
+
+    public void AttackEventStartNotify()
+    {
+    }
+
+    public void AtkLevelNotify(CharacterAttackMng.e_AttackLevel level)
+    {
+    }
+
+    public void BlinkValueNotify(CharacterControlMng.e_BlinkPos value)
+    {
+    }
+
+    public void GetBlinkEndNotify()
+    {
+    }
+
+    public void GetBlinkStartNotify()
+    {
+    }
+
+    public void GetBrockEndNotify()
+    {
+    }
+
+    public void GetEnemyFindNotify(List<Transform> findList)
+    {
+        if(findList != null && findList.Count>0)
+        {
+            monster.SetMonsterState(Monster.e_MonsterState.Attack);
+            taretList = findList;
+            monsterAtk.TargetInputter(findList);
+        }
+    }
+    #endregion
+
+
 
 
 }
