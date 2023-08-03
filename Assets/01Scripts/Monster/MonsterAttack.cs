@@ -60,5 +60,13 @@ public class MonsterAttack : MonoBehaviour
         TargetList = targets;
     }
 
+    public void TargetCheck()
+    {
+        if(TargetList.Count <= 0)
+        {
+            animator.GetComponent<MonsterManager>().GetMonsterClass().SetMonsterState(Monster.e_MonsterState.None);
+
+        }
+    }
 
 }

@@ -36,7 +36,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Depth: 0.304
+    - _Depth: 0.389
     - _DepthStrength: 0.969
     - _Float1: 0.1
     - _Float3: 1
@@ -77,4 +77,3 @@ Material:
     - _Shallowcolor: {r: 0.4890531, g: 0.6480994, b: 0.6603774, a: 0}
     - _deepcolor: {r: 0.3301887, g: 0.1712053, b: 0.07631721, a: 0}
     - _foamcolor: {r: 0.3066038, g: 1, b: 0.9145772, a: 0}
-  m_BuildTextureStacks: []

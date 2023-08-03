@@ -141,7 +141,18 @@ public class MonsterManager : MonoBehaviour, Observer
     }
     #endregion
 
+    void NondeStateChecker()
+    {
+        if(monster.GetMonsterState() == Monster.e_MonsterState.None)
+        {
+            
+        }
+    }
 
+    void PatrolAndIdle()
+    {
+           
+    }
 
 
 }

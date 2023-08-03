@@ -22,4 +22,7 @@ public class MobCactusAttack : MonsterAttack
         Debug.Log("MobCacutsAttack");
     }
 
+
+    
+
 }
