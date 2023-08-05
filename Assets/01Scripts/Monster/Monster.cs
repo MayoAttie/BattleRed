@@ -36,8 +36,9 @@ public class Monster : Objects
     private int nMonsterAtkPower;
     private int nMonsterDef;
     private float fMonsterSpeed;
+    private float fMonsterRotationSpeed;
 
-    public Monster(string sTag, string sName, int nGrade, bool isActive,e_MonsterState monsterState, e_MonsterType monsterType, int nMonsterMaxHp, int nMonsterCurrnetHp, int nMonsterExp, int nMonsterAtkPower, int nMonsterDef, float fMonsterSpeed)
+    public Monster(string sTag, string sName, int nGrade, bool isActive,e_MonsterState monsterState, e_MonsterType monsterType, int nMonsterMaxHp, int nMonsterCurrnetHp, int nMonsterExp, int nMonsterAtkPower, int nMonsterDef, float fMonsterSpeed, float fMonsterRotationSpeed)
         : base(sTag, sName, nGrade, isActive)
     {
         this.monsterType = monsterType;
@@ -48,6 +49,7 @@ public class Monster : Objects
         this.nMonsterDef = nMonsterDef;
         this.fMonsterSpeed = fMonsterSpeed;
         this.monsterState = monsterState;
+        this.fMonsterRotationSpeed = fMonsterRotationSpeed;
     }
 
     public Monster()
@@ -63,6 +65,8 @@ public class Monster : Objects
     public void SetMonsterAtkPower(int atkPower) { nMonsterAtkPower = atkPower; }
     public void SetMonsterDef(int def) { nMonsterDef = def; }
     public void SetMonsterSpeed(float speed) { fMonsterSpeed= speed; }
+    public void SetMonsterRotateSpeed(float rotate) { fMonsterRotationSpeed = rotate; }
+
 
     public e_MonsterState GetMonsterState() { return this.monsterState; }
     public e_MonsterType GetMonsetrType() { return monsterType; }
@@ -72,6 +76,8 @@ public class Monster : Objects
     public int GetMonsterAtkPower() { return nMonsterAtkPower; }
     public int GetMonsterDef() { return nMonsterDef; }
     public float GetMonsterSpeed() { return fMonsterSpeed;}
+    public float GetMonsterRotateSpeed() { return fMonsterRotationSpeed; }
+
     #endregion
 
 

@@ -53,17 +53,15 @@
     <UnityVersion>2019.4.34f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\01Scripts\ButtonClass.cs" />
     <Compile Include="Assets\01Scripts\CameraController.cs" />
     <Compile Include="Assets\01Scripts\Character\CharacterAniEventFinder.cs" />
     <Compile Include="Assets\01Scripts\Character\CharacterAttackMng.cs" />
     <Compile Include="Assets\01Scripts\Character\CharacterClass.cs" />
     <Compile Include="Assets\01Scripts\Character\CharacterControlMng.cs" />
     <Compile Include="Assets\01Scripts\Character\CharacterManager.cs" />
-    <Compile Include="Assets\01Scripts\CharacterViewRange.cs" />
     <Compile Include="Assets\01Scripts\Element.cs" />
     <Compile Include="Assets\01Scripts\Element_Interaction.cs" />
     <Compile Include="Assets\01Scripts\GameManager.cs" />
@@ -77,6 +75,10 @@
     <Compile Include="Assets\01Scripts\Patterns\Observer.cs" />
     <Compile Include="Assets\01Scripts\Patterns\Singleton.cs" />
     <Compile Include="Assets\01Scripts\Patterns\Subject.cs" />
+    <Compile Include="Assets\01Scripts\Tools\AttackRange.cs" />
+    <Compile Include="Assets\01Scripts\Tools\ButtonClass.cs" />
+    <Compile Include="Assets\01Scripts\Tools\CharacterViewRange.cs" />
+    <Compile Include="Assets\01Scripts\Tools\ViewRange.cs" />
     <Compile Include="Assets\01Scripts\TouchPadController.cs" />
     <Compile Include="Assets\02Assets\UJoystick\Content\Script\Core\bl_Joystick.cs" />
     <Compile Include="Assets\02Assets\UJoystick\Content\Script\Internal\bl_JoystickUtils.cs" />

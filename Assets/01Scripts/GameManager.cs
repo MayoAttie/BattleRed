@@ -18,11 +18,11 @@ public class GameManager : Singleton<GameManager>
         {
             foreach(var mob in Monsters) 
             {
-                Instantiate(mob);
-                MonsterManager mng = mob.GetComponent<MonsterManager>();
-                Monster monsterCls = new Monster("몬스터", "Cactus", 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence, 100, 100, 10, 10, 10, 5);
-                mng.SetMonsterClass(monsterCls);
-                mob.transform.position = point.position; // 위치를 point의 위치로 이동
+                Monster monsterCls = new Monster("몬스터", "Cactus", 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence, 100, 100, 10, 10, 10, 1.8f, 100f);
+                GameObject obj = Instantiate(mob);
+                MonsterManager monsterManager = obj.GetComponent<MonsterManager>();
+                monsterManager.SetMonsterClass(monsterCls);
+                obj.transform.position = point.position; // 위치를 point의 위치로 이동
             }
         }
         

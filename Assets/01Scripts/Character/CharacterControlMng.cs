@@ -241,7 +241,7 @@ public class CharacterControlMng : Subject, Observer
 
         // 객체 이동
         Vector3 move = transform.right * xPos + transform.forward * zPos;
-        controller.Move((move * 1 + velocity) * Time.deltaTime); // 중력이 적용된 이동
+        controller.Move((move * 12 + velocity) * Time.deltaTime); // 중력이 적용된 이동
 
 
         // x,y 값이 0에 가까우면, 이동을 멈추고 ATTACK 상태로 바꿈
