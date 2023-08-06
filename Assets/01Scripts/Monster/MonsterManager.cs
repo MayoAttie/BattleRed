@@ -22,6 +22,7 @@ public class MonsterManager : MonoBehaviour, Observer
     public Monster.e_MonsterState state;    // 몬스터의 상태 변수
     public float fElapsedTime;         // 시간 변수
     Vector3 v3_startPos;                    // 몬스터 처음 위치
+    MonsterAttack.e_MonsterAttackLevel monsterAtkLevel; // 몬스터 어택 단계 변수
 
     public float fPatrolTimeNumber;        // 순찰 시간 변수
     public float fIdleTimeNumber;          // 대기 시간 변수
@@ -159,7 +160,6 @@ public class MonsterManager : MonoBehaviour, Observer
             // 랜덤한 위치로 이동
             Vector3 randomPosition = GetRandomPosition();
             navMeshController.SetDestination(randomPosition);
-            monster.SetMonsterState(e_MonsterState.Walk);
         }
         else
         {
@@ -169,7 +169,6 @@ public class MonsterManager : MonoBehaviour, Observer
             // 이동 시간이 지나면 대기 상태로 변경
             if (navMeshController.remainingDistance <= stoppingDistanceWithCorrection)
             {
-                monster.SetMonsterState(e_MonsterState.Walk);
                 Vector3 randomPosition = GetRandomPosition();
                 navMeshController.SetDestination(randomPosition);
             }
@@ -178,6 +177,7 @@ public class MonsterManager : MonoBehaviour, Observer
         Vector3 velocity = navMeshController.velocity;
         fPosZ = velocity.z;
         fPosX = velocity.x;
+        monster.SetMonsterState(e_MonsterState.Walk);
 
         fElapsedTime += Time.deltaTime;
         if (fElapsedTime >= fPatrolTimeNumber)
@@ -192,6 +192,8 @@ public class MonsterManager : MonoBehaviour, Observer
     {
         fElapsedTime += Time.deltaTime;
         navMeshController.isStopped = true;
+        fPosZ = 0f;
+        fPosX = 0f;
         monster.SetMonsterState(e_MonsterState.Idle);
         // 대기 시간이 지나면 이동 상태로 변경
         if (fElapsedTime >= fIdleTimeNumber)
@@ -219,6 +221,10 @@ public class MonsterManager : MonoBehaviour, Observer
         // 처음 제자리로 돌아가는 동작을 구현합니다.
         navMeshController.SetDestination(v3_startPos);
         navMeshController.isStopped = false;
+        // 이동 방향에 따라 fPosZ와 fPosX 값 할당
+        Vector3 velocity = navMeshController.velocity;
+        fPosZ = velocity.z;
+        fPosX = velocity.x;
         monster.SetMonsterState(Monster.e_MonsterState.Walk);
     }
 
@@ -242,8 +248,8 @@ public class MonsterManager : MonoBehaviour, Observer
         {
             case Monster.e_MonsterState.Idle:
                 MobAnimator.SetInteger("Controller", 0);
-                MobAnimator.SetFloat("zPos", 0);
-                MobAnimator.SetFloat("xPos", 0);
+                MobAnimator.SetFloat("zPos", fPosZ);
+                MobAnimator.SetFloat("xPos", fPosX);
                 break;
             case Monster.e_MonsterState.Walk:
                 MobAnimator.SetInteger("Controller", -1);
@@ -251,7 +257,36 @@ public class MonsterManager : MonoBehaviour, Observer
                 MobAnimator.SetFloat("xPos", fPosX);
                 break;
             case Monster.e_MonsterState.Attack:
-
+                if(monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel.Chase)
+                {
+                    MobAnimator.SetInteger("Controller", -1);
+                    MobAnimator.SetFloat("zPos", fPosZ);
+                    MobAnimator.SetFloat("xPos", fPosX);
+                }
+                else if(monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel._1st)
+                {
+                    MobAnimator.SetFloat("zPos", fPosZ);
+                    MobAnimator.SetFloat("xPos", fPosX);
+                    MobAnimator.SetInteger("Controller", 11);
+                }
+                else if (monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel._2rd)
+                {
+                    MobAnimator.SetFloat("zPos", fPosZ);
+                    MobAnimator.SetFloat("xPos", fPosX);
+                    MobAnimator.SetInteger("Controller", 12);
+                }
+                else if (monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel._3th)
+                {
+                    MobAnimator.SetFloat("zPos", fPosZ);
+                    MobAnimator.SetFloat("xPos", fPosX);
+                    MobAnimator.SetInteger("Controller", 13);
+                }
+                else if (monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel._4th)
+                {
+                    MobAnimator.SetFloat("zPos", fPosZ);
+                    MobAnimator.SetFloat("xPos", fPosX);
+                    MobAnimator.SetInteger("Controller", 14);
+                }
                 break;
             case Monster.e_MonsterState.LookAround:
                 MobAnimator.SetInteger("Controller", 1);
@@ -279,7 +314,6 @@ public class MonsterManager : MonoBehaviour, Observer
                 // 새로운 MobCactusAttack 컴포넌트 추가
                 monsterAtk = gameObject.AddComponent<MobCactusAttack>();
                 monsterAtk.SetMonsetrCls(monster);
-                monsterAtk.SetAnimator(MobAnimator);
                 monsterAtk.SetNavMeshAgent(navMeshController);
                 monsterAtk.SetChaseRange(fChaseRange);
                 break;
@@ -303,6 +337,10 @@ public class MonsterManager : MonoBehaviour, Observer
     public void SetBattleActive(bool isBattle)
     {
         this.isBattle = isBattle;
+    }
+    public void SetMonsterAttackLevel(MonsterAttack.e_MonsterAttackLevel atkLevel)
+    {
+        monsterAtkLevel = atkLevel;
     }
 
 
@@ -361,6 +399,7 @@ public class MonsterManager : MonoBehaviour, Observer
             }
         }
     }
+
     #endregion
 
 

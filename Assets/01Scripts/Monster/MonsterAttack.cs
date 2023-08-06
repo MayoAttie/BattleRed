@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using static CharacterAttackMng;
+
 public class MonsterAttack : MonoBehaviour, Observer
 {
     #region 변수
     Monster monsterCls;                 // 부모 객체의 몬스터 클래스
-    Animator animator;                  // 부모 객체 애니메이터
     List<Transform> TargetList;         // 전체 적 객체
     GameObject target;                  // 전투 대상 오브젝트
     public bool isChase;                       // 추격 중임을 체크하는 변수
@@ -47,12 +48,10 @@ public class MonsterAttack : MonoBehaviour, Observer
 
 
         TargetChaseMove();
-        ChaseCheck();
     }
 
-    public MonsterAttack(Monster monsterCls, Animator animator, NavMeshAgent navAgent)
+    public MonsterAttack(Monster monsterCls, NavMeshAgent navAgent)
     {
-        this.animator = animator;
         this.monsterCls = monsterCls;
         this.navAgent = navAgent;
     }
@@ -74,7 +73,7 @@ public class MonsterAttack : MonoBehaviour, Observer
 
 
     // 몬스터 전투 해제용
-    private void ChaseCheck()
+    public void EndPageChaseCheck()
     {
         if (target == null && isBattle)
         {
@@ -103,14 +102,15 @@ public class MonsterAttack : MonoBehaviour, Observer
     {
         if (target != null && isBattle)
         {
-            if(gameObject == null)
-                Debug.Log("gameObject is null");
+            
             // 타깃과 몬스터의 거리 계산
             float distanceToTarget = Vector3.Distance(transform.position, GetTarget().transform.position);
 
-            if (GetTargetInRange())
+            if (isTargetInRange)
             {
                 navAgent.isStopped = true;
+                MonsterManager mng = GetComponent<MonsterManager>();
+                mng.SetAnimatorFloatValue(0, 0);
                 return;
             }
 
@@ -129,6 +129,13 @@ public class MonsterAttack : MonoBehaviour, Observer
 
             // 타깃 방향으로 이동
             navAgent.SetDestination(TargetPositionRetrun());
+
+            // 이동 방향에 따라 fPosZ와 fPosX 값 할당
+            Vector3 velocity = navAgent.velocity;
+            MonsterManager mng2 = GetComponent<MonsterManager>();
+            mng2.GetComponent<MonsterManager>().SetAnimatorFloatValue(velocity.x, velocity.z);
+            attackLevel = e_MonsterAttackLevel.Chase;
+            mng2.SetMonsterAttackLevel(attackLevel);
         }
     }
 
@@ -148,14 +155,13 @@ public class MonsterAttack : MonoBehaviour, Observer
 
     #endregion
 
+
+
+
     #region 세터게터
     public void SetMonsetrCls(Monster monster)
     {
         monsterCls = monster;
-    }
-    public void SetAnimator(Animator animator)
-    {
-        this.animator = animator;
     }
     public void SetChaseActive(bool isChase)
     {
@@ -164,6 +170,9 @@ public class MonsterAttack : MonoBehaviour, Observer
     public void SetAttackLevel(e_MonsterAttackLevel attackLevel)
     {
         this.attackLevel = attackLevel;
+        MonsterManager mng = GetComponent<MonsterManager>();
+        mng.SetAnimatorFloatValue(0, 0);
+        mng.GetComponent<MonsterManager>().SetMonsterAttackLevel(attackLevel);
     }
     public void SetBattleActive(bool isBattle)
     {
@@ -181,10 +190,6 @@ public class MonsterAttack : MonoBehaviour, Observer
     public Monster GetMonsterCls()
     {
         return monsterCls;
-    }
-    public Animator GetAnimator()
-    {
-        return animator;
     }
     public bool GetChaseActive()
     {
