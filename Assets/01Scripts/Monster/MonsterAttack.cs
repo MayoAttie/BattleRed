@@ -16,6 +16,7 @@ public class MonsterAttack : MonoBehaviour, Observer
     float fSetChaseRange;               // 최대 추격 기동 범위 - 몬스터 매니저에서 받음
     protected NavMeshAgent navAgent;                // 추적용 navMesh 에이전트
     protected e_MonsterAttackLevel attackLevel;     // attackLevel 변수
+    protected bool isAtkAnimationConrolFlag;        // 몬스터 애니메이션 제어용 부울변수
     #endregion
 
 
@@ -118,11 +119,13 @@ public class MonsterAttack : MonoBehaviour, Observer
             if (distanceToTarget > fSetChaseRange)
             {
                 isChase = false;
+                isAtkAnimationConrolFlag = false;
                 return;
             }
 
             isChase = true;
             navAgent.isStopped = false;
+            isAtkAnimationConrolFlag = false;
 
             // 타깃 방향으로 회전
             RotateTowardsTarget();

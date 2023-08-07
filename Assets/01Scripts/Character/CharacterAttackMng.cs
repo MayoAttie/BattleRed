@@ -23,12 +23,12 @@ public class CharacterAttackMng : Subject, Observer
     public enum e_AttackLevel
     {
         None = 99,
-        Brock,              //100
-        AttackMode,         //101
-        Attack1,            //102
-        Attack2,            //103
-        Attack3,            //104
-        Max                 //105
+        Brock,              //99
+        AttackMode,         //100
+        Attack1,            //101
+        Attack2,            //102
+        Attack3,            //103
+        Max                 //104
     }
 
     #endregion

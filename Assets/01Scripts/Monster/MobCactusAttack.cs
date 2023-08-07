@@ -7,7 +7,6 @@ public class MobCactusAttack : MonsterAttack
     int atkMaxLevel = 2;
     public int currnetAtkLevel = -1;
     Animator animator;
-    public bool isAtkAnimationConrolFlag;
     void Start()
     {
         isAtkAnimationConrolFlag = false;

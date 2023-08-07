@@ -67,6 +67,7 @@
     <Compile Include="Assets\01Scripts\GameManager.cs" />
     <Compile Include="Assets\01Scripts\Item.cs" />
     <Compile Include="Assets\01Scripts\JoyStickController.cs" />
+    <Compile Include="Assets\01Scripts\Monster\MobAngryMushroomAttack.cs" />
     <Compile Include="Assets\01Scripts\Monster\MobCactusAttack.cs" />
     <Compile Include="Assets\01Scripts\Monster\Monster.cs" />
     <Compile Include="Assets\01Scripts\Monster\MonsterAttack.cs" />

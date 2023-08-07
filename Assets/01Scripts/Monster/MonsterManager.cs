@@ -317,6 +317,12 @@ public class MonsterManager : MonoBehaviour, Observer
                 monsterAtk.SetNavMeshAgent(navMeshController);
                 monsterAtk.SetChaseRange(fChaseRange);
                 break;
+            case "MushroomAngry":
+                monsterAtk = gameObject.AddComponent<MobAngryMushroomAttack>();
+                monsterAtk.SetMonsetrCls(monster);
+                monsterAtk.SetNavMeshAgent(navMeshController);
+                monsterAtk.SetChaseRange(fChaseRange);
+                break;
             default: break;
         }
     }
