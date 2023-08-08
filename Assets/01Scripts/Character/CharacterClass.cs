@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class CharacterClass
+public class CharacterClass : Objects
 {
     public enum eCharactgerState
     {
@@ -30,7 +30,7 @@ public class CharacterClass
     eCharactgerState eCharacState;
     Element.e_Element eCharacElement;
 
-    public CharacterClass(int nCurrentHp, int nMaxHp, int nCurrentExp, int nMaxExp, int nAttack, int nDefense, int nLevel, float fSpeed, eCharactgerState eCharacState, Element.e_Element eCharacElement)
+    public CharacterClass(int nCurrentHp, int nMaxHp, int nCurrentExp, int nMaxExp, int nAttack, int nDefense, int nLevel, float fSpeed, eCharactgerState eCharacState, Element.e_Element eCharacElement, string sTag, string sName, int nGrade, bool isActive) : base(sTag, sName,nGrade,isActive)
     {
         this.nCurrentHp = nCurrentHp;
         this.nMaxHp = nMaxHp;

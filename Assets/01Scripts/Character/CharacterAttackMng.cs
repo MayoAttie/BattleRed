@@ -28,6 +28,7 @@ public class CharacterAttackMng : Subject, Observer
         Attack1,            //101
         Attack2,            //102
         Attack3,            //103
+        AtkSkill,
         Max                 //104
     }
 
@@ -113,6 +114,35 @@ public class CharacterAttackMng : Subject, Observer
     #endregion
 
     #region 스킬 공격
+
+    public void AttackSkillStart()
+    {
+        Element.e_Element element = characMng.GetElement();
+        
+        
+    }
+
+    void FireTypeAtkSkill(Element.e_Element element)
+    {
+
+    }
+
+    void WaterTypeAtkSkill(Element.e_Element element)
+    {
+
+    }
+    void PlantTypeAtkSkill(Element.e_Element element)
+    {
+
+    }
+    void LightningTypeAtkSkill(Element.e_Element element)
+    {
+
+    }
+    void WindTypeAtkSkill(Element.e_Element element)
+    {
+
+    }
 
 
     #endregion

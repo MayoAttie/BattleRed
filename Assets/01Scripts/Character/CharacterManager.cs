@@ -88,6 +88,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
                     aniController.SetInteger("Controller", 103);
                 else if (atkLevel == CharacterAttackMng.e_AttackLevel.Brock)
                     aniController.SetInteger("Controller", 99);
+                else if (atkLevel == CharacterAttackMng.e_AttackLevel.AtkSkill)
+                    aniController.SetInteger("Controller", 110);
                 break;
             case CharacterClass.eCharactgerState.e_HIT:
                 break;
@@ -155,6 +157,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
         while (elapsedTime < duration)
         {
+            // 버튼 쿨타임만큼 fillAmount 하기
             float t = elapsedTime / duration;
             float currentFillAmount = Mathf.Lerp(fillAmountStart, fillAmountEnd, t);
             ClickedBtnCls.SetInsideImageFillAmount(currentFillAmount);
