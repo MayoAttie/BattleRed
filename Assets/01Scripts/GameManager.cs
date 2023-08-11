@@ -9,7 +9,7 @@ public class GameManager : Singleton<GameManager>
     public Transform[] MonsterSpawnPoint;
     private void Awake()
     {
-        characterCls = new CharacterClass(300, 300, 0, 100, 50, 15, 1, 3.0f, CharacterClass.eCharactgerState.e_NONE, Element.e_Element.None,"플레이어","Knight",0,true);
+        characterCls = new CharacterClass(300, 300, 0, 100, 50, 15, 1, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true);
     }
 
     void Start()

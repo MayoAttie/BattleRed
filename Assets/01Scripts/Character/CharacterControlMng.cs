@@ -109,9 +109,9 @@ public class CharacterControlMng : Subject, Observer
         if(!isBlinking)
         {
             if (!isBattle)
-                characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_WALK);
+                characMng.GetCharacterClass().SetState(CharacterClass.eCharactgerState.e_WALK);
             else
-                characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_RUN);
+                characMng.GetCharacterClass().SetState(CharacterClass.eCharactgerState.e_RUN);
 
         }
 
@@ -151,7 +151,7 @@ public class CharacterControlMng : Subject, Observer
         // x,y 값이 0에 가까우면, 이동을 멈추고 iDle상태로 바꿈
         if (Mathf.Approximately(zPos, 0f) && Mathf.Approximately(xPos, 0f))
         {
-            characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_Idle);
+            characMng.GetCharacterClass().SetState(CharacterClass.eCharactgerState.e_Idle);
         }
     }
     #endregion
@@ -176,7 +176,7 @@ public class CharacterControlMng : Subject, Observer
         if (isGrounded && isJump)
         {
             gameObject.GetComponent<CharacterAttackMng>().FlagValueReset();
-            characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_JUMP);
+            characMng.GetCharacterClass().SetState(CharacterClass.eCharactgerState.e_JUMP);
             isJump = false;
         }
 
@@ -234,7 +234,7 @@ public class CharacterControlMng : Subject, Observer
 
             var instance = gameObject.GetComponent<CharacterAttackMng>();
             instance.ShildAct();
-            characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_ATTACK);
+            characMng.GetCharacterClass().SetState(CharacterClass.eCharactgerState.e_ATTACK);
         }
 
 
@@ -250,7 +250,7 @@ public class CharacterControlMng : Subject, Observer
             // 대기 모드 전환을 위한 함수 호출
             var instance = gameObject.GetComponent<CharacterAttackMng>();
             instance.OffBattleMode();
-            characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_ATTACK);
+            characMng.GetCharacterClass().SetState(CharacterClass.eCharactgerState.e_ATTACK);
         }
     }
     #endregion
@@ -304,7 +304,7 @@ public class CharacterControlMng : Subject, Observer
             controller.Move(moveDirection);
         }
         NotifyBlinkValue(blinkpos);
-        characMng.GetCharacterClass().setState(CharacterClass.eCharactgerState.e_AVOID);
+        characMng.GetCharacterClass().SetState(CharacterClass.eCharactgerState.e_AVOID);
         // 옵저버에게 블링크 값 넘기기
     }
 

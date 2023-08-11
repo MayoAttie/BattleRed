@@ -37,12 +37,13 @@ public class CharacterAttackMng : Subject, Observer
 
     private void Awake()
     {
-        isCoroutineFlag = false;
+
         AttackModeChecker = null;
         isAnimationIng = false;
         isClick = false;
         nAtkLevel = 101;
-        eventInputer = gameObject.GetComponent<CharacterAniEventFinder>();
+        eventInputer = gameObject.GetComponent<CharacterAniEventFinder>();        
+        isCoroutineFlag = false;
     }
 
     void Start()
@@ -78,7 +79,7 @@ public class CharacterAttackMng : Subject, Observer
         nAtkLevel++;
         // 애니메이션 제어
         NotifyAtkLevel((e_AttackLevel)nAtkLevel);   // 바뀐 공격 상태를 캐릭터 매니저에 알림
-        characMng.GetCharacterClass().setState(eCharactgerState.e_ATTACK);
+        characMng.GetCharacterClass().SetState(eCharactgerState.e_ATTACK);
         //Invoke("OffBattleMode", 8f);
     }
 
@@ -155,12 +156,12 @@ public class CharacterAttackMng : Subject, Observer
             return;
         if (isAnimationIng)
             return;
-        if (characMng.GetCharacterClass().getState() == eCharactgerState.e_RUN)
+        if (characMng.GetCharacterClass().GetState() == eCharactgerState.e_RUN)
             return;
         if (isBrock)
             return;
 
-        characMng.GetCharacterClass().setState(eCharactgerState.e_Idle);
+        characMng.GetCharacterClass().SetState(eCharactgerState.e_Idle);
         characMng.SetIsBattle(false);
         Debug.Log("characMng.SetIsBattle(false)");
     }
@@ -184,7 +185,7 @@ public class CharacterAttackMng : Subject, Observer
                 AttackModeChecker = null;
                 yield break;
             }
-            if (characMng.GetCharacterClass().getState() == eCharactgerState.e_RUN)
+            if (characMng.GetCharacterClass().GetState() == eCharactgerState.e_RUN)
             {
                 isCoroutineFlag = false;
                 AttackModeChecker = null;
@@ -197,7 +198,7 @@ public class CharacterAttackMng : Subject, Observer
                 yield break;
             }
 
-            characMng.GetCharacterClass().setState(eCharactgerState.e_Idle);
+            characMng.GetCharacterClass().SetState(eCharactgerState.e_Idle);
             characMng.SetIsBattle(false);
             Debug.Log("characMng.SetIsBattle(false)");
             isCoroutineFlag = false;
@@ -240,7 +241,7 @@ public class CharacterAttackMng : Subject, Observer
 
         if (isBattle)
         {
-            characMng.GetCharacterClass().setState(eCharactgerState.e_Idle);
+            characMng.GetCharacterClass().SetState(eCharactgerState.e_Idle);
             nAtkLevel = (int)e_AttackLevel.AttackMode;
             NotifyAtkLevel((e_AttackLevel)nAtkLevel);
         }

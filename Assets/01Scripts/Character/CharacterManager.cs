@@ -39,9 +39,9 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
     private void Update()
     {
-        clsState= clsCharacter.getState();
+        clsState= clsCharacter.GetState();
         clsCharacter = GameManager.Instance.characterCls;
-        Debug.Log(nameof(clsCharacter.getState)+":" + clsCharacter.getState()) ;
+        Debug.Log(nameof(clsCharacter.GetState)+":" + clsCharacter.GetState()) ;
         CharacterStateActor();
         FloatAnimatorValueFunc();
         SatelliteParticleColorSwitch();
@@ -52,7 +52,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     public void CharacterStateActor()
     {
 
-        switch (clsCharacter.getState())
+        switch (clsCharacter.GetState())
         {
             case CharacterClass.eCharactgerState.e_Idle:
                 aniController.SetInteger("Controller", 0);
@@ -136,6 +136,9 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
 
         element = (Element.e_Element)index;
+
+        Element characElement = new Element(element, true, false);
+        clsCharacter.SetCurrentElement(characElement);
 
         // ElementSwitchButton 오브젝트를 이름으로 정확히 찾아서 ButtonClass 컴포넌트를 가져옴
         GameObject elementSwitchButton = GameObject.Find("ElementSwitchButton");

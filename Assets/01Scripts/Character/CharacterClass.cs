@@ -26,11 +26,16 @@ public class CharacterClass : Objects
     int nAttack;
     int nDefense;
     int nLevel;
+    int nElementNum;
+    float fCriticalDamage;
+    float fCriticalPercentage;
     float fSpeed;
     eCharactgerState eCharacState;
-    Element.e_Element eCharacElement;
+    Element eCharacElement;         // 캐릭터가 사용하는 현재 원소
+    Element eEncountElement;        // 캐릭터가 몬스터에게 피격당한 현재 원소 상태
+    Element[] ChildElement;         // 캐릭터가 원소 효과로 생성할 원소
 
-    public CharacterClass(int nCurrentHp, int nMaxHp, int nCurrentExp, int nMaxExp, int nAttack, int nDefense, int nLevel, float fSpeed, eCharactgerState eCharacState, Element.e_Element eCharacElement, string sTag, string sName, int nGrade, bool isActive) : base(sTag, sName,nGrade,isActive)
+    public CharacterClass(int nCurrentHp, int nMaxHp, int nCurrentExp, int nMaxExp, int nAttack, int nDefense, int nLevel, float fSpeed, eCharactgerState eCharacState, int nElementNum, float fCriticalDamage, float fCriticalPercentage, string sTag, string sName, int nGrade, bool isActive) : base(sTag, sName,nGrade,isActive)
     {
         this.nCurrentHp = nCurrentHp;
         this.nMaxHp = nMaxHp;
@@ -41,24 +46,80 @@ public class CharacterClass : Objects
         this.nLevel = nLevel;
         this.fSpeed = fSpeed;
         this.eCharacState = eCharacState;
-        this.eCharacElement = eCharacElement;
+        this.eCharacElement = new Element(Element.e_Element.None, false, false);
+        this.nElementNum = nElementNum;
+        this.eEncountElement = new Element(Element.e_Element.None, false, false);
+        this.fCriticalDamage= fCriticalDamage;
+        this.fCriticalPercentage= fCriticalPercentage;
+
+        ChildElement = new Element[5];
+        for (int i = 0; i < ChildElement.Length; i++)
+        {
+            ChildElement[i] = new Element(Element.e_Element.None, false, true);
+        }
     }
 
     public CharacterClass()
     {
     }
 
-    public float getSpeed()
+    #region 세터게터
+
+    public float GetSpeed()
     {
         return fSpeed;
     }
-    public eCharactgerState getState()
+    public eCharactgerState GetState()
     {
         return eCharacState;
     }
-    public void setState(eCharactgerState state)
+    public int GetAttack()
+    {
+        return nAttack;
+    }
+    public Element GetEncountElement()
+    {
+        return eEncountElement;
+    }
+    public void SetState(eCharactgerState state)
     {
         eCharacState = state;
     }
+    public void SetAttack(int attack)
+    {
+        nAttack = attack;
+    }
+    public int GetElementNum()
+    {
+        return nElementNum;
+    }
+    public Element GetCurrnetElement()
+    {
+        return eCharacElement;
+    }
+    public Element GetChildElement(int index)
+    {
+        return ChildElement[index];
+    }
+    public void SetEncountElement(Element encountElement)
+    {
+        eEncountElement = encountElement;
+    }
+
+    public void SetElementNum(int elementNum)
+    {
+        nElementNum = elementNum;
+    }
+    public void SetCurrentElement(Element element)
+    {
+        eCharacElement = element;
+    }
+
+    public void SetChildElement(int index, Element element)
+    {
+        ChildElement[index] = element;
+    }
+    #endregion
+
 
 }
