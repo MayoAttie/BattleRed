@@ -112,10 +112,10 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 939
-  m_MinSize: {x: 911, y: 442}
+  m_MinSize: {x: 936, y: 502}
   m_MaxSize: {x: 22006, y: 14042}
   vertical: 0
-  controlID: 190
+  controlID: 143
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_MinSize: {x: 201, y: 442}
   m_MaxSize: {x: 4001, y: 8042}
   vertical: 1
-  controlID: 83
+  controlID: 144
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -215,10 +215,10 @@ MonoBehaviour:
     y: 0
     width: 1074
     height: 939
-  m_MinSize: {x: 710, y: 392}
+  m_MinSize: {x: 735, y: 502}
   m_MaxSize: {x: 18005, y: 14042}
   vertical: 1
-  controlID: 191
+  controlID: 100
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -241,10 +241,10 @@ MonoBehaviour:
     y: 0
     width: 1074
     height: 723
-  m_MinSize: {x: 710, y: 271}
+  m_MinSize: {x: 735, y: 381}
   m_MaxSize: {x: 18005, y: 10021}
   vertical: 0
-  controlID: 186
+  controlID: 101
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -307,7 +307,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: InspectorWindow
+  m_Name: NavMeshEditorWindow
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
@@ -316,14 +316,14 @@ MonoBehaviour:
     y: 0
     width: 421
     height: 723
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
-  m_ActualView: {fileID: 20}
+  m_MinSize: {x: 301, y: 381}
+  m_MaxSize: {x: 4001, y: 4021}
+  m_ActualView: {fileID: 21}
   m_Panes:
   - {fileID: 20}
   - {fileID: 21}
-  m_Selected: 0
-  m_LastSelected: 1
+  m_Selected: 1
+  m_LastSelected: 0
 --- !u!114 &14
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -343,8 +343,8 @@ MonoBehaviour:
     y: 723
     width: 1074
     height: 216
-  m_MinSize: {x: 100, y: 100}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 101, y: 121}
+  m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 22}
   m_Panes:
   - {fileID: 22}
@@ -479,9 +479,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 39.314, y: 4.328, z: 65}
+    m_Target: {x: 30.948118, y: 7.824491, z: 71.74435}
     speed: 2
-    m_Value: {x: 39.314, y: 4.328, z: 65}
+    m_Value: {x: 30.948118, y: 7.824491, z: 71.74435}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -527,13 +527,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.0038584971, y: -0.98311687, z: 0.18225695, w: 0.01925655}
+    m_Target: {x: -0.18655568, y: -0.72773373, z: 0.21839418, w: -0.62292033}
     speed: 2
-    m_Value: {x: 0.0038582617, y: -0.98305684, z: 0.18224584, w: 0.019255375}
+    m_Value: {x: -0.18654402, y: -0.7276882, z: 0.21838051, w: -0.62288135}
   m_Size:
-    m_Target: 0.7348478
+    m_Target: 5.320586
     speed: 2
-    m_Value: 0.7348478
+    m_Value: 5.320586
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -617,7 +617,7 @@ MonoBehaviour:
     - e00: 0.25978836
       e01: 0
       e02: 0
-      e03: 173.4709
+      e03: 173.47093
       e10: 0
       e11: 0.25978836
       e12: 0
@@ -633,11 +633,11 @@ MonoBehaviour:
     - e00: 0.7010915
       e01: 0
       e02: 0
-      e03: 150.43048
+      e03: -140.21832
       e10: 0
       e11: 0.7010915
       e12: 0
-      e13: 257.91022
+      e13: 230.62086
       e20: 0
       e21: 0
       e22: 1
@@ -678,14 +678,14 @@ MonoBehaviour:
       e31: 0
       e32: 0
       e33: 1
-    - e00: 0.1
+    - e00: 0.3951056
       e01: 0
       e02: 0
-      e03: 221.15683
+      e03: 19.934082
       e10: 0
-      e11: 0.1
+      e11: 0.3951056
       e12: 0
-      e13: 170.25662
+      e13: 184.95505
       e20: 0
       e21: 0
       e22: 1
@@ -694,14 +694,14 @@ MonoBehaviour:
       e31: 0
       e32: 0
       e33: 1
-    - e00: 0.97888005
+    - e00: 0.8297217
       e01: 0
       e02: 0
-      e03: -254.50873
+      e03: -112.20131
       e10: 0
-      e11: 0.97888005
+      e11: 0.8297217
       e12: 0
-      e13: 223.18869
+      e13: 254.55524
       e20: 0
       e21: 0
       e22: 1
@@ -821,23 +821,23 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 74370000
-      m_LastClickedID: 14196
-      m_ExpandedIDs: 5afbffff66fbffff10380000
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 92d9feff04e0feff7ce0fefffef0feffe6f6feff9e0cffffeebeffff5afbffff66fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: 
-        m_OriginalName: 
+        m_Name: MushroomAngry(Clone)
+        m_OriginalName: MushroomAngry(Clone)
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
           y: 0
           width: 0
           height: 0
-        m_UserData: 0
+        m_UserData: -75494
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 11
+        m_OriginalEventType: 0
         m_IsRenamingFilename: 0
         m_ClientGUIView: {fileID: 11}
       m_SearchString: 
@@ -886,20 +886,20 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/01Scripts/Character
+    - Assets/04Prefabs
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/01Scripts/Character
+  - Assets/04Prefabs
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\programming\UnityGame\BattleRed
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 7c450000
-    m_LastClickedID: 17788
-    m_ExpandedIDs: 0000000046450000484500004a4500004c4500004e45000050450000524500005445000056450000584500005a4500005c4500005e45000060450000624500006445000000ca9a3b
+    m_SelectedIDs: 8e450000
+    m_LastClickedID: 17806
+    m_ExpandedIDs: 000000004c4500004e45000050450000524500005445000056450000584500005a4500005c4500005e45000060450000624500006445000066450000684500006a450000944500007a47000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -927,7 +927,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000046450000484500004a4500004c4500004e45000050450000524500005445000056450000584500005a4500005c4500005e450000604500006245000064450000
+    m_ExpandedIDs: 000000004c4500004e45000050450000524500005445000056450000584500005a4500005c4500005e45000060450000624500006445000066450000684500006a450000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -958,15 +958,15 @@ MonoBehaviour:
     m_ExpandedInstanceIDs: 000000006a3a00003c430000704900009c4400009a7900002c05ffffc45e0000e2560000605300007eff0000da05010046640000224f0000544b0000a63d00003c370000a64100008c42000036430000aabe0000dc400000a0400000d641000030420000a4410000f6420000864100007e4200006042000006420000de410000104a000002a80000a249000062460000b6460000d2460000b2460000e2460000764600004c4600006c4600007c4600005c460000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: Element_Interaction
-      m_OriginalName: Element_Interaction
+      m_Name: Cactus
+      m_OriginalName: Cactus
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 11884
+      m_UserData: 15134
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
       m_OriginalEventType: 0
@@ -1015,7 +1015,7 @@ MonoBehaviour:
   m_LockTracker:
     m_IsLocked: 0
   m_PreviewResizer:
-    m_CachedPref: -194
+    m_CachedPref: 194
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
   m_PreviewWindow: {fileID: 0}

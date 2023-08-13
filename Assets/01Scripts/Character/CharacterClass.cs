@@ -81,6 +81,10 @@ public class CharacterClass : Objects
     {
         return eEncountElement;
     }
+    public int GetDeffense()
+    {
+        return nDefense;
+    }
     public void SetState(eCharactgerState state)
     {
         eCharacState = state;
@@ -101,6 +105,14 @@ public class CharacterClass : Objects
     {
         return ChildElement[index];
     }
+    public float GetCriticalDamage()
+    {
+        return fCriticalDamage;
+    }
+    public float GetCriticalPercentage()
+    {
+        return fCriticalPercentage;
+    }
     public void SetEncountElement(Element encountElement)
     {
         eEncountElement = encountElement;
@@ -118,6 +130,23 @@ public class CharacterClass : Objects
     public void SetChildElement(int index, Element element)
     {
         ChildElement[index] = element;
+    }
+
+    public int GetCurrentHp()
+    {
+        return nCurrentHp;  
+    }
+    public void SetCurrentHp(int hp)
+    {
+        nCurrentHp = hp;
+    }
+    public int GetMaxHp()
+    {
+        return nMaxHp;
+    }
+    public void SetMaxHp(int hp)
+    {
+        nMaxHp = hp;
     }
     #endregion
 

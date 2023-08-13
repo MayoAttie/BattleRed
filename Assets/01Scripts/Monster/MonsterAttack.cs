@@ -17,6 +17,7 @@ public class MonsterAttack : MonoBehaviour, Observer
     protected NavMeshAgent navAgent;                // 추적용 navMesh 에이전트
     protected e_MonsterAttackLevel attackLevel;     // attackLevel 변수
     protected bool isAtkAnimationConrolFlag;        // 몬스터 애니메이션 제어용 부울변수
+    GameObject colliderBox;                     // 공격 충돌 체크용 콜라이더 박스
     #endregion
 
 
@@ -170,6 +171,10 @@ public class MonsterAttack : MonoBehaviour, Observer
     {
         this.isChase = isChase;
     }
+    public void SetAtkColliderBox(GameObject box)
+    {
+        colliderBox = box;
+    }
     public void SetAttackLevel(e_MonsterAttackLevel attackLevel)
     {
         this.attackLevel = attackLevel;
@@ -218,6 +223,10 @@ public class MonsterAttack : MonoBehaviour, Observer
     {
         return isBattle;
     }
+    public GameObject GetAtkColliderBox()
+    {
+        return colliderBox;
+    }
 
     #endregion
 
@@ -252,7 +261,6 @@ public class MonsterAttack : MonoBehaviour, Observer
 
     public void GetEnemyFindNotify(List<Transform> findList)    // 공격 가능한 대상, 접근시 bool-true
     {
-        Debug.Log("findList.Count : " + findList.Count);
         isTargetInRange = findList.Exists(tmp => tmp.gameObject == target);
     }
     #endregion

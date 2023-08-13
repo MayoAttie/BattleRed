@@ -63,6 +63,7 @@
     <Compile Include="Assets\01Scripts\Character\CharacterControlMng.cs" />
     <Compile Include="Assets\01Scripts\Character\CharacterManager.cs" />
     <Compile Include="Assets\01Scripts\Character\SwordFunction.cs" />
+    <Compile Include="Assets\01Scripts\EffectManager.cs" />
     <Compile Include="Assets\01Scripts\Element.cs" />
     <Compile Include="Assets\01Scripts\Element_Interaction.cs" />
     <Compile Include="Assets\01Scripts\GameManager.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Assets\01Scripts\Monster\MobAngryMushroomAttack.cs" />
     <Compile Include="Assets\01Scripts\Monster\MobCactusAttack.cs" />
     <Compile Include="Assets\01Scripts\Monster\Monster.cs" />
+    <Compile Include="Assets\01Scripts\Monster\MonsterAtkColliderMng.cs" />
     <Compile Include="Assets\01Scripts\Monster\MonsterAttack.cs" />
     <Compile Include="Assets\01Scripts\Monster\MonsterManager.cs" />
     <Compile Include="Assets\01Scripts\Objects.cs" />

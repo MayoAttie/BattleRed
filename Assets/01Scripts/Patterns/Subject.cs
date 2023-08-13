@@ -81,4 +81,11 @@ public abstract class Subject : MonoBehaviour
             tmp.GetEnemyFindNotify(findList);
         }
     }
+
+
+    //
+    public void NotifyAttackIng()
+    {
+
+    }
 }

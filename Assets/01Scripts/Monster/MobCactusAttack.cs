@@ -59,6 +59,7 @@ public class MobCactusAttack : MonsterAttack
     {
         if(!isAtkAnimationConrolFlag)
         {
+            GetAtkColliderBox().gameObject.SetActive(true);
             isAtkAnimationConrolFlag = true;
             // 현재 재생 중인 애니메이션 클립의 이름 가져오기
             string clipName = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
@@ -71,11 +72,15 @@ public class MobCactusAttack : MonsterAttack
             while (elapsedTime < animationTime)
             {
                 if (GetTargetInRange() == false)
+                {
+                    GetAtkColliderBox().gameObject.SetActive(false);
                     yield break;
+                }
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
 
+            GetAtkColliderBox().gameObject.SetActive(false);
             isAtkAnimationConrolFlag = false;
         }
     }

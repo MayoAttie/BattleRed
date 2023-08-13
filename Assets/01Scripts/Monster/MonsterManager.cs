@@ -17,13 +17,15 @@ public class MonsterManager : MonoBehaviour, Observer
     bool isHit;                 // 히트 체크 변수
     bool isDead;                // 죽음 체크 변수
     bool isIdle;                // 아이들 상태 유무 변수
-    NavMeshAgent navMeshController;       // NavMesh AI 컨트롤러
-    List<Transform> taretList;              // 적 인식 Ragne 내의 객체 List
-    public Monster.e_MonsterState state;    // 몬스터의 상태 변수
-    public float fElapsedTime;         // 시간 변수
-    Vector3 v3_startPos;                    // 몬스터 처음 위치
+    bool isDeadFlag;
+    NavMeshAgent navMeshController;                     // NavMesh AI 컨트롤러
+    List<Transform> taretList;                          // 적 인식 Ragne 내의 객체 List
+    public Monster.e_MonsterState state;                // 몬스터의 상태 변수
+    public float fElapsedTime;                          // 시간 변수
+    Vector3 v3_startPos;                                // 몬스터 처음 위치
     MonsterAttack.e_MonsterAttackLevel monsterAtkLevel; // 몬스터 어택 단계 변수
 
+    [SerializeField] GameObject atkColliderBox;         // 몬스터 공격 충돌체크용 콜라이더박스
     public float fPatrolTimeNumber;        // 순찰 시간 변수
     public float fIdleTimeNumber;          // 대기 시간 변수
     public float fChaseRange;              // 최대 기동 범위
@@ -41,6 +43,8 @@ public class MonsterManager : MonoBehaviour, Observer
 
     private void Awake()
     {
+        atkColliderBox.SetActive(false);
+        isDeadFlag = false;
         MobAnimator = gameObject.GetComponent<Animator>();
         gameObject.GetComponent<CharacterViewRange>().Attach(this);
         navMeshController= gameObject.GetComponent<NavMeshAgent>();
@@ -60,6 +64,8 @@ public class MonsterManager : MonoBehaviour, Observer
         state = monster.GetMonsterState();  // 몬스터 상태 반영
         Monster_AI_Process();
         MonsterAnimationController();       // 몬스터 애니메이션 컨틀롤러
+        if(isDead)
+            StartCoroutine(WaitForDeadAnimation());
     }
 
 
@@ -89,17 +95,34 @@ public class MonsterManager : MonoBehaviour, Observer
         else
         {
             monster.SetMonsterState(e_MonsterState.Die);
+            isDead = true;
         }
     }
 
-    // 특정 애니메이션 종료 후, None상태로 돌아왔을 때,
-    void NondeStateChecker()
+    IEnumerator WaitForDeadAnimation()
     {
-        if (monster.GetMonsterState() == Monster.e_MonsterState.None)
+        if(!isDeadFlag)
         {
-            
+            isDeadFlag = true;
+            // 현재 재생 중인 애니메이션 정보 가져오기
+            AnimatorStateInfo stateInfo = MobAnimator.GetCurrentAnimatorStateInfo(0);
+
+            // 현재 애니메이션의 길이 및 경과 시간 가져오기
+            float animationLength = stateInfo.length;
+
+            yield return new WaitForSeconds(animationLength);
+
+            // 애니메이션 종료 후 원하는 동작 수행
+            DeadAnimation();
         }
     }
+
+    void DeadAnimation()
+    {
+        Destroy(this.gameObject);
+    }
+
+
 
     void AttackModeRangeChecker()
     {
@@ -296,6 +319,9 @@ public class MonsterManager : MonoBehaviour, Observer
             case Monster.e_MonsterState.Sturn:
                 break;
             case Monster.e_MonsterState.Die:
+                MobAnimator.SetInteger("Controller", 4);
+                MobAnimator.SetFloat("zPos", 0);
+                MobAnimator.SetFloat("xPos", 0);
                 break;
             default: break;
         }
@@ -316,12 +342,14 @@ public class MonsterManager : MonoBehaviour, Observer
                 monsterAtk.SetMonsetrCls(monster);
                 monsterAtk.SetNavMeshAgent(navMeshController);
                 monsterAtk.SetChaseRange(fChaseRange);
+                monsterAtk.SetAtkColliderBox(atkColliderBox);
                 break;
             case "MushroomAngry":
                 monsterAtk = gameObject.AddComponent<MobAngryMushroomAttack>();
                 monsterAtk.SetMonsetrCls(monster);
                 monsterAtk.SetNavMeshAgent(navMeshController);
                 monsterAtk.SetChaseRange(fChaseRange);
+                monsterAtk.SetAtkColliderBox(atkColliderBox);
                 break;
             default: break;
         }

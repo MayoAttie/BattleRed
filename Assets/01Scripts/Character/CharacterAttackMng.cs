@@ -10,6 +10,7 @@ public class CharacterAttackMng : Subject, Observer
     CharacterManager characMng;
     [SerializeField]int nAtkLevel;
     CharacterAniEventFinder eventInputer;
+    [SerializeField] GameObject SwordColider;
     public bool isBattle;                   // 전투중인지 체크
     public bool isAnimationIng;             // 공격 애니메이션 진행 확인
     public bool isClick;                    // 추가 공격버튼 클릭 확인
@@ -28,8 +29,9 @@ public class CharacterAttackMng : Subject, Observer
         Attack1,            //101
         Attack2,            //102
         Attack3,            //103
-        AtkSkill,
-        Max                 //104
+        AtkMax,             //104
+        AtkSkill = 110,     //110
+        Max                 //111
     }
 
     #endregion
@@ -37,7 +39,7 @@ public class CharacterAttackMng : Subject, Observer
 
     private void Awake()
     {
-
+        SwordColider.SetActive(false);
         AttackModeChecker = null;
         isAnimationIng = false;
         isClick = false;
@@ -50,6 +52,7 @@ public class CharacterAttackMng : Subject, Observer
     {
         eventInputer.Attach(this);
         characMng = CharacterManager.Instance;
+        
     }
 
     void Update()
@@ -58,7 +61,7 @@ public class CharacterAttackMng : Subject, Observer
         if (!isBattle)
             return;
 
-        if (nAtkLevel >= (int)e_AttackLevel.Max)
+        if (nAtkLevel >= (int)e_AttackLevel.AtkMax)
             nAtkLevel = (int)e_AttackLevel.AttackMode;
 
         if (AttackModeChecker == null && nAtkLevel == (int)e_AttackLevel.AttackMode)
@@ -90,7 +93,7 @@ public class CharacterAttackMng : Subject, Observer
         {
             nAtkLevel = num + 1;
             Debug.Log(nameof(nAtkLevel) + ":" + nAtkLevel);
-            if(nAtkLevel == (int)e_AttackLevel.Max)
+            if(nAtkLevel == (int)e_AttackLevel.AtkMax)
                 nAtkLevel = (int)e_AttackLevel.Attack1;
             // 애니메이션 제어
             NotifyAtkLevel((e_AttackLevel)nAtkLevel);
@@ -104,11 +107,13 @@ public class CharacterAttackMng : Subject, Observer
 
     public void AttackEventNotify(int num)  //동작 애니메이션 종료 때, 호출
     {
+        SwordColider.SetActive(false);
         ReturnIdle(num);
     }
 
     public void AttackEventStartNotify()    // 동작 애니메이션 시작 때, 호출
     {
+        SwordColider.SetActive(true);
         isClick = false;
         isAnimationIng = true;  // 애니메이션 동작 시작
     }
@@ -228,11 +233,11 @@ public class CharacterAttackMng : Subject, Observer
     #region 옵저버패턴
     public void AtkLevelNotify(e_AttackLevel level) {}//사용안함
 
-    public void BlinkValueNotify(CharacterControlMng.e_BlinkPos value){}
+    public void BlinkValueNotify(CharacterControlMng.e_BlinkPos value){ }//사용안함
 
-    public void GetBlinkEndNotify(){}
+    public void GetBlinkEndNotify(){ }//사용안함
 
-    public void GetBlinkStartNotify(){}
+    public void GetBlinkStartNotify(){ }//사용안함
 
     public void GetBrockEndNotify()
     {
