@@ -5,5 +5,5 @@ using UnityEngine;
 public interface ICombatMediator
 {
     void Mediator_CharacterAttack(CharacterClass character, Monster targetMonster);
-    void Mediator_MonsterAttack(Monster monster, CharacterClass targetCharacter);
+    bool Mediator_MonsterAttack(Monster monster, CharacterClass targetCharacter);
 }

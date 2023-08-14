@@ -21,6 +21,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     private float runZ;                         // 캐릭터 애니메이션 플로트 변수
     [SerializeField] GameObject SatelliteObj;   // 원소 체크용 위성 객체
 
+    public int characterHp;//테스트용
+
     public CharacterClass.eCharactgerState clsState;
     bool isClickedCoolCheck;                    // 버튼 쿨타임 코루틴 객체
 
@@ -39,7 +41,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
     private void Update()
     {
-        clsState= clsCharacter.GetState();
+        characterHp = clsCharacter.GetCurrentHp();  // 테스트용
+        clsState = clsCharacter.GetState();
         clsCharacter = GameManager.Instance.characterCls;
         Debug.Log(nameof(clsCharacter.GetState)+":" + clsCharacter.GetState()) ;
         CharacterStateActor();

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Monster : Objects
 {
@@ -37,8 +38,10 @@ public class Monster : Objects
     private int nMonsterDef;
     private float fMonsterSpeed;
     private float fMonsterRotationSpeed;
+    private Element monsterHaveElement;
+    private Element monsterHittedElement;
 
-    public Monster(string sTag, string sName, int nGrade, bool isActive,e_MonsterState monsterState, e_MonsterType monsterType, int nMonsterMaxHp, int nMonsterCurrnetHp, int nMonsterExp, int nMonsterAtkPower, int nMonsterDef, float fMonsterSpeed, float fMonsterRotationSpeed)
+    public Monster(string sTag, string sName, int nGrade, bool isActive,e_MonsterState monsterState, e_MonsterType monsterType, int nMonsterMaxHp, int nMonsterCurrnetHp, int nMonsterExp, int nMonsterAtkPower, int nMonsterDef, float fMonsterSpeed, float fMonsterRotationSpeed, Element.e_Element element)
         : base(sTag, sName, nGrade, isActive)
     {
         this.monsterType = monsterType;
@@ -50,6 +53,8 @@ public class Monster : Objects
         this.fMonsterSpeed = fMonsterSpeed;
         this.monsterState = monsterState;
         this.fMonsterRotationSpeed = fMonsterRotationSpeed;
+        monsterHaveElement = new Element(element, true, false);
+        monsterHittedElement= new Element(Element.e_Element.None, false, false);
     }
 
     public Monster()
@@ -66,9 +71,11 @@ public class Monster : Objects
     public void SetMonsterDef(int def) { nMonsterDef = def; }
     public void SetMonsterSpeed(float speed) { fMonsterSpeed= speed; }
     public void SetMonsterRotateSpeed(float rotate) { fMonsterRotationSpeed = rotate; }
+    public void SetMonsterHaveElement(Element element) { monsterHaveElement= element; }
+    public void SetMonsterHittedElement(Element element) { monsterHittedElement= element; }
 
 
-    public e_MonsterState GetMonsterState() { return this.monsterState; }
+    public e_MonsterState GetMonsterState() { return monsterState; }
     public e_MonsterType GetMonsetrType() { return monsterType; }
     public int GetMonsterCurrentHp() { return nMonsterCurrnetHp; }
     public int GetMonsterMaxHp() { return nMonsterMaxHp; }
@@ -77,6 +84,8 @@ public class Monster : Objects
     public int GetMonsterDef() { return nMonsterDef; }
     public float GetMonsterSpeed() { return fMonsterSpeed;}
     public float GetMonsterRotateSpeed() { return fMonsterRotationSpeed; }
+    public Element GetMonsterHaveElement() { return monsterHaveElement; }
+    public Element GetMonsterHittedElement() { return monsterHittedElement; }
 
     #endregion
 

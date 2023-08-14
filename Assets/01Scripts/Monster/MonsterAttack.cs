@@ -7,17 +7,17 @@ using static CharacterAttackMng;
 public class MonsterAttack : MonoBehaviour, Observer
 {
     #region 변수
-    Monster monsterCls;                 // 부모 객체의 몬스터 클래스
-    List<Transform> TargetList;         // 전체 적 객체
-    GameObject target;                  // 전투 대상 오브젝트
+    Monster monsterCls;                        // 부모 객체의 몬스터 클래스
+    List<Transform> TargetList;                // 전체 적 객체
+    GameObject target;                         // 전투 대상 오브젝트
     public bool isChase;                       // 추격 중임을 체크하는 변수
     public bool isTargetInRange;               // 공격 범위 내, 적 접근 시 활성화
     public bool isBattle;                      // 전투 중임을 체크하는 변수
-    float fSetChaseRange;               // 최대 추격 기동 범위 - 몬스터 매니저에서 받음
+    float fSetChaseRange;                      // 최대 추격 기동 범위 - 몬스터 매니저에서 받음
     protected NavMeshAgent navAgent;                // 추적용 navMesh 에이전트
     protected e_MonsterAttackLevel attackLevel;     // attackLevel 변수
     protected bool isAtkAnimationConrolFlag;        // 몬스터 애니메이션 제어용 부울변수
-    GameObject colliderBox;                     // 공격 충돌 체크용 콜라이더 박스
+    GameObject colliderBox;                         // 공격 충돌 체크용 콜라이더 박스
     #endregion
 
 

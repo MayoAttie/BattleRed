@@ -60,6 +60,7 @@ public class MobCactusAttack : MonsterAttack
         if(!isAtkAnimationConrolFlag)
         {
             GetAtkColliderBox().gameObject.SetActive(true);
+            Debug.Log("공격 박스 활성화");
             isAtkAnimationConrolFlag = true;
             // 현재 재생 중인 애니메이션 클립의 이름 가져오기
             string clipName = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
@@ -81,6 +82,7 @@ public class MobCactusAttack : MonsterAttack
             }
 
             GetAtkColliderBox().gameObject.SetActive(false);
+            Debug.Log("공격 박스 닫기");
             isAtkAnimationConrolFlag = false;
         }
     }

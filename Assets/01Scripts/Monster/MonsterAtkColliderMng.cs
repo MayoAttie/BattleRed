@@ -18,6 +18,7 @@ public class MonsterAtkColliderMng : CombatMediator
         // 충돌한 객체의 레이어를 확인하여 플레이어 레이어인지 체크
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
+            Debug.Log("몬스터 어택!");
             monster = mobMng.GetMonsterClass();
             var player = other.gameObject.GetComponent<CharacterManager>().GetCharacterClass();
 

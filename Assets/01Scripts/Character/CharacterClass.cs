@@ -65,89 +65,29 @@ public class CharacterClass : Objects
 
     #region 세터게터
 
-    public float GetSpeed()
-    {
-        return fSpeed;
-    }
-    public eCharactgerState GetState()
-    {
-        return eCharacState;
-    }
-    public int GetAttack()
-    {
-        return nAttack;
-    }
-    public Element GetEncountElement()
-    {
-        return eEncountElement;
-    }
-    public int GetDeffense()
-    {
-        return nDefense;
-    }
-    public void SetState(eCharactgerState state)
-    {
-        eCharacState = state;
-    }
-    public void SetAttack(int attack)
-    {
-        nAttack = attack;
-    }
-    public int GetElementNum()
-    {
-        return nElementNum;
-    }
-    public Element GetCurrnetElement()
-    {
-        return eCharacElement;
-    }
-    public Element GetChildElement(int index)
-    {
-        return ChildElement[index];
-    }
-    public float GetCriticalDamage()
-    {
-        return fCriticalDamage;
-    }
-    public float GetCriticalPercentage()
-    {
-        return fCriticalPercentage;
-    }
-    public void SetEncountElement(Element encountElement)
-    {
-        eEncountElement = encountElement;
-    }
+    public eCharactgerState GetState(){return eCharacState;}
+    public Element GetEncountElement(){return eEncountElement;}
+    public Element GetCurrnetElement(){return eCharacElement;}
+    public Element GetChildElement(int index){return ChildElement[index];}
+    public float GetSpeed(){return fSpeed;}
+    public int GetAttack(){return nAttack;}
+    public int GetDeffense(){return nDefense;}
+    public int GetElementNum(){return nElementNum;}
+    public int GetCurrentHp(){return nCurrentHp;}
+    public int GetMaxHp(){return nMaxHp;}
+    public float GetCriticalDamage(){return fCriticalDamage;}
+    public float GetCriticalPercentage(){return fCriticalPercentage;}
 
-    public void SetElementNum(int elementNum)
-    {
-        nElementNum = elementNum;
-    }
-    public void SetCurrentElement(Element element)
-    {
-        eCharacElement = element;
-    }
 
-    public void SetChildElement(int index, Element element)
-    {
-        ChildElement[index] = element;
-    }
+    public void SetState(eCharactgerState state){eCharacState = state;}
+    public void SetEncountElement(Element encountElement){eEncountElement = encountElement;}
+    public void SetCurrentElement(Element element){eCharacElement = element;}
+    public void SetChildElement(int index, Element element){ChildElement[index] = element;}
+    public void SetAttack(int attack){nAttack = attack;}
+    public void SetElementNum(int elementNum){nElementNum = elementNum;}
+    public void SetCurrentHp(int hp){nCurrentHp = hp;}
+    public void SetMaxHp(int hp){nMaxHp = hp;}
 
-    public int GetCurrentHp()
-    {
-        return nCurrentHp;  
-    }
-    public void SetCurrentHp(int hp)
-    {
-        nCurrentHp = hp;
-    }
-    public int GetMaxHp()
-    {
-        return nMaxHp;
-    }
-    public void SetMaxHp(int hp)
-    {
-        nMaxHp = hp;
-    }
     #endregion
 
 
