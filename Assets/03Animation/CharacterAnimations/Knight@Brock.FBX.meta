@@ -312,7 +312,7 @@ ModelImporter:
       curves: []
       events:
       - time: 1
-        functionName: GetBrockEnd
+        functionName: GetBrockEndNotify
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

@@ -14,22 +14,7 @@ public abstract class Subject : MonoBehaviour
     {
         _observers.Remove(observer);
     }
-    // 공격 애니메이션 엔드 단계, 해당 공격레벨 알림
-    public void NotifyAttackEvent(int num)
-    {
-        foreach(Observer tmp in _observers)
-        {
-            tmp.AttackEventNotify(num);
-        }
-    }
-    // 공격 애니메이션 시작 알림
-    public void NotifyAttackEventStart()
-    {
-        foreach(Observer tmp in _observers)
-        {
-            tmp.AttackEventStartNotify();
-        }
-    }
+
 
     //캐릭터 매니저에 공격 단계 방송
     public void NotifyAtkLevel(CharacterAttackMng.e_AttackLevel level)
@@ -48,32 +33,8 @@ public abstract class Subject : MonoBehaviour
             tmp.BlinkValueNotify(value);
         }
     }
-    // 회피기 끝
-    public void NotifyGetBlinkEnd()
-    {
-        foreach (Observer tmp in _observers)
-        {
-            tmp.GetBlinkEndNotify();
-        }
-    }
-    // 회피기 시작
-    public void NotifyGetBlinkStart()
-    {
-        foreach (Observer tmp in _observers)
-        {
-            tmp.GetBlinkStartNotify();
-        }
-    }
 
-    // 쉴드 종료 알림
-    public void NotifyGetBrockEnd()
-    {
-        foreach (Observer tmp in _observers)
-        {
-            tmp.GetBrockEndNotify();
-        }
-    }
-
+    // 적 탐지 알림
     public void NotifyGetEnemyFind(List<Transform> findList)
     {
         foreach(Observer tmp in _observers)
@@ -82,10 +43,4 @@ public abstract class Subject : MonoBehaviour
         }
     }
 
-
-    //
-    public void NotifyAttackIng()
-    {
-
-    }
 }

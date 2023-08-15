@@ -14,12 +14,25 @@ public class SwordFunction : CombatMediator
         if (other.gameObject.layer == LayerMask.NameToLayer("Monster"))
         {
             character = CharacterManager.Instance.GetCharacterClass();
+            CharacterAttackMng.e_AttackLevel attackLevel = CharacterManager.Instance.GetCharacterAtkLevel();
 
-            Monster mob = other.gameObject.GetComponent<MonsterManager>().GetMonsterClass();
-            Mediator_CharacterAttack(character, mob);
-            EffectManager.Instance.EffectCreate(this.gameObject.transform, 0);
+            // 평타 공격인지 체크
+            if (attackLevel == CharacterAttackMng.e_AttackLevel.Attack1 ||
+               attackLevel==CharacterAttackMng.e_AttackLevel.Attack2 ||
+               attackLevel == CharacterAttackMng.e_AttackLevel.Attack3)
+            {
+                Monster mob = other.gameObject.GetComponent<MonsterManager>().GetMonsterClass();
+                Mediator_CharacterAttack(character, mob);
+                EffectManager.Instance.EffectCreate(this.gameObject.transform, 0);
 
-            gameObject.SetActive(false);
+                gameObject.SetActive(false);
+            }
+            else if(attackLevel == CharacterAttackMng.e_AttackLevel.AtkSkill)
+            {
+
+            }
+
+
         }
     }
 

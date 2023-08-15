@@ -33,7 +33,6 @@ public class CharacterControlMng : Subject, Observer
     [SerializeField]int nBlinkNumber = 2;                       // 회피기 숫자
     Coroutine blinkCoolTimeCoroutine;           // Coroutine 객체를 저장할 변수
     CharacterManager characMng;                 // 캐릭터 매니저 싱글턴
-    CharacterAniEventFinder eventInputer;
     [SerializeField]e_BlinkPos blinkpos;
     #endregion
 
@@ -58,19 +57,17 @@ public class CharacterControlMng : Subject, Observer
         isBlinking   = false;
         isBattle     = false;
         blinkpos = e_BlinkPos.None;
-        eventInputer = gameObject.GetComponent<CharacterAniEventFinder>();
     }
 
     void Start()
     {
-        eventInputer.Attach(this);
         characMng = CharacterManager.Instance;
     }
 
     // Update is called once per frame
     private void Update()
     {
-        isBattle = characMng.getIsBattle();
+        isBattle = characMng.GetIsBattle();
         // 코루틴이 실행 중이지 않은 경우에만 코루틴을 시작.
         if (blinkCoolTimeCoroutine == null && nBlinkNumber<=0)
         {
@@ -342,10 +339,6 @@ public class CharacterControlMng : Subject, Observer
 
     #region 옵저버 패턴
 
-    public void AttackEventNotify(int num){}
-
-    public void AttackEventStartNotify(){}
-
     public void AtkLevelNotify(CharacterAttackMng.e_AttackLevel level){}
 
     public void BlinkValueNotify(e_BlinkPos value){}
@@ -364,11 +357,11 @@ public class CharacterControlMng : Subject, Observer
         isBlinkStart = true;    
     }
 
-    public void GetBrockEndNotify(){}
 
     public void GetEnemyFindNotify(List<Transform> findList)
     {
     }
+
 
     #endregion
 

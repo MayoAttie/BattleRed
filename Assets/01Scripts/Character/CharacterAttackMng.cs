@@ -9,7 +9,6 @@ public class CharacterAttackMng : Subject, Observer
     #region 변수
     CharacterManager characMng;
     [SerializeField]int nAtkLevel;
-    CharacterAniEventFinder eventInputer;
     [SerializeField] GameObject SwordColider;
     public bool isBattle;                   // 전투중인지 체크
     public bool isAnimationIng;             // 공격 애니메이션 진행 확인
@@ -44,24 +43,22 @@ public class CharacterAttackMng : Subject, Observer
         isAnimationIng = false;
         isClick = false;
         nAtkLevel = 101;
-        eventInputer = gameObject.GetComponent<CharacterAniEventFinder>();        
         isCoroutineFlag = false;
     }
 
     void Start()
     {
-        eventInputer.Attach(this);
         characMng = CharacterManager.Instance;
         
     }
 
     void Update()
     {
-        isBattle = characMng.getIsBattle();
+        isBattle = characMng.GetIsBattle();
         if (!isBattle)
             return;
 
-        if (nAtkLevel >= (int)e_AttackLevel.AtkMax)
+        if (nAtkLevel >= (int)e_AttackLevel.Max)
             nAtkLevel = (int)e_AttackLevel.AttackMode;
 
         if (AttackModeChecker == null && nAtkLevel == (int)e_AttackLevel.AttackMode)
@@ -123,33 +120,28 @@ public class CharacterAttackMng : Subject, Observer
 
     public void AttackSkillStart()
     {
+        characMng.SetIsBattle(true);
         Element.e_Element element = characMng.GetElement();
+        nAtkLevel = (int)e_AttackLevel.AtkSkill;
+
+        NotifyAtkLevel((e_AttackLevel)nAtkLevel);
+        characMng.GetCharacterClass().SetState(eCharactgerState.e_ATTACK);
+    }
+
+    public void AttackSkilAniStart()
+    {
+        SwordColider.SetActive(true);
+    }
+    public void AttackSkillAniEnd()
+    {
+        SwordColider.SetActive(false);
+        FlagValueReset();
+        nAtkLevel = (int)e_AttackLevel.AttackMode;
         
         
+        NotifyAtkLevel((e_AttackLevel)nAtkLevel);
+        characMng.GetCharacterClass().SetState(eCharactgerState.e_ATTACK);
     }
-
-    void FireTypeAtkSkill(Element.e_Element element)
-    {
-
-    }
-
-    void WaterTypeAtkSkill(Element.e_Element element)
-    {
-
-    }
-    void PlantTypeAtkSkill(Element.e_Element element)
-    {
-
-    }
-    void LightningTypeAtkSkill(Element.e_Element element)
-    {
-
-    }
-    void WindTypeAtkSkill(Element.e_Element element)
-    {
-
-    }
-
 
     #endregion
 
@@ -211,7 +203,7 @@ public class CharacterAttackMng : Subject, Observer
         }
     }
 
-
+    // 막기 동작 시작 함수
     public void ShildAct()
     {
         nAtkLevel = (int)e_AttackLevel.Brock;
@@ -220,6 +212,7 @@ public class CharacterAttackMng : Subject, Observer
         FlagValueReset();
     }
 
+    // 특정 동작으로 애니메이션 강제 해제 시, 프래그 변수 초기화
     public void FlagValueReset()
     {
         if (isAnimationIng)
@@ -235,10 +228,8 @@ public class CharacterAttackMng : Subject, Observer
 
     public void BlinkValueNotify(CharacterControlMng.e_BlinkPos value){ }//사용안함
 
-    public void GetBlinkEndNotify(){ }//사용안함
 
-    public void GetBlinkStartNotify(){ }//사용안함
-
+    // 막기, 엔드 프레임 호출 함수
     public void GetBrockEndNotify()
     {
         Debug.Log(nameof(isBrock) + ":" + isBrock);
@@ -257,8 +248,8 @@ public class CharacterAttackMng : Subject, Observer
 
     }
 
-    public void GetEnemyFindNotify(List<Transform> findList)
-    {
-    }
+    public void GetEnemyFindNotify(List<Transform> findList){}
+
+
     #endregion
 }

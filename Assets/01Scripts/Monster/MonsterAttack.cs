@@ -231,13 +231,6 @@ public class MonsterAttack : MonoBehaviour, Observer
     #endregion
 
     #region 옵저버 패턴
-    public void AttackEventNotify(int num)
-    {
-    }
-
-    public void AttackEventStartNotify()
-    {
-    }
 
     public void AtkLevelNotify(CharacterAttackMng.e_AttackLevel level)
     {
@@ -247,22 +240,12 @@ public class MonsterAttack : MonoBehaviour, Observer
     {
     }
 
-    public void GetBlinkEndNotify()
-    {
-    }
-
-    public void GetBlinkStartNotify()
-    {
-    }
-
-    public void GetBrockEndNotify()
-    {
-    }
 
     public void GetEnemyFindNotify(List<Transform> findList)    // 공격 가능한 대상, 접근시 bool-true
     {
         isTargetInRange = findList.Exists(tmp => tmp.gameObject == target);
     }
+
     #endregion
 
 }

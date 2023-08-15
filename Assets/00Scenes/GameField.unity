@@ -8892,6 +8892,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   element: 0
   SatelliteObj: {fileID: 450382885}
+  characterHp: 0
   clsState: 0
 --- !u!114 &958260792
 MonoBehaviour:
@@ -11205,8 +11206,8 @@ MonoBehaviour:
   onButtonUp:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 958260791}
-        m_MethodName: ElementSwitch
+      - m_Target: {fileID: 958260790}
+        m_MethodName: AttackSkillStart
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

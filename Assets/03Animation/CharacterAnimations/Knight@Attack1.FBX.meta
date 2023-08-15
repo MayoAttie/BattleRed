@@ -312,14 +312,14 @@ ModelImporter:
       curves: []
       events:
       - time: 0.83690095
-        functionName: GetAttackEvent
+        functionName: AttackEventNotify
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 102
         messageOptions: 0
       - time: 0
-        functionName: GetAttackEventStart
+        functionName: AttackEventStartNotify
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

@@ -96,6 +96,7 @@ public class Element_Interaction : MonoBehaviour
 
 
     #region 몬스터
+    // 선 방계산 후 뎀증 
     public static int m_FireToWater(Monster monCls, CharacterClass chCls)
     {
         Element characElement = chCls.GetEncountElement();
@@ -151,23 +152,21 @@ public class Element_Interaction : MonoBehaviour
         return damage;
 
     }
+    // 선뎀증 후 방계산
     public static int m_WaterToFire(Monster monCls, CharacterClass chCls)
     {
         Element characElement = chCls.GetEncountElement();
         characElement.SetElement(Element.e_Element.None);
         characElement.SetIsActive(false);
 
-        int damage;
         int characDef = chCls.GetDeffense();
-        int attackPower = monCls.GetMonsterAtkPower();
+        int attackPower = (int)(monCls.GetMonsterAtkPower()*1.5f);
 
         int DefRevisionValue = attackPower - characDef;
         if (DefRevisionValue < 0)
             DefRevisionValue = 1;
 
-        damage = (int)(DefRevisionValue * 2.0f);
-
-        return damage;
+        return DefRevisionValue;
     }
     public static int m_WaterToLightning(Monster monCls, CharacterClass chCls)
     {
@@ -175,17 +174,14 @@ public class Element_Interaction : MonoBehaviour
         characElement.SetElement(Element.e_Element.None);
         characElement.SetIsActive(false);
 
-        int damage;
         int characDef = chCls.GetDeffense();
-        int attackPower = monCls.GetMonsterAtkPower();
+        int attackPower = (int)(monCls.GetMonsterAtkPower() * 1.2f);
 
         int DefRevisionValue = attackPower - characDef;
         if (DefRevisionValue < 0)
             DefRevisionValue = 1;
 
-        damage = (int)(DefRevisionValue * 1.1f);
-
-        return damage;
+        return DefRevisionValue;
     }
     public static int m_WaterToPlant(Monster monCls, CharacterClass chCls)
     {
@@ -193,18 +189,16 @@ public class Element_Interaction : MonoBehaviour
         characElement.SetElement(Element.e_Element.None);
         characElement.SetIsActive(false);
 
-        int damage;
         int characDef = chCls.GetDeffense();
-        int attackPower = monCls.GetMonsterAtkPower();
+        int attackPower = (int)(monCls.GetMonsterAtkPower() * 1.3f);
 
         int DefRevisionValue = attackPower - characDef;
         if (DefRevisionValue < 0)
             DefRevisionValue = 1;
 
-        damage = (int)(DefRevisionValue * 1.3f);
-
-        return damage;
+        return DefRevisionValue;
     }
+    // 높은 뎀, 방어력 비례 감산
     public static int m_LightningToFire(Monster monCls, CharacterClass chCls)
     {
         Element characElement = chCls.GetEncountElement();
@@ -293,21 +287,78 @@ public class Element_Interaction : MonoBehaviour
 
         return (int)(damage * 1.1f);
     }
-    public static void m_WindToFire(Monster monsCls, CharacterClass chCls)
+    // 속성 변환
+    public static int m_WindToFire(Monster monCls, CharacterClass chCls)
     {
+        Element characElement = chCls.GetEncountElement();
+        characElement.SetElement(Element.e_Element.Fire);
+        characElement.SetIsActive(false);
 
+        int damage;
+        int characDef = chCls.GetDeffense();
+        int attackPower = monCls.GetMonsterAtkPower();
+
+        int DefRevisionValue = attackPower - characDef;
+        if (DefRevisionValue < 0)
+            DefRevisionValue = 1;
+
+        damage = (int)(DefRevisionValue * 1.1f);
+
+        return damage;
     }
-    public static void m_WindToLightning(Monster monCls, CharacterClass chCls)
+    public static int m_WindToLightning(Monster monCls, CharacterClass chCls)
     {
+        Element characElement = chCls.GetEncountElement();
+        characElement.SetElement(Element.e_Element.Lightning);
+        characElement.SetIsActive(false);
 
+        int damage;
+        int characDef = chCls.GetDeffense();
+        int attackPower = monCls.GetMonsterAtkPower();
+
+        int DefRevisionValue = attackPower - characDef;
+        if (DefRevisionValue < 0)
+            DefRevisionValue = 1;
+
+        damage = (int)(DefRevisionValue * 1.1f);
+
+        return damage;
     }
-    public static void m_WindToWater(Monster monCls, CharacterClass chCls)
+    public static int m_WindToWater(Monster monCls, CharacterClass chCls)
     {
+        Element characElement = chCls.GetEncountElement();
+        characElement.SetElement(Element.e_Element.Water);
+        characElement.SetIsActive(false);
 
+        int damage;
+        int characDef = chCls.GetDeffense();
+        int attackPower = monCls.GetMonsterAtkPower();
+
+        int DefRevisionValue = attackPower - characDef;
+        if (DefRevisionValue < 0)
+            DefRevisionValue = 1;
+
+        damage = (int)(DefRevisionValue * 1.1f);
+
+        return damage;
     }
-    public static void m_WindToPlant(Monster monCls, CharacterClass chCls)
+    public static int m_WindToPlant(Monster monCls, CharacterClass chCls)
     {
+        Element characElement = chCls.GetEncountElement();
+        characElement.SetElement(Element.e_Element.Plant);
+        characElement.SetIsActive(false);
 
+        int damage;
+        int characDef = chCls.GetDeffense();
+        int attackPower = monCls.GetMonsterAtkPower();
+
+        int DefRevisionValue = attackPower - characDef;
+        if (DefRevisionValue < 0)
+            DefRevisionValue = 1;
+
+        damage = (int)(DefRevisionValue * 1.1f);
+
+        return damage;
     }
 
     #endregion

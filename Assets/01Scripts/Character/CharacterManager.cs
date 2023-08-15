@@ -211,43 +211,25 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
 
     #region 게터세터
-    public bool getIsBattle()
-    {
-        return isBattle;
-    }
 
-    public void SetIsBattle(bool b) { isBattle = b; }
     public bool GetIsBattle() { return isBattle; }
-
-    public Element.e_Element GetElement()
-    {
-        return element;
-    }
-
-    public void SetCharacterClass(CharacterClass cls)
-    {
-        clsCharacter = cls;
-    }
-    public CharacterClass GetCharacterClass()
-    {
-        return clsCharacter;
-    }
-
+    public Element.e_Element GetElement(){return element;}
+    public CharacterClass GetCharacterClass(){return clsCharacter;}
+    public CharacterAttackMng.e_AttackLevel GetCharacterAtkLevel() { return atkLevel; }
+    public void SetCharacterClass(CharacterClass cls){clsCharacter = cls;}
+    
+    
+    public void SetIsBattle(bool b) { isBattle = b; }
     public void AnimatorFloatValueSetter(float zPos, float xPos)
     {
         this.xPos = xPos;
         this.zPos = zPos;
         runX = xPos;
         runZ = zPos;
-
     }
     #endregion
 
     #region 옵저버 패턴
-    public void AttackEventNotify(int num){}
-
-    public void AttackEventStartNotify(){}
-    public void GetBlinkEndNotify(){}
 
     public void AtkLevelNotify(CharacterAttackMng.e_AttackLevel level)
     {   //어택 매니저의 공격 프로세스 레벨을 받음.
@@ -259,13 +241,13 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         blinkValue = value;
     }
 
-    public void GetBlinkStartNotify(){}
 
-    public void GetBrockEndNotify(){}
 
     public void GetEnemyFindNotify(List<Transform> findList)
     {
     }
+
+
 
     #endregion
 }

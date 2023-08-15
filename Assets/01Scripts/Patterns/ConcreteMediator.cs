@@ -144,22 +144,31 @@ public class CombatMediator : Subject ,ICombatMediator
                 case Element.e_Element.Wind:   // 플레이어 == 바람 타입 + N원소
                     if (elementMng.GetElement() == Element.e_Element.Water)
                     {
-                        m_WindToWater(monster, targetCharacter);
+                        damage = m_WindToWater(monster, targetCharacter);
                     }
                     else if (elementMng.GetElement() == Element.e_Element.Plant)
                     {
-                        m_WindToPlant(monster, targetCharacter);
+                        damage = m_WindToPlant(monster, targetCharacter);
                     }
                     else if (elementMng.GetElement() == Element.e_Element.Fire)
                     {
-                        m_WindToFire(monster, targetCharacter);
+                        damage = m_WindToFire(monster, targetCharacter);
                     }
                     else if(elementMng.GetElement() == Element.e_Element.Lightning)
                     {
-                        m_WindToLightning(monster, targetCharacter);
+                        damage = m_WindToLightning(monster, targetCharacter);
                     }
                     break;
             }
+            // 동일 속성 간 원소 중첩이기에, 데미지 수식을 벗어남
+            if(damage<=0)   // 원소 변화 없이, 데미지만 계산
+            {
+                // 공격력 - 방어력
+                damage = atkPower - characDef;
+                if (damage < 0) // 방어력 감쇄로 데미지가 음수 값일 경우, 1보정.
+                    damage = 1;
+            }
+
             //캐릭터 피깎
             int tmp = characHp - damage;
             targetCharacter.SetCurrentHp(tmp);
