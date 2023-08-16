@@ -12,9 +12,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 (This is the Simplified BSD Licence - http://opensource.org/licenses/BSD-2-Clause)
  */
 
+using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class CameraController : MonoBehaviour, Observer
 {
     #region Public fields
 
@@ -38,6 +39,9 @@ public class CameraController : MonoBehaviour
 
     [Tooltip("캐릭터 위에서의 원하는 높이")]
     public float DesiredHeight = 2.0f;
+
+
+    public Light LightObject;
 
     #endregion
 
@@ -66,6 +70,14 @@ public class CameraController : MonoBehaviour
     
     private float _pitch;
     private float _distance;
+
+    public void Awake()
+    {
+        // 옵저버 패턴 부착
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        CharacterAttackMng characMng = playerObject.GetComponent<CharacterAttackMng>();
+        characMng.Attach(this);
+    }
 
     public void Start()
     {
@@ -137,4 +149,21 @@ public class CameraController : MonoBehaviour
             return false;
         }
     }
+
+    #region 옵저버
+    public void AtkLevelNotify(CharacterAttackMng.e_AttackLevel level){}
+
+    public void BlinkValueNotify(CharacterControlMng.e_BlinkPos value){}
+
+    public void GetEnemyFindNotify(List<Transform> findList){}
+
+    public void AttackSkillStartNotify()
+    {
+        LightObject.gameObject.SetActive(false);
+    }
+    public void AttackSkillEndNotify()
+    {
+        LightObject.gameObject.SetActive(true);
+    }
+    #endregion
 }

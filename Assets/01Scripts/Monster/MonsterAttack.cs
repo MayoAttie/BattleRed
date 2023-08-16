@@ -246,6 +246,10 @@ public class MonsterAttack : MonoBehaviour, Observer
         isTargetInRange = findList.Exists(tmp => tmp.gameObject == target);
     }
 
+    public void AttackSkillStartNotify(){}
+
+    public void AttackSkillEndNotify(){}
+
     #endregion
 
 }

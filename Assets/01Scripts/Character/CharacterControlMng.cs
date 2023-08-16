@@ -121,7 +121,7 @@ public class CharacterControlMng : Subject, Observer
 
         if (isGrounded && velocity.y < 0)
         {
-            velocity.y = -2f; // 지면에 닿아있을 때 y 속도를 초기화
+            velocity.y = -4f; // 지면에 닿아있을 때 y 속도를 초기화
         }
 
         // 중력 적용
@@ -172,14 +172,15 @@ public class CharacterControlMng : Subject, Observer
         Debug.Log(nameof(isGrounded)+":"+isGrounded);
         if (isGrounded && isJump)
         {
-            gameObject.GetComponent<CharacterAttackMng>().FlagValueReset();
+            var mng = gameObject.GetComponent<CharacterAttackMng>();
+            mng.FlagValueReset();
             characMng.GetCharacterClass().SetState(CharacterClass.eCharactgerState.e_JUMP);
             isJump = false;
         }
 
         velocity.y += gravity * Time.deltaTime;
 
-        controller.Move(velocity * Time.deltaTime);
+        controller.Move(velocity* jumpHeight * Time.deltaTime);
     }
     #endregion
 
@@ -361,6 +362,10 @@ public class CharacterControlMng : Subject, Observer
     public void GetEnemyFindNotify(List<Transform> findList)
     {
     }
+
+    public void AttackSkillStartNotify(){}
+
+    public void AttackSkillEndNotify(){}
 
 
     #endregion

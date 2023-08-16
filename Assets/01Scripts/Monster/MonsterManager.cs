@@ -416,6 +416,10 @@ public class MonsterManager : MonoBehaviour, Observer
         }
     }
 
+    public void AttackSkillStartNotify(){}
+
+    public void AttackSkillEndNotify(){}
+
     #endregion
 
 

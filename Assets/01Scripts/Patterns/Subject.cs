@@ -43,4 +43,19 @@ public abstract class Subject : MonoBehaviour
         }
     }
 
+    public void NotifyAttackSkillStart()
+    {
+        foreach(Observer tmp in _observers)
+        {
+            tmp.AttackSkillStartNotify();
+        }
+    }
+
+    public void NotifyAttackSkillEnd()
+    {
+        foreach(Observer tmp in _observers)
+        {
+            tmp.AttackSkillEndNotify();
+        }
+    }
 }

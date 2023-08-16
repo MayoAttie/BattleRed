@@ -247,6 +247,10 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     {
     }
 
+    public void AttackSkillStartNotify(){}
+
+    public void AttackSkillEndNotify(){}
+
 
 
     #endregion

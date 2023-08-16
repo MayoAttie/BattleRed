@@ -8,5 +8,7 @@ public interface Observer
     void BlinkValueNotify(CharacterControlMng.e_BlinkPos value);
     void GetEnemyFindNotify(List<Transform> findList);
 
+    void AttackSkillStartNotify();
+    void AttackSkillEndNotify();
 }
 

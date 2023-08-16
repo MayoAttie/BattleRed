@@ -10,6 +10,7 @@ public class CharacterAttackMng : Subject, Observer
     CharacterManager characMng;
     [SerializeField]int nAtkLevel;
     [SerializeField] GameObject SwordColider;
+    [SerializeField] GameObject darkCurtain;   // 스킬 시전 시 배경
     public bool isBattle;                   // 전투중인지 체크
     public bool isAnimationIng;             // 공격 애니메이션 진행 확인
     public bool isClick;                    // 추가 공격버튼 클릭 확인
@@ -38,6 +39,7 @@ public class CharacterAttackMng : Subject, Observer
 
     private void Awake()
     {
+        darkCurtain.SetActive(false);
         SwordColider.SetActive(false);
         AttackModeChecker = null;
         isAnimationIng = false;
@@ -120,6 +122,7 @@ public class CharacterAttackMng : Subject, Observer
 
     public void AttackSkillStart()
     {
+        darkCurtain.SetActive(true);
         characMng.SetIsBattle(true);
         Element.e_Element element = characMng.GetElement();
         nAtkLevel = (int)e_AttackLevel.AtkSkill;
@@ -130,7 +133,17 @@ public class CharacterAttackMng : Subject, Observer
 
     public void AttackSkilAniStart()
     {
+        if (darkCurtain.activeSelf == true)
+            Invoke("CurtainOff", 1.1f);
         SwordColider.SetActive(true);
+        NotifyAttackSkillStart();
+    }
+    public void CurtainOff()
+    {
+        if (darkCurtain.activeSelf == false)
+            return;
+        darkCurtain.SetActive(false);
+        NotifyAttackSkillEnd();
     }
     public void AttackSkillAniEnd()
     {
@@ -249,6 +262,10 @@ public class CharacterAttackMng : Subject, Observer
     }
 
     public void GetEnemyFindNotify(List<Transform> findList){}
+
+    public void AttackSkillStartNotify(){}
+
+    public void AttackSkillEndNotify(){}
 
 
     #endregion

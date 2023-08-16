@@ -6,16 +6,50 @@ using UnityEngineInternal;
 public class Element_Interaction : MonoBehaviour
 {
     #region 캐릭터
+    // 원소 부착
+    public static int c_ElementSet(CharacterClass chCls, Monster targetMob)
+    {
+        int damage;
+        float criticalDamage = chCls.GetCriticalDamage();
+        float criticalPercentage = chCls.GetCriticalPercentage();
+        int attackPower = chCls.GetAttack();
+
+        int mobDef = targetMob.GetMonsterDef();
+
+        damage = chCls.GetAttack();
+
+        var targetElement = targetMob.GetMonsterHittedElement();
+        targetElement.SetElement(chCls.GetCurrnetElement().GetElement());
+        targetElement.SetIsActive(true);
+
+        // 크리티컬 확률을 기반으로 크리티컬 결정
+        float randomValue = UnityEngine.Random.Range(0f, 1f);
+        bool isCritical = randomValue < (criticalPercentage / 100);
+
+        // 공격력 - 방어력
+        int damageWithoutCritical = attackPower - mobDef;
+        if (damageWithoutCritical < 0) return 1;
+
+        // 크리티컬 데미지 배율 적용
+        float criticalDamageMultiplier = criticalDamage / 100;
+        int totalCriticalDamage = Mathf.FloorToInt(attackPower * criticalDamageMultiplier);
+
+        // 크리티컬이 발생한 경우 크리티컬 데미지 추가
+        damage = damageWithoutCritical + (isCritical ? totalCriticalDamage : 0);
+
+
+        return damage;
+    }
+
     // 불 + 물 == 150% 데미지 (보정 데미지 반환)
-    public static int c_FireToWater(CharacterClass chCls)
+    public static int c_FireToWater(CharacterClass chCls, Monster targetMob)
     {
         int damage;
         int offset;
         
-        Element element = chCls.GetEncountElement();
+        Element element = targetMob.GetMonsterHittedElement();
         element.SetElement(Element.e_Element.None);
         element.SetIsActive(false);
-        chCls.SetEncountElement(element);
 
         damage = chCls.GetAttack();
         offset = (int)(damage * 0.5f);

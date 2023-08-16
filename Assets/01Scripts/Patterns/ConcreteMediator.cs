@@ -12,7 +12,7 @@ public class CombatMediator : Subject ,ICombatMediator
 
 
     #region 캐릭터
-    // 캐릭터 공격 판정 함수
+    // 캐릭터 평타 공격 판정 함수
     public void Mediator_CharacterAttack(CharacterClass character, Monster targetMonster)
     {
         float criticalDamage = character.GetCriticalDamage();
@@ -44,6 +44,56 @@ public class CombatMediator : Subject ,ICombatMediator
         targetMonster.SetMonsterCurrentHP(tmp);
 
     }
+
+    // 공격용 스킬 함수
+    public void Mediator_CharacterSkillAttack(CharacterClass character, CharacterManager characMng, Monster targetMonster)
+    {
+        Transform characTransform = characMng.GetComponent<Transform>();
+        Element element = character.GetCurrnetElement();
+        Element.e_Element mobElement = targetMonster.GetMonsterHittedElement().GetElement();
+        switch(element.GetElement())
+        {
+            case Element.e_Element.Fire:
+                if(mobElement != Element.e_Element.None)
+                {
+                    if(mobElement == Element.e_Element.Water)   // 캐릭터 원소 == 불 / 적부착 == 물
+                    {
+                        int damage = c_FireToWater(character,targetMonster);
+                        int mobHp = targetMonster.GetMonsterCurrentHp();
+                        targetMonster.SetMonsterCurrentHP(mobHp-damage);
+                    }
+                    else if(mobElement == Element.e_Element.Plant)  // 캐릭터 원소 == 불 / 적부착 풀
+                    {
+
+                    }
+                    else if(mobElement == Element.e_Element.Lightning)  // 캐릭터 원소 == 불 / 적부착 번개
+                    {
+
+                    }
+                    else if(mobElement == Element.e_Element.Wind)  // 캐릭터 원소 == 불 / 적부착 바람
+                    {
+
+                    }
+                }
+                else    // 적에 부착된 원소가 없을 경우 원소 부착
+                {
+                    int damage = c_ElementSet(character,targetMonster);
+                    int mobHp = targetMonster.GetMonsterCurrentHp();
+                    targetMonster.SetMonsterCurrentHP(mobHp-damage);
+                }
+                    break;
+            case Element.e_Element.Water:
+                break;
+            case Element.e_Element.Plant:
+                break;
+            case Element.e_Element.Lightning:
+                break;
+            case Element.e_Element.Wind:
+                break;
+        }
+
+    }
+
     #endregion
 
     #region 몬스터
