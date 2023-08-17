@@ -64,10 +64,31 @@ public class CombatMediator : Subject ,ICombatMediator
                     }
                     else if(mobElement == Element.e_Element.Plant)  // 캐릭터 원소 == 불 / 적부착 풀
                     {
-
+                        Element_Interaction.Instance.c_FireToPlant(character,targetMonster);           
                     }
                     else if(mobElement == Element.e_Element.Lightning)  // 캐릭터 원소 == 불 / 적부착 번개
                     {
+                        float diffusionRange = c_FireToLightning(character);
+                        int damage = c_FireToLightningGetDamage(character,targetMonster);
+
+                        //  범위 내 적에게 데미지
+                        Collider[] colliders = Physics.OverlapSphere(characTransform.position, diffusionRange, LayerMask.GetMask("Monster"));
+
+                        foreach (Collider collider in colliders)
+                        {
+                            Monster rangeMob = collider.GetComponent<Monster>();
+                            if (rangeMob != null)
+                            {
+                                if (rangeMob.GetMonsterHittedElement().GetElement() == Element.e_Element.None)
+                                {
+                                    rangeMob.GetMonsterHittedElement().SetElement(Element.e_Element.Fire);
+                                    rangeMob.GetMonsterHittedElement().SetIsActive(true);
+                                }
+
+                                int mobHp = rangeMob.GetMonsterCurrentHp();
+                                rangeMob.SetMonsterCurrentHP(mobHp - damage);
+                            }
+                        }
 
                     }
                     else if(mobElement == Element.e_Element.Wind)  // 캐릭터 원소 == 불 / 적부착 바람
@@ -83,16 +104,105 @@ public class CombatMediator : Subject ,ICombatMediator
                 }
                     break;
             case Element.e_Element.Water:
+                if (mobElement != Element.e_Element.None)
+                {
+                    if (mobElement == Element.e_Element.Fire)   // 캐릭터 원소 == 물 / 적부착 == 불
+                    {
+                    }
+                    else if (mobElement == Element.e_Element.Plant)  // 캐릭터 원소 == 물 / 적부착 풀
+                    {
+                    }
+                    else if (mobElement == Element.e_Element.Lightning)  // 캐릭터 원소 == 물 / 적부착 번개
+                    {
+                    }
+                    else if (mobElement == Element.e_Element.Wind)  // 캐릭터 원소 == 물 / 적부착 바람
+                    {
+                    }
+                }
+                else    // 적에 부착된 원소가 없을 경우 원소 부착
+                {
+                    int damage = c_ElementSet(character, targetMonster);
+                    int mobHp = targetMonster.GetMonsterCurrentHp();
+                    targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                }
                 break;
             case Element.e_Element.Plant:
+                if (mobElement != Element.e_Element.None)
+                {
+                    if (mobElement == Element.e_Element.Fire)   // 캐릭터 원소 == 풀 / 적부착 == 불
+                    {
+                    }
+                    else if (mobElement == Element.e_Element.Water)  // 캐릭터 원소 == 풀 / 적부착 물
+                    {
+                    }
+                    else if (mobElement == Element.e_Element.Lightning)  // 캐릭터 원소 == 풀 / 적부착 번개
+                    {
+                    }
+                    else if (mobElement == Element.e_Element.Wind)  // 캐릭터 원소 == 풀 / 적부착 바람
+                    {
+                    }
+                }
+                else    // 적에 부착된 원소가 없을 경우 원소 부착
+                {
+                    int damage = c_ElementSet(character, targetMonster);
+                    int mobHp = targetMonster.GetMonsterCurrentHp();
+                    targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                }
                 break;
             case Element.e_Element.Lightning:
+                if (mobElement != Element.e_Element.None)
+                {
+                    if (mobElement == Element.e_Element.Fire)   // 캐릭터 원소 == 번개 / 적부착 == 불
+                    {
+                    }
+                    else if (mobElement == Element.e_Element.Water)  // 캐릭터 원소 == 번개 / 적부착 물
+                    {
+                    }
+                    else if (mobElement == Element.e_Element.Plant)  // 캐릭터 원소 == 번개 / 적부착 풀
+                    {
+                    }
+                    else if (mobElement == Element.e_Element.Wind)  // 캐릭터 원소 == 번개 / 적부착 바람
+                    {
+                    }
+                }
+                else    // 적에 부착된 원소가 없을 경우 원소 부착
+                {
+                    int damage = c_ElementSet(character, targetMonster);
+                    int mobHp = targetMonster.GetMonsterCurrentHp();
+                    targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                }
                 break;
             case Element.e_Element.Wind:
+                if (mobElement != Element.e_Element.None)
+                {
+                    if (mobElement == Element.e_Element.Fire)   // 캐릭터 원소 == 바람 / 적부착 == 불
+                    {
+                    }
+                    else if (mobElement == Element.e_Element.Water)  // 캐릭터 원소 == 바람 / 적부착 물
+                    {
+                    }
+                    else if (mobElement == Element.e_Element.Plant)  // 캐릭터 원소 == 바람 / 적부착 풀
+                    {
+                    }
+                    else if (mobElement == Element.e_Element.Lightning)  // 캐릭터 원소 == 바람 / 적부착 번개
+                    {
+                    }
+                }
+                else    // 적에 부착된 원소가 없을 경우 원소 부착
+                {
+                    int damage = c_ElementSet(character, targetMonster);
+                    int mobHp = targetMonster.GetMonsterCurrentHp();
+                    targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                }
                 break;
         }
 
     }
+
+
+
+
+
 
     #endregion
 

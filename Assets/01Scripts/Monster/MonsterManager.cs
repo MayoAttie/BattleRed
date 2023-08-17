@@ -30,6 +30,8 @@ public class MonsterManager : MonoBehaviour, Observer
     public float fIdleTimeNumber;          // 대기 시간 변수
     public float fChaseRange;              // 최대 기동 범위
     public float fMovePointRange;          // 이동 포인트 범위
+    public int hp;                      //체크용
+    public Element.e_Element hitted;    //체크용
 
     public MonsterManager(Monster monster)
     {
@@ -61,6 +63,8 @@ public class MonsterManager : MonoBehaviour, Observer
 
     void Update()
     {
+        hitted = monster.GetMonsterHittedElement().GetElement(); // 몬스터 피격 원소 체크
+        hp = monster.GetMonsterCurrentHp(); // 몬스터 hp 체크
         state = monster.GetMonsterState();  // 몬스터 상태 반영
         Monster_AI_Process();
         MonsterAnimationController();       // 몬스터 애니메이션 컨틀롤러

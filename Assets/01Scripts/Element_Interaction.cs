@@ -1,60 +1,80 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngineInternal;
+using UnityEngine.AI;
 
-public class Element_Interaction : MonoBehaviour
+public class Element_Interaction : Singleton<Element_Interaction>
 {
+
     #region 캐릭터
-    // 원소 부착
-    public static int c_ElementSet(CharacterClass chCls, Monster targetMob)
+
+    // 치명타 계산 로직
+    static int CiriticalDamageReturn(CharacterClass chCls, int offset)
     {
         int damage;
         float criticalDamage = chCls.GetCriticalDamage();
         float criticalPercentage = chCls.GetCriticalPercentage();
         int attackPower = chCls.GetAttack();
 
-        int mobDef = targetMob.GetMonsterDef();
-
-        damage = chCls.GetAttack();
-
-        var targetElement = targetMob.GetMonsterHittedElement();
-        targetElement.SetElement(chCls.GetCurrnetElement().GetElement());
-        targetElement.SetIsActive(true);
+        damage = chCls.GetAttack() + offset;
 
         // 크리티컬 확률을 기반으로 크리티컬 결정
         float randomValue = UnityEngine.Random.Range(0f, 1f);
         bool isCritical = randomValue < (criticalPercentage / 100);
-
-        // 공격력 - 방어력
-        int damageWithoutCritical = attackPower - mobDef;
-        if (damageWithoutCritical < 0) return 1;
 
         // 크리티컬 데미지 배율 적용
         float criticalDamageMultiplier = criticalDamage / 100;
         int totalCriticalDamage = Mathf.FloorToInt(attackPower * criticalDamageMultiplier);
 
         // 크리티컬이 발생한 경우 크리티컬 데미지 추가
-        damage = damageWithoutCritical + (isCritical ? totalCriticalDamage : 0);
+        damage += isCritical ? totalCriticalDamage : 0;
 
 
         return damage;
     }
 
+    // 원소 부착
+    public static int c_ElementSet(CharacterClass chCls, Monster targetMob)
+    {
+        int damage;
+        int mobDef = targetMob.GetMonsterDef();
+
+        var targetElement = targetMob.GetMonsterHittedElement();
+        targetElement.SetElement(chCls.GetCurrnetElement().GetElement());
+        targetElement.SetIsActive(true);
+
+        
+        damage = CiriticalDamageReturn(chCls,0);
+
+        // 공격력 - 방어력
+        int damageWithoutCritical = damage - mobDef;
+        if (damageWithoutCritical < 0) return 1;
+
+        return damage;
+    }
+
+    #region 불
+
     // 불 + 물 == 150% 데미지 (보정 데미지 반환)
     public static int c_FireToWater(CharacterClass chCls, Monster targetMob)
     {
-        int damage;
+        int damage = chCls.GetAttack();
         int offset;
-        
+
         Element element = targetMob.GetMonsterHittedElement();
         element.SetElement(Element.e_Element.None);
         element.SetIsActive(false);
 
-        damage = chCls.GetAttack();
-        offset = (int)(damage * 0.5f);
-        return damage+ offset;
+        offset = (int)(damage * 0.5f);      // 불 증뎀
+
+        damage = CiriticalDamageReturn(chCls, offset);
+        damage -= targetMob.GetMonsterDef();
+
+        if (damage < 0)
+            damage = 1;
+
+        return damage;
     }
+
 
 
     // 불 + 번개 == 범위 확산 (확산 범위 반환)
@@ -66,24 +86,90 @@ public class Element_Interaction : MonoBehaviour
         element.SetElement(Element.e_Element.None);
         element.SetIsActive(false);
         chCls.SetEncountElement(element);
-        
-        range = chCls.GetElementNum()*0.15f;
+
+        range = chCls.GetElementNum() * 0.2f;
         return range;
     }
+    // 불 + 번개, 데미지 계산 공식
+    public static int c_FireToLightningGetDamage(CharacterClass chCls, Monster mobCls)
+    {
+        int damage;
 
+        Element element = mobCls.GetMonsterHittedElement();
+        element.SetElement(Element.e_Element.None);
+        element.SetIsActive(false);
+
+
+        damage = CiriticalDamageReturn(chCls, 0);
+        damage -= mobCls.GetMonsterDef();
+
+        if(damage<0)
+            damage = 1;
+
+
+        return damage;
+    }
+
+
+
+    // 불 + 풀 == 일정 시간 데미지
+    public void c_FireToPlant(CharacterClass chCls, Monster targetMob)
+    {
+        float time = c_FireToPlantGetTime(chCls);
+        int damage = c_FireToPlantGetDamage(chCls, targetMob);
+
+        StartCoroutine(CalculateDamageOverTime(targetMob, damage, time));
+    }
+    private IEnumerator CalculateDamageOverTime(Monster mobCls, int damage, float duration)
+    {
+        while (duration > 0)
+        {
+            // 데미지 계산식
+            int def = mobCls.GetMonsterDef();
+            damage -= def;
+
+            // 방어초과시 공격력 보정
+            if (damage <= 0)
+                damage = 2;
+
+            // hp 수정
+            int hp = mobCls.GetMonsterCurrentHp() - damage;
+            mobCls.SetMonsterCurrentHP(hp);
+
+            // 시간 감소
+            duration -= 1.0f;
+
+            yield return new WaitForSeconds(1.0f);
+        }
+    }
     // 불 + 풀 == 지속피해 (데미지 지속 시간 반환)
-    public static float c_FireToPlant(CharacterClass chCls)
+    private float c_FireToPlantGetTime(CharacterClass chCls)
     {
         float duration;
-        
+
         Element element = chCls.GetEncountElement();
         element.SetElement(Element.e_Element.None);
         element.SetIsActive(false);
         chCls.SetEncountElement(element);
-        
+
         duration = chCls.GetElementNum() * 0.1f;
         return duration;
     }
+    // 불+풀 데미지 계산 공식 (원소 값 * 1.2f)
+    private int c_FireToPlantGetDamage(CharacterClass chCls, Monster targetMob)
+    {
+        int damage = chCls.GetElementNum();
+
+        Element element = targetMob.GetMonsterHittedElement();
+        element.SetElement(Element.e_Element.None);
+        element.SetIsActive(false);
+
+        damage = (int)(damage * 1.2f);
+        return damage;
+    }
+    #endregion
+
+
 
     // 물 + 불 == 200% 데미지 (보정 데미지 반환)
     public static int c_WaterToFire(CharacterClass chCls)

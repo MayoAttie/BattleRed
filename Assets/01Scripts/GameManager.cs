@@ -22,7 +22,7 @@ public class GameManager : Singleton<GameManager>
                 int randomIndex = UnityEngine.Random.Range(0, MonsterSpawnPoint.Length);
                 var point = MonsterSpawnPoint[randomIndex];
 
-                Monster monsterCls = new Monster("몬스터", mob.name, 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence, 100, 100, 10, 10, 10, 1.8f, 100f, Element.e_Element.None);
+                Monster monsterCls = new Monster("몬스터", mob.name, 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence, 1000, 1000, 10, 10, 10, 1.8f, 100f, Element.e_Element.None);
                 GameObject obj = Instantiate(mob);
                 MonsterManager monsterManager = obj.GetComponent<MonsterManager>();
                 monsterManager.SetMonsterClass(monsterCls);
