@@ -71,28 +71,16 @@ public class CombatMediator : Subject ,ICombatMediator
                         float diffusionRange = c_FireToLightning(character);
                         int damage = c_FireToLightningGetDamage(character,targetMonster);
 
-                        //  범위 내 적에게 데미지
-                        Collider[] colliders = Physics.OverlapSphere(characTransform.position, diffusionRange, LayerMask.GetMask("Monster"));
-
-                        foreach (Collider collider in colliders)
-                        {
-                            Monster rangeMob = collider.GetComponent<Monster>();
-                            if (rangeMob != null)
-                            {
-                                if (rangeMob.GetMonsterHittedElement().GetElement() == Element.e_Element.None)
-                                {
-                                    rangeMob.GetMonsterHittedElement().SetElement(Element.e_Element.Fire);
-                                    rangeMob.GetMonsterHittedElement().SetIsActive(true);
-                                }
-
-                                int mobHp = rangeMob.GetMonsterCurrentHp();
-                                rangeMob.SetMonsterCurrentHP(mobHp - damage);
-                            }
-                        }
+                        DiffusionFunc(diffusionRange, damage, 0, Element.e_Element.Fire, characTransform);
 
                     }
-                    else if(mobElement == Element.e_Element.Wind)  // 캐릭터 원소 == 불 / 적부착 바람
+                    else if(mobElement == Element.e_Element.Wind)  // 캐릭터 원소 == 불 / 적 부착 바람
                     {
+                        float diffusionRange = c_FireToWind(character);
+                        int damage = c_FireToWindGetDamage(character, targetMonster);
+
+                        // 바람 원소로 확산할 경우, 데미지 반감
+                        DiffusionFunc(diffusionRange, damage, 2, Element.e_Element.Fire, characTransform);
 
                     }
                 }
@@ -103,20 +91,35 @@ public class CombatMediator : Subject ,ICombatMediator
                     targetMonster.SetMonsterCurrentHP(mobHp-damage);
                 }
                     break;
+
+
             case Element.e_Element.Water:
                 if (mobElement != Element.e_Element.None)
                 {
                     if (mobElement == Element.e_Element.Fire)   // 캐릭터 원소 == 물 / 적부착 == 불
                     {
+                        int damage = c_WaterToFire(character, targetMonster);
+                        int mobHp = targetMonster.GetMonsterCurrentHp();
+                        targetMonster.SetMonsterCurrentHP(mobHp - damage);
                     }
                     else if (mobElement == Element.e_Element.Plant)  // 캐릭터 원소 == 물 / 적부착 풀
                     {
+                        Element_Interaction.Instance.c_WaterToPlant(character, characTransform);
                     }
                     else if (mobElement == Element.e_Element.Lightning)  // 캐릭터 원소 == 물 / 적부착 번개
                     {
+                        float diffusionRange = c_WaterToLightning(character);
+                        int damage = c_WaterToLightningGetDamage(character, targetMonster);
+
+                        DiffusionFunc(diffusionRange, damage, 0, Element.e_Element.Water, characTransform);
                     }
                     else if (mobElement == Element.e_Element.Wind)  // 캐릭터 원소 == 물 / 적부착 바람
                     {
+                        float diffusionRange = c_WaterToWind(character);
+                        int damage = c_WaterToWindGetDamage(character, targetMonster);
+
+                        // 바람 원소로 확산할 경우, 데미지 반감
+                        DiffusionFunc(diffusionRange, damage, 2, Element.e_Element.Water, characTransform);
                     }
                 }
                 else    // 적에 부착된 원소가 없을 경우 원소 부착
@@ -126,6 +129,8 @@ public class CombatMediator : Subject ,ICombatMediator
                     targetMonster.SetMonsterCurrentHP(mobHp - damage);
                 }
                 break;
+
+
             case Element.e_Element.Plant:
                 if (mobElement != Element.e_Element.None)
                 {
@@ -149,6 +154,8 @@ public class CombatMediator : Subject ,ICombatMediator
                     targetMonster.SetMonsterCurrentHP(mobHp - damage);
                 }
                 break;
+
+
             case Element.e_Element.Lightning:
                 if (mobElement != Element.e_Element.None)
                 {
@@ -172,6 +179,8 @@ public class CombatMediator : Subject ,ICombatMediator
                     targetMonster.SetMonsterCurrentHP(mobHp - damage);
                 }
                 break;
+
+
             case Element.e_Element.Wind:
                 if (mobElement != Element.e_Element.None)
                 {
@@ -197,6 +206,36 @@ public class CombatMediator : Subject ,ICombatMediator
                 break;
         }
 
+    }
+
+    //확산(확산 범위, 피해량, 피해량 보정값, 부착될 원소타입)
+    void DiffusionFunc(float diffusionRange, int damage, int offset, Element.e_Element elementType, Transform characTransform)
+    {
+        Debug.Log("범위 탐색 : "+characTransform + " : " + diffusionRange);
+        //  범위 내 적에게 데미지
+        Collider[] colliders = Physics.OverlapSphere(characTransform.position, diffusionRange, LayerMask.GetMask("Monster"));
+        if(colliders != null)
+            Debug.Log("null아님");
+
+        foreach (Collider collider in colliders)
+        {
+            int attackPower = damage;
+            Monster rangeMob = collider.GetComponent<MonsterManager>().GetMonsterClass();
+            if (rangeMob != null)
+            {
+                if (rangeMob.GetMonsterHittedElement().GetElement() == Element.e_Element.None)
+                {
+                    rangeMob.GetMonsterHittedElement().SetElement(elementType);
+                    rangeMob.GetMonsterHittedElement().SetIsActive(true);
+                }
+                // 확산으로 데미지 부여.
+                int mobHp = rangeMob.GetMonsterCurrentHp();
+                if (offset > 0)
+                    attackPower /= offset;
+                rangeMob.SetMonsterCurrentHP(mobHp - attackPower);
+                Debug.Log(rangeMob+"데미지 주기" + (mobHp - attackPower));
+            }
+        }
     }
 
 

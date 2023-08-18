@@ -8290,6 +8290,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 718547516}
+  - component: {fileID: 718547517}
   m_Layer: 0
   m_Name: Element_InteractionManager
   m_TagString: Untagged
@@ -8311,6 +8312,19 @@ Transform:
   m_Father: {fileID: 1106756943}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &718547517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 718547515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24463753d17da584bafee84d175aa9a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  plantElement: {fileID: 100000, guid: 3ccd290dacb28bc409d85b2f564c9796, type: 3}
 --- !u!1001 &736563808
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8428,7 +8442,7 @@ GameObject:
   - component: {fileID: 776099231}
   m_Layer: 8
   m_Name: Terrain
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8

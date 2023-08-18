@@ -104,7 +104,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         }
     }
 
-
+    // 제어용 애니메이션 x,z좌표 수정
     private void FloatAnimatorValueFunc()
     {
         if(!isBattle)
@@ -123,7 +123,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         aniController.SetFloat("RunZ", runZ);
     }
 
-
+    // 원소 스위칭
     public void ElementSwitch()
     {
         if (isClickedCoolCheck)
@@ -152,7 +152,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
             StartCoroutine(ButtonClickedCoolTime(2f, btncls));
         }
     }
-
+    // 버튼 쿨타임 함수
     IEnumerator ButtonClickedCoolTime(float time, ButtonClass ClickedBtnCls)
     {
         isClickedCoolCheck = true;
@@ -177,12 +177,13 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         SatelliteObj.SetActive(false);
         isClickedCoolCheck = false;
     }
-
+    // 속성 애니메이션 파티클 SetOff
     void OffSatellite()
     {
         SatelliteObj.SetActive(false);
     }
 
+    // 원소 상태 표기 용 파티클 애니메이션 색상 전환
     void SatelliteParticleColorSwitch()
     {
 
@@ -243,10 +244,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
 
 
-    public void GetEnemyFindNotify(List<Transform> findList)
-    {
-    }
-
+    public void GetEnemyFindNotify(List<Transform> findList){}
     public void AttackSkillStartNotify(){}
 
     public void AttackSkillEndNotify(){}

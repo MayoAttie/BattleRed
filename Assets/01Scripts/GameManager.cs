@@ -14,20 +14,24 @@ public class GameManager : Singleton<GameManager>
 
     void Start()
     {
-        foreach (var mob in Monsters)
+        for(int i=0; i<5; i++)
         {
-            if (mob.name == "Cactus" || mob.name == "MushroomAngry")
+            foreach (var mob in Monsters)
             {
-                // 랜덤한 인덱스를 구해서 해당 위치에 몬스터 생성
-                int randomIndex = UnityEngine.Random.Range(0, MonsterSpawnPoint.Length);
-                var point = MonsterSpawnPoint[randomIndex];
+                if (mob.name == "Cactus" || mob.name == "MushroomAngry")
+                {
+                    // 랜덤한 인덱스를 구해서 해당 위치에 몬스터 생성
+                    int randomIndex = UnityEngine.Random.Range(0, MonsterSpawnPoint.Length);
+                    var point = MonsterSpawnPoint[randomIndex];
 
-                Monster monsterCls = new Monster("몬스터", mob.name, 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence, 1000, 1000, 10, 10, 10, 1.8f, 100f, Element.e_Element.None);
-                GameObject obj = Instantiate(mob);
-                MonsterManager monsterManager = obj.GetComponent<MonsterManager>();
-                monsterManager.SetMonsterClass(monsterCls);
-                obj.transform.position = point.position; // 위치를 랜덤하게 선택된 point의 위치로 이동
+                    Monster monsterCls = new Monster("몬스터", mob.name, 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence, 1000, 1000, 10, 10, 10, 1.8f, 100f, Element.e_Element.None);
+                    GameObject obj = Instantiate(mob);
+                    MonsterManager monsterManager = obj.GetComponent<MonsterManager>();
+                    monsterManager.SetMonsterClass(monsterCls);
+                    obj.transform.position = point.position; // 위치를 랜덤하게 선택된 point의 위치로 이동
+                }
             }
+
         }
 
     }

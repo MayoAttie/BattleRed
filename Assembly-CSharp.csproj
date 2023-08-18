@@ -63,8 +63,9 @@
     <Compile Include="Assets\01Scripts\Character\CharacterManager.cs" />
     <Compile Include="Assets\01Scripts\Character\SwordFunction.cs" />
     <Compile Include="Assets\01Scripts\EffectManager.cs" />
-    <Compile Include="Assets\01Scripts\Element.cs" />
-    <Compile Include="Assets\01Scripts\Element_Interaction.cs" />
+    <Compile Include="Assets\01Scripts\Element\Element.cs" />
+    <Compile Include="Assets\01Scripts\Element\Element_Interaction.cs" />
+    <Compile Include="Assets\01Scripts\Element\PlantElement.cs" />
     <Compile Include="Assets\01Scripts\GameManager.cs" />
     <Compile Include="Assets\01Scripts\Item.cs" />
     <Compile Include="Assets\01Scripts\JoyStickController.cs" />
@@ -99,13 +100,16 @@
   <ItemGroup>
     <None Include="Assets\02Assets\Female Knight\model\shader\Toon2side-Lighted.shader" />
     <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Water_Shader_WebGl.shader" />
+    <None Include="Assets\02Assets\CactusPack\Readme.txt" />
     <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Vegetation_Plants_Shader.shader" />
     <None Include="Assets\Particle Attractor by Moonflower Carnivore\Shaders\Particles Additive Intensify.shader" />
     <None Include="Assets\02Assets\UJoystick\ReadMe.txt" />
+    <None Include="Assets\02Assets\CactusPack\Shaders\Basic_Rimlight.shader" />
     <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Vegetation_Opaque_Shader_VS.shader" />
     <None Include="Assets\Particle Attractor by Moonflower Carnivore\Particle Attractor documentation.txt" />
     <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Vegetation_Opaque_Shader.shader" />
     <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Vegetation_Foliage_Shader.shader" />
+    <None Include="Assets\02Assets\CactusPack\Shaders\VertexBlend.shader" />
     <None Include="Assets\02Assets\Female Knight\model\shader\Toony-Lighted.shader" />
     <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Water_Shader.shader" />
     <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Vegetation_Flowers_Shader.shader" />
