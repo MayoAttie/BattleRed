@@ -147,7 +147,10 @@ public class CharacterAttackMng : Subject, Observer
     }
     public void AttackSkillAniEnd()
     {
-        SwordColider.SetActive(false);
+        // 스킬 종료에 따른, 원소 활성상태 Off
+        if (characMng.GetCharacterClass().GetCurrnetElement().GetIsActive())
+            characMng.GetCharacterClass().GetCurrnetElement().SetIsActive(false);
+
         FlagValueReset();
         nAtkLevel = (int)e_AttackLevel.AttackMode;
         
@@ -225,7 +228,7 @@ public class CharacterAttackMng : Subject, Observer
         FlagValueReset();
     }
 
-    // 특정 동작으로 애니메이션 강제 해제 시, 프래그 변수 초기화
+    // 특정 동작으로 애니메이션 강제 해제 시, 플래그 변수 초기화
     public void FlagValueReset()
     {
         if (isAnimationIng)

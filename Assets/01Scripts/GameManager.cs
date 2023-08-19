@@ -14,7 +14,7 @@ public class GameManager : Singleton<GameManager>
 
     void Start()
     {
-        for(int i=0; i<5; i++)
+        for(int i=0; i<1; i++)
         {
             foreach (var mob in Monsters)
             {

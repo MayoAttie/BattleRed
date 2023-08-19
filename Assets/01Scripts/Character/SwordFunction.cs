@@ -29,15 +29,15 @@ public class SwordFunction : CombatMediator
             }
             else if(attackLevel == CharacterAttackMng.e_AttackLevel.AtkSkill)
             {
+                character.GetCurrnetElement().SetIsActive(true);
                 Monster mob = other.gameObject.GetComponent<MonsterManager>().GetMonsterClass();
                 Mediator_CharacterSkillAttack(character, CharacterManager.Instance, mob);
-
 
             }
 
 
         }
-
+        
         gameObject.SetActive(false);
     }
 

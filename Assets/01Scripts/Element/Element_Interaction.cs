@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using System.Collections.Generic;
 using UnityEngine.AI;
 
 public class Element_Interaction : Singleton<Element_Interaction>
@@ -7,6 +8,7 @@ public class Element_Interaction : Singleton<Element_Interaction>
     [SerializeField] private GameObject plantElement;
     static int plantElementNum = 0;
     static int plantElementMaxNum = 5;
+    Queue<GameObject> plantQue = new Queue<GameObject>();
 
     #region 캐릭터
 
@@ -47,6 +49,16 @@ public class Element_Interaction : Singleton<Element_Interaction>
 
         
         damage = CiriticalDamageReturn(chCls,0);
+
+
+        // 몬스터가 격화 상태라면, 촉진/발산 효과로 원소량에 따라 데미지 증가.
+        if(targetMob.GetIsQuicken()==true)
+        {
+            if (chCls.GetCurrnetElement().GetElement() == Element.e_Element.Lightning ||
+                chCls.GetCurrnetElement().GetElement() == Element.e_Element.Plant)
+                damage += (int)(chCls.GetElementNum() * 1.2f);
+        }
+
 
         // 공격력 - 방어력
         int damageWithoutCritical = damage - mobDef;
@@ -148,7 +160,7 @@ public class Element_Interaction : Singleton<Element_Interaction>
         duration = chCls.GetElementNum() * 0.1f;
         return duration;
     }
-    // 불+풀 데미지 계산 공식 (원소 값 * 1.2f)
+    // 불+풀 데미지 계산 공식 (원소 값 * 1.4f)
     private int c_FireToPlantGetDamage(CharacterClass chCls, Monster targetMob)
     {
         int damage = chCls.GetElementNum();
@@ -157,7 +169,7 @@ public class Element_Interaction : Singleton<Element_Interaction>
         element.SetElement(Element.e_Element.None);
         element.SetIsActive(false);
 
-        damage = (int)(damage * 1.2f);
+        damage = (int)(damage * 1.4f);
         return damage;
     }
 
@@ -246,26 +258,58 @@ public class Element_Interaction : Singleton<Element_Interaction>
     // 물 + 풀 == 풀 원소 생성
     public void c_WaterToPlant(CharacterClass chCls, Transform createPos)
     {
-        if(plantElementNum<plantElementMaxNum)
+        plantElementNum++;
+
+        Vector3 randomOffset = new Vector3(Random.Range(-2f, 2f), 0f, Random.Range(-2f, 2f));
+        Vector3 spawnPosition = createPos.position + randomOffset;
+
+        RaycastHit hit;
+        if (Physics.Raycast(spawnPosition + Vector3.up * 10f, Vector3.down, out hit, Mathf.Infinity, LayerMask.GetMask("Ground")))
         {
-            plantElementNum++;
-            var element = chCls.GetCurrnetElement();
-            element.SetElement(Element.e_Element.None);
-            element.SetIsActive(false);
-
-            Vector3 randomOffset = new Vector3(Random.Range(-2f, 2f), 0f, Random.Range(-2f, 2f));
-            Vector3 spawnPosition = createPos.position + randomOffset;
-
-            RaycastHit hit;
-            if (Physics.Raycast(spawnPosition + Vector3.up * 10f, Vector3.down, out hit, Mathf.Infinity, LayerMask.GetMask("Ground")))
+            if (hit.collider.CompareTag("Ground"))
             {
-                if (hit.collider.CompareTag("Ground"))
-                {
-                    spawnPosition = hit.point;
-                    Instantiate(plantElement, spawnPosition, Quaternion.identity);
-                }
+                spawnPosition = hit.point;
+                // 풀 원핵 생성
+                var obj = Instantiate(plantElement, spawnPosition, Quaternion.identity);
+                plantQue.Enqueue(obj);
+
+                // 풀원핵 객체의 스크립트 처리
+                var mng = obj.GetComponent<PlantElement>();
+                mng.SetElement(new Element(Element.e_Element.Plant, false, true));
+                mng.SetIdIndex(plantElementNum%plantElementMaxNum);
             }
         }
+        Debug.Log("plantElementNum : " + plantElementNum);
+
+        // 원핵의 숫자가, 최대한계치를 넘었을 경우,
+        if (plantElementNum>=plantElementMaxNum)
+        {
+            var obj = plantQue.Dequeue(); // 가장 위에 있는 객체를 가져옴
+            var mng = obj.GetComponent<PlantElement>();
+            float range = mng.GetDetectionRange();
+
+            // 몬스터 레이어를 가진 객체를 배열에 저장
+            Collider[] colliders = Physics.OverlapSphere(obj.transform.position, range, LayerMask.GetMask("Monster"));
+
+            foreach (Collider collider in colliders)
+            {
+                if (collider == null)
+                    Debug.Log("몬스터 널");
+                else
+                    Debug.Log("몬스터 널 X" + collider.gameObject.name);
+
+                Monster mobCls = collider.GetComponent<MonsterManager>().GetMonsterClass();
+                int damage = c_PlantToPlant(chCls, mobCls);  // 개화 데미지 계산 함수 호출
+                int mobHp = mobCls.GetMonsterCurrentHp(); 
+                mobCls.SetMonsterCurrentHP(mobHp - damage);  // 몬스터 체력 감소
+
+            }
+
+            plantElementNum--;
+            Debug.Log("plantElementNum : " + plantElementNum);
+            Destroy(obj); // 객체 파괴
+        }
+
     }
 
 
@@ -301,7 +345,191 @@ public class Element_Interaction : Singleton<Element_Interaction>
 
 
     #region 번개
+    // 번개 + 불 범위 반환
+    public static float c_LightningToFire(CharacterClass chCls)
+    {
+        float range;
 
+        range = chCls.GetElementNum() * 0.1f;
+        return range;
+    }
+    // 불 + 번개, 데미지 반환
+    public static int c_LightningToFireGetDamage(CharacterClass chCls, Monster mobCls)
+    {
+        int damage;
+
+        Element element = mobCls.GetMonsterHittedElement();
+        element.SetElement(Element.e_Element.None);
+        element.SetIsActive(false);
+
+
+        damage = CiriticalDamageReturn(chCls, 0);
+        damage -= mobCls.GetMonsterDef();
+
+        if (damage < 0)
+            damage = 1;
+
+
+        return damage;
+    }
+
+
+    // 번개 + 물 == 일정 시간 데미지
+    public void c_LightningToWater(CharacterClass chCls, Monster targetMob)
+    {
+        float time = c_LightningToWaterGetTime(chCls);
+        int damage = c_LightningToWaterGetTime(chCls, targetMob);
+
+        StartCoroutine(CalculateDamageOverTime(targetMob, damage, time));
+    }
+    // 번개 + 물 == 지속피해 (데미지 지속 시간 반환)
+    private float c_LightningToWaterGetTime(CharacterClass chCls)
+    {
+        float duration;
+
+        duration = chCls.GetAttack() * 0.1f;
+        return duration;
+    }
+    // 번개 + 물 데미지 계산 공식 (공격력 * 0.7f)
+    private int c_LightningToWaterGetTime(CharacterClass chCls, Monster targetMob)
+    {
+        int damage = chCls.GetAttack();
+
+        Element element = targetMob.GetMonsterHittedElement();
+        element.SetElement(Element.e_Element.None);
+        element.SetIsActive(false);
+
+        damage = (int)(damage * 0.7f);
+        return damage;
+    }
+
+
+    // 번개 + 풀 == 격화상태 부여, 번개or풀 속성 공격 시, 데미지 증가
+    public void c_LightningToPlant(CharacterClass chCls, Monster mobCls)
+    {
+        mobCls.GetMonsterHittedElement().SetElement(Element.e_Element.None);
+        mobCls.GetMonsterHittedElement().SetIsActive(false);
+
+        float duration = c_LightningToPlantGetTime(chCls);
+        StartCoroutine(QuickenKeepTime(mobCls, duration));
+    }
+    // 번개 + 풀 == 격화 지속시간 (데미지 지속 시간 반환)
+    private float c_LightningToPlantGetTime(CharacterClass chCls)
+    {
+        float duration;
+
+        duration = chCls.GetElementNum() * 0.2f;
+        return duration;
+    }
+    // 격화 타임 코루틴 함수
+    private IEnumerator QuickenKeepTime(Monster mobCls, float duration)
+    {
+        while (duration > 0)
+        {
+            if(!mobCls.GetIsQuicken())
+                mobCls.SetIsQuicken(true);
+
+            // 시간 감소
+            duration -= 1.0f;
+
+            yield return new WaitForSeconds(1.0f);
+        }
+
+        mobCls.SetIsQuicken(false);
+    }
+
+
+    // 번개+바람, 확산 범위 반환
+    public static float c_LightningToWind(CharacterClass chCls)
+    {
+        float range;
+
+        range = chCls.GetElementNum() * 0.4f;
+        return range;
+    }
+    // 번개+바람, 데미지 반환
+    public static int c_LightningToWindGetDamage(CharacterClass chCls, Monster mobCls)
+    {
+        int damage;
+
+        Element element = mobCls.GetMonsterHittedElement();
+        element.SetElement(Element.e_Element.None);
+        element.SetIsActive(false);
+
+
+        damage = CiriticalDamageReturn(chCls, 0);
+        damage -= mobCls.GetMonsterDef();
+
+        if (damage < 0)
+            damage = 1;
+
+
+        return damage;
+    }
+    #endregion
+
+
+
+    #region 풀
+    // 풀 + 풀, 개화반응
+    public static int c_PlantToPlant(CharacterClass chCls, Monster mobCls)
+    {
+        int damage = chCls.GetElementNum();
+        int offset = (int)(damage * 0.6f);
+
+        Element element = mobCls.GetMonsterHittedElement();
+        element.SetElement(Element.e_Element.Plant);
+        element.SetIsActive(true);
+
+
+        damage = CiriticalDamageReturn(chCls, offset);
+        damage -= mobCls.GetMonsterDef();
+
+        if (damage < 0)
+            damage = 1;
+
+        return damage;
+    }
+
+
+    // 풀 + 불 == 범위 확산 (확산 범위 반환)
+    public static float c_PlantToFireGetRange(CharacterClass chCls)
+    {
+        float range;
+
+        range = chCls.GetElementNum() * 0.1f;
+        return range;
+    }
+
+    // 풀 + 불 == 일정 시간 데미지
+    public void c_PlantToFire(CharacterClass chCls, Monster targetMob)
+    {
+        float time = c_PlantToFireGetDuration(chCls);
+        int damage = c_PlantToFireGetDamage(chCls, targetMob);
+
+        StartCoroutine(CalculateDamageOverTime(targetMob, damage, time));
+    }
+    // 풀 + 불 == 지속피해 (데미지 지속 시간 반환)
+    private float c_PlantToFireGetDuration(CharacterClass chCls)
+    {
+        float duration;
+
+        duration = chCls.GetAttack() * 0.1f;
+        return duration;
+    }
+    // 풀 + 불  데미지 계산 공식 (원소마스터리 *0.8f)
+    private int c_PlantToFireGetDamage(CharacterClass chCls, Monster targetMob)
+    {
+        int damage = chCls.GetElementNum();
+
+        Element mobElement = targetMob.GetMonsterHittedElement();
+        mobElement.SetElement(Element.e_Element.None);
+        mobElement.SetIsActive(false);
+
+        damage = (int)(damage * 0.8f);
+
+        return damage;
+    }
 
 
     #endregion

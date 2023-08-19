@@ -46,7 +46,7 @@ public class CharacterClass : Objects
         this.nLevel = nLevel;
         this.fSpeed = fSpeed;
         this.eCharacState = eCharacState;
-        this.eCharacElement = new Element(Element.e_Element.None, false, false);
+        this.eCharacElement = new Element(Element.e_Element.Fire, false, false);
         this.nElementNum = nElementNum;
         this.eEncountElement = new Element(Element.e_Element.None, false, false);
         this.fCriticalDamage= fCriticalDamage;

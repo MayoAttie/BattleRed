@@ -219,6 +219,8 @@ MonoBehaviour:
   fIdleTimeNumber: 5
   fChaseRange: 15
   fMovePointRange: 10
+  hp: 0
+  hitted: 0
 --- !u!195 &3722099137704694535
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -567,7 +569,7 @@ GameObject:
   - component: {fileID: 606229931678924961}
   - component: {fileID: 84130211081741549}
   - component: {fileID: 5587026091684975449}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: AttackColliderBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}

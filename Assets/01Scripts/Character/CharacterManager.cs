@@ -8,46 +8,50 @@ using UnityEngine.EventSystems;
 
 public class CharacterManager : Singleton<CharacterManager>, Observer
 {
-    private CharacterClass clsCharacter;        // 캐릭터 데이터 클래스
-    private Animator aniController;             // 캐릭터 제어 애니메이터
-    private bool isBattle;                      // 전투 체크 변수
-    private CharacterAttackMng.e_AttackLevel atkLevel;  // 공격 단계 변수
-    private CharacterControlMng.e_BlinkPos blinkValue;  // 회피기 방향 변수
-    [SerializeField]private Element.e_Element element;                  // 선택한 원소 변수
+    #region 변수
+    private CharacterClass clsCharacter;                    // 캐릭터 데이터 클래스
+    private Animator aniController;                         // 캐릭터 제어 애니메이터
+    private bool isBattle;                                  // 전투 체크 변수
+    private CharacterAttackMng.e_AttackLevel atkLevel;      // 공격 단계 변수
+    private CharacterControlMng.e_BlinkPos blinkValue;      // 회피기 방향 변수
+    [SerializeField]private Element.e_Element element;      // 선택한 원소 변수
 
     private float xPos;                         // 캐릭터 애니메이션 플로트 변수
     private float zPos;                         // 캐릭터 애니메이션 플로트 변수
     private float runX;                         // 캐릭터 애니메이션 플로트 변수
     private float runZ;                         // 캐릭터 애니메이션 플로트 변수
     [SerializeField] GameObject SatelliteObj;   // 원소 체크용 위성 객체
-
-    public int characterHp;//테스트용
-
-    public CharacterClass.eCharactgerState clsState;
     bool isClickedCoolCheck;                    // 버튼 쿨타임 코루틴 객체
+
+
+    public int characterHp;                             //테스트용
+    public CharacterClass.eCharactgerState clsState;    //테스트 확인용
+    public bool elementGetActive;
+    #endregion
 
     private void Awake()
     {
         isBattle = false;
-        gameObject.GetComponent<CharacterAttackMng>().Attach(this);
-        gameObject.GetComponent<CharacterControlMng>().Attach(this);
-        aniController = gameObject.GetComponent<Animator>();
-        SatelliteObj.gameObject.SetActive(false);
+        gameObject.GetComponent<CharacterAttackMng>().Attach(this);     // 옵저버패턴 부착
+        gameObject.GetComponent<CharacterControlMng>().Attach(this);    // 옵저버패턴 부착
+        aniController = gameObject.GetComponent<Animator>();            // 애니메이터 초기화
+        SatelliteObj.gameObject.SetActive(false);                       // 원소 상태 표시용 위성 SetFalse
     }
     private void Start()
     {
-        clsCharacter = GameManager.Instance.characterCls;
+        clsCharacter = GameManager.Instance.characterCls;           // 캐릭터 클래스 초기화
+        element = clsCharacter.GetCurrnetElement().GetElement();    // 캐릭터 클래스 - 현재 원소 초기화
     }
 
     private void Update()
     {
+        elementGetActive = clsCharacter.GetCurrnetElement().GetIsActive();
         characterHp = clsCharacter.GetCurrentHp();  // 테스트용
-        clsState = clsCharacter.GetState();
-        clsCharacter = GameManager.Instance.characterCls;
-        Debug.Log(nameof(clsCharacter.GetState)+":" + clsCharacter.GetState()) ;
-        CharacterStateActor();
-        FloatAnimatorValueFunc();
-        SatelliteParticleColorSwitch();
+        clsState = clsCharacter.GetState();         // 테스트용
+        clsCharacter = GameManager.Instance.characterCls;       // 데이터 처리를 위한 캐릭터 클래스 최신화
+        CharacterStateActor();                                  // 애니메이션 제어
+        FloatAnimatorValueFunc();                               // 애니메이터 xz_flaot 변수 변경
+        SatelliteParticleColorSwitch();                         // 원소 변경
     }
 
 
@@ -140,7 +144,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
         element = (Element.e_Element)index;
 
-        Element characElement = new Element(element, true, false);
+        Element characElement = new Element(element, false, false);
         clsCharacter.SetCurrentElement(characElement);
 
         // ElementSwitchButton 오브젝트를 이름으로 정확히 찾아서 ButtonClass 컴포넌트를 가져옴

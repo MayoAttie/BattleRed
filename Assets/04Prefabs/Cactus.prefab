@@ -303,6 +303,8 @@ MonoBehaviour:
   fIdleTimeNumber: 5
   fChaseRange: 15
   fMovePointRange: 10
+  hp: 0
+  hitted: 0
 --- !u!114 &7669916024531766425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -725,7 +727,7 @@ GameObject:
   - component: {fileID: 4292853298511677469}
   - component: {fileID: 9022841232465234366}
   - component: {fileID: 749827002557794445}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: AttackColliderBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}

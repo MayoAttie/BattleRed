@@ -38,6 +38,7 @@ public class Monster : Objects
     private int nMonsterDef;
     private float fMonsterSpeed;
     private float fMonsterRotationSpeed;
+    private bool isQuicken;
     private Element monsterHaveElement;
     private Element monsterHittedElement;
 
@@ -53,6 +54,7 @@ public class Monster : Objects
         this.fMonsterSpeed = fMonsterSpeed;
         this.monsterState = monsterState;
         this.fMonsterRotationSpeed = fMonsterRotationSpeed;
+        isQuicken = false;
         monsterHaveElement = new Element(element, true, false);
         monsterHittedElement= new Element(Element.e_Element.None, false, false);
     }
@@ -73,6 +75,7 @@ public class Monster : Objects
     public void SetMonsterRotateSpeed(float rotate) { fMonsterRotationSpeed = rotate; }
     public void SetMonsterHaveElement(Element element) { monsterHaveElement= element; }
     public void SetMonsterHittedElement(Element element) { monsterHittedElement= element; }
+    public void SetIsQuicken(bool isQuicken) { this.isQuicken = isQuicken; }
 
 
     public e_MonsterState GetMonsterState() { return monsterState; }
@@ -86,6 +89,7 @@ public class Monster : Objects
     public float GetMonsterRotateSpeed() { return fMonsterRotationSpeed; }
     public Element GetMonsterHaveElement() { return monsterHaveElement; }
     public Element GetMonsterHittedElement() { return monsterHittedElement; }
+    public bool GetIsQuicken() { return isQuicken; }
 
     #endregion
 
