@@ -36,9 +36,9 @@ public class SwordFunction : CombatMediator
             }
 
 
+            gameObject.SetActive(false);
         }
         
-        gameObject.SetActive(false);
     }
 
 

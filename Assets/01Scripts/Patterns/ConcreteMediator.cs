@@ -153,12 +153,19 @@ public class CombatMediator : Subject ,ICombatMediator
                     }
                     else if (mobElement == Element.e_Element.Water)  // 캐릭터 원소 == 풀 / 적부착 물
                     {
+                        Element_Interaction.Instance.c_WaterToPlant(character, characTransform);
                     }
                     else if (mobElement == Element.e_Element.Lightning)  // 캐릭터 원소 == 풀 / 적부착 번개
                     {
+                        Element_Interaction.Instance.c_LightningToPlant(character, targetMonster);
                     }
                     else if (mobElement == Element.e_Element.Wind)  // 캐릭터 원소 == 풀 / 적부착 바람
                     {
+                        float diffusionRange = c_PlantToWind(character);
+                        int damage = c_PlantToWindGetDamage(character, targetMonster);
+
+                        // 바람 원소로 확산할 경우, 데미지 반감
+                        DiffusionFunc(diffusionRange, damage, 2, Element.e_Element.Plant, characTransform);
                     }
                 }
                 else    // 적에 부착된 원소가 없을 경우 원소 부착
@@ -214,15 +221,35 @@ public class CombatMediator : Subject ,ICombatMediator
                 {
                     if (mobElement == Element.e_Element.Fire)   // 캐릭터 원소 == 바람 / 적부착 == 불
                     {
+                        float diffusionRange = c_FireToWind(character);
+                        int damage = c_FireToWindGetDamage(character, targetMonster);
+
+                        // 바람 원소로 확산할 경우, 데미지 반감
+                        DiffusionFunc(diffusionRange, damage, 2, Element.e_Element.Fire, characTransform);
                     }
                     else if (mobElement == Element.e_Element.Water)  // 캐릭터 원소 == 바람 / 적부착 물
                     {
+                        float diffusionRange = c_WaterToWind(character);
+                        int damage = c_WaterToWindGetDamage(character, targetMonster);
+
+                        // 바람 원소로 확산할 경우, 데미지 반감
+                        DiffusionFunc(diffusionRange, damage, 2, Element.e_Element.Water, characTransform);
                     }
                     else if (mobElement == Element.e_Element.Plant)  // 캐릭터 원소 == 바람 / 적부착 풀
                     {
+                        float diffusionRange = c_PlantToWind(character);
+                        int damage = c_PlantToWindGetDamage(character, targetMonster);
+
+                        // 바람 원소로 확산할 경우, 데미지 반감
+                        DiffusionFunc(diffusionRange, damage, 2, Element.e_Element.Plant, characTransform);
                     }
                     else if (mobElement == Element.e_Element.Lightning)  // 캐릭터 원소 == 바람 / 적부착 번개
                     {
+                        float diffusionRange = c_LightningToWind(character);
+                        int damage = c_LightningToWindGetDamage(character, targetMonster);
+
+                        // 바람 원소로 확산할 경우, 데미지 반감
+                        DiffusionFunc(diffusionRange, damage, 2, Element.e_Element.Lightning, characTransform);
                     }
                 }
                 else    // 적에 부착된 원소가 없을 경우 원소 부착
@@ -292,6 +319,7 @@ public class CombatMediator : Subject ,ICombatMediator
 
             //만개 반응 == 풀원핵 + 번개
             case Element.e_Element.Lightning:
+                Element_Interaction.Instance.c_LightningToPlant(character, targetMonster);
                 isActive = true;
                 break;
 

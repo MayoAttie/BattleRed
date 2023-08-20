@@ -276,7 +276,7 @@ public class Element_Interaction : Singleton<Element_Interaction>
                 // 풀원핵 객체의 스크립트 처리
                 var mng = obj.GetComponent<PlantElement>();
                 mng.SetElement(new Element(Element.e_Element.Plant, false, true));
-                mng.SetIdIndex(plantElementNum%plantElementMaxNum);
+                mng.SetIdIndex(plantElementNum);
             }
         }
         Debug.Log("plantElementNum : " + plantElementNum);
@@ -531,7 +531,33 @@ public class Element_Interaction : Singleton<Element_Interaction>
         return damage;
     }
 
+    // 번개+바람, 확산 범위 반환
+    public static float c_PlantToWind(CharacterClass chCls)
+    {
+        float range;
 
+        range = chCls.GetElementNum() * 0.4f;
+        return range;
+    }
+    // 번개+바람, 데미지 반환
+    public static int c_PlantToWindGetDamage(CharacterClass chCls, Monster mobCls)
+    {
+        int damage;
+
+        Element element = mobCls.GetMonsterHittedElement();
+        element.SetElement(Element.e_Element.None);
+        element.SetIsActive(false);
+
+
+        damage = CiriticalDamageReturn(chCls, 0);
+        damage -= mobCls.GetMonsterDef();
+
+        if (damage < 0)
+            damage = 1;
+
+
+        return damage;
+    }
     #endregion
 
     #endregion
