@@ -20,7 +20,7 @@ public class MobCactusAttack : MonsterAttack
         EndPageChaseCheck();
     }
     public MobCactusAttack(Monster monsterObj, NavMeshAgent navAgent) : base(monsterObj, navAgent) {}
-    public MobCactusAttack(){}
+    public MobCactusAttack(){ }
 
 
     public override void MonsterAttackStart()   // 공격시작함수

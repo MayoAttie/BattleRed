@@ -49,8 +49,8 @@ public class PlantElement : CombatMediator
             else
                 Debug.Log("몬스터 널 X" + collider.gameObject.name);
 
-            Monster mobCls = collider.GetComponent<MonsterManager>().GetMonsterClass();
-            bool checker = Mediator_PlantObj(characMng.GetCharacterClass(), mobCls);
+            var mobMng = collider.GetComponent<MonsterManager>();
+            bool checker = Mediator_PlantObj(characMng.GetCharacterClass(), mobMng);
 
             if (!isActive) isActive = checker;
         }

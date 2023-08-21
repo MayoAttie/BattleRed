@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.AI;
+using System.Net.Http.Headers;
 
 public class Element_Interaction : Singleton<Element_Interaction>
 {
@@ -123,17 +124,19 @@ public class Element_Interaction : Singleton<Element_Interaction>
 
 
     // 불 + 풀 == 일정 시간 데미지
-    public void c_FireToPlant(CharacterClass chCls, Monster targetMob)
+    public void c_FireToPlant(CharacterClass chCls,MonsterManager mobMng)
     {
+        var targetMob = mobMng.GetMonsterClass();
         float time = c_FireToPlantGetTime(chCls);
         int damage = c_FireToPlantGetDamage(chCls, targetMob);
 
-        StartCoroutine(CalculateDamageOverTime(targetMob, damage, time));
+        StartCoroutine(CalculateDamageOverTime(mobMng, damage, time,Element.e_Element.Fire));
     }
-    private IEnumerator CalculateDamageOverTime(Monster mobCls, int damage, float duration)
+    private IEnumerator CalculateDamageOverTime(MonsterManager mobMng, int damage, float duration, Element.e_Element element)
     {
         while (duration > 0)
         {
+            var mobCls = mobMng.GetMonsterClass();
             // 데미지 계산식
             int def = mobCls.GetMonsterDef();
             damage -= def;
@@ -146,10 +149,31 @@ public class Element_Interaction : Singleton<Element_Interaction>
             int hp = mobCls.GetMonsterCurrentHp() - damage;
             mobCls.SetMonsterCurrentHP(hp);
 
+            // 데미지 플로팅
+            switch(element)
+            {
+                case Element.e_Element.Fire:
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobMng.GetMonsterHeadPosition(), Color.red);
+                    break;
+                case Element.e_Element.Water:
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobMng.GetMonsterHeadPosition(), Color.blue);
+                    break;
+                case Element.e_Element.Plant:
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobMng.GetMonsterHeadPosition(), Color.green);
+                    break;
+                case Element.e_Element.Lightning:
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobMng.GetMonsterHeadPosition(), new Color(0.5f, 0f, 0.5f));
+                    break;
+                case Element.e_Element.Wind:
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobMng.GetMonsterHeadPosition(), Color.cyan);
+                    break;
+            }
+
             // 시간 감소
             duration -= 1.0f;
 
             yield return new WaitForSeconds(1.0f);
+
         }
     }
     // 불 + 풀 == 지속피해 (데미지 지속 시간 반환)
@@ -303,6 +327,9 @@ public class Element_Interaction : Singleton<Element_Interaction>
                 int mobHp = mobCls.GetMonsterCurrentHp(); 
                 mobCls.SetMonsterCurrentHP(mobHp - damage);  // 몬스터 체력 감소
 
+                var mobPos = collider.GetComponent<MonsterManager>().GetMonsterHeadPosition();
+                // 데미지 플로팅
+                DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobPos, Color.green);
             }
 
             plantElementNum--;
@@ -375,12 +402,13 @@ public class Element_Interaction : Singleton<Element_Interaction>
 
 
     // 번개 + 물 == 일정 시간 데미지
-    public void c_LightningToWater(CharacterClass chCls, Monster targetMob)
+    public void c_LightningToWater(CharacterClass chCls, MonsterManager mobMng)
     {
+        var targetMob = mobMng.GetMonsterClass();
         float time = c_LightningToWaterGetTime(chCls);
         int damage = c_LightningToWaterGetTime(chCls, targetMob);
 
-        StartCoroutine(CalculateDamageOverTime(targetMob, damage, time));
+        StartCoroutine(CalculateDamageOverTime(mobMng, damage, time,Element.e_Element.Lightning));
     }
     // 번개 + 물 == 지속피해 (데미지 지속 시간 반환)
     private float c_LightningToWaterGetTime(CharacterClass chCls)
@@ -405,8 +433,9 @@ public class Element_Interaction : Singleton<Element_Interaction>
 
 
     // 번개 + 풀 == 격화상태 부여, 번개or풀 속성 공격 시, 데미지 증가
-    public void c_LightningToPlant(CharacterClass chCls, Monster mobCls)
+    public void c_LightningToPlant(CharacterClass chCls, MonsterManager mobMng)
     {
+        var mobCls = mobMng.GetMonsterClass();
         mobCls.GetMonsterHittedElement().SetElement(Element.e_Element.None);
         mobCls.GetMonsterHittedElement().SetIsActive(false);
 
@@ -502,12 +531,13 @@ public class Element_Interaction : Singleton<Element_Interaction>
     }
 
     // 풀 + 불 == 일정 시간 데미지
-    public void c_PlantToFire(CharacterClass chCls, Monster targetMob)
+    public void c_PlantToFire(CharacterClass chCls, MonsterManager mobMng)
     {
+        var targetMob = mobMng.GetMonsterClass();
         float time = c_PlantToFireGetDuration(chCls);
         int damage = c_PlantToFireGetDamage(chCls, targetMob);
 
-        StartCoroutine(CalculateDamageOverTime(targetMob, damage, time));
+        StartCoroutine(CalculateDamageOverTime(mobMng, damage, time,Element.e_Element.Plant));
     }
     // 풀 + 불 == 지속피해 (데미지 지속 시간 반환)
     private float c_PlantToFireGetDuration(CharacterClass chCls)

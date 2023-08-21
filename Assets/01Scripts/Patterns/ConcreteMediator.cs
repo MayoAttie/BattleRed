@@ -11,15 +11,17 @@ public class CombatMediator : Subject ,ICombatMediator
 
     #region 캐릭터
     // 캐릭터 평타 공격 판정 함수
-    public void Mediator_CharacterAttack(CharacterClass character, Monster targetMonster)
+    public void Mediator_CharacterAttack(CharacterClass character, MonsterManager targetMonster)
     {
         float criticalDamage = character.GetCriticalDamage();
         float criticalPercentage = character.GetCriticalPercentage();
         int attackPower = character.GetAttack();
 
-        int mobDef = targetMonster.GetMonsterDef();
-        int mobCurrentHp = targetMonster.GetMonsterCurrentHp();
-        int mobMaxHp = targetMonster.GetMonsterMaxHp();
+        var mobMng = targetMonster.GetMonsterClass();
+
+        int mobDef = mobMng.GetMonsterDef();
+        int mobCurrentHp = mobMng.GetMonsterCurrentHp();
+        int mobMaxHp = mobMng.GetMonsterMaxHp();
 
         // 크리티컬 확률을 기반으로 크리티컬 결정
         float randomValue = UnityEngine.Random.Range(0f, 1f);
@@ -36,16 +38,18 @@ public class CombatMediator : Subject ,ICombatMediator
         // 크리티컬이 발생한 경우 크리티컬 데미지 추가
         int damage = damageWithoutCritical + (isCritical ? totalCriticalDamage : 0);
 
+        DamageTextManager.Instance.CreateFloatingText(damage.ToString(), targetMonster.GetMonsterHeadPosition(), Color.white);
 
         //몬스터 피깎
         int tmp = mobCurrentHp - damage;
-        targetMonster.SetMonsterCurrentHP(tmp);
+        mobMng.SetMonsterCurrentHP(tmp);
 
     }
 
     // 공격용 스킬 함수
-    public void Mediator_CharacterSkillAttack(CharacterClass character, CharacterManager characMng, Monster targetMonster)
+    public void Mediator_CharacterSkillAttack(CharacterClass character, CharacterManager characMng, MonsterManager mobManager)
     {
+        var targetMonster = mobManager.GetMonsterClass();
         Transform characTransform = characMng.GetComponent<Transform>();
         Element element = character.GetCurrnetElement();
         Element.e_Element mobElement = targetMonster.GetMonsterHittedElement().GetElement();
@@ -54,20 +58,21 @@ public class CombatMediator : Subject ,ICombatMediator
             case Element.e_Element.Fire:
                 if(mobElement != Element.e_Element.None)
                 {
-                    if(mobElement == Element.e_Element.Water)   // 캐릭터 원소 == 불 / 적부착 == 물
+                    int damage = -1;
+                    if (mobElement == Element.e_Element.Water)   // 캐릭터 원소 == 불 / 적부착 == 물
                     {
-                        int damage = c_FireToWater(character,targetMonster);
+                        damage = c_FireToWater(character,targetMonster);
                         int mobHp = targetMonster.GetMonsterCurrentHp();
                         targetMonster.SetMonsterCurrentHP(mobHp-damage);
                     }
                     else if(mobElement == Element.e_Element.Plant)  // 캐릭터 원소 == 불 / 적부착 풀
                     {
-                        Element_Interaction.Instance.c_FireToPlant(character,targetMonster);           
+                        Element_Interaction.Instance.c_FireToPlant(character,mobManager);           
                     }
                     else if(mobElement == Element.e_Element.Lightning)  // 캐릭터 원소 == 불 / 적부착 번개
                     {
                         float diffusionRange = c_FireToLightning(character);
-                        int damage = c_FireToLightningGetDamage(character,targetMonster);
+                        damage = c_FireToLightningGetDamage(character,targetMonster);
 
                         DiffusionFunc(diffusionRange, damage, 0, Element.e_Element.Fire, characTransform);
 
@@ -75,7 +80,7 @@ public class CombatMediator : Subject ,ICombatMediator
                     else if(mobElement == Element.e_Element.Wind)  // 캐릭터 원소 == 불 / 적 부착 바람
                     {
                         float diffusionRange = c_FireToWind(character);
-                        int damage = c_FireToWindGetDamage(character, targetMonster);
+                        damage = c_FireToWindGetDamage(character, targetMonster);
 
                         // 바람 원소로 확산할 경우, 데미지 반감
                         DiffusionFunc(diffusionRange, damage, 2, Element.e_Element.Fire, characTransform);
@@ -83,16 +88,19 @@ public class CombatMediator : Subject ,ICombatMediator
                     }
                     else    // 중복 원소일 경우, 데미지만 계산만 돌림.
                     {
-                        int damage = c_ElementSet(character, targetMonster);
+                        damage = c_ElementSet(character, targetMonster);
                         int mobHp = targetMonster.GetMonsterCurrentHp();
                         targetMonster.SetMonsterCurrentHP(mobHp - damage);
                     }
+                    if(damage != -1)
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.red);
                 }
                 else    // 적에 부착된 원소가 없을 경우 원소 부착
                 {
                     int damage = c_ElementSet(character,targetMonster);
                     int mobHp = targetMonster.GetMonsterCurrentHp();
                     targetMonster.SetMonsterCurrentHP(mobHp-damage);
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.red);
                 }
                     break;
 
@@ -100,9 +108,10 @@ public class CombatMediator : Subject ,ICombatMediator
             case Element.e_Element.Water:
                 if (mobElement != Element.e_Element.None)
                 {
+                    int damage = -1;
                     if (mobElement == Element.e_Element.Fire)   // 캐릭터 원소 == 물 / 적부착 == 불
                     {
-                        int damage = c_WaterToFire(character, targetMonster);
+                        damage = c_WaterToFire(character, targetMonster);
                         int mobHp = targetMonster.GetMonsterCurrentHp();
                         targetMonster.SetMonsterCurrentHP(mobHp - damage);
                     }
@@ -113,30 +122,33 @@ public class CombatMediator : Subject ,ICombatMediator
                     else if (mobElement == Element.e_Element.Lightning)  // 캐릭터 원소 == 물 / 적부착 번개
                     {
                         float diffusionRange = c_WaterToLightning(character);
-                        int damage = c_WaterToLightningGetDamage(character, targetMonster);
+                        damage = c_WaterToLightningGetDamage(character, targetMonster);
 
                         DiffusionFunc(diffusionRange, damage, 0, Element.e_Element.Water, characTransform);
                     }
                     else if (mobElement == Element.e_Element.Wind)  // 캐릭터 원소 == 물 / 적부착 바람
                     {
                         float diffusionRange = c_WaterToWind(character);
-                        int damage = c_WaterToWindGetDamage(character, targetMonster);
+                        damage = c_WaterToWindGetDamage(character, targetMonster);
 
                         // 바람 원소로 확산할 경우, 데미지 반감
                         DiffusionFunc(diffusionRange, damage, 2, Element.e_Element.Water, characTransform);
                     }
                     else    // 중복 원소일 경우, 데미지만 계산만 돌림.
                     {
-                        int damage = c_ElementSet(character, targetMonster);
+                        damage = c_ElementSet(character, targetMonster);
                         int mobHp = targetMonster.GetMonsterCurrentHp();
                         targetMonster.SetMonsterCurrentHP(mobHp - damage);
                     }
+                    if(damage != -1)
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.blue);
                 }
                 else    // 적에 부착된 원소가 없을 경우 원소 부착
                 {
                     int damage = c_ElementSet(character, targetMonster);
                     int mobHp = targetMonster.GetMonsterCurrentHp();
                     targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.blue);
                 }
                 break;
 
@@ -146,7 +158,7 @@ public class CombatMediator : Subject ,ICombatMediator
                 {
                     if (mobElement == Element.e_Element.Fire)   // 캐릭터 원소 == 풀 / 적부착 == 불
                     {
-                        Element_Interaction.Instance.c_PlantToFire(character,targetMonster);
+                        Element_Interaction.Instance.c_PlantToFire(character,mobManager);
                         float diffusionRange = c_PlantToFireGetRange(character);
 
                         DiffusionFunc(diffusionRange, 0, 0, Element.e_Element.Plant, characTransform);
@@ -157,7 +169,7 @@ public class CombatMediator : Subject ,ICombatMediator
                     }
                     else if (mobElement == Element.e_Element.Lightning)  // 캐릭터 원소 == 풀 / 적부착 번개
                     {
-                        Element_Interaction.Instance.c_LightningToPlant(character, targetMonster);
+                        Element_Interaction.Instance.c_LightningToPlant(character, mobManager);
                     }
                     else if (mobElement == Element.e_Element.Wind)  // 캐릭터 원소 == 풀 / 적부착 바람
                     {
@@ -167,12 +179,22 @@ public class CombatMediator : Subject ,ICombatMediator
                         // 바람 원소로 확산할 경우, 데미지 반감
                         DiffusionFunc(diffusionRange, damage, 2, Element.e_Element.Plant, characTransform);
                     }
+                    else    // 중복 원소일 경우, 데미지만 계산만 돌림.
+                    {
+                        int damage = c_ElementSet(character, targetMonster);
+                        int mobHp = targetMonster.GetMonsterCurrentHp();
+                        targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                        DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.green);
+                    }
+
                 }
                 else    // 적에 부착된 원소가 없을 경우 원소 부착
                 {
                     int damage = c_ElementSet(character, targetMonster);
                     int mobHp = targetMonster.GetMonsterCurrentHp();
                     targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.green);
+
                 }
                 break;
 
@@ -188,11 +210,11 @@ public class CombatMediator : Subject ,ICombatMediator
                     }
                     else if (mobElement == Element.e_Element.Water)  // 캐릭터 원소 == 번개 / 적부착 물
                     {
-                        Element_Interaction.Instance.c_LightningToWater(character, targetMonster);
+                        Element_Interaction.Instance.c_LightningToWater(character, mobManager);
                     }
                     else if (mobElement == Element.e_Element.Plant)  // 캐릭터 원소 == 번개 / 적부착 풀
                     {
-                        Element_Interaction.Instance.c_LightningToPlant(character, targetMonster);
+                        Element_Interaction.Instance.c_LightningToPlant(character, mobManager);
                     }
                     else if (mobElement == Element.e_Element.Wind)  // 캐릭터 원소 == 번개 / 적부착 바람
                     {
@@ -212,6 +234,8 @@ public class CombatMediator : Subject ,ICombatMediator
                     int damage = c_ElementSet(character, targetMonster);
                     int mobHp = targetMonster.GetMonsterCurrentHp();
                     targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), new Color(0.5f, 0f, 0.5f));
+
                 }
                 break;
 
@@ -257,6 +281,7 @@ public class CombatMediator : Subject ,ICombatMediator
                     int damage = c_ElementSet(character, targetMonster);
                     int mobHp = targetMonster.GetMonsterCurrentHp();
                     targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.cyan);
                 }
                 break;
         }
@@ -277,6 +302,7 @@ public class CombatMediator : Subject ,ICombatMediator
         {
             int attackPower = damage;
             Monster rangeMob = collider.GetComponent<MonsterManager>().GetMonsterClass();
+            var monMng =  collider.GetComponent<MonsterManager>();
             if (rangeMob != null)
             {
                 if (rangeMob.GetMonsterHittedElement().GetElement() == Element.e_Element.None)
@@ -291,6 +317,26 @@ public class CombatMediator : Subject ,ICombatMediator
                 rangeMob.SetMonsterCurrentHP(mobHp - attackPower);
                 Debug.Log(rangeMob+"데미지 주기" + (mobHp - attackPower));
             }
+            
+            // 속성별 데미지 띄우기
+            switch(elementType)
+            {
+                case Element.e_Element.Fire:
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monMng.GetMonsterHeadPosition(), Color.red);
+                    break;
+                case Element.e_Element.Water:
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monMng.GetMonsterHeadPosition(), Color.blue);
+                    break;
+                case Element.e_Element.Plant:
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monMng.GetMonsterHeadPosition(), Color.green);
+                    break;
+                case Element.e_Element.Lightning:
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monMng.GetMonsterHeadPosition(), new Color(0.5f, 0f, 0.5f));
+                    break;
+                case Element.e_Element.Wind:
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monMng.GetMonsterHeadPosition(), Color.cyan);
+                    break;
+            }
         }
     }
 
@@ -304,7 +350,7 @@ public class CombatMediator : Subject ,ICombatMediator
 
     #region 풀원핵
     // 풀 원핵 오브젝트 반응
-    public bool Mediator_PlantObj(CharacterClass character, Monster targetMonster)
+    public bool Mediator_PlantObj(CharacterClass character, MonsterManager targetMonster)
     {
         bool isActive = false;
         Element element = character.GetCurrnetElement();

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.UIElements;
 
 public class Monster : Objects
@@ -38,11 +39,12 @@ public class Monster : Objects
     private int nMonsterDef;
     private float fMonsterSpeed;
     private float fMonsterRotationSpeed;
+    private float fMonsterHeadPos;
     private bool isQuicken;
     private Element monsterHaveElement;
     private Element monsterHittedElement;
 
-    public Monster(string sTag, string sName, int nGrade, bool isActive,e_MonsterState monsterState, e_MonsterType monsterType, int nMonsterMaxHp, int nMonsterCurrnetHp, int nMonsterExp, int nMonsterAtkPower, int nMonsterDef, float fMonsterSpeed, float fMonsterRotationSpeed, Element.e_Element element)
+    public Monster(string sTag, string sName, int nGrade, bool isActive,e_MonsterState monsterState, e_MonsterType monsterType, int nMonsterMaxHp, int nMonsterCurrnetHp, int nMonsterExp, int nMonsterAtkPower, int nMonsterDef, float fMonsterSpeed, float fMonsterRotationSpeed, Element.e_Element element, float fMonsterHeadPos)
         : base(sTag, sName, nGrade, isActive)
     {
         this.monsterType = monsterType;
@@ -54,6 +56,7 @@ public class Monster : Objects
         this.fMonsterSpeed = fMonsterSpeed;
         this.monsterState = monsterState;
         this.fMonsterRotationSpeed = fMonsterRotationSpeed;
+        this.fMonsterHeadPos = fMonsterHeadPos;
         isQuicken = false;
         monsterHaveElement = new Element(element, true, false);
         monsterHittedElement= new Element(Element.e_Element.None, false, false);
@@ -76,6 +79,7 @@ public class Monster : Objects
     public void SetMonsterHaveElement(Element element) { monsterHaveElement= element; }
     public void SetMonsterHittedElement(Element element) { monsterHittedElement= element; }
     public void SetIsQuicken(bool isQuicken) { this.isQuicken = isQuicken; }
+    public void SetMonsterHeadPos(float fMonsterHeadPos) {this.fMonsterHeadPos = fMonsterHeadPos; }
 
 
     public e_MonsterState GetMonsterState() { return monsterState; }
@@ -90,6 +94,7 @@ public class Monster : Objects
     public Element GetMonsterHaveElement() { return monsterHaveElement; }
     public Element GetMonsterHittedElement() { return monsterHittedElement; }
     public bool GetIsQuicken() { return isQuicken; }
+    public float GetMonsterHeadPos() { return fMonsterHeadPos; }
 
     #endregion
 

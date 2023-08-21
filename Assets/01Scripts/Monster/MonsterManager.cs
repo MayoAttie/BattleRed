@@ -363,32 +363,20 @@ public class MonsterManager : MonoBehaviour, Observer
 
 
     #region 게터세터
-    public void SetMonsterClass(Monster monsterCls)
-    {
-        this.monster = monsterCls;
-    }
-    public void SetAnimatorFloatValue(float posX, float posZ)
-    {
-        fPosX = posX;
-        fPosZ = posZ;
-    }
-    public void SetBattleActive(bool isBattle)
-    {
-        this.isBattle = isBattle;
-    }
-    public void SetMonsterAttackLevel(MonsterAttack.e_MonsterAttackLevel atkLevel)
-    {
-        monsterAtkLevel = atkLevel;
-    }
+    public void SetMonsterClass(Monster monsterCls){this.monster = monsterCls;}
+    public void SetAnimatorFloatValue(float posX, float posZ){fPosX = posX; fPosZ = posZ;}
+    public void SetBattleActive(bool isBattle){this.isBattle = isBattle;}
+    public void SetMonsterAttackLevel(MonsterAttack.e_MonsterAttackLevel atkLevel){monsterAtkLevel = atkLevel;}
 
 
-    public Monster GetMonsterClass()
+    public Monster GetMonsterClass(){return this.monster;}
+    public bool GetBattleActive(){return isBattle;}
+
+    public Vector3 GetMonsterHeadPosition()
     {
-        return this.monster;
-    }
-    public bool GetBattleActive()
-    {
-        return isBattle;
+        // 몬스터 머리 위 위치를 계산하고 반환하는 로직 추가
+        Vector3 headPosition = transform.position + Vector3.up * monster.GetMonsterHeadPos(); // 예시로 머리 위로 어느 정도 올라가도록 계산
+        return headPosition;
     }
 
 
