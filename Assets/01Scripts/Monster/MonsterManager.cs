@@ -375,7 +375,7 @@ public class MonsterManager : MonoBehaviour, Observer
     public Vector3 GetMonsterHeadPosition()
     {
         // 몬스터 머리 위 위치를 계산하고 반환하는 로직 추가
-        Vector3 headPosition = transform.position + Vector3.up * monster.GetMonsterHeadPos(); // 예시로 머리 위로 어느 정도 올라가도록 계산
+        Vector3 headPosition = transform.position + Vector3.up * monster.GetMonsterHeadPos();
         return headPosition;
     }
 

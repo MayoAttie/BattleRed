@@ -1,18 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
 
 public class PlantElement : CombatMediator
 {
     Element myElement;
     float timeIndex = 0;
-    float detectionRange = 3f;
+    float detectionRange = 15f;
     int idIndex;
 
     // 객체 생명주기
     IEnumerator LifeCycle()
     {
-        detectionRange = 4f;
         while(timeIndex <30f)
         {
             timeIndex += Time.deltaTime;
@@ -24,7 +24,6 @@ public class PlantElement : CombatMediator
             {
                 if(collider != null)
                 {
-                    Debug.Log("____GetActive =="+ CharacterManager.Instance.GetCharacterClass().GetCurrnetElement().GetIsActive());
                     if (CharacterManager.Instance.GetCharacterClass().GetCurrnetElement().GetIsActive()== true)
                         ElemnetInterective(CharacterManager.Instance);
                 }
@@ -32,37 +31,55 @@ public class PlantElement : CombatMediator
         }
 
 
-        Destroy(gameObject);
+        QueueResettingAndDestroy();
     }
 
     void ElemnetInterective(CharacterManager characMng)
     {
-        detectionRange = 4f;
         bool isActive = false;
         
         Collider[] colliders = Physics.OverlapSphere(transform.position, detectionRange, LayerMask.GetMask("Monster"));
 
         foreach (Collider collider in colliders)
         {
-            if (collider == null)
-                Debug.Log("몬스터 널");
-            else
-                Debug.Log("몬스터 널 X" + collider.gameObject.name);
 
             var mobMng = collider.GetComponent<MonsterManager>();
-            bool checker = Mediator_PlantObj(characMng.GetCharacterClass(), mobMng);
+            isActive = Mediator_PlantObj(characMng.GetCharacterClass(), mobMng);
 
-            if (!isActive) isActive = checker;
+            if (isActive)
+                break;
         }
 
 
         if (isActive == false)
             return;
 
-        Destroy(gameObject);
+
+
+        QueueResettingAndDestroy();
     }
 
     public PlantElement(){}
+
+    public void QueueResettingAndDestroy()
+    {
+        // 제거하려는 게임 오브젝트를 큐에서 제거
+        Queue<GameObject> plantQue = Element_Interaction.Instance.plantQue;
+        GameObject gameObjectToRemove = this.gameObject; // 현재 게임 오브젝트를 제거하려는 대상으로 설정
+
+        Queue<GameObject> newQueue = new Queue<GameObject>();
+        foreach (GameObject obj in plantQue)
+        {
+            if (obj != gameObjectToRemove)
+            {
+                newQueue.Enqueue(obj);
+            }
+        }
+        Element_Interaction.Instance.plantQue = newQueue;
+        Element_Interaction.plantElementNum--;
+        // 게임 오브젝트 제거
+        Destroy(gameObjectToRemove);
+    }
 
     public void SetElement(Element element)
     { 

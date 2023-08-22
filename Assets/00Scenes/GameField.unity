@@ -896,7 +896,7 @@ GameObject:
   - component: {fileID: 304939432}
   - component: {fileID: 304939433}
   - component: {fileID: 304939434}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: swordCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

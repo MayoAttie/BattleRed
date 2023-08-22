@@ -292,11 +292,9 @@ public class CombatMediator : Subject ,ICombatMediator
     //확산(확산 범위, 피해량, 피해량 보정값, 부착될 원소타입)
     void DiffusionFunc(float diffusionRange, int damage, int offset, Element.e_Element elementType, Transform characTransform)
     {
-        Debug.Log("범위 탐색 : "+characTransform + " : " + diffusionRange);
         //  범위 내 적에게 데미지
         Collider[] colliders = Physics.OverlapSphere(characTransform.position, diffusionRange, LayerMask.GetMask("Monster"));
-        if(colliders != null)
-            Debug.Log("null아님");
+
 
         foreach (Collider collider in colliders)
         {
@@ -315,7 +313,6 @@ public class CombatMediator : Subject ,ICombatMediator
                 if (offset > 0)
                     attackPower /= offset;
                 rangeMob.SetMonsterCurrentHP(mobHp - attackPower);
-                Debug.Log(rangeMob+"데미지 주기" + (mobHp - attackPower));
             }
             
             // 속성별 데미지 띄우기
@@ -508,7 +505,6 @@ public class CombatMediator : Subject ,ICombatMediator
             isElementAttackActive = true;
         }
 
-        Debug.Log("몬스터 어택 성공~!!");
         return isElementAttackActive;
     }
 

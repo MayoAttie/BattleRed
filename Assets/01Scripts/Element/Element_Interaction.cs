@@ -7,9 +7,9 @@ using System.Net.Http.Headers;
 public class Element_Interaction : Singleton<Element_Interaction>
 {
     [SerializeField] private GameObject plantElement;
-    static int plantElementNum = 0;
+    public static int plantElementNum = 0;
     static int plantElementMaxNum = 5;
-    Queue<GameObject> plantQue = new Queue<GameObject>();
+    public Queue<GameObject> plantQue = new Queue<GameObject>();
 
     #region 캐릭터
 
@@ -180,7 +180,6 @@ public class Element_Interaction : Singleton<Element_Interaction>
     private float c_FireToPlantGetTime(CharacterClass chCls)
     {
         float duration;
-
         duration = chCls.GetElementNum() * 0.1f;
         return duration;
     }
@@ -303,7 +302,6 @@ public class Element_Interaction : Singleton<Element_Interaction>
                 mng.SetIdIndex(plantElementNum);
             }
         }
-        Debug.Log("plantElementNum : " + plantElementNum);
 
         // 원핵의 숫자가, 최대한계치를 넘었을 경우,
         if (plantElementNum>=plantElementMaxNum)
@@ -313,18 +311,19 @@ public class Element_Interaction : Singleton<Element_Interaction>
             float range = mng.GetDetectionRange();
 
             // 몬스터 레이어를 가진 객체를 배열에 저장
-            Collider[] colliders = Physics.OverlapSphere(obj.transform.position, range, LayerMask.GetMask("Monster"));
+            int monsterLayer = LayerMask.NameToLayer("Monster");
+            Collider[] colliders = Physics.OverlapSphere(obj.transform.position, range, 1 << monsterLayer);
 
             foreach (Collider collider in colliders)
             {
-                if (collider == null)
-                    Debug.Log("몬스터 널");
-                else
-                    Debug.Log("몬스터 널 X" + collider.gameObject.name);
 
                 Monster mobCls = collider.GetComponent<MonsterManager>().GetMonsterClass();
                 int damage = c_PlantToPlant(chCls, mobCls);  // 개화 데미지 계산 함수 호출
-                int mobHp = mobCls.GetMonsterCurrentHp(); 
+                int mobHp = mobCls.GetMonsterCurrentHp();
+
+                Element element = new Element(Element.e_Element.Plant,transform,false);
+                mobCls.SetMonsterHittedElement(element);
+                
                 mobCls.SetMonsterCurrentHP(mobHp - damage);  // 몬스터 체력 감소
 
                 var mobPos = collider.GetComponent<MonsterManager>().GetMonsterHeadPosition();
@@ -333,7 +332,6 @@ public class Element_Interaction : Singleton<Element_Interaction>
             }
 
             plantElementNum--;
-            Debug.Log("plantElementNum : " + plantElementNum);
             Destroy(obj); // 객체 파괴
         }
 
@@ -860,5 +858,7 @@ public class Element_Interaction : Singleton<Element_Interaction>
     }
 
     #endregion
+
+
 
 }

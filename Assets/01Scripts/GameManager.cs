@@ -13,7 +13,7 @@ public class GameManager : Singleton<GameManager>
 
     void Start()
     {
-        for(int i=0; i<1; i++)
+        for(int i=0; i<2; i++)
         {
             foreach (var mob in Monsters)
             {
@@ -38,6 +38,6 @@ public class GameManager : Singleton<GameManager>
     // Update is called once per frame
     void Update()
     {
-        
+        Debug.Log(nameof(Element_Interaction.plantElementNum) + " : " + Element_Interaction.plantElementNum);
     }
 }
