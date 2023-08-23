@@ -40,6 +40,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     private void Start()
     {
         clsCharacter = GameManager.Instance.characterCls;           // 캐릭터 클래스 초기화
+        UI_Manager.Instance.HpBarFill_Init(clsCharacter.GetMaxHp(), clsCharacter.GetCurrentHp());
+        UI_Manager.Instance.HpBarFill_End(clsCharacter.GetMaxHp(), clsCharacter.GetCurrentHp());
         element = clsCharacter.GetCurrnetElement().GetElement();    // 캐릭터 클래스 - 현재 원소 초기화
     }
 

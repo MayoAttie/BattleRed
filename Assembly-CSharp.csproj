@@ -88,6 +88,7 @@
     <Compile Include="Assets\01Scripts\Tools\FloatingText.cs" />
     <Compile Include="Assets\01Scripts\Tools\ViewRange.cs" />
     <Compile Include="Assets\01Scripts\TouchPadController.cs" />
+    <Compile Include="Assets\01Scripts\UI_Manager.cs" />
     <Compile Include="Assets\02Assets\UJoystick\Content\Script\Core\bl_Joystick.cs" />
     <Compile Include="Assets\02Assets\UJoystick\Content\Script\Internal\bl_JoystickUtils.cs" />
     <Compile Include="Assets\02Assets\UJoystick\Example\Scrips\bl_ControllerExample.cs" />
