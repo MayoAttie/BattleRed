@@ -78,6 +78,7 @@
     <Compile Include="Assets\01Scripts\Objects.cs" />
     <Compile Include="Assets\01Scripts\Patterns\ConcreteMediator.cs" />
     <Compile Include="Assets\01Scripts\Patterns\ICombatMediator.cs" />
+    <Compile Include="Assets\01Scripts\Patterns\ObjectPool.cs" />
     <Compile Include="Assets\01Scripts\Patterns\Observer.cs" />
     <Compile Include="Assets\01Scripts\Patterns\Singleton.cs" />
     <Compile Include="Assets\01Scripts\Patterns\Subject.cs" />

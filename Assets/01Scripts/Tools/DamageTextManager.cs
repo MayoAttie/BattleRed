@@ -16,6 +16,7 @@ public class DamageTextManager : Singleton<DamageTextManager>
 
         // 월드 좌표를 스크린 좌표로 변환합니다.
         Vector2 screenPosition = Camera.main.WorldToScreenPoint(position);
+        Debug.Log("_screenPosition  : " + screenPosition);
 
         instance.transform.SetParent(canvas.transform, false);
         instance.transform.position = screenPosition;

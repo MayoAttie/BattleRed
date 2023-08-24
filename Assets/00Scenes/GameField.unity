@@ -8722,6 +8722,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hpbar: {fileID: 304551251}
+  monster_HPbar: {fileID: 981153259070329893, guid: 96131aea6eff8944cb8a5910b0124f16,
+    type: 3}
 --- !u!1 &802310063
 GameObject:
   m_ObjectHideFlags: 0

@@ -379,7 +379,7 @@ public class CombatMediator : Subject ,ICombatMediator
     // 몬스터 공격 판정함수
     public bool Mediator_MonsterAttack(Monster monster, CharacterClass targetCharacter)
     {
-        UI_Manager.Instance.HpBarFill_Init(targetCharacter.GetMaxHp(), targetCharacter.GetCurrentHp());
+        UI_Manager.Instance.HpBarFill_Init(targetCharacter.GetCurrentHp());
 
         bool isElementAttackActive = false;
         int atkPower = monster.GetMonsterAtkPower();
@@ -400,7 +400,7 @@ public class CombatMediator : Subject ,ICombatMediator
             Debug.Log(damage);
             targetCharacter.SetCurrentHp(tmp);
             // UI HP바 표기
-            UI_Manager.Instance.HpBarFill_End(targetCharacter.GetMaxHp(), targetCharacter.GetCurrentHp());
+            UI_Manager.Instance.HpBarFill_End(targetCharacter.GetMaxHp(), targetCharacter.GetCurrentHp(), false);
         }
         else
         {
@@ -504,7 +504,7 @@ public class CombatMediator : Subject ,ICombatMediator
             int tmp = characHp - damage;
             targetCharacter.SetCurrentHp(tmp);
             // UI HP바 표기
-            UI_Manager.Instance.HpBarFill_End(targetCharacter.GetMaxHp(), targetCharacter.GetCurrentHp());
+            UI_Manager.Instance.HpBarFill_End(targetCharacter.GetMaxHp(), targetCharacter.GetCurrentHp(), false);
 
 
             // 원소 공격 유무 액티브 활성화
