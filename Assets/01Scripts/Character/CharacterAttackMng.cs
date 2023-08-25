@@ -213,7 +213,6 @@ public class CharacterAttackMng : Subject, Observer
 
             characMng.GetCharacterClass().SetState(eCharactgerState.e_Idle);
             characMng.SetIsBattle(false);
-            Debug.Log("characMng.SetIsBattle(false)");
             isCoroutineFlag = false;
             AttackModeChecker = null;
         }

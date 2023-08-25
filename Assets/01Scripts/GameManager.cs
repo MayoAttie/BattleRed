@@ -1,43 +1,67 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 public class GameManager : Singleton<GameManager>
 {
     public CharacterClass characterCls;
     public GameObject[] Monsters;
-    public Transform[] MonsterSpawnPoint;
+
+    public ObjectPool<MonsterManager> CactusPool;
+    public ObjectPool<MonsterManager> MushroomAngryPool;
+
+
     private void Awake()
     {
         characterCls = new CharacterClass(300, 300, 0, 100, 50, 15, 1, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true);
+        CactusPool = new ObjectPool<MonsterManager>(Monsters[0],10);
+        MushroomAngryPool = new ObjectPool<MonsterManager>(Monsters[1],10);
+
+
     }
 
     void Start()
     {
-        for(int i=0; i<2; i++)
-        {
-            foreach (var mob in Monsters)
-            {
-                if (mob.name == "Cactus" || mob.name == "MushroomAngry")
-                {
-                    // 랜덤한 인덱스를 구해서 해당 위치에 몬스터 생성
-                    int randomIndex = UnityEngine.Random.Range(0, MonsterSpawnPoint.Length);
-                    var point = MonsterSpawnPoint[randomIndex];
 
-                    Monster monsterCls = new Monster("몬스터", mob.name, 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence, 1000, 1000, 10, 50, 50, 1.8f, 100f, Element.e_Element.None, 1.5f);
-                    GameObject obj = Instantiate(mob);
-                    MonsterManager monsterManager = obj.GetComponent<MonsterManager>();
-                    monsterManager.SetMonsterClass(monsterCls);
-                    obj.transform.position = point.position; // 위치를 랜덤하게 선택된 point의 위치로 이동
-                }
-            }
-
-        }
 
     }
 
-    // Update is called once per frame
     void Update()
     {
-        Debug.Log(nameof(Element_Interaction.plantElementNum) + " : " + Element_Interaction.plantElementNum);
     }
+
+    public void MonsterSpawn(Transform point)
+    {
+        Collider[] colliders = Physics.OverlapSphere(point.position, 12, 1 << LayerMask.NameToLayer("Monster"));
+
+        if (colliders.Length > 0)
+        {
+            // 이미 해당 위치 인근에 몬스터가 있는 경우, 생성하지 않고 바로 반환
+            return;
+        }
+
+        // 오브젝트 풀을 이용해 몬스터 생성
+        foreach (var mob in Monsters)
+        {
+            if (mob.name == "Cactus")
+            {
+                Vector3 spawnPosition = point.position + new Vector3(1 * 2, 0, 0);
+                int extraHealth = 100;
+                int extraAttack = 0;
+                Monster monsterCls = new Monster("몬스터", mob.name, 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence, 1000 + extraHealth, 1000, 10 + extraAttack, 15, 15, 1.8f, 100f, Element.e_Element.None, 1.5f);
+                MonsterManager monsterManager = CactusPool.GetFromPool(spawnPosition, Quaternion.identity);
+                monsterManager.SetMonsterClass(monsterCls);
+            }
+            else if (mob.name == "MushroomAngry")
+            {
+                Vector3 spawnPosition = point.position + new Vector3(2 * 2, 0, 0);
+                int extraHealth = 0;
+                int extraAttack = 10;
+                Monster monsterCls = new Monster("몬스터", mob.name, 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence, 1000 + extraHealth, 1000, 10 + extraAttack, 15, 15, 1.8f, 100f, Element.e_Element.None, 1.5f);
+                MonsterManager monsterManager = MushroomAngryPool.GetFromPool(spawnPosition, Quaternion.identity);
+                monsterManager.SetMonsterClass(monsterCls);
+            }
+        }
+    }
+
 }

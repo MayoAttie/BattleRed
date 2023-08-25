@@ -36,18 +36,21 @@ public class MonsterAttack : MonoBehaviour, Observer
     
     #endregion
 
-    private void Awake()
+
+    private void OnEnable()
     {
-    }
-    void Start()
-    {
+        // 변수 초기화
+        isChase = false;
+        isTargetInRange = false;
+        isBattle = false;
+        attackLevel = e_MonsterAttackLevel.None;
+        isAtkAnimationConrolFlag = false;
     }
 
     protected void Update()
     {
         if (isBattle == false)
             return;
-
 
         TargetChaseMove();
     }
@@ -163,18 +166,9 @@ public class MonsterAttack : MonoBehaviour, Observer
 
 
     #region 세터게터
-    public void SetMonsetrCls(Monster monster)
-    {
-        monsterCls = monster;
-    }
-    public void SetChaseActive(bool isChase)
-    {
-        this.isChase = isChase;
-    }
-    public void SetAtkColliderBox(GameObject box)
-    {
-        colliderBox = box;
-    }
+    public void SetMonsetrCls(Monster monster){monsterCls = monster;}
+    public void SetChaseActive(bool isChase){this.isChase = isChase;}
+    public void SetAtkColliderBox(GameObject box){colliderBox = box;}
     public void SetAttackLevel(e_MonsterAttackLevel attackLevel)
     {
         this.attackLevel = attackLevel;
@@ -182,51 +176,18 @@ public class MonsterAttack : MonoBehaviour, Observer
         mng.SetAnimatorFloatValue(0, 0);
         mng.GetComponent<MonsterManager>().SetMonsterAttackLevel(attackLevel);
     }
-    public void SetBattleActive(bool isBattle)
-    {
-        this.isBattle = isBattle;
-    }
-    public void SetNavMeshAgent(NavMeshAgent navAgent)
-    {
-        this.navAgent = navAgent;
-    }
-    public void SetChaseRange(float fSetChaseRange)
-    {
-        this.fSetChaseRange = fSetChaseRange;
-    }
+    public void SetBattleActive(bool isBattle){this.isBattle = isBattle;}
+    public void SetNavMeshAgent(NavMeshAgent navAgent){this.navAgent = navAgent;}
+    public void SetChaseRange(float fSetChaseRange){this.fSetChaseRange = fSetChaseRange;}
 
-    public Monster GetMonsterCls()
-    {
-        return monsterCls;
-    }
-    public bool GetChaseActive()
-    {
-        return isChase;
-    }
-    public GameObject GetTarget()
-    {
-        return target;
-    }
-    public e_MonsterAttackLevel GetAttackLevel()
-    {
-        return attackLevel;
-    }
-    public List<Transform> GetTargetList()
-    {
-        return TargetList;
-    }
-    public bool GetTargetInRange()
-    {
-        return isTargetInRange;
-    }
-    public bool GetBattleActive()
-    {
-        return isBattle;
-    }
-    public GameObject GetAtkColliderBox()
-    {
-        return colliderBox;
-    }
+    public Monster GetMonsterCls(){return monsterCls;}
+    public bool GetChaseActive(){return isChase;}
+    public GameObject GetTarget(){return target;}
+    public e_MonsterAttackLevel GetAttackLevel(){return attackLevel;}
+    public List<Transform> GetTargetList(){return TargetList;}
+    public bool GetTargetInRange(){return isTargetInRange;}
+    public bool GetBattleActive(){return isBattle;}
+    public GameObject GetAtkColliderBox(){return colliderBox;}
 
     #endregion
 

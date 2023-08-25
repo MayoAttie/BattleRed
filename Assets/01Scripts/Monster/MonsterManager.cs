@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
 using static Monster;
@@ -20,7 +21,7 @@ public class MonsterManager : MonoBehaviour, Observer
     bool isDeadFlag;
     NavMeshAgent navMeshController;                     // NavMesh AI 컨트롤러
     List<Transform> taretList;                          // 적 인식 Ragne 내의 객체 List
-    public Monster.e_MonsterState state;                // 몬스터의 상태 변수
+    public Monster.e_MonsterState state;                // 몬스터의 상태 변수(체크용)
     public float fElapsedTime;                          // 시간 변수
     Vector3 v3_startPos;                                // 몬스터 처음 위치
     MonsterAttack.e_MonsterAttackLevel monsterAtkLevel; // 몬스터 어택 단계 변수
@@ -43,18 +44,31 @@ public class MonsterManager : MonoBehaviour, Observer
 
     #endregion
 
+
+
     private void Awake()
     {
         atkColliderBox.SetActive(false);
-        isDeadFlag = false;
         MobAnimator = gameObject.GetComponent<Animator>();
         gameObject.GetComponent<CharacterViewRange>().Attach(this);
         navMeshController= gameObject.GetComponent<NavMeshAgent>();
     }
+    private void OnEnable()
+    {
+        // 변수 초기화
+        fPosX = 0;
+        fPosZ = 0;
+        isBattle = false;
+        isHit = false;
+        isDead = false;
+        isIdle = false;
+        isDeadFlag = false;
+        monsterAtkLevel = MonsterAttack.e_MonsterAttackLevel.None;
+        v3_startPos = this.gameObject.transform.position;
+    }
 
     void Start()
     {
-        v3_startPos = this.gameObject.transform.position;
         navMeshController.speed = monster.GetMonsterSpeed();
 
         // 객체의 몬스터 Object 클래스 찾기.
@@ -121,9 +135,33 @@ public class MonsterManager : MonoBehaviour, Observer
         }
     }
 
+    // 몬스터 사망시, 오브젝트 풀 리턴
     void DeadAnimation()
     {
-        Destroy(this.gameObject);
+        MonsterManager monsterManager = GetComponent<MonsterManager>();
+        string name = monster.GetName();
+        switch (name)
+        {
+            case "Cactus":
+                if (monsterManager != null)
+                {
+                    GameManager.Instance.CactusPool.ReturnToPool(monsterManager);
+                }
+                else
+                    // 오브젝트 풀이 아닌 다른 처리를 해야할 경우의 코드
+                    Destroy(gameObject);
+                break;
+            case "MushroomAngry":
+                if (monsterManager != null)
+                {
+                    GameManager.Instance.MushroomAngryPool.ReturnToPool(monsterManager);
+                }
+                else
+                    // 오브젝트 풀이 아닌 다른 처리를 해야할 경우의 코드
+                    Destroy(gameObject);
+                break;
+            default: break;
+        }
     }
 
 
@@ -376,6 +414,7 @@ public class MonsterManager : MonoBehaviour, Observer
     {
         // 몬스터 머리 위 위치를 계산하고 반환하는 로직 추가
         Vector3 headPosition = transform.position + Vector3.up * monster.GetMonsterHeadPos();
+        Debug.Log("monster gameObject.transform.position) " + transform.position);
         return headPosition;
     }
 

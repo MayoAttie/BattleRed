@@ -320,9 +320,6 @@ public class Element_Interaction : Singleton<Element_Interaction>
                 Monster mobCls = collider.GetComponent<MonsterManager>().GetMonsterClass();
                 int damage = c_PlantToPlant(chCls, mobCls);  // 개화 데미지 계산 함수 호출
                 int mobHp = mobCls.GetMonsterCurrentHp();
-
-                Element element = new Element(Element.e_Element.Plant,transform,false);
-                mobCls.SetMonsterHittedElement(element);
                 
                 mobCls.SetMonsterCurrentHP(mobHp - damage);  // 몬스터 체력 감소
 

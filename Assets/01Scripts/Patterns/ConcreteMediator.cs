@@ -392,7 +392,7 @@ public class CombatMediator : Subject ,ICombatMediator
         {
             // 공격력 - 방어력
             damage = atkPower - characDef;
-            if (damage < 0) // 방어력 감쇄로 데미지가 음수 값일 경우, 1보정.
+            if (damage <= 0) // 방어력 감쇄로 데미지가 음수 값일 경우, 1보정.
                 damage = 1;
 
             //캐릭터 피깎

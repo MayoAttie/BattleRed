@@ -15,6 +15,10 @@ public class MobAngryMushroomAttack : MonsterAttack
         isAtkAnimationConrolFlag = false;
         animator = gameObject.GetComponent<Animator>();
     }
+    private void OnEnable()
+    {
+        currnetAtkLevel = -1;
+    }
 
     void Update()
     {

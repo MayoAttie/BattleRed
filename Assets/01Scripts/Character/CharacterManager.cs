@@ -5,6 +5,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SocialPlatforms;
 
 public class CharacterManager : Singleton<CharacterManager>, Observer
 {
@@ -55,6 +56,13 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         FloatAnimatorValueFunc();                               // 애니메이터 xz_flaot 변수 변경
         SatelliteParticleColorSwitch();                         // 원소 변경
     }
+    private void FixedUpdate()
+    {
+        World_InCharacterCheck();
+        
+    }
+
+    #region 애니메이션 제어
 
 
     // 캐릭터 애니메이터 제어 함수
@@ -128,6 +136,9 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         aniController.SetFloat("RunX", runX);
         aniController.SetFloat("RunZ", runZ);
     }
+    #endregion
+
+    #region 원소 제어
 
     // 원소 스위칭
     public void ElementSwitch()
@@ -215,6 +226,31 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
                 break;
         }
     }
+
+    #endregion
+
+
+    #region 캐릭터 월드 Range 체크
+
+    void World_InCharacterCheck()
+    {
+        // 몬스터 레이어를 가진 객체를 배열에 저장
+        int SpwanPoint = LayerMask.NameToLayer("SpwanPoint");
+        // 탐색범위 10
+        Collider[] colliders = Physics.OverlapSphere(transform.position, 10, 1 << SpwanPoint);
+        if(colliders.Length > 0 )
+        {
+            foreach (Collider collider in colliders)
+            {
+                GameManager.Instance.MonsterSpawn(collider.transform);
+            }
+        }
+
+    }
+
+    #endregion
+
+
 
 
     #region 게터세터

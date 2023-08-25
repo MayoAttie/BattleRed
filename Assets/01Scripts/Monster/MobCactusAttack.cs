@@ -12,12 +12,18 @@ public class MobCactusAttack : MonsterAttack
         isAtkAnimationConrolFlag = false;
         animator = gameObject.GetComponent<Animator>();
     }
+    private void OnEnable()
+    {
+        currnetAtkLevel = -1;
+    }
 
     void Update()
     {
         base.Update();
+
         AttackProcessAI();
         EndPageChaseCheck();
+
     }
     public MobCactusAttack(Monster monsterObj, NavMeshAgent navAgent) : base(monsterObj, navAgent) {}
     public MobCactusAttack(){ }
