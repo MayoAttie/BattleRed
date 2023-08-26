@@ -27,13 +27,15 @@ public class ObjectPool<T> : MonoBehaviour where T : Component
         }
     }
 
-    // 오브젝트 풀에서 오브젝트 가져오기
-    public T GetFromPool(Vector3 position, Quaternion rotation)
+    // 오브젝트 풀에서 오브젝트 가져오기 및 부모 설정
+    public T GetFromPool(Vector3 position, Quaternion rotation, Transform parent = null)
     {
         foreach (T obj in pool)
         {
             if (!obj.gameObject.activeInHierarchy)
             {
+                if(parent != null)
+                    obj.transform.SetParent(parent);
                 obj.transform.position = position;
                 obj.transform.rotation = rotation;
                 obj.gameObject.SetActive(true);
@@ -42,6 +44,8 @@ public class ObjectPool<T> : MonoBehaviour where T : Component
         }
 
         T newObj = Object.Instantiate(prefab, position, rotation).GetComponent<T>();
+        if (parent != null)
+            newObj.transform.SetParent(parent);
         pool.Add(newObj);
         return newObj;
     }

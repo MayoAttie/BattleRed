@@ -77,6 +77,7 @@ public class CharacterClass : Objects
     public int GetMaxHp(){return nMaxHp;}
     public float GetCriticalDamage(){return fCriticalDamage;}
     public float GetCriticalPercentage(){return fCriticalPercentage;}
+    public int GetLeveL() { return nLevel; }
 
 
     public void SetState(eCharactgerState state){eCharacState = state;}

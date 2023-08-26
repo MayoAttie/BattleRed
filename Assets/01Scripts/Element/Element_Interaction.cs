@@ -134,9 +134,14 @@ public class Element_Interaction : Singleton<Element_Interaction>
     }
     private IEnumerator CalculateDamageOverTime(MonsterManager mobMng, int damage, float duration, Element.e_Element element)
     {
+        var mobHpMng = mobMng.GetMonsterHPMng();
+        var mobCls = mobMng.GetMonsterClass();
+        int maxHp = mobCls.GetMonsterMaxHp();   //최대체력 저장
         while (duration > 0)
         {
-            var mobCls = mobMng.GetMonsterClass();
+            //hp바 현재 체력 초기화
+            mobHpMng.HpBarFill_Init(mobCls.GetMonsterCurrentHp());
+
             // 데미지 계산식
             int def = mobCls.GetMonsterDef();
             damage -= def;
@@ -148,6 +153,9 @@ public class Element_Interaction : Singleton<Element_Interaction>
             // hp 수정
             int hp = mobCls.GetMonsterCurrentHp() - damage;
             mobCls.SetMonsterCurrentHP(hp);
+
+            //hp바 반영
+            mobHpMng.HpBarFill_End(maxHp, hp, false);
 
             // 데미지 플로팅
             switch(element)
@@ -316,12 +324,16 @@ public class Element_Interaction : Singleton<Element_Interaction>
 
             foreach (Collider collider in colliders)
             {
+                var mobMng = collider.GetComponent<MonsterManager>();
+                MonsterHp mobHpMng = mobMng.GetMonsterHPMng();
+                Monster mobCls = mobMng.GetMonsterClass();
+                mobHpMng.HpBarFill_Init(mobCls.GetMonsterCurrentHp());
 
-                Monster mobCls = collider.GetComponent<MonsterManager>().GetMonsterClass();
                 int damage = c_PlantToPlant(chCls, mobCls);  // 개화 데미지 계산 함수 호출
                 int mobHp = mobCls.GetMonsterCurrentHp();
                 
                 mobCls.SetMonsterCurrentHP(mobHp - damage);  // 몬스터 체력 감소
+                mobHpMng.HpBarFill_End(mobCls.GetMonsterMaxHp(), mobHp - damage, false);    //Hp바 반영
 
                 var mobPos = collider.GetComponent<MonsterManager>().GetMonsterHeadPosition();
                 // 데미지 플로팅

@@ -16,6 +16,10 @@ public class MobCactusAttack : MonsterAttack
     {
         currnetAtkLevel = -1;
     }
+    private void OnDisable()
+    {
+        currnetAtkLevel = -1;
+    }
 
     void Update()
     {

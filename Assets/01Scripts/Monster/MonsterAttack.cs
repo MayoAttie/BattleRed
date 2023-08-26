@@ -45,6 +45,17 @@ public class MonsterAttack : MonoBehaviour, Observer
         isBattle = false;
         attackLevel = e_MonsterAttackLevel.None;
         isAtkAnimationConrolFlag = false;
+        target = null;
+    }
+    private void OnDisable()
+    {
+        // 변수 초기화
+        isChase = false;
+        isTargetInRange = false;
+        isBattle = false;
+        attackLevel = e_MonsterAttackLevel.None;
+        isAtkAnimationConrolFlag = false;
+        target = null;
     }
 
     protected void Update()

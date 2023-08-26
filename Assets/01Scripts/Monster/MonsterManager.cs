@@ -25,6 +25,7 @@ public class MonsterManager : MonoBehaviour, Observer
     public float fElapsedTime;                          // 시간 변수
     Vector3 v3_startPos;                                // 몬스터 처음 위치
     MonsterAttack.e_MonsterAttackLevel monsterAtkLevel; // 몬스터 어택 단계 변수
+    MonsterHp monsterHPMng;                             // 몬스터 HpBar 매니저 함수
 
     [SerializeField] GameObject atkColliderBox;         // 몬스터 공격 충돌체크용 콜라이더박스
     public float fPatrolTimeNumber;        // 순찰 시간 변수
@@ -65,6 +66,22 @@ public class MonsterManager : MonoBehaviour, Observer
         isDeadFlag = false;
         monsterAtkLevel = MonsterAttack.e_MonsterAttackLevel.None;
         v3_startPos = this.gameObject.transform.position;
+        navMeshController.ResetPath();
+
+    }
+    private void OnDisable()
+    {
+        // 변수 초기화
+        fPosX = 0;
+        fPosZ = 0;
+        isBattle = false;
+        isHit = false;
+        isDead = false;
+        isIdle = false;
+        isDeadFlag = false;
+        monsterAtkLevel = MonsterAttack.e_MonsterAttackLevel.None;
+        v3_startPos = this.gameObject.transform.position;
+        navMeshController.ResetPath();
     }
 
     void Start()
@@ -84,6 +101,8 @@ public class MonsterManager : MonoBehaviour, Observer
         MonsterAnimationController();       // 몬스터 애니메이션 컨틀롤러
         if(isDead)
             StartCoroutine(WaitForDeadAnimation());
+
+        MonsterHpMngBroadCastPosition();
     }
 
 
@@ -162,6 +181,7 @@ public class MonsterManager : MonoBehaviour, Observer
                 break;
             default: break;
         }
+        GameManager.Instance.MonsterHpBarPool.ReturnToPool(monsterHPMng);
     }
 
 
@@ -174,6 +194,7 @@ public class MonsterManager : MonoBehaviour, Observer
         if (distanceToStartPos > fChaseRange)   // 기동 범위를 벗어났을 경우,
         {
             monsterAtk.SetChaseActive(false);
+            isBattle = false;
         }
 
     }
@@ -396,6 +417,12 @@ public class MonsterManager : MonoBehaviour, Observer
             default: break;
         }
     }
+
+    void MonsterHpMngBroadCastPosition()
+    {
+        if (monsterHPMng != null)
+            monsterHPMng.SetMonsterPos(GetMonsterHeadPosition());
+    }
     #endregion
 
 
@@ -405,10 +432,12 @@ public class MonsterManager : MonoBehaviour, Observer
     public void SetAnimatorFloatValue(float posX, float posZ){fPosX = posX; fPosZ = posZ;}
     public void SetBattleActive(bool isBattle){this.isBattle = isBattle;}
     public void SetMonsterAttackLevel(MonsterAttack.e_MonsterAttackLevel atkLevel){monsterAtkLevel = atkLevel;}
+    public void SetMonsterHPMng(MonsterHp monsterHpMng) { monsterHPMng = monsterHpMng; }
 
 
     public Monster GetMonsterClass(){return this.monster;}
     public bool GetBattleActive(){return isBattle;}
+    public MonsterHp GetMonsterHPMng() { return monsterHPMng; }
 
     public Vector3 GetMonsterHeadPosition()
     {

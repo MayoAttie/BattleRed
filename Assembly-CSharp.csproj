@@ -66,6 +66,7 @@
     <Compile Include="Assets\01Scripts\Element\Element.cs" />
     <Compile Include="Assets\01Scripts\Element\Element_Interaction.cs" />
     <Compile Include="Assets\01Scripts\Element\PlantElement.cs" />
+    <Compile Include="Assets\01Scripts\EnergyBarManager.cs" />
     <Compile Include="Assets\01Scripts\GameManager.cs" />
     <Compile Include="Assets\01Scripts\Item.cs" />
     <Compile Include="Assets\01Scripts\JoyStickController.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Assets\01Scripts\Monster\Monster.cs" />
     <Compile Include="Assets\01Scripts\Monster\MonsterAtkColliderMng.cs" />
     <Compile Include="Assets\01Scripts\Monster\MonsterAttack.cs" />
+    <Compile Include="Assets\01Scripts\Monster\MonsterHp.cs" />
     <Compile Include="Assets\01Scripts\Monster\MonsterManager.cs" />
     <Compile Include="Assets\01Scripts\Objects.cs" />
     <Compile Include="Assets\01Scripts\Patterns\ConcreteMediator.cs" />

@@ -13,6 +13,10 @@ public class CombatMediator : Subject ,ICombatMediator
     // 캐릭터 평타 공격 판정 함수
     public void Mediator_CharacterAttack(CharacterClass character, MonsterManager targetMonster)
     {
+        // 몬스터 체력 감소 UI표시를 위한 함수 호출
+        var mobHpMng = targetMonster.GetMonsterHPMng();
+        mobHpMng.HpBarFill_Init(targetMonster.GetMonsterClass().GetMonsterCurrentHp());
+
         float criticalDamage = character.GetCriticalDamage();
         float criticalPercentage = character.GetCriticalPercentage();
         int attackPower = character.GetAttack();
@@ -44,16 +48,23 @@ public class CombatMediator : Subject ,ICombatMediator
         int tmp = mobCurrentHp - damage;
         mobMng.SetMonsterCurrentHP(tmp);
 
+        // 몬스터 체력 감소 UI 마무리 함수 호출
+        mobHpMng.HpBarFill_End(mobMaxHp, tmp, false);
     }
 
     // 공격용 스킬 함수
     public void Mediator_CharacterSkillAttack(CharacterClass character, CharacterManager characMng, MonsterManager mobManager)
     {
+        var mobHpMng = mobManager.GetMonsterHPMng();
         var targetMonster = mobManager.GetMonsterClass();
-        Transform characTransform = characMng.GetComponent<Transform>();
-        Element element = character.GetCurrnetElement();
-        Element.e_Element mobElement = targetMonster.GetMonsterHittedElement().GetElement();
-        switch(element.GetElement())
+        Transform characTransform = characMng.GetComponent<Transform>();        // 캐릭터의 위치좌표
+        Element element = character.GetCurrnetElement();                        // 캐릭터의 현재 원소 상태
+        Element.e_Element mobElement = targetMonster.GetMonsterHittedElement().GetElement();    //몹의 피격 원소 상태
+
+        int mobMaxHp = targetMonster.GetMonsterMaxHp();
+        mobHpMng.HpBarFill_Init(targetMonster.GetMonsterCurrentHp());   // hp바 체력 초기화
+
+        switch (element.GetElement())
         {
             case Element.e_Element.Fire:
                 if(mobElement != Element.e_Element.None)
@@ -63,7 +74,9 @@ public class CombatMediator : Subject ,ICombatMediator
                     {
                         damage = c_FireToWater(character,targetMonster);
                         int mobHp = targetMonster.GetMonsterCurrentHp();
-                        targetMonster.SetMonsterCurrentHP(mobHp-damage);
+                        int revisionHp = mobHp - damage;
+                        targetMonster.SetMonsterCurrentHP(revisionHp);
+                        mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
                     }
                     else if(mobElement == Element.e_Element.Plant)  // 캐릭터 원소 == 불 / 적부착 풀
                     {
@@ -90,16 +103,23 @@ public class CombatMediator : Subject ,ICombatMediator
                     {
                         damage = c_ElementSet(character, targetMonster);
                         int mobHp = targetMonster.GetMonsterCurrentHp();
-                        targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                        int revisionHp = mobHp - damage;
+                        targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
+                        // Hp바 반영
+                        mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
                     }
                     if(damage != -1)
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.red);
                 }
                 else    // 적에 부착된 원소가 없을 경우 원소 부착
                 {
-                    int damage = c_ElementSet(character,targetMonster);
+                    int damage = c_ElementSet(character, targetMonster);
                     int mobHp = targetMonster.GetMonsterCurrentHp();
-                    targetMonster.SetMonsterCurrentHP(mobHp-damage);
+                    int revisionHp = mobHp - damage;
+                    targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
+                    // Hp바 반영
+                    mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
+
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.red);
                 }
                     break;
@@ -113,7 +133,9 @@ public class CombatMediator : Subject ,ICombatMediator
                     {
                         damage = c_WaterToFire(character, targetMonster);
                         int mobHp = targetMonster.GetMonsterCurrentHp();
-                        targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                        int revisionHp = mobHp - damage;
+                        targetMonster.SetMonsterCurrentHP(revisionHp);
+                        mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
                     }
                     else if (mobElement == Element.e_Element.Plant)  // 캐릭터 원소 == 물 / 적부착 풀
                     {
@@ -138,7 +160,10 @@ public class CombatMediator : Subject ,ICombatMediator
                     {
                         damage = c_ElementSet(character, targetMonster);
                         int mobHp = targetMonster.GetMonsterCurrentHp();
-                        targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                        int revisionHp = mobHp - damage;
+                        targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
+                        // Hp바 반영
+                        mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
                     }
                     if(damage != -1)
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.blue);
@@ -147,7 +172,11 @@ public class CombatMediator : Subject ,ICombatMediator
                 {
                     int damage = c_ElementSet(character, targetMonster);
                     int mobHp = targetMonster.GetMonsterCurrentHp();
-                    targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                    int revisionHp = mobHp - damage;
+                    targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
+                    // Hp바 반영
+                    mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
+
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.blue);
                 }
                 break;
@@ -183,7 +212,10 @@ public class CombatMediator : Subject ,ICombatMediator
                     {
                         int damage = c_ElementSet(character, targetMonster);
                         int mobHp = targetMonster.GetMonsterCurrentHp();
-                        targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                        int revisionHp = mobHp - damage;
+                        targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
+                        // Hp바 반영
+                        mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
                         DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.green);
                     }
 
@@ -192,7 +224,11 @@ public class CombatMediator : Subject ,ICombatMediator
                 {
                     int damage = c_ElementSet(character, targetMonster);
                     int mobHp = targetMonster.GetMonsterCurrentHp();
-                    targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                    int revisionHp = mobHp - damage;
+                    targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
+                    // Hp바 반영
+                    mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
+
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.green);
 
                 }
@@ -226,14 +262,24 @@ public class CombatMediator : Subject ,ICombatMediator
                     {
                         int damage = c_ElementSet(character, targetMonster);
                         int mobHp = targetMonster.GetMonsterCurrentHp();
-                        targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                        int revisionHp = mobHp - damage;
+                        targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
+                        // Hp바 반영
+                        mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
+
+                        DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), new Color(0.5f, 0f, 0.5f));
+
                     }
                 }
                 else    // 적에 부착된 원소가 없을 경우 원소 부착
                 {
                     int damage = c_ElementSet(character, targetMonster);
                     int mobHp = targetMonster.GetMonsterCurrentHp();
-                    targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                    int revisionHp = mobHp - damage;
+                    targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
+                    // Hp바 반영
+                    mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
+
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), new Color(0.5f, 0f, 0.5f));
 
                 }
@@ -280,7 +326,11 @@ public class CombatMediator : Subject ,ICombatMediator
                 {
                     int damage = c_ElementSet(character, targetMonster);
                     int mobHp = targetMonster.GetMonsterCurrentHp();
-                    targetMonster.SetMonsterCurrentHP(mobHp - damage);
+                    int revisionHp = mobHp - damage;
+                    targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
+                    // Hp바 반영
+                    mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
+
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.cyan);
                 }
                 break;
@@ -299,24 +349,27 @@ public class CombatMediator : Subject ,ICombatMediator
         foreach (Collider collider in colliders)
         {
             int attackPower = damage;
-            Monster rangeMob = collider.GetComponent<MonsterManager>().GetMonsterClass();
-            var monMng =  collider.GetComponent<MonsterManager>();
-            if (rangeMob != null)
+            var monMng =  collider.GetComponent<MonsterManager>();      // 몬스터 매니저 클래스
+            Monster rangeMob = monMng.GetMonsterClass();                // 몬스터 클래스  
+            var monHpMng = monMng.GetMonsterHPMng();                    // 몬스터 HP바 관리 클래스
+            monHpMng.HpBarFill_Init(rangeMob.GetMonsterCurrentHp());
+
+            if (rangeMob.GetMonsterHittedElement().GetElement() == Element.e_Element.None)
             {
-                if (rangeMob.GetMonsterHittedElement().GetElement() == Element.e_Element.None)
-                {
-                    rangeMob.GetMonsterHittedElement().SetElement(elementType);
-                    rangeMob.GetMonsterHittedElement().SetIsActive(true);
-                }
-                // 확산으로 데미지 부여.
-                int mobHp = rangeMob.GetMonsterCurrentHp();
-                if (offset > 0)
-                    attackPower /= offset;
-                rangeMob.SetMonsterCurrentHP(mobHp - attackPower);
+                rangeMob.GetMonsterHittedElement().SetElement(elementType);
+                rangeMob.GetMonsterHittedElement().SetIsActive(true);
             }
-            
+            // 확산으로 데미지 부여.
+            int mobHp = rangeMob.GetMonsterCurrentHp();
+            if (offset > 0)
+                attackPower /= offset;
+            rangeMob.SetMonsterCurrentHP(mobHp - attackPower);
+
+            // 체력감소에 따른 HP바 반영
+            monHpMng.HpBarFill_End(rangeMob.GetMonsterMaxHp(), rangeMob.GetMonsterCurrentHp(), false);
+
             // 속성별 데미지 띄우기
-            switch(elementType)
+            switch (elementType)
             {
                 case Element.e_Element.Fire:
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monMng.GetMonsterHeadPosition(), Color.red);
