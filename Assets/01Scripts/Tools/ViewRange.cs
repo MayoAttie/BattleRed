@@ -59,9 +59,13 @@ public class ViewRange : Subject
         viewMesh.name = "View Mehsh";
         ViewMeshFilter.mesh = viewMesh;
 
-        //0.2초 간격으로 코루틴 호출
-        StartCoroutine(FindTargetWithDelay(0.2f));
     }
+
+    private void OnEnable()
+    {
+        //0.2초 간격으로 코루틴 호출
+        StartCoroutine(FindTargetWithDelay(0.2f));            }
+
     private void LateUpdate()
     {
         // 폴리곤 범위 그리기 함수 호출

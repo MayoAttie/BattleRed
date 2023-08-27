@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Monster;
+
 public class GameManager : Singleton<GameManager>
 {
     public CharacterClass characterCls;
@@ -34,6 +36,12 @@ public class GameManager : Singleton<GameManager>
     {
     }
 
+    private void FixedUpdate()
+    {
+        
+    }
+
+    #region 몬스터 스폰
     public void MonsterSpawn(Transform point)
     {
         Collider[] colliders = Physics.OverlapSphere(point.position, 12, 1 << LayerMask.NameToLayer("Monster"));
@@ -79,5 +87,66 @@ public class GameManager : Singleton<GameManager>
             }
         }
     }
+    #endregion
+    #region 몬스터 제거
+    // 일정 범위 내의 몬스터를 제외한 나머지 몬스터를 오브젝트 풀에 리턴.
+    public void MonsterReturnToPool(Collider[] detectedMonster)
+    {
+        List<MonsterManager> cactusList = CactusPool.GetPoolList();
+        List<MonsterManager> AngryMushList = MushroomAngryPool.GetPoolList();
+
+        // 오브젝트 풀을 순회.
+        if (cactusList.Count > 0)
+        {
+            // Cactus을 저장한 리스트를 순회하며, 활성화 여부 체크, 및 detectedMonster 내의 객체 체크
+            for (int i = 0; i < cactusList.Count; i++)
+            {
+                if (!cactusList[i].gameObject.activeSelf)
+                    continue;
+                bool isDetected = false;
+                MonsterManager compareMob = cactusList[i];
+                for (int j = 0; j < detectedMonster.Length; j++)
+                {
+                    MonsterManager detectedMob = detectedMonster[j].GetComponent<MonsterManager>(); 
+                    if (compareMob == detectedMob)
+                    {
+                        isDetected = true;
+                        break;
+                    }
+                }
+                if (!isDetected)
+                {
+                    // 탐지된 적이 아닐 경우엔 다시 오브젝트풀에 리턴.
+                    MonsterHpBarPool.ReturnToPool(compareMob.GetMonsterHPMng());
+                    CactusPool.ReturnToPool(compareMob);
+                }
+            }
+        }
+        if (AngryMushList.Count > 0)
+        {
+            for (int i = 0; i < AngryMushList.Count; i++)
+            {
+                if (!AngryMushList[i].gameObject.activeSelf)
+                    continue;
+                bool isDetected = false;
+                MonsterManager compareMob = AngryMushList[i];
+                for (int j = 0; j < detectedMonster.Length; j++)
+                {
+                    MonsterManager detectedMob = detectedMonster[j].GetComponent<MonsterManager>(); // 수정된 부분
+                    if (compareMob == detectedMob)
+                    {
+                        isDetected = true;
+                        break;
+                    }
+                }
+                if (!isDetected)
+                {
+                    MonsterHpBarPool.ReturnToPool(compareMob.GetMonsterHPMng());
+                    MushroomAngryPool.ReturnToPool(compareMob);
+                }
+            }
+        }
+    }
+    #endregion
 
 }

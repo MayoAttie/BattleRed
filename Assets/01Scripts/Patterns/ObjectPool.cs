@@ -55,4 +55,5 @@ public class ObjectPool<T> : MonoBehaviour where T : Component
     {
         obj.gameObject.SetActive(false);
     }
+    public List<T> GetPoolList() { return pool; }
 }

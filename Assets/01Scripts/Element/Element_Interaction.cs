@@ -335,7 +335,7 @@ public class Element_Interaction : Singleton<Element_Interaction>
                 mobCls.SetMonsterCurrentHP(mobHp - damage);  // 몬스터 체력 감소
                 mobHpMng.HpBarFill_End(mobCls.GetMonsterMaxHp(), mobHp - damage, false);    //Hp바 반영
 
-                var mobPos = collider.GetComponent<MonsterManager>().GetMonsterHeadPosition();
+                var mobPos = mobMng.GetMonsterHeadPosition();
                 // 데미지 플로팅
                 DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobPos, Color.green);
             }

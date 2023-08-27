@@ -51,8 +51,8 @@ public class MonsterManager : MonoBehaviour, Observer
     {
         atkColliderBox.SetActive(false);
         MobAnimator = gameObject.GetComponent<Animator>();
-        gameObject.GetComponent<CharacterViewRange>().Attach(this);
         navMeshController= gameObject.GetComponent<NavMeshAgent>();
+        gameObject.GetComponent<CharacterViewRange>().Attach(this);
     }
     private void OnEnable()
     {
@@ -104,7 +104,6 @@ public class MonsterManager : MonoBehaviour, Observer
 
         MonsterHpMngBroadCastPosition();
     }
-
 
 
     #region AI
@@ -163,21 +162,10 @@ public class MonsterManager : MonoBehaviour, Observer
         {
             case "Cactus":
                 if (monsterManager != null)
-                {
                     GameManager.Instance.CactusPool.ReturnToPool(monsterManager);
-                }
-                else
-                    // 오브젝트 풀이 아닌 다른 처리를 해야할 경우의 코드
-                    Destroy(gameObject);
                 break;
             case "MushroomAngry":
-                if (monsterManager != null)
-                {
                     GameManager.Instance.MushroomAngryPool.ReturnToPool(monsterManager);
-                }
-                else
-                    // 오브젝트 풀이 아닌 다른 처리를 해야할 경우의 코드
-                    Destroy(gameObject);
                 break;
             default: break;
         }
@@ -423,6 +411,8 @@ public class MonsterManager : MonoBehaviour, Observer
         if (monsterHPMng != null)
             monsterHPMng.SetMonsterPos(GetMonsterHeadPosition());
     }
+
+
     #endregion
 
 
@@ -443,7 +433,6 @@ public class MonsterManager : MonoBehaviour, Observer
     {
         // 몬스터 머리 위 위치를 계산하고 반환하는 로직 추가
         Vector3 headPosition = transform.position + Vector3.up * monster.GetMonsterHeadPos();
-        Debug.Log("monster gameObject.transform.position) " + transform.position);
         return headPosition;
     }
 

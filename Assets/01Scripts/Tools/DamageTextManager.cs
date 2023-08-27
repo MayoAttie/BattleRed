@@ -12,7 +12,7 @@ public class DamageTextManager : Singleton<DamageTextManager>
 
     RectTransform rectParent;
 
-    private void OnEnable()
+    private void Start()
     {
         rectParent = canvas.GetComponent<RectTransform>();
         _camera = canvas.worldCamera;
@@ -21,20 +21,18 @@ public class DamageTextManager : Singleton<DamageTextManager>
     public void CreateFloatingText(string text, Vector3 position, Color textColor)
     {
         var instance = Instantiate(popupText);
-        RectTransform rectHp = instance.GetComponent<RectTransform>();
 
         // 부모 객체를 canvas로 설정
-        rectHp.SetParent(canvas.transform, false);
+        instance.transform.SetParent(canvas.transform, false);
+        RectTransform rectHp = instance.GetComponent<RectTransform>();
 
-        var screenPos = Camera.main.WorldToScreenPoint(position); // 몬스터의 월드 3D 좌표를 스크린 좌표로 변환
+        var screenPos = _camera.WorldToScreenPoint(position); // 몬스터의 월드 3D 좌표를 스크린 좌표로 변환
+        
         if (screenPos.z < 0.0f)
-        {
             screenPos *= -1.0f;
-        }
+
         var localPos = Vector2.zero;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(rectParent, screenPos, _camera, out localPos); // 스크린 좌표를 다시 캔버스 좌표로 변환
-
-        rectHp.localPosition = localPos; // 체력바 위치 조정
 
         // 스케일을 항상 (1, 1, 1)로 설정
         rectHp.localScale = Vector3.one;
@@ -42,6 +40,7 @@ public class DamageTextManager : Singleton<DamageTextManager>
         var floatingTextComponent = instance.GetComponent<FloatingText>();
         floatingTextComponent.SetText(text);
         floatingTextComponent.SetColor(textColor);
+        floatingTextComponent.SetPosition(localPos);
     }
 
     #region 레거시
@@ -58,6 +57,35 @@ public class DamageTextManager : Singleton<DamageTextManager>
 
     //Debug.Log(nameof(anchoredPosition) + " : " + anchoredPosition);
     //instance.transform.SetParent(canvas.transform, false);
+
+
+
+    /*
+        var instance = Instantiate(popupText);
+
+        // 부모 객체를 canvas로 설정
+        instance.transform.SetParent(canvas.transform, false);
+        RectTransform rectHp = instance.GetComponent<RectTransform>();
+
+        var screenPos = Camera.main.WorldToScreenPoint(position); // 몬스터의 월드 3D 좌표를 스크린 좌표로 변환
+        if (screenPos.z < 0.0f)
+        {
+            screenPos *= -1.0f;
+        }
+        var localPos = Vector2.zero;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(rectParent, screenPos, _camera, out localPos); // 스크린 좌표를 다시 캔버스 좌표로 변환
+
+        // 스케일을 항상 (1, 1, 1)로 설정
+        rectHp.localScale = Vector3.one;
+
+        var floatingTextComponent = instance.GetComponent<FloatingText>();
+        floatingTextComponent.SetText(text);
+        floatingTextComponent.SetColor(textColor);
+        floatingTextComponent.SetPosition(localPos);
+     
+     */
+
+
 
     #endregion
 

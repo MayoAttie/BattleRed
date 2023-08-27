@@ -59,7 +59,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     private void FixedUpdate()
     {
         World_InCharacterCheck();
-        
+        World_OutMonsterCheck();
     }
 
     #region 애니메이션 제어
@@ -245,8 +245,21 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
                 GameManager.Instance.MonsterSpawn(collider.transform);
             }
         }
-
+        
     }
+
+    void World_OutMonsterCheck()
+    {
+        // 몬스터 레이어를 가진 객체를 배열에 저장
+        int monsterLayer = LayerMask.NameToLayer("Monster");
+        // 탐색범위 10
+        Collider[] colliders = Physics.OverlapSphere(transform.position, 20, 1 << monsterLayer);
+        if (colliders.Length > 0)
+        {
+            GameManager.Instance.MonsterReturnToPool(colliders);
+        }
+    }
+
 
     #endregion
 

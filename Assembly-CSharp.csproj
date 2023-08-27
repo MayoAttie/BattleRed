@@ -78,7 +78,7 @@
     <Compile Include="Assets\01Scripts\Monster\MonsterHp.cs" />
     <Compile Include="Assets\01Scripts\Monster\MonsterManager.cs" />
     <Compile Include="Assets\01Scripts\Objects.cs" />
-    <Compile Include="Assets\01Scripts\Patterns\ConcreteMediator.cs" />
+    <Compile Include="Assets\01Scripts\Patterns\CombatMediator.cs" />
     <Compile Include="Assets\01Scripts\Patterns\ICombatMediator.cs" />
     <Compile Include="Assets\01Scripts\Patterns\ObjectPool.cs" />
     <Compile Include="Assets\01Scripts\Patterns\Observer.cs" />
