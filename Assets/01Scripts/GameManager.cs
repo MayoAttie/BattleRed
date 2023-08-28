@@ -44,49 +44,119 @@ public class GameManager : Singleton<GameManager>
     #region 몬스터 스폰
     public void MonsterSpawn(Transform point)
     {
-        Collider[] colliders = Physics.OverlapSphere(point.position, 12, 1 << LayerMask.NameToLayer("Monster"));
+        // 스폰 포인트의 이름을 파싱하여, 번호를 분류.
+        GameObject spawnObj = point.gameObject;
+        string objName = spawnObj.name;
+        string remainingCharacters = objName.Substring(12);
 
-        if (colliders.Length > 0)
+        // 탐색한 콜라이더 내의 몬스터 이름들을 저장하는 리스트 생성.
+        Collider[] colliders = Physics.OverlapSphere(point.position, 15, 1 << LayerMask.NameToLayer("Monster"));
+        List<string> names = new List<string>();
+
+        foreach (Collider collider in colliders)
         {
-            // 이미 해당 위치 인근에 몬스터가 있는 경우, 생성하지 않고 바로 반환
-            return;
+            string colliderName = collider.GetComponent<MonsterManager>().GetMonsterClass().GetName();
+            names.Add(colliderName);
+        }
+        string cactusName;
+
+        // 분류한 번호에 따라, 분기하여 해당하는 몬스터를 생성.
+        switch (remainingCharacters)
+        {
+            case "1":
+            case "2":
+            case "3":
+                cactusName = "Cactus";
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector3 spawnPosition = point.position + new Vector3(i * 2, 0, 0);
+                    int extraHealth = characterCls.GetLeveL() * 100;
+                    int extraAttack = 0;
+                    SpawnMonster(names, cactusName, spawnPosition, extraHealth, extraAttack);
+                }
+                break;
+            case "4":
+            case "5":
+                cactusName = "MushroomAngry";
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector3 spawnPosition = point.position + new Vector3(i * 2, 0, 0);
+                    int extraHealth = 0;
+                    int extraAttack = characterCls.GetLeveL() * 10; ;
+                    SpawnMonster(names, cactusName, spawnPosition, extraHealth, extraAttack);
+                }
+                break;
         }
 
-        // 오브젝트 풀을 이용해 몬스터 생성
-        foreach (var mob in Monsters)
-        {
-            if (mob.name == "Cactus")
-            {
-                Vector3 spawnPosition = point.position + new Vector3(1 * 2, 0, 0);
-                int extraHealth = characterCls.GetLeveL()*100;
-                int extraAttack = 0;
-                Monster monsterCls = new Monster("몬스터", mob.name, 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence, 200 + extraHealth, 200 + extraHealth, 10 + extraAttack, 15, 15, 1.8f, 100f, Element.e_Element.None, 1.5f);
-                // 오브젝트 풀로 Hp와 몬스터 객체 생성
-                MonsterManager monsterManager = CactusPool.GetFromPool(spawnPosition, Quaternion.identity);
-                MonsterHp monsterHpMng = MonsterHpBarPool.GetFromPool(spawnPosition, Quaternion.identity,BottomCanvas.transform);
-                monsterManager.SetMonsterHPMng(monsterHpMng);
-                monsterManager.SetMonsterClass(monsterCls);
-                //hp FillAmount 초기화
-                monsterHpMng.HpBarFill_Init(monsterCls.GetMonsterCurrentHp());
-                monsterHpMng.HpBarFill_End(monsterCls.GetMonsterMaxHp(), monsterCls.GetMonsterCurrentHp(), false);
-            }
-            else if (mob.name == "MushroomAngry")
-            {
-                Vector3 spawnPosition = point.position + new Vector3(2 * 2, 0, 0);
-                int extraHealth = 0;
-                int extraAttack = characterCls.GetLeveL() * 10;
-                Monster monsterCls = new Monster("몬스터", mob.name, 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence, 200 + extraHealth, 200 + extraHealth, 10 + extraAttack, 15, 15, 1.8f, 100f, Element.e_Element.None, 1.5f);
-                // 오브젝트 풀로 Hp와 몬스터 객체 생성
-                MonsterManager monsterManager = MushroomAngryPool.GetFromPool(spawnPosition, Quaternion.identity);
-                MonsterHp monsterHpMng = MonsterHpBarPool.GetFromPool(spawnPosition, Quaternion.identity, BottomCanvas.transform);
-                monsterManager.SetMonsterHPMng(monsterHpMng);
-                monsterManager.SetMonsterClass(monsterCls);
-                //hp FillAmount 초기화
-                monsterHpMng.HpBarFill_Init(monsterCls.GetMonsterCurrentHp());
-                monsterHpMng.HpBarFill_End(monsterCls.GetMonsterMaxHp(), monsterCls.GetMonsterCurrentHp(), false);
-            }
-        }
+        #region 레거시
+        //// 오브젝트 풀을 이용해 몬스터 생성
+        //foreach (var mob in Monsters)
+        //{
+        //    if (mob.name == "Cactus")
+        //    {
+        //        Vector3 spawnPosition = point.position + new Vector3(1 * 2, 0, 0);
+        //        int extraHealth = characterCls.GetLeveL()*100;
+        //        int extraAttack = 0;
+        //        Monster monsterCls = new Monster("몬스터", mob.name, 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence, 200 + extraHealth, 200 + extraHealth, 10 + extraAttack, 15, 15, 1.8f, 100f, Element.e_Element.None, 1.5f);
+        //        // 오브젝트 풀로 Hp와 몬스터 객체 생성
+        //        MonsterManager monsterManager = CactusPool.GetFromPool(spawnPosition, Quaternion.identity);
+        //        MonsterHp monsterHpMng = MonsterHpBarPool.GetFromPool(spawnPosition, Quaternion.identity,BottomCanvas.transform);
+        //        monsterManager.SetMonsterHPMng(monsterHpMng);
+        //        monsterManager.SetMonsterClass(monsterCls);
+        //        //hp FillAmount 초기화
+        //        monsterHpMng.HpBarFill_Init(monsterCls.GetMonsterCurrentHp());
+        //        monsterHpMng.HpBarFill_End(monsterCls.GetMonsterMaxHp(), monsterCls.GetMonsterCurrentHp(), false);
+        //    }
+        //    else if (mob.name == "MushroomAngry")
+        //    {
+        //        Vector3 spawnPosition = point.position + new Vector3(2 * 2, 0, 0);
+        //        int extraHealth = 0;
+        //        int extraAttack = characterCls.GetLeveL() * 10;
+        //        Monster monsterCls = new Monster("몬스터", mob.name, 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence, 200 + extraHealth, 200 + extraHealth, 10 + extraAttack, 15, 15, 1.8f, 100f, Element.e_Element.None, 1.5f);
+        //        // 오브젝트 풀로 Hp와 몬스터 객체 생성
+        //        MonsterManager monsterManager = MushroomAngryPool.GetFromPool(spawnPosition, Quaternion.identity);
+        //        MonsterHp monsterHpMng = MonsterHpBarPool.GetFromPool(spawnPosition, Quaternion.identity, BottomCanvas.transform);
+        //        monsterManager.SetMonsterHPMng(monsterHpMng);
+        //        monsterManager.SetMonsterClass(monsterCls);
+        //        //hp FillAmount 초기화
+        //        monsterHpMng.HpBarFill_Init(monsterCls.GetMonsterCurrentHp());
+        //        monsterHpMng.HpBarFill_End(monsterCls.GetMonsterMaxHp(), monsterCls.GetMonsterCurrentHp(), false);
+        //    }
+        //}
+        #endregion
     }
+
+    private void SpawnMonster(List<string> names,string monsterName, Vector3 spawnPosition, int extraHealth, int extraAttack)
+    {
+        string foundMonsterName = names.Find(name => name == monsterName);
+        if (foundMonsterName != null)
+            return;   // 이미 몬스터가 존재한다면 리턴
+
+        Monster monsterCls = new Monster("몬스터", monsterName, 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence, 200 + extraHealth, 200 + extraHealth, 10 + extraAttack, 15, 15, 1.8f, 100f, Element.e_Element.None, 1.5f);
+
+        MonsterManager monsterManager = null;
+
+        //오브젝트 풀로 몬스터 생성
+        switch (monsterName)
+        {
+            case "Cactus":
+                monsterManager = CactusPool.GetFromPool(spawnPosition, Quaternion.identity);
+                break;
+            case "MushroomAngry":
+                monsterManager = MushroomAngryPool.GetFromPool(spawnPosition, Quaternion.identity);
+                break;
+        }
+        // 오브젝트 풀로 hp바 생성
+        MonsterHp monsterHpMng = MonsterHpBarPool.GetFromPool(spawnPosition, Quaternion.identity, BottomCanvas.transform);
+
+        // 필요한 데이터 초기화
+        monsterManager.SetMonsterHPMng(monsterHpMng);
+        monsterManager.SetMonsterClass(monsterCls);
+
+        monsterHpMng.HpBarFill_Init(monsterCls.GetMonsterCurrentHp());
+        monsterHpMng.HpBarFill_End(monsterCls.GetMonsterMaxHp(), monsterCls.GetMonsterCurrentHp(), false);
+    }
+
     #endregion
     #region 몬스터 제거
     // 일정 범위 내의 몬스터를 제외한 나머지 몬스터를 오브젝트 풀에 리턴.

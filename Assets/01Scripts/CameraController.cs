@@ -41,7 +41,10 @@ public class CameraController : MonoBehaviour, Observer
     public float DesiredHeight = 2.0f;
 
 
+    // 조명 오브젝트
     public Light LightObject;
+    // 미니맵 카메라
+    public Camera MiniMapCamera;
 
     #endregion
 
@@ -115,6 +118,10 @@ public class CameraController : MonoBehaviour, Observer
             // 카메라의 위치를 지면 위에서 원하는 높이만큼 보간하여 조정.
             transform.position = startPos - transform.forward * _distance + Vector3.up * DesiredHeight;
         }
+
+        // 미니맵 카메라 위치 설정
+        Vector3 miniMapPosition = new Vector3(Target.transform.position.x, MiniMapCamera.transform.position.y, Target.transform.position.z);
+        MiniMapCamera.transform.position = miniMapPosition;
     }
 
     // 시작점(startPos)과 끝점(endPos) 사이에 레이를 발사하여 충돌 감지를 수행하는 메서드

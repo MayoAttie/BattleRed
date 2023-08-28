@@ -40,7 +40,7 @@ public class MonsterHp : EnergyBarManager
         RectTransformUtility.ScreenPointToLocalPointInRectangle(rectParent, screenPos, hpCamera, out localPos); // 스크린 좌표를 다시 체력바 UI 캔버스 좌표로 변환
 
         rectHp.localPosition = localPos; // 체력바 위치조정
-        Debug.Log(nameof(localPos) + ":" + localPos);
+        //Debug.Log(nameof(localPos) + ":" + localPos);
         // 스케일을 항상 (1, 1, 1)로 설정
         rectHp.localScale = Vector3.one;
     }
