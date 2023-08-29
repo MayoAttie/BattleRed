@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Monster;
-
+using static HandlePauseTool;
 public class GameManager : Singleton<GameManager>
 {
+    #region 변수
     public CharacterClass characterCls;
     public GameObject[] Monsters;
     public GameObject MonsterHpBar;
@@ -17,8 +17,15 @@ public class GameManager : Singleton<GameManager>
     public Canvas BottomCanvas;
     public Camera HpCamera;
 
+    private bool isPaused;
+
+    #endregion
+
+
+
     private void Awake()
     {
+        isPaused = false;
         characterCls = new CharacterClass(300, 300, 0, 100, 50, 15, 1, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true);
         CactusPool = new ObjectPool<MonsterManager>(Monsters[0],10);
         MushroomAngryPool = new ObjectPool<MonsterManager>(Monsters[1],10);
@@ -41,7 +48,23 @@ public class GameManager : Singleton<GameManager>
         
     }
 
+    #region 일시정지
+    public static event Action<bool> OnPauseStateChanged;
+
+    public void PauseManager()
+    {
+        isPaused = !isPaused;
+
+        // 일시정지 상태 변경시 이벤트 발생
+        OnPauseStateChanged?.Invoke(isPaused);
+        Time.timeScale = isPaused ? 0 : 1;
+    }
+    public bool GetPauseActive() { return isPaused; }
+
+    #endregion
+
     #region 몬스터 스폰
+    // Transform에 따라, 몬스터 확인 후, 생성 함수 호출
     public void MonsterSpawn(Transform point)
     {
         // 스폰 포인트의 이름을 파싱하여, 번호를 분류.
@@ -126,6 +149,7 @@ public class GameManager : Singleton<GameManager>
         #endregion
     }
 
+    // 몬스터 생성 함수
     private void SpawnMonster(List<string> names,string monsterName, Vector3 spawnPosition, int extraHealth, int extraAttack)
     {
         string foundMonsterName = names.Find(name => name == monsterName);
@@ -158,6 +182,8 @@ public class GameManager : Singleton<GameManager>
     }
 
     #endregion
+
+
     #region 몬스터 제거
     // 일정 범위 내의 몬스터를 제외한 나머지 몬스터를 오브젝트 풀에 리턴.
     public void MonsterReturnToPool(Collider[] detectedMonster)
@@ -218,5 +244,7 @@ public class GameManager : Singleton<GameManager>
         }
     }
     #endregion
+
+
 
 }

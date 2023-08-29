@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using static TouchPadController;
+using static HandlePauseTool;
 
 public class CharacterControlMng : Subject, Observer
 {
@@ -62,6 +63,18 @@ public class CharacterControlMng : Subject, Observer
     void Start()
     {
         characMng = CharacterManager.Instance;
+    }
+
+    private void OnEnable()
+    {
+        // 게임매니저의 이벤트에 구독
+        GameManager.OnPauseStateChanged += HandlePauseStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        // 게임매니저의 이벤트 구독 해제
+        GameManager.OnPauseStateChanged -= HandlePauseStateChanged;
     }
 
     // Update is called once per frame

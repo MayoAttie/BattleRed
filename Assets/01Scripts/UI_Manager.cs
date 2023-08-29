@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 public class UI_Manager : EnergyBarManager
 {
     // 싱글턴 인스턴스
@@ -22,5 +18,9 @@ public class UI_Manager : EnergyBarManager
         }
     }
 
-
+    public void BagOpenButtonClick()
+    {
+        GameManager.Instance.PauseManager();
+        Debug.Log("일시정지");
+    }
 }

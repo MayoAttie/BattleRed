@@ -4,10 +4,23 @@ using System.Collections.Generic;
 using System.Data.Common;
 using UnityEngine;
 using static Element_Interaction;
+using static HandlePauseTool;
 // ConcreteMediator 클래스
 // 옵저버 패턴 활용을 위한 Subject 상속
 public class CombatMediator : Subject ,ICombatMediator
 {
+    private void OnEnable()
+    {
+        // 게임매니저의 이벤트에 구독
+        GameManager.OnPauseStateChanged += HandlePauseStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        // 게임매니저의 이벤트 구독 해제
+        GameManager.OnPauseStateChanged -= HandlePauseStateChanged;
+    }
+
 
     #region 캐릭터
     // 캐릭터 평타 공격 판정 함수

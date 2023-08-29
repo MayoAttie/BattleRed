@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static HandlePauseTool;
 
 public class ViewRange : Subject
 {
@@ -64,7 +65,16 @@ public class ViewRange : Subject
     private void OnEnable()
     {
         //0.2초 간격으로 코루틴 호출
-        StartCoroutine(FindTargetWithDelay(0.2f));            }
+        StartCoroutine(FindTargetWithDelay(0.2f));
+        // 게임매니저의 이벤트에 구독
+        GameManager.OnPauseStateChanged += HandlePauseStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        // 게임매니저의 이벤트 구독 해제
+        GameManager.OnPauseStateChanged -= HandlePauseStateChanged;
+    }
 
     private void LateUpdate()
     {

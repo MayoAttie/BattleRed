@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using TMPro;
-using System.Linq.Expressions;
-using System.Runtime.InteropServices.ComTypes;
+using static HandlePauseTool;
 
 public class FloatingText : MonoBehaviour
 {
@@ -15,7 +14,17 @@ public class FloatingText : MonoBehaviour
         damageText = GetComponent<TextMeshProUGUI>();
         rectTransform = gameObject.GetComponent<RectTransform>();
     }
+    private void OnEnable()
+    {
+        // 게임매니저의 이벤트에 구독
+        GameManager.OnPauseStateChanged += HandlePauseStateChanged;
+    }
 
+    private void OnDisable()
+    {
+        // 게임매니저의 이벤트 구독 해제
+        GameManager.OnPauseStateChanged -= HandlePauseStateChanged;
+    }
 
     public void SetText(string text)
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using static CharacterClass;
-
+using static HandlePauseTool;
 public class CharacterAttackMng : Subject, Observer
 {
     #region 변수
@@ -46,6 +46,17 @@ public class CharacterAttackMng : Subject, Observer
         isClick = false;
         nAtkLevel = 101;
         isCoroutineFlag = false;
+    }
+    private void OnEnable()
+    {
+        // 게임매니저의 이벤트에 구독
+        GameManager.OnPauseStateChanged += HandlePauseStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        // 게임매니저의 이벤트 구독 해제
+        GameManager.OnPauseStateChanged -= HandlePauseStateChanged;
     }
 
     void Start()

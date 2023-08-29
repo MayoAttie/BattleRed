@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static HandlePauseTool;
 
 public class MonsterAtkColliderMng : CombatMediator
 {
@@ -8,9 +9,22 @@ public class MonsterAtkColliderMng : CombatMediator
     MonsterManager mobMng;
     Monster monster;
 
+
     private void Awake()
     {
         mobMng = GetComponentInParent<MonsterManager>();
+    }
+
+    private void OnEnable()
+    {
+        // 게임매니저의 이벤트에 구독
+        GameManager.OnPauseStateChanged += HandlePauseStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        // 게임매니저의 이벤트 구독 해제
+        GameManager.OnPauseStateChanged -= HandlePauseStateChanged;
     }
 
     private void OnTriggerEnter(Collider other)

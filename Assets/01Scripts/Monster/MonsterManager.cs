@@ -4,6 +4,7 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
 using static Monster;
+using static HandlePauseTool;
 
 public class MonsterManager : MonoBehaviour, Observer
 {
@@ -68,20 +69,14 @@ public class MonsterManager : MonoBehaviour, Observer
         v3_startPos = this.gameObject.transform.position;
         navMeshController.ResetPath();
 
+        // 게임매니저의 이벤트에 구독
+        GameManager.OnPauseStateChanged += HandlePauseStateChanged;
+
     }
     private void OnDisable()
     {
-        // 변수 초기화
-        fPosX = 0;
-        fPosZ = 0;
-        isBattle = false;
-        isHit = false;
-        isDead = false;
-        isIdle = false;
-        isDeadFlag = false;
-        monsterAtkLevel = MonsterAttack.e_MonsterAttackLevel.None;
-        v3_startPos = this.gameObject.transform.position;
-        navMeshController.ResetPath();
+        // 게임매니저의 이벤트 구독 해제
+        GameManager.OnPauseStateChanged -= HandlePauseStateChanged;
     }
 
     void Start()

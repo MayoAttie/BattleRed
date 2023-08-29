@@ -1,13 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using static HandlePauseTool;
 public class EffectManager : Singleton<EffectManager>
 {
     // 0번 : 무지개색 이팩트
     [SerializeField] GameObject[] effects;
 
+    private void OnEnable()
+    {
+        // 게임매니저의 이벤트에 구독
+        GameManager.OnPauseStateChanged += HandlePauseStateChanged;
+    }
 
+    private void OnDisable()
+    {
+        // 게임매니저의 이벤트 구독 해제
+        GameManager.OnPauseStateChanged -= HandlePauseStateChanged;
+    }
 
     // 오버로딩을 이용한, Voctor3와 float 인수 케이스 분리!
     public void EffectCreate(Transform pos, int index)

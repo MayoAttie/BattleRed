@@ -89,6 +89,7 @@
     <Compile Include="Assets\01Scripts\Tools\CharacterViewRange.cs" />
     <Compile Include="Assets\01Scripts\Tools\DamageTextManager.cs" />
     <Compile Include="Assets\01Scripts\Tools\FloatingText.cs" />
+    <Compile Include="Assets\01Scripts\Tools\HandlePauseTool.cs" />
     <Compile Include="Assets\01Scripts\Tools\ViewRange.cs" />
     <Compile Include="Assets\01Scripts\TouchPadController.cs" />
     <Compile Include="Assets\01Scripts\UI_Manager.cs" />

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using static CharacterAttackMng;
+using static HandlePauseTool;
 
 public class MonsterAttack : MonoBehaviour, Observer
 {
@@ -46,16 +46,13 @@ public class MonsterAttack : MonoBehaviour, Observer
         attackLevel = e_MonsterAttackLevel.None;
         isAtkAnimationConrolFlag = false;
         target = null;
+        // 게임매니저의 이벤트에 구독
+        GameManager.OnPauseStateChanged += HandlePauseStateChanged;
     }
     private void OnDisable()
     {
-        // 변수 초기화
-        isChase = false;
-        isTargetInRange = false;
-        isBattle = false;
-        attackLevel = e_MonsterAttackLevel.None;
-        isAtkAnimationConrolFlag = false;
-        target = null;
+        // 게임매니저의 이벤트 구독 해제
+        GameManager.OnPauseStateChanged -= HandlePauseStateChanged;
     }
 
     protected void Update()

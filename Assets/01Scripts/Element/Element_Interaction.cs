@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.AI;
-using System.Net.Http.Headers;
+using static HandlePauseTool;
 
 public class Element_Interaction : Singleton<Element_Interaction>
 {
@@ -10,6 +9,18 @@ public class Element_Interaction : Singleton<Element_Interaction>
     public static int plantElementNum = 0;
     static int plantElementMaxNum = 5;
     public Queue<GameObject> plantQue = new Queue<GameObject>();
+
+    private void OnEnable()
+    {
+        // 게임매니저의 이벤트에 구독
+        GameManager.OnPauseStateChanged += HandlePauseStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        // 게임매니저의 이벤트 구독 해제
+        GameManager.OnPauseStateChanged -= HandlePauseStateChanged;
+    }
 
     #region 캐릭터
 

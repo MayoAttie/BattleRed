@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using UnityEngine;
+using static HandlePauseTool;
 
 public class PlantElement : CombatMediator
 {
@@ -9,6 +10,18 @@ public class PlantElement : CombatMediator
     float timeIndex = 0;
     float detectionRange = 15f;
     int idIndex;
+
+    private void OnEnable()
+    {
+        // 게임매니저의 이벤트에 구독
+        GameManager.OnPauseStateChanged += HandlePauseStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        // 게임매니저의 이벤트 구독 해제
+        GameManager.OnPauseStateChanged -= HandlePauseStateChanged;
+    }
 
     // 객체 생명주기
     IEnumerator LifeCycle()

@@ -69,12 +69,20 @@ public class ButtonClass : MonoBehaviour
 
     public void OnButtonDown()
     {
+        // 일시정지일 경우에는 리턴.
+        if (GameManager.Instance.GetPauseActive())
+            return;
+
         // 버튼이 눌렸을 때 호출되는 이벤트
         onButtonDown.Invoke();
     }
 
     public void OnButtonUp()
     {
+        // 일시정지일 경우에는 리턴.
+        if (GameManager.Instance.GetPauseActive())
+            return;
+
         // 버튼이 눌려있던 상태에서 뗄 때 호출되는 이벤트
         onButtonUp.Invoke();
     }

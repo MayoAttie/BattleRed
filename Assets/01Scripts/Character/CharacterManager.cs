@@ -1,11 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Net;
-using System.Reflection;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using UnityEngine.SocialPlatforms;
+using static HandlePauseTool;
 
 public class CharacterManager : Singleton<CharacterManager>, Observer
 {
@@ -38,12 +34,24 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         aniController = gameObject.GetComponent<Animator>();            // 애니메이터 초기화
         SatelliteObj.gameObject.SetActive(false);                       // 원소 상태 표시용 위성 SetFalse
     }
+
     private void Start()
     {
         clsCharacter = GameManager.Instance.characterCls;           // 캐릭터 클래스 초기화
         UI_Manager.Instance.HpBarFill_Init(clsCharacter.GetCurrentHp());
         UI_Manager.Instance.HpBarFill_End(clsCharacter.GetMaxHp(), clsCharacter.GetCurrentHp(), true);
         element = clsCharacter.GetCurrnetElement().GetElement();    // 캐릭터 클래스 - 현재 원소 초기화
+    }
+    private void OnEnable()
+    {
+        // 게임매니저의 이벤트에 구독
+        GameManager.OnPauseStateChanged += HandlePauseStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        // 게임매니저의 이벤트 구독 해제
+        GameManager.OnPauseStateChanged -= HandlePauseStateChanged;
     }
 
     private void Update()

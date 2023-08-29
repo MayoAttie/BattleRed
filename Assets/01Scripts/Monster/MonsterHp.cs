@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static HandlePauseTool;
 
 public class MonsterHp : EnergyBarManager
 {
@@ -16,8 +17,14 @@ public class MonsterHp : EnergyBarManager
     {
         Hpbar = gameObject.transform.GetChild(0).GetComponent<Image>();
 
+        // 게임매니저의 이벤트에 구독
+        GameManager.OnPauseStateChanged += HandlePauseStateChanged;
     }
-
+    private void OnDisable()
+    {
+        // 게임매니저의 이벤트 구독 해제
+        GameManager.OnPauseStateChanged -= HandlePauseStateChanged;
+    }
 
     private void Start()
     {
