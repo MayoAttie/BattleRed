@@ -20,6 +20,7 @@ public class MonsterManager : MonoBehaviour, Observer
     bool isDead;                // 죽음 체크 변수
     bool isIdle;                // 아이들 상태 유무 변수
     bool isDeadFlag;
+    bool isDetected;            // 캐릭터에게 탐지당한 적.
     NavMeshAgent navMeshController;                     // NavMesh AI 컨트롤러
     List<Transform> taretList;                          // 적 인식 Ragne 내의 객체 List
     public Monster.e_MonsterState state;                // 몬스터의 상태 변수(체크용)
@@ -58,6 +59,7 @@ public class MonsterManager : MonoBehaviour, Observer
     private void OnEnable()
     {
         // 변수 초기화
+        taretList=  new List<Transform>();
         fPosX = 0;
         fPosZ = 0;
         isBattle = false;
@@ -98,6 +100,10 @@ public class MonsterManager : MonoBehaviour, Observer
             StartCoroutine(WaitForDeadAnimation());
 
         MonsterHpMngBroadCastPosition();
+    }
+    private void FixedUpdate()
+    {
+        WorldPlayerCheck();
     }
 
 
@@ -407,6 +413,21 @@ public class MonsterManager : MonoBehaviour, Observer
             monsterHPMng.SetMonsterPos(GetMonsterHeadPosition());
     }
 
+    // 범위 내에 플레이어가 없을 경우, 몬스터 pool 리턴
+    void WorldPlayerCheck()
+    {
+        if(gameObject.activeSelf)
+        {
+            if(taretList.Count> 0 && taretList!=null)
+                return; 
+
+            int playerrLayer = LayerMask.NameToLayer("Player");
+            Collider[] colliders = Physics.OverlapSphere(transform.position, 20, 1 << playerrLayer);
+            Debug.Log("MonsterManager WorldPlayerCheck Count : " + colliders.Length);
+            if (colliders.Length <= 0)
+                GameManager.Instance.RangeOutMonsterPoolReturn(this, monsterHPMng);
+        }
+    }
 
     #endregion
 
@@ -418,11 +439,12 @@ public class MonsterManager : MonoBehaviour, Observer
     public void SetBattleActive(bool isBattle){this.isBattle = isBattle;}
     public void SetMonsterAttackLevel(MonsterAttack.e_MonsterAttackLevel atkLevel){monsterAtkLevel = atkLevel;}
     public void SetMonsterHPMng(MonsterHp monsterHpMng) { monsterHPMng = monsterHpMng; }
-
+    public void SetDetectedActive(bool isDetected) {  this.isDetected = isDetected;}
 
     public Monster GetMonsterClass(){return this.monster;}
     public bool GetBattleActive(){return isBattle;}
     public MonsterHp GetMonsterHPMng() { return monsterHPMng; }
+    public bool GetDetectedActive() { return isDetected;}
 
     public Vector3 GetMonsterHeadPosition()
     {

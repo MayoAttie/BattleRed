@@ -3,19 +3,23 @@ using UnityEngine.UI;
 
 public class ButtonClass : MonoBehaviour
 {
+    #region 변수
     Button button;
     Image background;
     Image inside;
-    public Sprite btnBackgroundSprite;
-    public Sprite btnInsideSprite;
-    [Range(0,1)] public float BackgroundAlpha;
+    public Sprite btnBackgroundSprite;              // 버튼 백그라운드 이미지
+    public Sprite btnInsideSprite;                  // 버튼 이미지
+    [Range(0,1)] public float BackgroundAlpha;      // 버튼 백그라운드 알파값
 
-    public UnityEngine.Events.UnityEvent onPressed;
-    public UnityEngine.Events.UnityEvent onButtonDown;
-    public UnityEngine.Events.UnityEvent onButtonUp;
+    [Tooltip("onPressed이벤트는, Time Pause의 영향을 받지 않음.")]
+    public UnityEngine.Events.UnityEvent onPressed;         // 프레스 이벤트
+    public UnityEngine.Events.UnityEvent onButtonDown;      // 프레스다운 이벤트
+    public UnityEngine.Events.UnityEvent onButtonUp;        // 프레스업 이벤트
 
-    [Tooltip("이미지를 Filled 상태로 변경할지 선택합니다.")]
-    public bool ImageFilledSet;
+    [Tooltip("이미지를 Filled 상태로 변경할지 선택")]
+    public bool ImageFilledSet;                             // 버튼을 FillAmount할지 판단하는 부울형
+
+    #endregion
 
     private void Awake()
     {

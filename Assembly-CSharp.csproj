@@ -86,6 +86,7 @@
     <Compile Include="Assets\01Scripts\Patterns\Subject.cs" />
     <Compile Include="Assets\01Scripts\Tools\AttackRange.cs" />
     <Compile Include="Assets\01Scripts\Tools\ButtonClass.cs" />
+    <Compile Include="Assets\01Scripts\Tools\ButtonClass2.cs" />
     <Compile Include="Assets\01Scripts\Tools\CharacterViewRange.cs" />
     <Compile Include="Assets\01Scripts\Tools\DamageTextManager.cs" />
     <Compile Include="Assets\01Scripts\Tools\FloatingText.cs" />
