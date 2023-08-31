@@ -171,13 +171,13 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         GameObject elementSwitchButton = GameObject.Find("ElementSwitchButton");
         if (elementSwitchButton != null)
         {
-            ButtonClass btncls = elementSwitchButton.GetComponent<ButtonClass>();
+            var btncls = elementSwitchButton.GetComponent<ButtonClass2>();
             
             StartCoroutine(ButtonClickedCoolTime(2f, btncls));
         }
     }
     // 버튼 쿨타임 함수
-    IEnumerator ButtonClickedCoolTime(float time, ButtonClass ClickedBtnCls)
+    IEnumerator ButtonClickedCoolTime(float time, ButtonClass2 ClickedBtnCls)
     {
         isClickedCoolCheck = true;
         float elapsedTime = 0f;

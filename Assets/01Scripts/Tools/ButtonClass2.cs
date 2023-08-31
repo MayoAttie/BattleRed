@@ -19,6 +19,8 @@ public class ButtonClass2 : MonoBehaviour
     public Sprite leftSprite;                       // 버튼셋 왼쪽 이미지
     public Sprite symbolSprite;                     // 버튼셋 심볼
     [Range(0,1)] public float BackgroundAlpha;      // 버튼 백그라운드 알파값
+    [Range(0, 1)] public float ButtonImageAlpha;      // 버튼 이미지 알파값
+
 
     // 이미지들의 알파값
     private Color originalBackgroundColor;
@@ -47,43 +49,60 @@ public class ButtonClass2 : MonoBehaviour
         button.onClick.AddListener(OnButtonDown);
         button.onClick.AddListener(OnButtonUp);
 
+        background = transform.GetChild(0).GetComponent<Image>();
+        leftImg = transform.GetChild(1).GetComponent<Image>();
+        rightImg = transform.GetChild(2).GetComponent<Image>();
+        symbolImg = transform.GetChild(3).GetComponent<Image>();
+
+        // 버튼 텍스트 초기화
+        inText = transform.GetChild(4).GetComponent<TextMeshProUGUI>();
 
 
         // 백그라운드 이미지 설정
         if (btnBackgroundSprite != null)
         {
-            background = transform.GetChild(0).GetComponent<Image>();
             if (background != null)
                 background.sprite = btnBackgroundSprite;
         }
+        else
+        { background.gameObject.SetActive(false); }
 
         // 왼쪽 이미지 설정
         if (leftSprite != null)
         {
-            leftImg = transform.GetChild(1).GetComponent<Image>();
             if (leftImg != null)
                 leftImg.sprite = leftSprite;
         }
+        else
+        { leftImg.gameObject.SetActive(false); }
 
         // 오른쪽 이미지 설정
         if (rightSprite != null)
         {
-            rightImg = transform.GetChild(2).GetComponent<Image>();
             if (rightImg != null)
                 rightImg.sprite = rightSprite;
         }
+        else
+        { rightImg.gameObject.SetActive(false);}
 
         // 심볼 이미지 설정
         if (symbolSprite != null)
         {
-            symbolImg = transform.GetChild(3).GetComponent<Image>();
             if (symbolImg != null)
                 symbolImg.sprite = symbolSprite;
         }
+        else
+        { symbolImg.gameObject.SetActive(false); }
 
-        // 버튼 텍스트 초기화
-        inText = transform.GetChild(4).GetComponent<TextMeshProUGUI>();
 
+        //왼쪽 오른쪽 이미지가 활성화 되지 않았다면, 버튼 크기 조절
+        if(!leftImg.gameObject.activeSelf && !rightImg.gameObject.activeSelf)
+        {
+            // 심볼 이미지의 위치를 백그라운드 이미지의 정중앙으로 설정
+            symbolImg.GetComponent<RectTransform>().anchoredPosition = Vector2.zero; // 백그라운드 이미지의 정중앙
+            // 버튼 사이즈 조절
+            button.GetComponent<RectTransform>().sizeDelta = background.GetComponent<RectTransform>().sizeDelta;
+        }
 
         // 버튼 이미지 설정
         if (btnInsideSprite != null)
@@ -93,11 +112,19 @@ public class ButtonClass2 : MonoBehaviour
                 inside.sprite = btnInsideSprite;
         }
 
+        // 백그라운드 알파값 설정
+        if (background != null)
+        {
+            Color backgroundColor = background.color;
+            backgroundColor.a = BackgroundAlpha;
+            background.color = backgroundColor;
+        }
+
         // 버튼 이미지 알파값 설정
         if (inside != null)
         {
             Color insideColor = background.color;
-            insideColor.a = BackgroundAlpha;
+            insideColor.a = ButtonImageAlpha;
             inside.color = insideColor;
         }
 
@@ -113,7 +140,7 @@ public class ButtonClass2 : MonoBehaviour
         if(ImageFilledSet == true)
         {
             // 이미지 타입을 Filled로 변경
-            inside.type = Image.Type.Filled;
+            symbolImg.type = Image.Type.Filled;
         }
     }
 
@@ -155,9 +182,9 @@ public class ButtonClass2 : MonoBehaviour
     // 버튼의 내부 이미지의 FillAmount 값을 조정하는 함수
     public void SetInsideImageFillAmount(float fillAmount)
     {
-        if (inside != null && inside.type == Image.Type.Filled)
+        if (symbolImg != null && symbolImg.type == Image.Type.Filled)
         {
-            inside.fillAmount = fillAmount;
+            symbolImg.fillAmount = fillAmount;
         }
     }
 
