@@ -6,18 +6,25 @@ using static HandlePauseTool;
 public class GameManager : Singleton<GameManager>
 {
     #region 변수
+    // 프리팹
     public CharacterClass characterCls;
     public GameObject[] Monsters;
     public GameObject MonsterHpBar;
 
+    // 오브젝트 풀
     public ObjectPool<MonsterManager> CactusPool;
     public ObjectPool<MonsterManager> MushroomAngryPool;
     public ObjectPool<MonsterHp> MonsterHpBarPool;
 
+    // 캔버스
     public Canvas BottomCanvas;
     public Camera HpCamera;
 
+    // 일시정지 체크
     private bool isPaused;
+
+    // 게임 데이터
+    public List<ItemClass> list_ItemClasses;
 
     #endregion
 
@@ -25,11 +32,17 @@ public class GameManager : Singleton<GameManager>
 
     private void Awake()
     {
+        // 변수 초기화
         isPaused = false;
-        characterCls = new CharacterClass(300, 300, 0, 100, 50, 15, 1, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true);
+        list_ItemClasses = new List<ItemClass>();
+        // 오브젝트 풀 초기화
         CactusPool = new ObjectPool<MonsterManager>(Monsters[0],10);
         MushroomAngryPool = new ObjectPool<MonsterManager>(Monsters[1],10);
         MonsterHpBarPool = new ObjectPool<MonsterHp>(MonsterHpBar, 15);
+
+        // 게임 데이터 초기화
+        characterCls = new CharacterClass(300, 300, 0, 100, 50, 15, 1, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true);
+        list_ItemClasses.Add(new ItemClass("무기", "천공의 검", 1, false, 1, 100000));
 
     }
 

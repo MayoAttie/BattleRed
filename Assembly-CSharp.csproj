@@ -69,6 +69,7 @@
     <Compile Include="Assets\01Scripts\EnergyBarManager.cs" />
     <Compile Include="Assets\01Scripts\GameManager.cs" />
     <Compile Include="Assets\01Scripts\Item.cs" />
+    <Compile Include="Assets\01Scripts\Item\ItemClass.cs" />
     <Compile Include="Assets\01Scripts\JoyStickController.cs" />
     <Compile Include="Assets\01Scripts\Monster\MobAngryMushroomAttack.cs" />
     <Compile Include="Assets\01Scripts\Monster\MobCactusAttack.cs" />
@@ -85,14 +86,16 @@
     <Compile Include="Assets\01Scripts\Patterns\Singleton.cs" />
     <Compile Include="Assets\01Scripts\Patterns\Subject.cs" />
     <Compile Include="Assets\01Scripts\Tools\AttackRange.cs" />
-    <Compile Include="Assets\01Scripts\Tools\ButtonClass.cs" />
-    <Compile Include="Assets\01Scripts\Tools\ButtonClass2.cs" />
     <Compile Include="Assets\01Scripts\Tools\CharacterViewRange.cs" />
     <Compile Include="Assets\01Scripts\Tools\DamageTextManager.cs" />
     <Compile Include="Assets\01Scripts\Tools\FloatingText.cs" />
     <Compile Include="Assets\01Scripts\Tools\HandlePauseTool.cs" />
     <Compile Include="Assets\01Scripts\Tools\ViewRange.cs" />
     <Compile Include="Assets\01Scripts\TouchPadController.cs" />
+    <Compile Include="Assets\01Scripts\UI\ButtonClass.cs" />
+    <Compile Include="Assets\01Scripts\UI\ButtonClass2.cs" />
+    <Compile Include="Assets\01Scripts\UI\InvenItemObjClass.cs" />
+    <Compile Include="Assets\01Scripts\UI\InventoryButton.cs" />
     <Compile Include="Assets\01Scripts\UI_Manager.cs" />
     <Compile Include="Assets\02Assets\UJoystick\Content\Script\Core\bl_Joystick.cs" />
     <Compile Include="Assets\02Assets\UJoystick\Content\Script\Internal\bl_JoystickUtils.cs" />
