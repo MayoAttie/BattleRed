@@ -10,39 +10,71 @@ public class GameManager : Singleton<GameManager>
     public CharacterClass characterCls;
     public GameObject[] Monsters;
     public GameObject MonsterHpBar;
+    public GameObject InventoryItemObj;
 
     // 오브젝트 풀
     public ObjectPool<MonsterManager> CactusPool;
     public ObjectPool<MonsterManager> MushroomAngryPool;
     public ObjectPool<MonsterHp> MonsterHpBarPool;
+    public ObjectPool<InvenItemObjClass> WeaponItemPool;
+    public ObjectPool<InvenItemObjClass> EquipItemPool;
+    public ObjectPool<InvenItemObjClass> GemItemPool;
+    public ObjectPool<InvenItemObjClass> FoodItemPool;
+
 
     // 캔버스
     public Canvas BottomCanvas;
+    public Canvas TopCanvas;
     public Camera HpCamera;
 
     // 일시정지 체크
     private bool isPaused;
 
     // 게임 데이터
-    public List<ItemClass> list_ItemClasses;
+    private List<ItemClass> list_WeaponItemClasses;
+    private List<ItemClass> list_EquipItemClasses;
+    private List<ItemClass> list_GemItemClasses;
+    private List<ItemClass> list_FoodItemClasses;
+
+    // 기타
+    [SerializeField] Transform objectPoolSavePos;
 
     #endregion
 
+    #region 구조체
+    public enum e_PoolItemType
+    {
+        Weapon,
+        Equip,
+        Gem,
+        Food,
+        Max
+    }
+    #endregion
 
 
     private void Awake()
     {
         // 변수 초기화
         isPaused = false;
-        list_ItemClasses = new List<ItemClass>();
+        list_WeaponItemClasses = new List<ItemClass>();
+        list_EquipItemClasses = new List<ItemClass>();
+        list_GemItemClasses = new List<ItemClass>();
+        list_FoodItemClasses = new List<ItemClass>();
         // 오브젝트 풀 초기화
-        CactusPool = new ObjectPool<MonsterManager>(Monsters[0],10);
-        MushroomAngryPool = new ObjectPool<MonsterManager>(Monsters[1],10);
-        MonsterHpBarPool = new ObjectPool<MonsterHp>(MonsterHpBar, 15);
+        CactusPool = new ObjectPool<MonsterManager>(Monsters[0],10, objectPoolSavePos);
+        MushroomAngryPool = new ObjectPool<MonsterManager>(Monsters[1],10, objectPoolSavePos);
+        MonsterHpBarPool = new ObjectPool<MonsterHp>(MonsterHpBar, 15, objectPoolSavePos);
+        WeaponItemPool = new ObjectPool<InvenItemObjClass>(InventoryItemObj, 5, objectPoolSavePos);
+        EquipItemPool = new ObjectPool<InvenItemObjClass>(InventoryItemObj, 5, objectPoolSavePos);
+        GemItemPool = new ObjectPool<InvenItemObjClass>(InventoryItemObj, 5, objectPoolSavePos);
+        FoodItemPool = new ObjectPool<InvenItemObjClass>(InventoryItemObj, 5, objectPoolSavePos);
 
         // 게임 데이터 초기화
         characterCls = new CharacterClass(300, 300, 0, 100, 50, 15, 1, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true);
-        list_ItemClasses.Add(new ItemClass("무기", "천공의 검", 1, false, 1, 100000));
+        list_WeaponItemClasses.Add(new ItemClass("무기", "천공의 검", 5, false, 1, 100000, 1, "풍룡의 영광을 상징하는 기사검.\n잃어버렸다가 오늘날 되찾았다.\n현재 검에 바람 신의 축복이 깃들어 있으며, 푸른 하늘과 바람의 힘을 지니고 있다"));
+        list_WeaponItemClasses.Add(new ItemClass("무기", "제례검", 4, false, 1, 65000, 3, "기나긴 세월을 거쳐 석화한 검은 의례적인 장식이 여전히 선명하게 보인다.\n시간의 바람에 씻긴 축복의 힘을 보유하고 있다"));
+
 
     }
 
@@ -274,5 +306,41 @@ public class GameManager : Singleton<GameManager>
     #endregion
 
 
+    #region 아이템 데이터 오브젝트 풀 셋
+    public void WeaponItemToObjPool(int num, e_PoolItemType type, Transform parent)
+    {
+        // 매개변수만큼 오브젝트 풀에서 UI 오브젝트 생성
+        for(int i=0; i<num; i++)
+        {
+            switch(type)
+            {
+                case e_PoolItemType.Weapon:
+                    WeaponItemPool.GetFromPool(Vector3.zero, Quaternion.identity, parent.transform);
+                    break;
+                case e_PoolItemType.Equip:
+                    EquipItemPool.GetFromPool(Vector3.zero, Quaternion.identity, parent.transform);
+                    break;
+                case e_PoolItemType.Gem:
+                    GemItemPool.GetFromPool(Vector3.zero, Quaternion.identity, parent.transform);
+                    break;
+                case e_PoolItemType.Food:
+                    FoodItemPool.GetFromPool(Vector3.zero, Quaternion.identity, parent.transform);
+                    break;
+            }
+        }
+    }
+    #endregion
+
+
+
+    #region 게터세터
+    public List<ItemClass> GetWeaponItemClass() { return list_WeaponItemClasses; }
+    public List<ItemClass> GetEquipItemClass() { return list_EquipItemClasses; }
+    public List<ItemClass> GetGemItemClass() { return list_GemItemClasses; }
+    public List<ItemClass> GetFoodItemClass() { return list_FoodItemClasses; }
+
+
+
+    #endregion
 
 }

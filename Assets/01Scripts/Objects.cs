@@ -51,7 +51,7 @@ public class Objects
     {
         return sName;
     }
-    public int Count()
+    public int GetGrade()
     {
         return nGrade;
     }

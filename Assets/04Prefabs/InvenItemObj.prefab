@@ -411,7 +411,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e308d6b413daa04c8a6f2d8eebacebe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SelectSprite: {fileID: 21300000, guid: d5625662f5e401347a1cb29c618398e8, type: 3}
   onPressed:
     m_PersistentCalls:
       m_Calls: []
@@ -523,8 +522,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 40, y: 40}
+  m_AnchoredPosition: {x: 0, y: 15}
+  m_SizeDelta: {x: 40, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4391547429695200976
 CanvasRenderer:

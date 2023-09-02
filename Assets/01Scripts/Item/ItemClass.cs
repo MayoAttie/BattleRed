@@ -6,14 +6,18 @@ public class ItemClass : Objects
 {
     int nNumber;
     int nCost;
+    int nLevel;
+    string sContent;
 
     public ItemClass()
     { }
 
-    public ItemClass(string sTag, string sName, int nGrade, bool isActive, int nNumber, int nCost) : base(sTag, sName, nGrade, isActive)
+    public ItemClass(string sTag, string sName, int nGrade, bool isActive, int nNumber, int nCost, int nLevel, string sContent) : base(sTag, sName, nGrade, isActive)
     {
         this.nNumber = nNumber;
         this.nCost = nCost;
+        this.nLevel = nLevel;
+        this.sContent = sContent;
     }
 
     #region 게터세터
@@ -21,5 +25,7 @@ public class ItemClass : Objects
     public void SetCost(int nCost) { this.nCost = nCost; }
     public int GetNumber() { return nNumber;}
     public int GetCost() { return nCost;}
+    public int GetLevel() { return nLevel; }
+    public string GetContent() { return sContent; }
     #endregion
 }

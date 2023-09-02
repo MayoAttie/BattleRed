@@ -7,49 +7,59 @@ using UnityEngine.UI;
 
 public class InvenItemObjClass : MonoBehaviour
 {
+    #region 변수
     Image img_TopBgrImg;                // 백그라운드 이미지
     Image img_TopSpriteImg;             // 아이템 이미지
     Image img_SelectExpress;            // 선택된 아이템 표시
     TextMeshProUGUI txt_BottomText;     // 하단 텍스트
     Button button;
 
-    Color FiveStarColor = new Color(177/255, 115/255, 43/255);
-    Color FourStarColor = new Color(138/255, 107/255, 170/255);
-    Color ThreeStarColor = new Color(86 / 255, 131 / 255, 164 / 255);
-    Color OneStarColor = new Color(108 / 255, 105 / 255, 108 / 255);
+    ItemClass itemCls;                  // 오브젝트가 저장하는 아이템
+    bool isActive;                      // obj가 엑티브 상태인지 체크
+    bool isClicked;                     // 클릭 상태인지 체크
 
 
-    bool isClicked;
+
+    #endregion
+
+
 
     public UnityEngine.Events.UnityEvent onPressed;
 
     private void Awake()
     {
-        isClicked = true;
         img_TopBgrImg = gameObject.transform.GetChild(0).GetComponent<Image>();
         img_TopSpriteImg = img_TopBgrImg.transform.GetChild(1).GetComponent<Image>();
         txt_BottomText = gameObject.transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
         img_SelectExpress = gameObject.transform.GetChild(2).GetComponent<Image>();
-
-        img_SelectExpress.enabled = false;
-
+        
         button = gameObject.GetComponentInChildren<Button>();
         // 버튼 클릭 이벤트에 대한 메서드 등록
         button.onClick.AddListener(OnClick);
     }
 
+    private void OnEnable()
+    {
+        // 활성화 될 때마다, 변수 초기화
+        isActive = false;
+        isClicked = false;
+        img_SelectExpress.enabled = false;
+    }
+
+    private void OnDisable()
+    {
+        itemCls = null;
+    }
+
     private void OnClick()
     {
         ClickedUIApply();
+        // 클릭된 객체의 데이터를 전송
+        UI_Manager.Instance.ClickedItemNotifyed(itemCls, this);
         onPressed.Invoke();
     }
 
-    void Start()
-    {
-        
-    }
-
-    void ClickedUIApply()
+    public void ClickedUIApply()
     {
         isClicked = !isClicked;
 
@@ -64,5 +74,33 @@ public class InvenItemObjClass : MonoBehaviour
         }
     }
 
+    // 아이템 등급에 따라서 색상 변경
+    public void SetItemColor(int grade)
+    {
+        switch(grade)
+        {
+            case 5:
+                img_TopBgrImg.color = ItemSpritesSaver.Instance.GetFiveStarColor();
+                break;
+            case 4:
+                img_TopBgrImg.color = ItemSpritesSaver.Instance.GetFourStarColor();
+                break;
+            case 3:
+                img_TopBgrImg.color = ItemSpritesSaver.Instance.GetThreeStarColor();
+                break;
+            default:
+                img_TopBgrImg.color = ItemSpritesSaver.Instance.GetOneStarColor();
+                break;
+        }
+    }
+
+    // 아이템 스프라이트 설정
+    public void SetItemSprite(Sprite sprite){ img_TopSpriteImg.sprite = sprite; }
+    // 아이템 텍스트 설정
+    public void SetItemText(string sText) { txt_BottomText.text = sText; }
+    public void SetItemcls(ItemClass itemCls) { this.itemCls = itemCls; }
+    public void SetIsActive(bool isActive) { this.isActive = isActive; }
+    public bool GetButtonClicked() { return isClicked; }    // 버튼 클릭 여부값 반환
+    public bool GetIsActive() { return isActive; }
 
 }
