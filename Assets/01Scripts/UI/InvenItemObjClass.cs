@@ -53,9 +53,19 @@ public class InvenItemObjClass : MonoBehaviour
 
     private void OnClick()
     {
+        if(!isClicked)  // 클릭된 상태가 아닐 경우.
+        {
+            // 클릭된 객체의 데이터를 전송
+            UI_Manager.Instance.ClickedItemNotifyed(itemCls, this);
+        }
+        else            // 클릭된 상태일 경우.
+        {
+            // 프레임 리셋.
+            UI_Manager.Instance.ExpressFrameReset();
+        }
+
+
         ClickedUIApply();
-        // 클릭된 객체의 데이터를 전송
-        UI_Manager.Instance.ClickedItemNotifyed(itemCls, this);
         onPressed.Invoke();
     }
 
@@ -102,5 +112,6 @@ public class InvenItemObjClass : MonoBehaviour
     public void SetIsActive(bool isActive) { this.isActive = isActive; }
     public bool GetButtonClicked() { return isClicked; }    // 버튼 클릭 여부값 반환
     public bool GetIsActive() { return isActive; }
+    public Sprite GetItemSprite() { return img_TopSpriteImg.sprite; }
 
 }

@@ -8,16 +8,18 @@ public class ItemClass : Objects
     int nCost;
     int nLevel;
     string sContent;
+    string sSet;
 
     public ItemClass()
     { }
 
-    public ItemClass(string sTag, string sName, int nGrade, bool isActive, int nNumber, int nCost, int nLevel, string sContent) : base(sTag, sName, nGrade, isActive)
+    public ItemClass(string sTag, string sName, int nGrade, bool isActive, int nNumber, int nCost, int nLevel, string sContent, string sSet) : base(sTag, sName, nGrade, isActive)
     {
         this.nNumber = nNumber;
         this.nCost = nCost;
         this.nLevel = nLevel;
         this.sContent = sContent;
+        this.sSet = sSet;
     }
 
     #region 게터세터

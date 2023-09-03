@@ -200,7 +200,7 @@ public class ButtonClass2 : MonoBehaviour
         if (!isClicked)
         {
             // 이미지 알파값을 80%로 변경
-            SetImageAlpha(background, 0.2f);
+            SetImageAlpha(background, 0.8f);
             SetImageAlpha(rightImg, 0.8f);
             SetImageAlpha(leftImg, 0.8f);
             SetImageAlpha(symbolImg, 0.8f);

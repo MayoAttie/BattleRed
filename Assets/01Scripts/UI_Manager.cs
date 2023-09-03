@@ -23,7 +23,7 @@ public class UI_Manager : EnergyBarManager
     private GameObject ExpressFrame;                    // 특정 아이템 선택시 아이템 정보 출력창
 
     private List<InvenItemObjClass> openUI_ItemList;    // 선택한 아이템 타입의 객체 리스트
-
+    private bool[] invenButtonIsClicked;                // 인벤토리 아이템 타입선택 버튼 클릭 여부
     #endregion
 
     #region 구조체
@@ -49,7 +49,8 @@ public class UI_Manager : EnergyBarManager
             Destroy(gameObject); // 이미 인스턴스가 있다면 이 오브젝트는 파괴
         }
         Inventory.SetActive(false); // 인벤토리는 기본적으로 Off
-        openUI_ItemList = new List<InvenItemObjClass>();
+        openUI_ItemList = new List<InvenItemObjClass>();                    // 선택한 아이템 리스트
+        invenButtonIsClicked = new bool[] { false, false, false, false };   // 배열 초기화
     }
 
     #region 인벤토리 UI 관리
@@ -82,17 +83,28 @@ public class UI_Manager : EnergyBarManager
     // 아이템 타입 버튼 클릭시 인덱스값 송신 함수
     public void InventoryViewItemTypeNotify(int index)
     {
+        // 만약 선택한 타입이 이미 열람 중인 객체라면, 이벤트 리턴.
+        if (invenButtonIsClicked[index] == true)
+        {
+            invenButtons[index].ButtonUIColorSet(); // UI 상태는 유지
+            return;
+        }
+        // 인벤 버튼들을 순회하며, Active 상태를 Off하고 부울 초기화
         for(int i=0; i<invenButtons.Length; i++)
         {
             if(invenButtons[i].GetClickActive() == true && i != index)
                 invenButtons[i].ButtonUIColorSet();
+            invenButtonIsClicked[i] = false;
         }
+
+        invenButtonIsClicked[index] = true; // 클릭한 버튼 객체의 인덱스를 true.
         ScrollViewReset(index);             // 스크롤뷰 리셋
         ItemPrintByObj_Index(index);        // 아이템 출력
         ExpressFrame.gameObject.SetActive(false);
     }
 
     // 인덱스 값에 따라서 아이템 출력
+    // ascending == true : 오름차순, false : 내림차순
     private void ItemPrintByObj_Index(int index)
     {
         switch((GameManager.e_PoolItemType)index)
@@ -101,7 +113,7 @@ public class UI_Manager : EnergyBarManager
                 WeaponPrintAtScroll(SortingOrder.NameOrder,true);
                 break;
             case GameManager.e_PoolItemType.Equip:     //장비
-                
+                EquipPrintAtScroll(SortingOrder.GradeOrder, false);
                 break;
             case GameManager.e_PoolItemType.Gem:       //광물
                 
@@ -153,7 +165,7 @@ public class UI_Manager : EnergyBarManager
 
 
         // 오브젝트 풀로, UI객체 생성
-        GameManager.Instance.WeaponItemToObjPool(itemClses.Count, GameManager.e_PoolItemType.Weapon, scrollContent);
+        GameManager.Instance.ItemToObjPool(itemClses.Count, GameManager.e_PoolItemType.Weapon, scrollContent);
         // 오브젝트 풀에 저장된 리스트 인스턴스화
 
         var datas = GameManager.Instance.WeaponItemPool.GetPoolList();
@@ -167,25 +179,83 @@ public class UI_Manager : EnergyBarManager
                     continue;
 
                 if(data.GetName() == "천공의 검")
-                {
                     obj.SetItemSprite(ItemSpritesSaver.Instance.WeaponSprites[0]);
-                    obj.SetItemColor(data.GetGrade());
-                    obj.SetItemText("LV : " + data.GetLevel().ToString());
-                    obj.SetIsActive(true);
-                    obj.SetItemcls(data);
-                    openUI_ItemList.Add(obj);
-                    break;
-                }
                 else if(data.GetName() == "제례검")
-                {
                     obj.SetItemSprite(ItemSpritesSaver.Instance.WeaponSprites[1]);
-                    obj.SetItemColor(data.GetGrade());
-                    obj.SetItemText("LV : " + data.GetLevel().ToString());
-                    obj.SetIsActive(true);
-                    obj.SetItemcls(data);
-                    openUI_ItemList.Add(obj);
-                    break;
-                }
+                else { break; }
+                
+                obj.SetItemColor(data.GetGrade());
+                obj.SetItemText("LV : " + data.GetLevel().ToString());
+                obj.SetIsActive(true);
+                obj.SetItemcls(data);
+                openUI_ItemList.Add(obj);
+                break;
+            }
+        }
+    }
+
+    // 게임매니저의 데이터를 참조하여, 장비들을 스크롤뷰 콘텐츠에 출력
+    void EquipPrintAtScroll(SortingOrder sortOrder, bool ascending)
+    {
+        var itemClses = GameManager.Instance.GetEquipItemClass();      // 저장된 아이템 목록
+
+        SortingItemList(itemClses, sortOrder, ascending);
+
+
+        // 오브젝트 풀로, UI객체 생성
+        GameManager.Instance.ItemToObjPool(itemClses.Count, GameManager.e_PoolItemType.Equip, scrollContent);
+        // 오브젝트 풀에 저장된 리스트 인스턴스화
+
+        var datas = GameManager.Instance.EquipItemPool.GetPoolList();
+
+
+        foreach (ItemClass data in itemClses)
+        {
+            foreach (InvenItemObjClass obj in datas)
+            {
+                if (obj.gameObject.activeSelf == false || obj.GetIsActive() == true)
+                    continue;
+
+                if (data.GetName() == "이국의 술잔")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[0]);
+                else if (data.GetName() == "귀향의 깃털")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[1]);
+                else if (data.GetName() == "이별의 모자")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[2]);
+                else if (data.GetName() == "옛 벗의 마음")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[3]);
+                else if (data.GetName() == "빛을 좆는 돌")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[4]);   
+
+                else if (data.GetName() == "전투광의 해골잔")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[5]);
+                else if (data.GetName() == "전투광의 깃털")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[6]);
+                else if (data.GetName() == "전투광의 귀면")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[7]);
+                else if (data.GetName() == "전투광의 장미")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[8]);
+                else if (data.GetName() == "전투광의 시계")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[9]);
+
+                else if (data.GetName() == "피에 물든 기사의 술잔")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[10]);
+                else if (data.GetName() == "피에 물든 검은 깃털")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[11]);
+                else if (data.GetName() == "피에 물든 철가면")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[12]);
+                else if (data.GetName() == "피에 물든 강철 심장")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[13]);
+                else if (data.GetName() == "피에 물든 기사의 술잔")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[14]);
+                else { break; }
+
+                obj.SetItemColor(data.GetGrade());
+                obj.SetItemText("LV : " + data.GetLevel().ToString());
+                obj.SetIsActive(true);
+                obj.SetItemcls(data);
+                openUI_ItemList.Add(obj);
+                break;
             }
         }
     }
@@ -236,19 +306,13 @@ public class UI_Manager : EnergyBarManager
         }
 
         // 아이템 이미지 출력
-        switch(itemCls.GetName())
-        {
-            case "천공의 검":
-                topImage.sprite = ItemSpritesSaver.Instance.WeaponSprites[0];
-                break;
-            case "제례검":
-                topImage.sprite = ItemSpritesSaver.Instance.WeaponSprites[1];
-                break;
-            default:
-                break;
-        }
+        topImage.sprite = clickedObj.GetItemSprite();
 
-        
+    }
+
+    public void ExpressFrameReset()
+    {
+        ExpressFrame.gameObject.SetActive(false);
     }
     #endregion
 

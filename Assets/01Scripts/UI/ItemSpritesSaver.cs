@@ -9,7 +9,10 @@ public class ItemSpritesSaver : Singleton<ItemSpritesSaver>
     public Sprite[] WeaponSprites;
 
     /* 장비 목록
-     * 
+     * <성배, 깃털, 왕관, 꽃, 모래 순서>
+     * 0~4 - 행자의 마음
+     * 5~9 - 전투광
+     * 10~14 - 피에 물든 기사도
      */
     public Sprite[] EquipSprites;
 

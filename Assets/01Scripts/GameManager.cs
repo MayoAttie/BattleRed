@@ -72,9 +72,26 @@ public class GameManager : Singleton<GameManager>
 
         // 게임 데이터 초기화
         characterCls = new CharacterClass(300, 300, 0, 100, 50, 15, 1, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true);
-        list_WeaponItemClasses.Add(new ItemClass("무기", "천공의 검", 5, false, 1, 100000, 1, "풍룡의 영광을 상징하는 기사검.\n잃어버렸다가 오늘날 되찾았다.\n현재 검에 바람 신의 축복이 깃들어 있으며, 푸른 하늘과 바람의 힘을 지니고 있다"));
-        list_WeaponItemClasses.Add(new ItemClass("무기", "제례검", 4, false, 1, 65000, 3, "기나긴 세월을 거쳐 석화한 검은 의례적인 장식이 여전히 선명하게 보인다.\n시간의 바람에 씻긴 축복의 힘을 보유하고 있다"));
+        list_WeaponItemClasses.Add(new ItemClass("무기", "천공의 검", 5, false, 1, 100000, 1, "풍룡의 영광을 상징하는 기사검.\n잃어버렸다가 오늘날 되찾았다.\n현재 검에 바람 신의 축복이 깃들어 있으며, 푸른 하늘과 바람의 힘을 지니고 있다",""));
+        list_WeaponItemClasses.Add(new ItemClass("무기", "제례검", 4, false, 1, 65000, 3, "기나긴 세월을 거쳐 석화한 검은 의례적인 장식이 여전히 선명하게 보인다.\n시간의 바람에 씻긴 축복의 힘을 보유하고 있다",""));
 
+        list_EquipItemClasses.Add(new ItemClass("성배", "이국의 술잔", 3, false, 1, 9000, 1, "한때 이 소박한 백자 술잔엔 기쁨의 술이 가득 차 있었다","행자의 마음"));
+        list_EquipItemClasses.Add(new ItemClass("깃털", "귀향의 깃털", 3, false, 1, 10000, 1, "푸른색 화살 깃 위에 나그네의 저 멀리 떠나가는 미련이 서려 있다", "행자의 마음"));
+        list_EquipItemClasses.Add(new ItemClass("왕관", "이별의 모자", 3, false, 1, 8000, 1, "봄바람의 기운을 발산하는 버드나무 왕관", "행자의 마음"));
+        list_EquipItemClasses.Add(new ItemClass("꽃", "옛 벗의 마음", 3, false, 1, 7000, 1, "푸른빛의 작은 꽃. 꽃줄기에 오래된 누군가의 리본이 묶여있다", "행자의 마음"));
+        list_EquipItemClasses.Add(new ItemClass("모래", "빛을 좆는 돌", 3, false, 1, 8000, 1, "산전수전 다 겪은 돌시계는 언제나 고요 속에서 일월순환을 기록한다", "행자의 마음"));
+
+        list_EquipItemClasses.Add(new ItemClass("성배", "전투광의 해골잔", 4, false, 1, 30000, 1, "이름 모를 거대한 짐승의 뼈로 만든 컵이다.\n사냥으로 얻은 전리품이다", "전투광"));
+        list_EquipItemClasses.Add(new ItemClass("깃털", "전투광의 깃털", 4, false, 1, 32000, 1, "전설 속의 초상을 알리던 새의 검푸른 꽁지 깃털이다.\n일부분이 붉은색으로 변해버렸다", "전투광"));
+        list_EquipItemClasses.Add(new ItemClass("왕관", "전투광의 귀면", 4, false, 1, 28000, 1, "생사를 가리지 않는 싸움에서 반쯤 부서진 흉측한 강철 가면", "전투광"));
+        list_EquipItemClasses.Add(new ItemClass("꽃", "전투광의 장미", 4, false, 1, 25000, 1, "핏빛의 정교한 꽃송이는 광전사의 기질과 미묘하게 어울린다", "전투광"));
+        list_EquipItemClasses.Add(new ItemClass("모래", "전투광의 시계", 4, false, 1, 28000, 1, "영원히 무정하게 흐르는 기물(器物)\n광전사에게 전쟁터, 그리고 인간 세상에서의 시간이 얼마 남지 않았음을 일깨워준다", "전투광"));
+
+        list_EquipItemClasses.Add(new ItemClass("성배", "피에 물든 기사의 술잔", 5, false, 1, 60000, 1, "핏빛 기사가 지닌 어두운 금속 잔.\n겉은 검은 연기와 굳어버린 피로 인해 밤처럼 새까맣다", "피에 물든 기사도"));
+        list_EquipItemClasses.Add(new ItemClass("깃털", "피에 물든 검은 깃털", 5, false, 1, 67000, 1, "기사의 망토에 붙어 있던 까마귀 깃털.\n검은 피에 반복적으로 물들어 완전히 검은색으로 변했다", "피에 물든 기사도"));
+        list_EquipItemClasses.Add(new ItemClass("왕관", "피에 물든 철가면", 5, false, 1, 55000, 1, "기사가 자신의 얼굴을 가릴 때 사용하던 철가면.\n가면 아래의 얼굴은 수많은 사람들이 상상의 나래를 펼치게 했다", "피에 물든 기사도"));
+        list_EquipItemClasses.Add(new ItemClass("꽃", "피에 물든 강철 심장", 5, false, 1, 51000, 1, "피에 검게 물들어 강철과 같은 강도를 가지게 될 정도로 말라버린 꽃.\n과거 이 꽃의 주인에겐 일종의 기념품이지 않았을까", "피에 물든 기사도"));
+        list_EquipItemClasses.Add(new ItemClass("모래", "피에 물든 기사의 술잔", 5, false, 1, 55000, 1, "핏빛 기사가 지닌 어두운 금속 잔.\n겉은 검은 연기와 굳어버린 피로 인해 밤처럼 새까맣다", "피에 물든 기사도"));
 
     }
 
@@ -307,7 +324,7 @@ public class GameManager : Singleton<GameManager>
 
 
     #region 아이템 데이터 오브젝트 풀 셋
-    public void WeaponItemToObjPool(int num, e_PoolItemType type, Transform parent)
+    public void ItemToObjPool(int num, e_PoolItemType type, Transform parent)
     {
         // 매개변수만큼 오브젝트 풀에서 UI 오브젝트 생성
         for(int i=0; i<num; i++)
