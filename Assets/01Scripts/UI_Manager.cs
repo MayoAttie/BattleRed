@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System;
 using UnityEngine.UI;
 using TMPro;
+using System.Reflection;
+
 public class UI_Manager : EnergyBarManager
 {
     // 싱글턴 인스턴스
@@ -21,13 +23,21 @@ public class UI_Manager : EnergyBarManager
     private GameObject scrollViewObj;                   // 스크롤뷰 콘텐츠에 부착될 컴포넌트 프리팹
     [SerializeField]
     private GameObject ExpressFrame;                    // 특정 아이템 선택시 아이템 정보 출력창
+    [SerializeField]
+    private GameObject SortSelectionButtonOnList;       // Sort 선택 버튼 클릭 시, 띄우는 리스트 버튼 객체
+
 
     private List<InvenItemObjClass> openUI_ItemList;    // 선택한 아이템 타입의 객체 리스트
     private bool[] invenButtonIsClicked;                // 인벤토리 아이템 타입선택 버튼 클릭 여부
+    private bool isAscending;                           // 오름차순 정렬 기준인지 판단
+    private e_SortingOrder selected_SortOrder;            // 현재 선택된 정렬 기준
+    private int nSelectedInvenIdx;
+
+
     #endregion
 
     #region 구조체
-    enum SortingOrder
+    public enum e_SortingOrder
     {
         GradeOrder,
         LevelOrder,
@@ -51,6 +61,10 @@ public class UI_Manager : EnergyBarManager
         Inventory.SetActive(false); // 인벤토리는 기본적으로 Off
         openUI_ItemList = new List<InvenItemObjClass>();                    // 선택한 아이템 리스트
         invenButtonIsClicked = new bool[] { false, false, false, false };   // 배열 초기화
+        isAscending = false;
+        selected_SortOrder = e_SortingOrder.GradeOrder;
+        nSelectedInvenIdx = 0;                                              // 선택한 정렬 버튼 인덱스 무기로 초기화
+        SortSelectionButtonOnList.SetActive(false);                         // 정렬 리스트 목록 숨김
     }
 
     #region 인벤토리 UI 관리
@@ -83,23 +97,30 @@ public class UI_Manager : EnergyBarManager
     // 아이템 타입 버튼 클릭시 인덱스값 송신 함수
     public void InventoryViewItemTypeNotify(int index)
     {
+        nSelectedInvenIdx = index;
         // 만약 선택한 타입이 이미 열람 중인 객체라면, 이벤트 리턴.
-        if (invenButtonIsClicked[index] == true)
+        if (invenButtonIsClicked[nSelectedInvenIdx] == true)
         {
-            invenButtons[index].ButtonUIColorSet(); // UI 상태는 유지
+            invenButtons[nSelectedInvenIdx].ButtonUIColorSet(); // UI 상태는 유지
             return;
         }
-        // 인벤 버튼들을 순회하며, Active 상태를 Off하고 부울 초기화
-        for(int i=0; i<invenButtons.Length; i++)
+        // 타입 선택 버튼들을 순회하며, 해당 버튼 UI의 Active 상태를 Off하고 부울 초기화
+        for (int i = 0; i < invenButtons.Length; i++)
         {
-            if(invenButtons[i].GetClickActive() == true && i != index)
+            if (invenButtons[i].GetClickActive() == true && i != nSelectedInvenIdx)
                 invenButtons[i].ButtonUIColorSet();
             invenButtonIsClicked[i] = false;
         }
 
-        invenButtonIsClicked[index] = true; // 클릭한 버튼 객체의 인덱스를 true.
-        ScrollViewReset(index);             // 스크롤뷰 리셋
-        ItemPrintByObj_Index(index);        // 아이템 출력
+        invenButtonIsClicked[nSelectedInvenIdx] = true; // 클릭한 버튼 객체의 인덱스를 true.
+
+        ViewProcess();
+    }
+
+    private void ViewProcess()
+    {
+        ScrollViewReset();                              // 스크롤뷰 리셋
+        ItemPrintByObj_Index(nSelectedInvenIdx);        // 아이템 출력
         ExpressFrame.gameObject.SetActive(false);
     }
 
@@ -110,10 +131,10 @@ public class UI_Manager : EnergyBarManager
         switch((GameManager.e_PoolItemType)index)
         {
             case GameManager.e_PoolItemType.Weapon:    //웨폰
-                WeaponPrintAtScroll(SortingOrder.NameOrder,true);
+                WeaponPrintAtScroll(selected_SortOrder);
                 break;
             case GameManager.e_PoolItemType.Equip:     //장비
-                EquipPrintAtScroll(SortingOrder.GradeOrder, false);
+                EquipPrintAtScroll(selected_SortOrder);
                 break;
             case GameManager.e_PoolItemType.Gem:       //광물
                 
@@ -127,41 +148,21 @@ public class UI_Manager : EnergyBarManager
     }
 
     // 스크롤뷰 리셋
-    private void ScrollViewReset(int index)
+    private void ScrollViewReset()
     {
-        switch((GameManager.e_PoolItemType)index)
-        {
-            case GameManager.e_PoolItemType.Weapon:
-                GameManager.Instance.EquipItemPool.AllReturnToPool();
-                GameManager.Instance.GemItemPool.AllReturnToPool();
-                GameManager.Instance.FoodItemPool.AllReturnToPool();
-                break;
-            case GameManager.e_PoolItemType.Equip:
-                GameManager.Instance.WeaponItemPool.AllReturnToPool();
-                GameManager.Instance.GemItemPool.AllReturnToPool();
-                GameManager.Instance.FoodItemPool.AllReturnToPool();
-                break;
-            case GameManager.e_PoolItemType.Gem:
-                GameManager.Instance.EquipItemPool.AllReturnToPool();
-                GameManager.Instance.WeaponItemPool.AllReturnToPool();
-                GameManager.Instance.FoodItemPool.AllReturnToPool();
-                break;
-            case GameManager.e_PoolItemType.Food:
-                GameManager.Instance.EquipItemPool.AllReturnToPool();
-                GameManager.Instance.GemItemPool.AllReturnToPool();
-                GameManager.Instance.WeaponItemPool.AllReturnToPool();
-                break;
-            default: break;
-        }
+        GameManager.Instance.WeaponItemPool.AllReturnToPool();
+        GameManager.Instance.EquipItemPool.AllReturnToPool();
+        GameManager.Instance.GemItemPool.AllReturnToPool();
+        GameManager.Instance.FoodItemPool.AllReturnToPool();
         openUI_ItemList.Clear();
     }
     
     // 게임매니저의 데이터를 참조하여, 무기들을 스크롤뷰 콘텐츠에 출력
-    void WeaponPrintAtScroll(SortingOrder sortOrder, bool ascending)
+    void WeaponPrintAtScroll(e_SortingOrder sortOrder)
     {
         var itemClses = GameManager.Instance.GetWeaponItemClass();      // 저장된 아이템 목록
 
-        SortingItemList(itemClses, sortOrder, ascending);
+        SortingItemList(itemClses, sortOrder);
 
 
         // 오브젝트 풀로, UI객체 생성
@@ -195,11 +196,11 @@ public class UI_Manager : EnergyBarManager
     }
 
     // 게임매니저의 데이터를 참조하여, 장비들을 스크롤뷰 콘텐츠에 출력
-    void EquipPrintAtScroll(SortingOrder sortOrder, bool ascending)
+    void EquipPrintAtScroll(e_SortingOrder sortOrder)
     {
         var itemClses = GameManager.Instance.GetEquipItemClass();      // 저장된 아이템 목록
 
-        SortingItemList(itemClses, sortOrder, ascending);
+        SortingItemList(itemClses, sortOrder);
 
 
         // 오브젝트 풀로, UI객체 생성
@@ -261,6 +262,31 @@ public class UI_Manager : EnergyBarManager
     }
     #endregion
 
+    #region 스크롤뷰 정렬
+    // 오름차순 내림차순 선택 버튼
+    public void Descending_AscendingButton(GameObject clickedButton)
+    {
+        isAscending = !isAscending;
+        var cls = clickedButton.GetComponent<ButtonClass2>();
+        cls.AlphaValueChangeing();
+        ViewProcess();
+    }
+    // 정렬기준 선택 버튼
+    public void SortSelectionButton()
+    {
+        if(SortSelectionButtonOnList.activeSelf)
+            SortSelectionButtonOnList.SetActive(false);
+        else
+        {
+            var mng = SortSelectionButtonOnList.GetComponent<InventorySortSelectButton>();
+            mng.HideButtonBackGround();
+            SortSelectionButtonOnList.SetActive(true);
+        }
+    }
+
+
+    #endregion
+
     #region 아이템 선택 및 데이터 출력
     // 선택된 아이템의 데이터를 통신받음
     public void ClickedItemNotifyed(ItemClass itemCls, InvenItemObjClass clickedObj)
@@ -317,30 +343,33 @@ public class UI_Manager : EnergyBarManager
     #endregion
 
 
+
+    #endregion
+
     #region 기타
 
     /* 아이템 정렬 
     *  sortingOrder == GradeOrder : 등급 기준  // LevelOrder : 레벨 기준  //  NameOrder : 이름 기준
     *  ascending == true : 오름차순, false : 내림차순
     */
-    void SortingItemList(List<ItemClass> clsList, SortingOrder sortingOrder, bool ascending)
+    void SortingItemList(List<ItemClass> clsList, e_SortingOrder sortingOrder)
     {
         switch (sortingOrder)
         {
-            case SortingOrder.GradeOrder: // 등급을 기준으로 정렬
-                if (ascending)
+            case e_SortingOrder.GradeOrder: // 등급을 기준으로 정렬
+                if (isAscending)
                     clsList.Sort((item1, item2) => item1.GetGrade().CompareTo(item2.GetGrade()));
                 else
                     clsList.Sort((item1, item2) => item2.GetGrade().CompareTo(item1.GetGrade()));
                 break;
-            case SortingOrder.LevelOrder: // 레벨을 기준으로 정렬
-                if (ascending)
+            case e_SortingOrder.LevelOrder: // 레벨을 기준으로 정렬
+                if (isAscending)
                     clsList.Sort((item1, item2) => item1.GetLevel().CompareTo(item2.GetLevel()));
                 else
                     clsList.Sort((item1, item2) => item2.GetLevel().CompareTo(item1.GetLevel()));
                 break;
-            case SortingOrder.NameOrder: // 이름을 기준으로 정렬
-                if (ascending)
+            case e_SortingOrder.NameOrder: // 이름을 기준으로 정렬
+                if (isAscending)
                     clsList.Sort((item1, item2) => string.Compare(item1.GetName(), item2.GetName()));
                 else
                     clsList.Sort((item1, item2) => string.Compare(item2.GetName(), item1.GetName()));
@@ -350,7 +379,4 @@ public class UI_Manager : EnergyBarManager
         }
     }
     #endregion
-
-    #endregion
-
 }

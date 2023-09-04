@@ -193,7 +193,7 @@ public class ButtonClass2 : MonoBehaviour
         inText.text = text;
     }
 
-    private void AlphaValueChangeing()
+    public void AlphaValueChangeing()
     {
         // 버튼이 눌릴 때 호출되는 이벤트
 
