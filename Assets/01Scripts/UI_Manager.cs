@@ -25,13 +25,15 @@ public class UI_Manager : EnergyBarManager
     private GameObject ExpressFrame;                    // 특정 아이템 선택시 아이템 정보 출력창
     [SerializeField]
     private GameObject SortSelectionButtonOnList;       // Sort 선택 버튼 클릭 시, 띄우는 리스트 버튼 객체
+    [SerializeField]
+    private TextMeshProUGUI selectedOrderPrintText;     // 선택한 정렬오더 출력용 TEXT
 
 
     private List<InvenItemObjClass> openUI_ItemList;    // 선택한 아이템 타입의 객체 리스트
     private bool[] invenButtonIsClicked;                // 인벤토리 아이템 타입선택 버튼 클릭 여부
     private bool isAscending;                           // 오름차순 정렬 기준인지 판단
-    private e_SortingOrder selected_SortOrder;            // 현재 선택된 정렬 기준
-    private int nSelectedInvenIdx;
+    private e_SortingOrder selected_SortOrder;          // 현재 선택된 정렬 기준
+    private int nSelectedInvenIdx;                      // 0:무기, 1:장비, 2:광물, 3:음식
 
 
     #endregion
@@ -39,9 +41,9 @@ public class UI_Manager : EnergyBarManager
     #region 구조체
     public enum e_SortingOrder
     {
-        GradeOrder,
-        LevelOrder,
-        NameOrder
+        NameOrder =1,
+        LevelOrder =2,
+        GradeOrder =3
     }
 
     #endregion
@@ -63,7 +65,7 @@ public class UI_Manager : EnergyBarManager
         invenButtonIsClicked = new bool[] { false, false, false, false };   // 배열 초기화
         isAscending = false;
         selected_SortOrder = e_SortingOrder.GradeOrder;
-        nSelectedInvenIdx = 0;                                              // 선택한 정렬 버튼 인덱스 무기로 초기화
+        nSelectedInvenIdx = 0;                                              // 선택한 타입 버튼 인덱스, 무기로 초기화
         SortSelectionButtonOnList.SetActive(false);                         // 정렬 리스트 목록 숨김
     }
 
@@ -114,6 +116,11 @@ public class UI_Manager : EnergyBarManager
 
         invenButtonIsClicked[nSelectedInvenIdx] = true; // 클릭한 버튼 객체의 인덱스를 true.
 
+        // 객체 타입에 따라서, 리스트 버튼의 텍스트 수정
+        var mng = SortSelectionButtonOnList.GetComponent<InventorySortSelectButton>();
+        mng.UI_TextSettingInit();
+        TextRevise();
+
         ViewProcess();
     }
 
@@ -131,10 +138,10 @@ public class UI_Manager : EnergyBarManager
         switch((GameManager.e_PoolItemType)index)
         {
             case GameManager.e_PoolItemType.Weapon:    //웨폰
-                WeaponPrintAtScroll(selected_SortOrder);
+                WeaponPrintAtScroll();
                 break;
             case GameManager.e_PoolItemType.Equip:     //장비
-                EquipPrintAtScroll(selected_SortOrder);
+                EquipPrintAtScroll();
                 break;
             case GameManager.e_PoolItemType.Gem:       //광물
                 
@@ -158,11 +165,11 @@ public class UI_Manager : EnergyBarManager
     }
     
     // 게임매니저의 데이터를 참조하여, 무기들을 스크롤뷰 콘텐츠에 출력
-    void WeaponPrintAtScroll(e_SortingOrder sortOrder)
+    void WeaponPrintAtScroll()
     {
         var itemClses = GameManager.Instance.GetWeaponItemClass();      // 저장된 아이템 목록
 
-        SortingItemList(itemClses, sortOrder);
+        SortingItemList(itemClses);
 
 
         // 오브젝트 풀로, UI객체 생성
@@ -196,11 +203,11 @@ public class UI_Manager : EnergyBarManager
     }
 
     // 게임매니저의 데이터를 참조하여, 장비들을 스크롤뷰 콘텐츠에 출력
-    void EquipPrintAtScroll(e_SortingOrder sortOrder)
+    void EquipPrintAtScroll()
     {
         var itemClses = GameManager.Instance.GetEquipItemClass();      // 저장된 아이템 목록
 
-        SortingItemList(itemClses, sortOrder);
+        SortingItemList(itemClses);
 
 
         // 오브젝트 풀로, UI객체 생성
@@ -283,7 +290,32 @@ public class UI_Manager : EnergyBarManager
             SortSelectionButtonOnList.SetActive(true);
         }
     }
-
+    // 리스트 내부 버튼에 연결, 클릭 이벤트 호출 함수
+    public void GetSortIndex(int index) 
+    {
+        selected_SortOrder = (e_SortingOrder)index;
+        TextRevise();
+        ViewProcess();
+    }
+    private void TextRevise()
+    {
+        // selected_SortOrder 값에 따라 분기하여 텍스트 출력
+        switch (selected_SortOrder)
+        {
+            case e_SortingOrder.NameOrder:
+                selectedOrderPrintText.text = "이름";
+                break;
+            case e_SortingOrder.LevelOrder:
+                if (nSelectedInvenIdx == 0 || nSelectedInvenIdx == 1)
+                    selectedOrderPrintText.text = "레벨";
+                else
+                    selectedOrderPrintText.text = "갯수";
+                break;
+            case e_SortingOrder.GradeOrder:
+                selectedOrderPrintText.text = "희귀도";
+                break;
+        }
+    }
 
     #endregion
 
@@ -342,8 +374,6 @@ public class UI_Manager : EnergyBarManager
     }
     #endregion
 
-
-
     #endregion
 
     #region 기타
@@ -352,9 +382,9 @@ public class UI_Manager : EnergyBarManager
     *  sortingOrder == GradeOrder : 등급 기준  // LevelOrder : 레벨 기준  //  NameOrder : 이름 기준
     *  ascending == true : 오름차순, false : 내림차순
     */
-    void SortingItemList(List<ItemClass> clsList, e_SortingOrder sortingOrder)
+    void SortingItemList(List<ItemClass> clsList)
     {
-        switch (sortingOrder)
+        switch (selected_SortOrder)
         {
             case e_SortingOrder.GradeOrder: // 등급을 기준으로 정렬
                 if (isAscending)
@@ -378,5 +408,7 @@ public class UI_Manager : EnergyBarManager
                 break;
         }
     }
+    public int GetnSelectedInvenIdx(){return nSelectedInvenIdx;}
+
     #endregion
 }
