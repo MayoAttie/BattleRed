@@ -21,6 +21,8 @@ public class ButtonClass2 : MonoBehaviour
     [Range(0,1)] public float BackgroundAlpha;      // 버튼 백그라운드 알파값
     [Range(0, 1)] public float ButtonImageAlpha;      // 버튼 이미지 알파값
 
+    private float elapsedTime = 0f;                 // 시간 계산용 변수
+    private bool hasInvoked = true;                // 시간 계산용 변수
 
     // 이미지들의 알파값
     private Color originalBackgroundColor;
@@ -144,10 +146,33 @@ public class ButtonClass2 : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        // Time.unscaledDeltaTime를 사용하여 경과한 시간 누적
+        elapsedTime += Time.unscaledDeltaTime;
+
+        // 경과 시간이 0.1초 이상이고 아직 함수가 호출되지 않았다면 호출
+        if (elapsedTime >= 0.2f && !hasInvoked)
+        {
+            AlphaValueChangeing();
+            // 함수를 호출한 후 플래그를 설정하여 중복 호출을 방지
+            hasInvoked = true;
+        }
+    }
+
+    private void ResetElapsedTime()
+    {
+        // 함수가 호출된 후 경과 시간을 초기화하고 플래그도 초기화
+        elapsedTime = 0f;
+        hasInvoked = false;
+    }
+
     private void OnClick()
     {
         AlphaValueChangeing();
-        Invoke("AlphaValueChangeing", 0.1f);
+
+        // 버튼이 클릭되면 함수 호출을 요청하고, 경과 시간 초기화
+        ResetElapsedTime();
 
         // 버튼이 눌릴 때 호출되는 이벤트
         onPressed.Invoke();

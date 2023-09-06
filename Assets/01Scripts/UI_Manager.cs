@@ -28,13 +28,15 @@ public class UI_Manager : EnergyBarManager
     [SerializeField]
     private TextMeshProUGUI selectedOrderPrintText;     // 선택한 정렬오더 출력용 TEXT
 
-
     private List<InvenItemObjClass> openUI_ItemList;    // 선택한 아이템 타입의 객체 리스트
     private bool[] invenButtonIsClicked;                // 인벤토리 아이템 타입선택 버튼 클릭 여부
     private bool isAscending;                           // 오름차순 정렬 기준인지 판단
     private e_SortingOrder selected_SortOrder;          // 현재 선택된 정렬 기준
     private int nSelectedInvenIdx;                      // 0:무기, 1:장비, 2:광물, 3:음식
 
+
+    // 캐릭터 창 관련
+    public GameObject PlayerInfoScreen;
 
     #endregion
 
@@ -61,6 +63,7 @@ public class UI_Manager : EnergyBarManager
             Destroy(gameObject); // 이미 인스턴스가 있다면 이 오브젝트는 파괴
         }
         Inventory.SetActive(false); // 인벤토리는 기본적으로 Off
+        PlayerInfoScreen.SetActive(false);
         openUI_ItemList = new List<InvenItemObjClass>();                    // 선택한 아이템 리스트
         invenButtonIsClicked = new bool[] { false, false, false, false };   // 배열 초기화
         isAscending = false;
@@ -144,10 +147,10 @@ public class UI_Manager : EnergyBarManager
                 EquipPrintAtScroll();
                 break;
             case GameManager.e_PoolItemType.Gem:       //광물
-                
+                GemPrintAtScroll();
                 break;
             case GameManager.e_PoolItemType.Food:      //음식
-                
+                FoodPrintAtScroll();
                 break;
             default:
                 break;
@@ -267,6 +270,120 @@ public class UI_Manager : EnergyBarManager
             }
         }
     }
+
+    // 게임매니저의 데이터를 참조하여, 광물들을 스크롤뷰 콘텐츠에 출력
+    void GemPrintAtScroll()
+    {
+        var itemClses = GameManager.Instance.GetGemItemClass();      // 저장된 아이템 목록
+
+        SortingItemList(itemClses);
+
+
+        // 오브젝트 풀로, UI객체 생성
+        GameManager.Instance.ItemToObjPool(itemClses.Count, GameManager.e_PoolItemType.Gem, scrollContent);
+        // 오브젝트 풀에 저장된 리스트 인스턴스화
+
+        var datas = GameManager.Instance.GemItemPool.GetPoolList();
+
+
+        foreach (ItemClass data in itemClses)
+        {
+            foreach (InvenItemObjClass obj in datas)
+            {
+                if (obj.gameObject.activeSelf == false || obj.GetIsActive() == true)
+                    continue;
+
+                if (data.GetName() == "철광석")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.GemSprites[0]);
+                else if (data.GetName() == "백철")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.GemSprites[1]);
+                else if (data.GetName() == "수정덩이")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.GemSprites[2]);
+
+                else if (data.GetName() == "정제용 하급 광물")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.GemSprites[3]);
+                else if (data.GetName() == "정제용 광물")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.GemSprites[4]);
+                else if (data.GetName() == "정제용 마법 광물")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.GemSprites[5]);
+                
+                else if (data.GetName() == "야박석")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.GemSprites[6]);
+                else if (data.GetName() == "전기수정")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.GemSprites[7]);
+                else if (data.GetName() == "콜라피스")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.GemSprites[8]);
+                else { break; }
+
+                obj.SetItemColor(data.GetGrade());
+                obj.SetItemText("갯수 : " + data.GetLevel().ToString());
+                obj.SetIsActive(true);
+                obj.SetItemcls(data);
+                openUI_ItemList.Add(obj);
+                break;
+            }
+        }
+    }
+
+    // 게임매니저의 데이터를 참조하여, 음식들을 스크롤뷰 콘텐츠에 출력
+    void FoodPrintAtScroll()
+    {
+        var itemClses = GameManager.Instance.GetFoodItemClass();      // 저장된 아이템 목록
+
+        SortingItemList(itemClses);
+
+
+        // 오브젝트 풀로, UI객체 생성
+        GameManager.Instance.ItemToObjPool(itemClses.Count, GameManager.e_PoolItemType.Food, scrollContent);
+        // 오브젝트 풀에 저장된 리스트 인스턴스화
+
+        var datas = GameManager.Instance.FoodItemPool.GetPoolList();
+
+
+        foreach (ItemClass data in itemClses)
+        {
+            foreach (InvenItemObjClass obj in datas)
+            {
+                if (obj.gameObject.activeSelf == false || obj.GetIsActive() == true)
+                    continue;
+
+                if (data.GetName() == "어부 토스트")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.FoodSprites[0]);
+                else if (data.GetName() == "버섯닭꼬치")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.FoodSprites[1]);
+                else if (data.GetName() == "달콤달콤 닭고기 스튜")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.FoodSprites[2]);
+                
+                else if (data.GetName() == "냉채수육")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.FoodSprites[3]);
+                else if (data.GetName() == "허니캐럿그릴")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.FoodSprites[4]);
+
+                else if (data.GetName() == "스테이크")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.FoodSprites[5]);
+                else if (data.GetName() == "무스프")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.FoodSprites[6]);
+                else if (data.GetName() == "몬드 감자전")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.FoodSprites[7]);
+                
+                else if (data.GetName() == "방랑자의 경험")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.FoodSprites[8]);
+                else if (data.GetName() == "모험자의 경험")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.FoodSprites[9]);
+                else if (data.GetName() == "영웅의 경험")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.FoodSprites[10]);
+                else { break; }
+
+                obj.SetItemColor(data.GetGrade());
+                obj.SetItemText("갯수 : " + data.GetLevel().ToString());
+                obj.SetIsActive(true);
+                obj.SetItemcls(data);
+                openUI_ItemList.Add(obj);
+                break;
+            }
+        }
+    }
+
     #endregion
 
     #region 스크롤뷰 정렬
@@ -374,6 +491,21 @@ public class UI_Manager : EnergyBarManager
     }
     #endregion
 
+    #endregion
+
+    #region 캐릭터 인포 UI 관리
+
+    public void OpenPlayerInfoScreenButton()
+    {
+        GameManager.Instance.PauseManager();
+        PlayerInfoScreen.SetActive(true);
+    }
+    public void ClosePlayerInfoScreenButton()
+    {
+        GameManager.Instance.PauseManager();
+        PlayerInfoScreen.SetActive(false);
+    }
+    
     #endregion
 
     #region 기타

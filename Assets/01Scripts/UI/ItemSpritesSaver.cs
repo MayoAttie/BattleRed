@@ -17,12 +17,17 @@ public class ItemSpritesSaver : Singleton<ItemSpritesSaver>
     public Sprite[] EquipSprites;
 
     /* 보석 목록
-     * 
+     * 0~2 - 철광석, 백철, 수정덩이
+     * 3~5 - 정제용 하급 광물, 정제용 광물, 정제용 마법 광물
+     * 6~8 - 야박석, 전기수정, 콜라피스
      */
     public Sprite[] GemSprites;
 
     /* 음식 목록
-     * 
+     * 0~2 - 어부 토스트, 버섯닭꼬치, 달콤달콤 닭고기 스튜
+     * 3~4 - 냉채수육, 허니캐럿그릴
+     * 5~7 - 스테이크, 무스프, 몬드 감자전
+     * 8~10 - 방랑자의 경험, 모험자의 경험, 영웅의 경험(경험치 책)
      */
     public Sprite[] FoodSprites;
 

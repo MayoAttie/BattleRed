@@ -93,6 +93,12 @@ public class GameManager : Singleton<GameManager>
         list_EquipItemClasses.Add(new ItemClass("꽃", "피에 물든 강철 심장", 5, false, 1, 51000, 1, "피에 검게 물들어 강철과 같은 강도를 가지게 될 정도로 말라버린 꽃.\n과거 이 꽃의 주인에겐 일종의 기념품이지 않았을까", "피에 물든 기사도"));
         list_EquipItemClasses.Add(new ItemClass("모래", "피에 물든 기사의 술잔", 5, false, 1, 55000, 1, "핏빛 기사가 지닌 어두운 금속 잔.\n겉은 검은 연기와 굳어버린 피로 인해 밤처럼 새까맣다", "피에 물든 기사도"));
 
+        list_GemItemClasses.Add(new ItemClass("광물", "철광석", 1, false, 1, 600, 1, "철광석. 뛰어난 대장장이에게 가면 빛을 발할 수 있다", ""));
+        list_GemItemClasses.Add(new ItemClass("광물", "백철", 3, false, 1, 1500, 1, "하얀색 철광석. 뛰어난 대장장이에게 가면 빛을 발할 수 있다", ""));
+        list_GemItemClasses.Add(new ItemClass("광물", "수정덩이", 4, false, 1, 4000, 1, "가공되지 않은 결정체. 세공을 해야 진정한 가치를 알 수 있다", ""));
+
+
+        list_FoodItemClasses.Add(new ItemClass("음식", "달콤달콤 닭고기 스튜", 3, false, 1, 1500, 1, "꿀에 버무려 구운 새고기. 탱탱한 새고기에 넘쳐흐르는 육즙, 게다가 아삭아삭한 달콤달콤꽃까지 정말 맛있다",""));
     }
 
     void Start()
