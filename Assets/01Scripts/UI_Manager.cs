@@ -588,6 +588,7 @@ public class UI_Manager : EnergyBarManager
                 break;
         }
         infoSelectButtons[(int)info_Index].OnOffSpriteSetting();    // 버튼 UI 수정 함수 호출
+
     }
 
     #region 속성(Status) 프레임, 데이터 출력
