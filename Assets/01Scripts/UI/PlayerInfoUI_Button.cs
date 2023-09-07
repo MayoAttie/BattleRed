@@ -38,12 +38,12 @@ public class PlayerInfoUI_Button : MonoBehaviour
 
     void OnButtonClick()
     {
-        OnOffSpriteSetting();
         // UI 매니저에 선택한 버튼 객체의 인덱스를 방송하고, 함수 호출
         UI_Manager.Instance.InfoSelectButton(index);
     }
 
-    void OnOffSpriteSetting()
+    // 클릭된 버튼 UI 수정 함수
+    public void OnOffSpriteSetting()
     {
         isClicked = !isClicked;
 
@@ -67,5 +67,7 @@ public class PlayerInfoUI_Button : MonoBehaviour
         }
 
     }
+
+    public bool GetClickedActive() { return isClicked; }
 
 }

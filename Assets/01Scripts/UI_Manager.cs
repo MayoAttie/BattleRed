@@ -45,10 +45,13 @@ public class UI_Manager : EnergyBarManager
     public GameObject PlayerInfoScreen;
 
     [SerializeField]
-    private PlayerInfoUI_Button[] infoSelectButtons;
+    private PlayerInfoUI_Button[] infoSelectButtons;        // 선택한 버튼 클래스 배열
+    [SerializeField]
+    private GameObject[] printInfoDataField;                // 출력되는 UI 오브젝트
 
 
-    private e_InfoButtonSelected info_Index;
+    private e_InfoButtonSelected info_Index;                // 선택한 정보 인덱스
+    
 
     #endregion
 
@@ -64,7 +67,7 @@ public class UI_Manager : EnergyBarManager
     }
     public enum e_InfoButtonSelected
     {
-        Status,
+        Status =0,
         Weapon,
         Equipment,
         LimitBreaker,
@@ -523,6 +526,7 @@ public class UI_Manager : EnergyBarManager
 
     #region 캐릭터 인포 UI 관리
 
+    // 인포창 On,Off 버튼 함수
     public void OpenPlayerInfoScreenButton()
     {
         // 캐릭터 속성 정보 디폴트로 출력
@@ -530,7 +534,6 @@ public class UI_Manager : EnergyBarManager
         CharaceterInfoPrint();
 
         GameManager.Instance.PauseManager();
-        PlayerInfoScreen.SetActive(true);
     }
     public void ClosePlayerInfoScreenButton()
     {
@@ -538,34 +541,63 @@ public class UI_Manager : EnergyBarManager
         PlayerInfoScreen.SetActive(false);
     }
 
+    // 인포선택 버튼 Click 이벤트 시, 호출되는 함수 (인덱스는 선택한 정보 타입)
     public void InfoSelectButton(e_InfoButtonSelected index)
     {
-        if(info_Index != index)
-            info_Index = index;
-        
+        info_Index = index;
+
+        // 버튼 UI가 클릭 상태라면, Off한다
+        foreach (var tmp in infoSelectButtons)
+        {
+            if (tmp.GetClickedActive() == true)
+                tmp.OnOffSpriteSetting();
+        }
+
         CharaceterInfoPrint();
     }
 
+    // 인포 인덱스 값에 따라서, Active할 UI 프레임 분기
     private void CharaceterInfoPrint()
     {
+        foreach(GameObject tmp in printInfoDataField)
+        {
+            tmp.SetActive(false);
+        }
+
         switch(info_Index)
         {
             case e_InfoButtonSelected.Status:
                 PlayerInfoScreen.SetActive(true);
+                printInfoDataField[0].SetActive(true);
                 break;
             case e_InfoButtonSelected.Weapon:
+                PlayerInfoScreen.SetActive(true);
+                printInfoDataField[1].SetActive(true);
                 break;
             case e_InfoButtonSelected.Equipment:
+                PlayerInfoScreen.SetActive(true);
+                printInfoDataField[2].SetActive(true);
                 break;
             case e_InfoButtonSelected.LimitBreaker:
+                PlayerInfoScreen.SetActive(true);
+                printInfoDataField[3].SetActive(true);
                 break;
             case e_InfoButtonSelected.Skill:
+                PlayerInfoScreen.SetActive(true);
+                printInfoDataField[4].SetActive(true);
                 break;
         }
+        infoSelectButtons[(int)info_Index].OnOffSpriteSetting();    // 버튼 UI 수정 함수 호출
     }
 
+    #region 속성(Status) 프레임, 데이터 출력
+
     
-    
+
+    #endregion
+
+
+
     #endregion
 
     #region 기타
