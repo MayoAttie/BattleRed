@@ -8,6 +8,7 @@ public class PlayerInfoUI_Button : MonoBehaviour
 {
     public Sprite originSprite;
     public Sprite selectSprite;
+    public UI_Manager.e_InfoButtonSelected index;
 
     Image frameImage;
     Image insideImage;
@@ -38,6 +39,8 @@ public class PlayerInfoUI_Button : MonoBehaviour
     void OnButtonClick()
     {
         OnOffSpriteSetting();
+        // UI 매니저에 선택한 버튼 객체의 인덱스를 방송하고, 함수 호출
+        UI_Manager.Instance.InfoSelectButton(index);
     }
 
     void OnOffSpriteSetting()

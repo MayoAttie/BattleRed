@@ -12,13 +12,16 @@ public class UI_Manager : EnergyBarManager
     public static UI_Manager Instance { get { return instance; } }
 
     #region 변수
+
+    #region 인벤토리
     // 인벤토리 관련
+    [Header("인벤토리 관련(Inventory's Values)")]
     public GameObject Inventory;                // 인벤토리 전체 객체
     
     [SerializeField]                        
     private InventoryButton[] invenButtons;             // 인벤토리 아이템 타입 선택 버튼들(0-웨폰,1-장비,2-광물,3-음식)
     [SerializeField]
-    private Transform scrollContent;                    //인벤토리 스크롤뷰 콘텐츠의 Transform
+    private Transform scrollContent;                    // 인벤토리 스크롤뷰 콘텐츠의 Transform
     [SerializeField]
     private GameObject scrollViewObj;                   // 스크롤뷰 콘텐츠에 부착될 컴포넌트 프리팹
     [SerializeField]
@@ -34,9 +37,21 @@ public class UI_Manager : EnergyBarManager
     private e_SortingOrder selected_SortOrder;          // 현재 선택된 정렬 기준
     private int nSelectedInvenIdx;                      // 0:무기, 1:장비, 2:광물, 3:음식
 
+    #endregion
 
+    #region 캐릭터 창
     // 캐릭터 창 관련
+    [Header("캐릭터 정보 관련(CharacterInfo's Value)")]
     public GameObject PlayerInfoScreen;
+
+    [SerializeField]
+    private PlayerInfoUI_Button[] infoSelectButtons;
+
+
+    private e_InfoButtonSelected info_Index;
+
+    #endregion
+
 
     #endregion
 
@@ -46,6 +61,14 @@ public class UI_Manager : EnergyBarManager
         NameOrder =1,
         LevelOrder =2,
         GradeOrder =3
+    }
+    public enum e_InfoButtonSelected
+    {
+        Status,
+        Weapon,
+        Equipment,
+        LimitBreaker,
+        Skill
     }
 
     #endregion
@@ -62,14 +85,19 @@ public class UI_Manager : EnergyBarManager
         {
             Destroy(gameObject); // 이미 인스턴스가 있다면 이 오브젝트는 파괴
         }
+
+        // 인벤토리 창
         Inventory.SetActive(false); // 인벤토리는 기본적으로 Off
-        PlayerInfoScreen.SetActive(false);
         openUI_ItemList = new List<InvenItemObjClass>();                    // 선택한 아이템 리스트
         invenButtonIsClicked = new bool[] { false, false, false, false };   // 배열 초기화
         isAscending = false;
         selected_SortOrder = e_SortingOrder.GradeOrder;
         nSelectedInvenIdx = 0;                                              // 선택한 타입 버튼 인덱스, 무기로 초기화
         SortSelectionButtonOnList.SetActive(false);                         // 정렬 리스트 목록 숨김
+
+        // 캐릭터 정보창
+        PlayerInfoScreen.SetActive(false);
+        info_Index = e_InfoButtonSelected.Status;
     }
 
     #region 인벤토리 UI 관리
@@ -497,6 +525,10 @@ public class UI_Manager : EnergyBarManager
 
     public void OpenPlayerInfoScreenButton()
     {
+        // 캐릭터 속성 정보 디폴트로 출력
+        info_Index = e_InfoButtonSelected.Status;
+        CharaceterInfoPrint();
+
         GameManager.Instance.PauseManager();
         PlayerInfoScreen.SetActive(true);
     }
@@ -505,6 +537,34 @@ public class UI_Manager : EnergyBarManager
         GameManager.Instance.PauseManager();
         PlayerInfoScreen.SetActive(false);
     }
+
+    public void InfoSelectButton(e_InfoButtonSelected index)
+    {
+        if(info_Index != index)
+            info_Index = index;
+        
+        CharaceterInfoPrint();
+    }
+
+    private void CharaceterInfoPrint()
+    {
+        switch(info_Index)
+        {
+            case e_InfoButtonSelected.Status:
+                PlayerInfoScreen.SetActive(true);
+                break;
+            case e_InfoButtonSelected.Weapon:
+                break;
+            case e_InfoButtonSelected.Equipment:
+                break;
+            case e_InfoButtonSelected.LimitBreaker:
+                break;
+            case e_InfoButtonSelected.Skill:
+                break;
+        }
+    }
+
+    
     
     #endregion
 

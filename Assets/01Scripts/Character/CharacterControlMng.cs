@@ -87,36 +87,37 @@ public class CharacterControlMng : Subject, Observer
             blinkCoolTimeCoroutine = StartCoroutine(BlinkCoolTimeReset());
         }
 
-        GravityFunc();
-        ControllerGetInputData();
-        RotateCharacter();
+        GravityFunc();                      // 중력 함수
+        ControllerGetInputData();           // 컨트롤러 값 호출 함수
+        RotateCharacter();                  // 캐릭터 회전 함수
         if(!isBlinking)
         {
             if(isBattle)
             {
                 groundDistance = 6f;
-                RunCharacterFunction();
+                RunCharacterFunction();     // 달리기 함수
             }
             else
             {
                 groundDistance = 4f;
-                MoveCharacterFunction();
+                MoveCharacterFunction();    // 걷기 함수
             }
         }
-        JumpCharacterFunction();
+        JumpCharacterFunction();            // 점프 함수
 
     }
 
     // 조이스틱 컨트롤러, xy좌표 값 Get 함수
     void ControllerGetInputData()
     {
-        zPos = JoyStickController.Instance.GetVerticalValue();
-        xPos = JoyStickController.Instance.GetHorizontalValue();
+        zPos = JoyStickController.Instance.GetVerticalValue(); // 수직 입력값 (전진/후진)
+        xPos = JoyStickController.Instance.GetHorizontalValue(); // 수평 입력값 (좌우 이동)
 
         //Debug.Log(nameof(zPos)+":" +zPos);
         //Debug.Log(nameof(xPos) + ":" + xPos);
 
-        if(!isBlinking)
+        // 회피 중이 아닐 때, 걷기 혹은 달리기 상태로 캐릭터의 상태를 지정함
+        if (!isBlinking)
         {
             if (!isBattle)
                 characMng.GetCharacterClass().SetState(CharacterClass.eCharactgerState.e_WALK);
@@ -124,7 +125,6 @@ public class CharacterControlMng : Subject, Observer
                 characMng.GetCharacterClass().SetState(CharacterClass.eCharactgerState.e_RUN);
 
         }
-
     }
 
     //중력함수
@@ -181,19 +181,27 @@ public class CharacterControlMng : Subject, Observer
     // 점프 애니메이션 함수
     void JumpCharacterFunction()
     {
+        // 캐릭터가 지면에 있는지를 확인하고 결과를 isGrounded 변수에 저장.
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-        Debug.Log(nameof(isGrounded)+":"+isGrounded);
+        Debug.Log(nameof(isGrounded) + ":" + isGrounded);
+
+        // 만약 캐릭터가 지면에 있고(isGrounded가 true) 점프를 시도할 수 있는(isJump가 true) 상태라면
         if (isGrounded && isJump)
         {
             var mng = gameObject.GetComponent<CharacterAttackMng>();
-            mng.FlagValueReset();
+            mng.FlagValueReset();   // 점프로 인한, 동작 강탈로 전투 동작 관리에 필요했던 플래그 변수들을 초기화
             characMng.GetCharacterClass().SetState(CharacterClass.eCharactgerState.e_JUMP);
+
+            // 점프를 시도한 후 isJump 값을 false로 변경하여 추가 점프를 방지
             isJump = false;
         }
 
+        // 중력을 적용합니다. velocity.y에 중력(gravity)을 더해준다.
         velocity.y += gravity * Time.deltaTime;
 
-        controller.Move(velocity* jumpHeight * Time.deltaTime);
+        // controller.Move를 사용하여 캐릭터를 점프할 높이(jumpHeight)에 따라 이동.
+        // velocity와 jumpHeight를 곱하고 Time.deltaTime을 곱하여 시간에 따른 이동을 적용.
+        controller.Move(velocity * jumpHeight * Time.deltaTime);
     }
     #endregion
 
@@ -202,15 +210,19 @@ public class CharacterControlMng : Subject, Observer
     // 캐릭터 회전 함수
     private void RotateCharacter()
     {
-
         e_TouchSlideDic touchDic;
         touchDic = TouchPadController.Instance.GetDirectionHorizontal();
+
+        // 만약 수평 방향 입력이 오른쪽(Right)으로 감지된 경우
         if (touchDic == e_TouchSlideDic.Right)
         {
+            // 캐릭터를 오른쪽으로 회전시킵니다.
             transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
         }
+        // 만약 수평 방향 입력이 왼쪽(Left)으로 감지된 경우
         else if (touchDic == e_TouchSlideDic.Left)
         {
+            // 캐릭터를 왼쪽으로 회전시킵니다.
             transform.Rotate(Vector3.up, -rotationSpeed * Time.deltaTime);
         }
     }

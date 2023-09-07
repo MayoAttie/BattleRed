@@ -19,7 +19,9 @@ public class ButtonClass2 : MonoBehaviour
     public Sprite leftSprite;                       // 버튼셋 왼쪽 이미지
     public Sprite symbolSprite;                     // 버튼셋 심볼
     [Range(0,1)] public float BackgroundAlpha;      // 버튼 백그라운드 알파값
-    [Range(0, 1)] public float ButtonImageAlpha;      // 버튼 이미지 알파값
+    [Range(0,1)] public float RightAlpha;           // 오른쪽 백그라운드 알파값
+    [Range(0,1)] public float LeftAlpha;            // 왼쪽 백그라운드 알파값
+    [Range(0, 1)] public float ButtonImageAlpha;    // 버튼 이미지 알파값
 
     private float elapsedTime = 0f;                 // 시간 계산용 변수
     private bool hasInvoked = true;                // 시간 계산용 변수
@@ -120,6 +122,21 @@ public class ButtonClass2 : MonoBehaviour
             Color backgroundColor = background.color;
             backgroundColor.a = BackgroundAlpha;
             background.color = backgroundColor;
+        }
+
+        // 오른쪽 알파값 설정
+        if (rightImg != null)
+        {
+            Color backgroundColor = rightImg.color;
+            backgroundColor.a = RightAlpha;
+            rightImg.color = backgroundColor;
+        }
+        // 왼쪽 알파값 설정
+        if (leftImg != null)
+        {
+            Color backgroundColor = leftImg.color;
+            backgroundColor.a = LeftAlpha;
+            leftImg.color = backgroundColor;
         }
 
         // 버튼 이미지 알파값 설정
