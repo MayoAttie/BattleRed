@@ -26,7 +26,9 @@ public class CharacterClass : Objects
     int nAttack;
     int nDefense;
     int nLevel;
+    int nMaxLevel;
     int nElementNum;
+    int nStamina;
     float fCriticalDamage;
     float fCriticalPercentage;
     float fSpeed;
@@ -35,7 +37,7 @@ public class CharacterClass : Objects
     Element eEncountElement;        // 캐릭터가 몬스터에게 피격당한 현재 원소 상태
     Element[] ChildElement;         // 캐릭터가 원소 효과로 생성할 원소
 
-    public CharacterClass(int nCurrentHp, int nMaxHp, int nCurrentExp, int nMaxExp, int nAttack, int nDefense, int nLevel, float fSpeed, eCharactgerState eCharacState, int nElementNum, float fCriticalDamage, float fCriticalPercentage, string sTag, string sName, int nGrade, bool isActive) : base(sTag, sName,nGrade,isActive)
+    public CharacterClass(int nCurrentHp, int nMaxHp, int nCurrentExp, int nMaxExp, int nAttack, int nDefense, int nLevel, int nMaxLevel, float fSpeed, eCharactgerState eCharacState, int nElementNum, float fCriticalDamage, float fCriticalPercentage, string sTag, string sName, int nGrade, bool isActive, int nStamina) : base(sTag, sName, nGrade, isActive)
     {
         this.nCurrentHp = nCurrentHp;
         this.nMaxHp = nMaxHp;
@@ -44,19 +46,22 @@ public class CharacterClass : Objects
         this.nAttack = nAttack;
         this.nDefense = nDefense;
         this.nLevel = nLevel;
+        this.nMaxLevel = nMaxLevel;
         this.fSpeed = fSpeed;
         this.eCharacState = eCharacState;
         this.eCharacElement = new Element(Element.e_Element.Fire, false, false);
         this.nElementNum = nElementNum;
         this.eEncountElement = new Element(Element.e_Element.None, false, false);
-        this.fCriticalDamage= fCriticalDamage;
-        this.fCriticalPercentage= fCriticalPercentage;
+        this.fCriticalDamage = fCriticalDamage;
+        this.fCriticalPercentage = fCriticalPercentage;
 
         ChildElement = new Element[5];
         for (int i = 0; i < ChildElement.Length; i++)
         {
             ChildElement[i] = new Element(Element.e_Element.None, false, true);
         }
+
+        this.nStamina = nStamina;
     }
 
     public CharacterClass()
@@ -78,7 +83,8 @@ public class CharacterClass : Objects
     public float GetCriticalDamage(){return fCriticalDamage;}
     public float GetCriticalPercentage(){return fCriticalPercentage;}
     public int GetLeveL() { return nLevel; }
-
+    public int GetStamina() { return nStamina;}
+    public int GetMaxLevel() { return nMaxLevel;}
 
     public void SetState(eCharactgerState state){eCharacState = state;}
     public void SetEncountElement(Element encountElement){eEncountElement = encountElement;}

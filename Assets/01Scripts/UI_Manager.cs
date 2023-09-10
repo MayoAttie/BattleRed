@@ -533,6 +533,8 @@ public class UI_Manager : EnergyBarManager
         info_Index = e_InfoButtonSelected.Status;
         CharaceterInfoPrint();
 
+        
+
         GameManager.Instance.PauseManager();
     }
     public void ClosePlayerInfoScreenButton()
@@ -567,6 +569,7 @@ public class UI_Manager : EnergyBarManager
         switch(info_Index)
         {
             case e_InfoButtonSelected.Status:
+                PlayerDataPrint();
                 PlayerInfoScreen.SetActive(true);
                 printInfoDataField[0].SetActive(true);
                 break;
@@ -588,6 +591,31 @@ public class UI_Manager : EnergyBarManager
                 break;
         }
         infoSelectButtons[(int)info_Index].OnOffSpriteSetting();    // 버튼 UI 수정 함수 호출
+
+    }
+
+    void PlayerDataPrint()
+    {
+        var datas = GameManager.Instance.characterCls;
+        TextMeshProUGUI levelText = printInfoDataField[0].transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI maxLevelText = printInfoDataField[0].transform.GetChild(3).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI[] statusTexts = new TextMeshProUGUI[5];
+        for (int i=0; i<5; i++) // 0-체력, 1-공격력, 2-방어력, 3- 원소마스터리 4- 스테미나
+        {
+            statusTexts[i] = printInfoDataField[0].transform.GetChild(4+i).GetChild(2).GetComponent<TextMeshProUGUI>();
+        }
+
+        levelText.text = datas.GetLeveL().ToString();
+        maxLevelText.text = "/ "+datas.GetMaxLevel().ToString();
+        statusTexts[0].text = datas.GetMaxHp().ToString();
+        statusTexts[1].text = datas.GetAttack().ToString();
+        statusTexts[2].text = datas.GetDeffense().ToString();
+        statusTexts[3].text = datas.GetElementNum().ToString();
+        statusTexts[4].text = datas.GetStamina().ToString();
+    }
+
+    private void DetailedStatusInfoPrint()
+    {
 
     }
 
