@@ -201,7 +201,7 @@ public class UI_Manager : EnergyBarManager
     // 게임매니저의 데이터를 참조하여, 무기들을 스크롤뷰 콘텐츠에 출력
     void WeaponPrintAtScroll()
     {
-        var itemClses = GameManager.Instance.GetWeaponItemClass();      // 저장된 아이템 목록
+        var itemClses = GameManager.Instance.GetUserClass().GetHadWeaponList();      // 저장된 아이템 목록
 
         SortingItemList(itemClses);
 
@@ -225,7 +225,10 @@ public class UI_Manager : EnergyBarManager
                 else if(data.GetName() == "제례검")
                     obj.SetItemSprite(ItemSpritesSaver.Instance.WeaponSprites[1]);
                 else { break; }
-                
+
+                if (data.GetIsActive() == true) // 아이템이 활성 상태라면, 사용중임을 알림.
+                    obj.EquippedItemUIPrint(true);
+
                 obj.SetItemColor(data.GetGrade());
                 obj.SetItemText("LV : " + data.GetLevel().ToString());
                 obj.SetIsActive(true);
@@ -239,7 +242,7 @@ public class UI_Manager : EnergyBarManager
     // 게임매니저의 데이터를 참조하여, 장비들을 스크롤뷰 콘텐츠에 출력
     void EquipPrintAtScroll()
     {
-        var itemClses = GameManager.Instance.GetEquipItemClass();      // 저장된 아이템 목록
+        var itemClses = GameManager.Instance.GetUserClass().GetHadEquipmentList();      // 저장된 아이템 목록
 
         SortingItemList(itemClses);
 
@@ -292,6 +295,9 @@ public class UI_Manager : EnergyBarManager
                     obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[14]);
                 else { break; }
 
+                if (data.GetIsActive() == true) // 아이템이 활성 상태라면, 사용중임을 알림.
+                    obj.EquippedItemUIPrint(true);
+
                 obj.SetItemColor(data.GetGrade());
                 obj.SetItemText("LV : " + data.GetLevel().ToString());
                 obj.SetIsActive(true);
@@ -305,7 +311,7 @@ public class UI_Manager : EnergyBarManager
     // 게임매니저의 데이터를 참조하여, 광물들을 스크롤뷰 콘텐츠에 출력
     void GemPrintAtScroll()
     {
-        var itemClses = GameManager.Instance.GetGemItemClass();      // 저장된 아이템 목록
+        var itemClses = GameManager.Instance.GetUserClass().GetHadGemList();      // 저장된 아이템 목록
 
         SortingItemList(itemClses);
 
@@ -359,7 +365,7 @@ public class UI_Manager : EnergyBarManager
     // 게임매니저의 데이터를 참조하여, 음식들을 스크롤뷰 콘텐츠에 출력
     void FoodPrintAtScroll()
     {
-        var itemClses = GameManager.Instance.GetFoodItemClass();      // 저장된 아이템 목록
+        var itemClses = GameManager.Instance.GetUserClass().GetHadFoodList();      // 저장된 아이템 목록
 
         SortingItemList(itemClses);
 
@@ -444,7 +450,7 @@ public class UI_Manager : EnergyBarManager
         selected_SortOrder = (e_SortingOrder)index;
         TextRevise();
         ViewProcess();
-    }
+    } 
     private void TextRevise()
     {
         // selected_SortOrder 값에 따라 분기하여 텍스트 출력
@@ -524,6 +530,8 @@ public class UI_Manager : EnergyBarManager
 
     #endregion
 
+
+    // 캐릭터 데이터 출력
     #region 캐릭터 인포 UI 관리
 
     // 인포창 On,Off 버튼 함수
@@ -621,7 +629,7 @@ public class UI_Manager : EnergyBarManager
 
     #region 속성(Status) 프레임, 데이터 출력
 
-    
+
 
     #endregion
 
@@ -637,30 +645,98 @@ public class UI_Manager : EnergyBarManager
     */
     void SortingItemList(List<ItemClass> clsList)
     {
+        // isActive가 true인 아이템과 false인 아이템을 나눕니다.
+        // isActive가 true인 아이템과 false인 아이템을 나눕니다.
+        List<ItemClass> activeItems = clsList.FindAll(item => item.GetIsActive());
+        List<ItemClass> inactiveItems = clsList.FindAll(item => !item.GetIsActive());
+
+
+        // isActive가 true인 아이템을 먼저 정렬합니다.
         switch (selected_SortOrder)
         {
             case e_SortingOrder.GradeOrder: // 등급을 기준으로 정렬
                 if (isAscending)
-                    clsList.Sort((item1, item2) => item1.GetGrade().CompareTo(item2.GetGrade()));
+                    activeItems.Sort((item1, item2) => item1.GetGrade().CompareTo(item2.GetGrade()));
                 else
-                    clsList.Sort((item1, item2) => item2.GetGrade().CompareTo(item1.GetGrade()));
+                    activeItems.Sort((item1, item2) => item2.GetGrade().CompareTo(item1.GetGrade()));
                 break;
             case e_SortingOrder.LevelOrder: // 레벨을 기준으로 정렬
                 if (isAscending)
-                    clsList.Sort((item1, item2) => item1.GetLevel().CompareTo(item2.GetLevel()));
+                    activeItems.Sort((item1, item2) => item1.GetLevel().CompareTo(item2.GetLevel()));
                 else
-                    clsList.Sort((item1, item2) => item2.GetLevel().CompareTo(item1.GetLevel()));
+                    activeItems.Sort((item1, item2) => item2.GetLevel().CompareTo(item1.GetLevel()));
                 break;
             case e_SortingOrder.NameOrder: // 이름을 기준으로 정렬
                 if (isAscending)
-                    clsList.Sort((item1, item2) => string.Compare(item1.GetName(), item2.GetName()));
+                    activeItems.Sort((item1, item2) => string.Compare(item1.GetName(), item2.GetName()));
                 else
-                    clsList.Sort((item1, item2) => string.Compare(item2.GetName(), item1.GetName()));
+                    activeItems.Sort((item1, item2) => string.Compare(item2.GetName(), item1.GetName()));
                 break;
             default:
                 break;
         }
+
+        // 선택된 정렬 기준에 따라 inactiveItems를 정렬합니다.
+        switch (selected_SortOrder)
+        {
+            case e_SortingOrder.GradeOrder: // 등급을 기준으로 정렬
+                if (isAscending)
+                    inactiveItems.Sort((item1, item2) => item1.GetGrade().CompareTo(item2.GetGrade()));
+                else
+                    inactiveItems.Sort((item1, item2) => item2.GetGrade().CompareTo(item1.GetGrade()));
+                break;
+            case e_SortingOrder.LevelOrder: // 레벨을 기준으로 정렬
+                if (isAscending)
+                    inactiveItems.Sort((item1, item2) => item1.GetLevel().CompareTo(item2.GetLevel()));
+                else
+                    inactiveItems.Sort((item1, item2) => item2.GetLevel().CompareTo(item1.GetLevel()));
+                break;
+            case e_SortingOrder.NameOrder: // 이름을 기준으로 정렬
+                if (isAscending)
+                    inactiveItems.Sort((item1, item2) => string.Compare(item1.GetName(), item2.GetName()));
+                else
+                    inactiveItems.Sort((item1, item2) => string.Compare(item2.GetName(), item1.GetName()));
+                break;
+            default:
+                break;
+        }
+
+        // 두 그룹을 병합합니다.
+        clsList.Clear();
+        clsList.AddRange(activeItems);
+        clsList.AddRange(inactiveItems);
     }
+
+    #region 정렬 레거시
+
+    //void SortingItemList(List<ItemClass> clsList)
+    //{
+    //    switch (selected_SortOrder)
+    //    {
+    //        case e_SortingOrder.GradeOrder: // 등급을 기준으로 정렬
+    //            if (isAscending)
+    //                clsList.Sort((item1, item2) => item1.GetGrade().CompareTo(item2.GetGrade()));
+    //            else
+    //                clsList.Sort((item1, item2) => item2.GetGrade().CompareTo(item1.GetGrade()));
+    //            break;
+    //        case e_SortingOrder.LevelOrder: // 레벨을 기준으로 정렬
+    //            if (isAscending)
+    //                clsList.Sort((item1, item2) => item1.GetLevel().CompareTo(item2.GetLevel()));
+    //            else
+    //                clsList.Sort((item1, item2) => item2.GetLevel().CompareTo(item1.GetLevel()));
+    //            break;
+    //        case e_SortingOrder.NameOrder: // 이름을 기준으로 정렬
+    //            if (isAscending)
+    //                clsList.Sort((item1, item2) => string.Compare(item1.GetName(), item2.GetName()));
+    //            else
+    //                clsList.Sort((item1, item2) => string.Compare(item2.GetName(), item1.GetName()));
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //}
+    #endregion
+
     public int GetnSelectedInvenIdx(){return nSelectedInvenIdx;}
 
     #endregion

@@ -37,6 +37,8 @@ public class CharacterClass : Objects
     Element eEncountElement;        // 캐릭터가 몬스터에게 피격당한 현재 원소 상태
     Element[] ChildElement;         // 캐릭터가 원소 효과로 생성할 원소
 
+    
+
     public CharacterClass(int nCurrentHp, int nMaxHp, int nCurrentExp, int nMaxExp, int nAttack, int nDefense, int nLevel, int nMaxLevel, float fSpeed, eCharactgerState eCharacState, int nElementNum, float fCriticalDamage, float fCriticalPercentage, string sTag, string sName, int nGrade, bool isActive, int nStamina) : base(sTag, sName, nGrade, isActive)
     {
         this.nCurrentHp = nCurrentHp;

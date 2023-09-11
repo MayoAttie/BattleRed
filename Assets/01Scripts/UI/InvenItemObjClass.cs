@@ -11,6 +11,7 @@ public class InvenItemObjClass : MonoBehaviour
     Image img_TopBgrImg;                // 백그라운드 이미지
     Image img_TopSpriteImg;             // 아이템 이미지
     Image img_SelectExpress;            // 선택된 아이템 표시
+    Image img_EquippedImg;              // 장비중인 아이템 표시
     TextMeshProUGUI txt_BottomText;     // 하단 텍스트
     Button button;
 
@@ -30,9 +31,10 @@ public class InvenItemObjClass : MonoBehaviour
     {
         img_TopBgrImg = gameObject.transform.GetChild(0).GetComponent<Image>();
         img_TopSpriteImg = img_TopBgrImg.transform.GetChild(1).GetComponent<Image>();
+        img_EquippedImg = img_TopBgrImg.transform.GetChild(2).GetComponent<Image>();
         txt_BottomText = gameObject.transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
         img_SelectExpress = gameObject.transform.GetChild(2).GetComponent<Image>();
-        
+
         button = gameObject.GetComponentInChildren<Button>();
         // 버튼 클릭 이벤트에 대한 메서드 등록
         button.onClick.AddListener(OnClick);
@@ -44,6 +46,7 @@ public class InvenItemObjClass : MonoBehaviour
         isActive = false;
         isClicked = false;
         img_SelectExpress.enabled = false;
+        img_EquippedImg.enabled = false;
     }
 
     private void OnDisable()
@@ -81,6 +84,20 @@ public class InvenItemObjClass : MonoBehaviour
             case false:
                 img_SelectExpress.enabled = false;
                 break;
+        }
+    }
+
+    public void EquippedItemUIPrint(bool isActive)
+    {
+        if (img_EquippedImg != null)
+        {
+            img_EquippedImg.enabled = isActive;
+
+            // 부모 객체의 RectTransform을 가져옵니다.
+            RectTransform parentRect = transform.parent.GetComponent<RectTransform>();
+
+            if (isActive)
+                img_EquippedImg.rectTransform.localScale = new Vector3(0.3f, 0.3f, 1.0f);
         }
     }
 

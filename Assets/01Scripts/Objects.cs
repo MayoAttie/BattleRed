@@ -55,7 +55,7 @@ public class Objects
     {
         return nGrade;
     }
-    public bool IsActive()
+    public bool GetIsActive()
     {
         return isActive;
     }
