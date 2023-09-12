@@ -1966,7 +1966,7 @@ MonoBehaviour:
   img_symbolAndBgr:
   - {fileID: 1785696440}
   - {fileID: 394625236}
-  nObjectIndex: 3
+  objectIndex: 3
   onPressed:
     m_PersistentCalls:
       m_Calls: []
@@ -2029,7 +2029,7 @@ MonoBehaviour:
   img_symbolAndBgr:
   - {fileID: 1033655612}
   - {fileID: 2102008491}
-  nObjectIndex: 0
+  objectIndex: 0
   onPressed:
     m_PersistentCalls:
       m_Calls: []
@@ -3449,7 +3449,7 @@ MonoBehaviour:
   img_symbolAndBgr:
   - {fileID: 101540041}
   - {fileID: 667621876}
-  nObjectIndex: 1
+  objectIndex: 1
   onPressed:
     m_PersistentCalls:
       m_Calls: []
@@ -22425,7 +22425,7 @@ MonoBehaviour:
   img_symbolAndBgr:
   - {fileID: 1788182577}
   - {fileID: 887436136}
-  nObjectIndex: 2
+  objectIndex: 2
   onPressed:
     m_PersistentCalls:
       m_Calls: []

@@ -12,7 +12,7 @@ public class InventoryButton : MonoBehaviour
     Image[] img_symbolAndBgr;   //0번 - bgr, 1번 - 심볼 이미지
     Button button;
     [SerializeField]            
-    int nObjectIndex;           // 웨폰-0번, 장비-1번, 광물-2번, 음식-3번
+    UI_Manager.e_InventoryTypeSelected objectIndex;           // 웨폰-0번, 장비-1번, 광물-2번, 음식-3번
 
     // 원래 색상
     Color nomalColor_Symbol = Color.white;
@@ -40,7 +40,7 @@ public class InventoryButton : MonoBehaviour
         // 버튼 객체의 UI를 변형
         ButtonUIColorSet();
         // 객체의 인덱스를 UI매니저에 송신
-        UI_Manager.Instance.InventoryViewItemTypeNotify(nObjectIndex);
+        UI_Manager.Instance.InventoryViewItemTypeNotify(objectIndex);
         // 버튼이 눌릴 때 호출되는 이벤트
         onPressed.Invoke();
     }

@@ -35,7 +35,8 @@ public class UI_Manager : EnergyBarManager
     private bool[] invenButtonIsClicked;                // 인벤토리 아이템 타입선택 버튼 클릭 여부
     private bool isAscending;                           // 오름차순 정렬 기준인지 판단
     private e_SortingOrder selected_SortOrder;          // 현재 선택된 정렬 기준
-    private int nSelectedInvenIdx;                      // 0:무기, 1:장비, 2:광물, 3:음식
+    private e_InventoryTypeSelected invenType_Index;    // 인벤토리 타입 인덱스
+    private Tuple<ItemClass, InvenItemObjClass> selectedObjAndItemCls;  // 플레이어가 선택한 아이템
 
     #endregion
 
@@ -51,7 +52,6 @@ public class UI_Manager : EnergyBarManager
 
 
     private e_InfoButtonSelected info_Index;                // 선택한 정보 인덱스
-    
 
     #endregion
 
@@ -59,12 +59,22 @@ public class UI_Manager : EnergyBarManager
     #endregion
 
     #region 구조체
+    // 인벤토리 UI 창 - 아이템 타입 구조체
+    public enum e_InventoryTypeSelected
+    {
+        Weapon =0,
+        Equipment,
+        Gem,
+        Food
+    }
+    // 정렬 우선순위 구조체
     public enum e_SortingOrder
     {
         NameOrder =1,
         LevelOrder =2,
         GradeOrder =3
     }
+    // PlayerInfoScreen UI 창 - 정보 타입 구조체
     public enum e_InfoButtonSelected
     {
         Status =0,
@@ -95,7 +105,7 @@ public class UI_Manager : EnergyBarManager
         invenButtonIsClicked = new bool[] { false, false, false, false };   // 배열 초기화
         isAscending = false;
         selected_SortOrder = e_SortingOrder.GradeOrder;
-        nSelectedInvenIdx = 0;                                              // 선택한 타입 버튼 인덱스, 무기로 초기화
+        invenType_Index = e_InventoryTypeSelected.Weapon;                                              // 선택한 타입 버튼 인덱스, 무기로 초기화
         SortSelectionButtonOnList.SetActive(false);                         // 정렬 리스트 목록 숨김
 
         // 캐릭터 정보창
@@ -125,30 +135,86 @@ public class UI_Manager : EnergyBarManager
     // 사용하기 버튼 클릭시 호출
     public void UsingButtonClick()
     {
-        Debug.Log("아이템 사용");
+        List<ItemClass> datas = new List<ItemClass>();
+
+        // 무기와 성유물 장착
+        if(invenType_Index == e_InventoryTypeSelected.Weapon || invenType_Index == e_InventoryTypeSelected.Equipment)
+        {
+            // 현재 타입에 따라서 분기하여 데이터 설정
+            switch (invenType_Index)
+            {
+                case e_InventoryTypeSelected.Weapon:
+                    datas = GameManager.Instance.GetUserClass().GetHadWeaponList();
+                    break;
+                case e_InventoryTypeSelected.Equipment:
+                    datas = GameManager.Instance.GetUserClass().GetHadEquipmentList();
+                    break;
+            }
+
+            // 기존의 아이템 중 활성 상태인 객체 가져오기
+            var existingData = datas.FindAll(item => item.GetIsActive() == true && item.GetTag() == selectedObjAndItemCls.Item1.GetTag());
+            foreach (var tmp in existingData)    // 활성 상태 취소
+            {
+                tmp.SetActive(false);
+            }
+            // 선택된 객체와 동일한 객체를 가져오기
+            var findData = datas.Find(item => item.Equals(selectedObjAndItemCls.Item1));
+            // 해당 객체 활성화
+            findData.SetActive(true);
+
+        }
+        else if(invenType_Index == e_InventoryTypeSelected.Food)        // 소모성 아이템
+        {
+            datas = GameManager.Instance.GetUserClass().GetHadFoodList();
+            var findData = datas.Find(item => item.Equals(selectedObjAndItemCls.Item1));
+            
+            // 소모 효과 구현
+            
+
+            // 아이템 감산
+            if(findData.GetNumber() >1)     // 갯수가 1 초과라면, 아이템 소모
+            {
+                
+
+                int num = findData.GetNumber();
+                findData.SetNumber(--num);
+            }
+            else                            // 갯수가 1개 이하라면, 아이템 삭제
+            {
+                // 항목을 리스트에서 제거
+                datas.Remove(findData);
+                selectedObjAndItemCls = null;
+            }
+        }
+
+        ScrollViewReset();                                   // 스크롤뷰 리셋
+        ItemPrintByObj_Index((int)invenType_Index);         // 아이템 출력
+
+        if(invenType_Index == e_InventoryTypeSelected.Food && selectedObjAndItemCls != null)
+            selectedObjAndItemCls.Item2.ClickedUIApply();       // 소비템인 경우엔 사용 후에도 클릭된 상태 부여
     }
 
     #region 스크롤뷰 아이템 출력
 
     // 아이템 타입 버튼 클릭시 인덱스값 송신 함수
-    public void InventoryViewItemTypeNotify(int index)
+    public void InventoryViewItemTypeNotify(e_InventoryTypeSelected index)
     {
-        nSelectedInvenIdx = index;
+        invenType_Index = index;
         // 만약 선택한 타입이 이미 열람 중인 객체라면, 이벤트 리턴.
-        if (invenButtonIsClicked[nSelectedInvenIdx] == true)
+        if (invenButtonIsClicked[(int)invenType_Index] == true)
         {
-            invenButtons[nSelectedInvenIdx].ButtonUIColorSet(); // UI 상태는 유지
+            invenButtons[(int)invenType_Index].ButtonUIColorSet(); // UI 상태는 유지
             return;
         }
         // 타입 선택 버튼들을 순회하며, 해당 버튼 UI의 Active 상태를 Off하고 부울 초기화
         for (int i = 0; i < invenButtons.Length; i++)
         {
-            if (invenButtons[i].GetClickActive() == true && i != nSelectedInvenIdx)
+            if (invenButtons[i].GetClickActive() == true && i != (int)invenType_Index)
                 invenButtons[i].ButtonUIColorSet();
             invenButtonIsClicked[i] = false;
         }
 
-        invenButtonIsClicked[nSelectedInvenIdx] = true; // 클릭한 버튼 객체의 인덱스를 true.
+        invenButtonIsClicked[(int)invenType_Index] = true; // 클릭한 버튼 객체의 인덱스를 true.
 
         // 객체 타입에 따라서, 리스트 버튼의 텍스트 수정
         var mng = SortSelectionButtonOnList.GetComponent<InventorySortSelectButton>();
@@ -161,7 +227,7 @@ public class UI_Manager : EnergyBarManager
     private void ViewProcess()
     {
         ScrollViewReset();                              // 스크롤뷰 리셋
-        ItemPrintByObj_Index(nSelectedInvenIdx);        // 아이템 출력
+        ItemPrintByObj_Index((int)invenType_Index);        // 아이템 출력
         ExpressFrame.gameObject.SetActive(false);
     }
 
@@ -353,7 +419,7 @@ public class UI_Manager : EnergyBarManager
                 else { break; }
 
                 obj.SetItemColor(data.GetGrade());
-                obj.SetItemText("갯수 : " + data.GetLevel().ToString());
+                obj.SetItemText("갯수 : " + data.GetNumber().ToString());
                 obj.SetIsActive(true);
                 obj.SetItemcls(data);
                 openUI_ItemList.Add(obj);
@@ -412,7 +478,7 @@ public class UI_Manager : EnergyBarManager
                 else { break; }
 
                 obj.SetItemColor(data.GetGrade());
-                obj.SetItemText("갯수 : " + data.GetLevel().ToString());
+                obj.SetItemText("갯수 : " + data.GetNumber().ToString());
                 obj.SetIsActive(true);
                 obj.SetItemcls(data);
                 openUI_ItemList.Add(obj);
@@ -460,7 +526,7 @@ public class UI_Manager : EnergyBarManager
                 selectedOrderPrintText.text = "이름";
                 break;
             case e_SortingOrder.LevelOrder:
-                if (nSelectedInvenIdx == 0 || nSelectedInvenIdx == 1)
+                if (invenType_Index == e_InventoryTypeSelected.Weapon || invenType_Index  == e_InventoryTypeSelected.Equipment)
                     selectedOrderPrintText.text = "레벨";
                 else
                     selectedOrderPrintText.text = "갯수";
@@ -519,6 +585,9 @@ public class UI_Manager : EnergyBarManager
 
         // 아이템 이미지 출력
         topImage.sprite = clickedObj.GetItemSprite();
+
+        // 선택한 아이템 객체를 클래스 지역 변수에 저장
+        selectedObjAndItemCls = new Tuple<ItemClass, InvenItemObjClass>(itemCls,clickedObj);
 
     }
 
@@ -602,6 +671,7 @@ public class UI_Manager : EnergyBarManager
 
     }
 
+    // 플레이어 캐릭터 정보 출력
     void PlayerDataPrint()
     {
         var datas = GameManager.Instance.characterCls;
@@ -622,6 +692,7 @@ public class UI_Manager : EnergyBarManager
         statusTexts[4].text = datas.GetStamina().ToString();
     }
 
+    // 캐릭터 상세 정보 출력 버튼
     private void DetailedStatusInfoPrint()
     {
 
@@ -737,7 +808,7 @@ public class UI_Manager : EnergyBarManager
     //}
     #endregion
 
-    public int GetnSelectedInvenIdx(){return nSelectedInvenIdx;}
+    public e_InventoryTypeSelected GetnSelectedInvenIdx(){return invenType_Index; }
 
     #endregion
 }

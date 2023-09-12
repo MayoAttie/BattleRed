@@ -87,14 +87,14 @@ public class InventorySortSelectButton : MonoBehaviour
 
     public void UI_TextSettingInit()
     {
-        int idx = UI_Manager.Instance.GetnSelectedInvenIdx();
-        if(idx == 0 || idx == 1)    // 무기, 장비
+        UI_Manager.e_InventoryTypeSelected idx = UI_Manager.Instance.GetnSelectedInvenIdx();
+        if(idx == UI_Manager.e_InventoryTypeSelected.Weapon || idx == UI_Manager.e_InventoryTypeSelected.Equipment)    // 무기, 장비
         {
             btn3_InputTxt = "희귀도";
             btn2_InputTxt = "레벨";
             btn1_InputTxt = "이름";
         }
-        if(idx == 2 || idx == 3)    // 광물, 음식
+        if(idx == UI_Manager.e_InventoryTypeSelected.Gem || idx == UI_Manager.e_InventoryTypeSelected.Food)    // 광물, 음식
         {
             btn3_InputTxt = "희귀도";
             btn2_InputTxt = "갯수";
