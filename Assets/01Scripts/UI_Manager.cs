@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 using System.Reflection;
+using System.Data;
 
 public class UI_Manager : EnergyBarManager
 {
@@ -19,23 +21,23 @@ public class UI_Manager : EnergyBarManager
     public GameObject Inventory;                // 인벤토리 전체 객체
     
     [SerializeField]                        
-    private InventoryButton[] invenButtons;             // 인벤토리 아이템 타입 선택 버튼들(0-웨폰,1-장비,2-광물,3-음식)
+    private InventoryButton[] invenButtons;                             // 인벤토리 아이템 타입 선택 버튼들(0-웨폰,1-장비,2-광물,3-음식)
     [SerializeField]
-    private Transform scrollContent;                    // 인벤토리 스크롤뷰 콘텐츠의 Transform
+    private Transform scrollContent;                                    // 인벤토리 스크롤뷰 콘텐츠의 Transform
     [SerializeField]
-    private GameObject scrollViewObj;                   // 스크롤뷰 콘텐츠에 부착될 컴포넌트 프리팹
+    private GameObject scrollViewObj;                                   // 스크롤뷰 콘텐츠에 부착될 컴포넌트 프리팹
     [SerializeField]
-    private GameObject ExpressFrame;                    // 특정 아이템 선택시 아이템 정보 출력창
+    private GameObject ExpressFrame;                                    // 특정 아이템 선택시 아이템 정보 출력창
     [SerializeField]
-    private GameObject SortSelectionButtonOnList;       // Sort 선택 버튼 클릭 시, 띄우는 리스트 버튼 객체
+    private GameObject SortSelectionButtonOnList;                       // Sort 선택 버튼 클릭 시, 띄우는 리스트 버튼 객체
     [SerializeField]
-    private TextMeshProUGUI selectedOrderPrintText;     // 선택한 정렬오더 출력용 TEXT
+    private TextMeshProUGUI selectedOrderPrintText;                     // 선택한 정렬오더 출력용 TEXT
 
-    private List<InvenItemObjClass> openUI_ItemList;    // 선택한 아이템 타입의 객체 리스트
-    private bool[] invenButtonIsClicked;                // 인벤토리 아이템 타입선택 버튼 클릭 여부
-    private bool isAscending;                           // 오름차순 정렬 기준인지 판단
-    private e_SortingOrder selected_SortOrder;          // 현재 선택된 정렬 기준
-    private e_InventoryTypeSelected invenType_Index;    // 인벤토리 타입 인덱스
+    private List<InvenItemObjClass> openUI_ItemList;                    // 선택한 아이템 타입의 객체 리스트
+    private bool[] invenButtonIsClicked;                                // 인벤토리 아이템 타입선택 버튼 클릭 여부
+    private bool isAscending;                                           // 오름차순 정렬 기준인지 판단
+    private e_SortingOrder selected_SortOrder;                          // 현재 선택된 정렬 기준
+    private e_InventoryTypeSelected invenType_Index;                    // 인벤토리 타입 인덱스
     private Tuple<ItemClass, InvenItemObjClass> selectedObjAndItemCls;  // 플레이어가 선택한 아이템
 
     #endregion
@@ -52,6 +54,7 @@ public class UI_Manager : EnergyBarManager
 
 
     private e_InfoButtonSelected info_Index;                // 선택한 정보 인덱스
+    private bool isDetailScreenOpen;
 
     #endregion
 
@@ -102,8 +105,8 @@ public class UI_Manager : EnergyBarManager
         // 인벤토리 창
         Inventory.SetActive(false); // 인벤토리는 기본적으로 Off
         openUI_ItemList = new List<InvenItemObjClass>();                    // 선택한 아이템 리스트
-        invenButtonIsClicked = new bool[] { false, false, false, false };   // 배열 초기화
         isAscending = false;
+        invenButtonIsClicked = new bool[] { false, false, false, false };   // 배열 초기화
         selected_SortOrder = e_SortingOrder.GradeOrder;
         invenType_Index = e_InventoryTypeSelected.Weapon;                                              // 선택한 타입 버튼 인덱스, 무기로 초기화
         SortSelectionButtonOnList.SetActive(false);                         // 정렬 리스트 목록 숨김
@@ -111,10 +114,12 @@ public class UI_Manager : EnergyBarManager
         // 캐릭터 정보창
         PlayerInfoScreen.SetActive(false);
         info_Index = e_InfoButtonSelected.Status;
+        isDetailScreenOpen = false;
     }
 
+
     #region 인벤토리 UI 관리
-    
+
     //인벤토리 오픈 버튼
     public void BagOpenButtonClick()
     {
@@ -122,12 +127,15 @@ public class UI_Manager : EnergyBarManager
         Inventory.SetActive(true);
         ExpressFrame.SetActive(false);
         invenButtons[0].ButtonUIColorSet();
-        InventoryViewItemTypeNotify(0);
+        InventoryViewItemTypeNotify(e_InventoryTypeSelected.Weapon);
         Debug.Log("일시정지");
     }
     // 인벤토리 종료 버튼
     public void BagCloseButtonClick()
     {
+        for(int i=0; i< invenButtonIsClicked.Length; i++)   // 클릭체크 변수 초기화
+            invenButtonIsClicked[i] = false;
+
         GameManager.Instance.PauseManager();
         Inventory.SetActive(false);
 
@@ -159,6 +167,32 @@ public class UI_Manager : EnergyBarManager
             }
             // 선택된 객체와 동일한 객체를 가져오기
             var findData = datas.Find(item => item.Equals(selectedObjAndItemCls.Item1));
+
+            // 해당 객체를 유저 데이터의 착용 장비로 설정
+            if(findData.GetTag() == "무기")
+                GameManager.Instance.GetUserClass().SetUserEquippedWeapon(findData);
+            else
+            {
+                switch(findData.GetTag())
+                {
+                    case "꽃":
+                        GameManager.Instance.GetUserClass().SetUserEquippedEquipment(findData, 0);
+                        break; 
+                    case "깃털":
+                        GameManager.Instance.GetUserClass().SetUserEquippedEquipment(findData, 1);
+                        break;
+                    case "모래":
+                        GameManager.Instance.GetUserClass().SetUserEquippedEquipment(findData, 2);
+                        break;
+                    case "성배":
+                        GameManager.Instance.GetUserClass().SetUserEquippedEquipment(findData, 3);
+                        break;
+                    case "왕관":
+                        GameManager.Instance.GetUserClass().SetUserEquippedEquipment(findData, 4);
+                        break;
+                }
+            }
+
             // 해당 객체 활성화
             findData.SetActive(true);
 
@@ -600,57 +634,28 @@ public class UI_Manager : EnergyBarManager
     #endregion
 
 
-    // 캐릭터 데이터 출력
-    #region 캐릭터 인포 UI 관리
-
-    // 인포창 On,Off 버튼 함수
-    public void OpenPlayerInfoScreenButton()
-    {
-        // 캐릭터 속성 정보 디폴트로 출력
-        info_Index = e_InfoButtonSelected.Status;
-        CharaceterInfoPrint();
-
-        
-
-        GameManager.Instance.PauseManager();
-    }
-    public void ClosePlayerInfoScreenButton()
-    {
-        GameManager.Instance.PauseManager();
-        PlayerInfoScreen.SetActive(false);
-    }
-
-    // 인포선택 버튼 Click 이벤트 시, 호출되는 함수 (인덱스는 선택한 정보 타입)
-    public void InfoSelectButton(e_InfoButtonSelected index)
-    {
-        info_Index = index;
-
-        // 버튼 UI가 클릭 상태라면, Off한다
-        foreach (var tmp in infoSelectButtons)
-        {
-            if (tmp.GetClickedActive() == true)
-                tmp.OnOffSpriteSetting();
-        }
-
-        CharaceterInfoPrint();
-    }
+    #region PlayerInfoScreen 오브젝트 스크립트
 
     // 인포 인덱스 값에 따라서, Active할 UI 프레임 분기
     private void CharaceterInfoPrint()
     {
-        foreach(GameObject tmp in printInfoDataField)
+        foreach (GameObject tmp in printInfoDataField)
         {
             tmp.SetActive(false);
         }
 
-        switch(info_Index)
+        switch (info_Index)
         {
             case e_InfoButtonSelected.Status:
                 PlayerDataPrint();
                 PlayerInfoScreen.SetActive(true);
                 printInfoDataField[0].SetActive(true);
+                // 상세화면 출력 오브젝트 False
+                var obj = printInfoDataField[0].transform.GetChild(10).GetComponent<Transform>();
+                obj.gameObject.SetActive(false);
                 break;
             case e_InfoButtonSelected.Weapon:
+                EquippedWeaponPrint();
                 PlayerInfoScreen.SetActive(true);
                 printInfoDataField[1].SetActive(true);
                 break;
@@ -670,6 +675,68 @@ public class UI_Manager : EnergyBarManager
         infoSelectButtons[(int)info_Index].OnOffSpriteSetting();    // 버튼 UI 수정 함수 호출
 
     }
+
+    // 인포선택 버튼 Click 이벤트 시, 호출되는 함수 (인덱스는 선택한 정보 타입)
+    public void InfoSelectButton(e_InfoButtonSelected index)
+    {
+        info_Index = index;
+
+        // 버튼 UI가 클릭 상태라면, Off한다
+        foreach (var tmp in infoSelectButtons)
+        {
+            if (tmp.GetClickedActive() == true)
+                tmp.OnOffSpriteSetting();
+        }
+
+        CharaceterInfoPrint();
+    }
+
+    // 인포창 On 버튼 함수
+    public void OpenPlayerInfoScreenButton()
+    {
+        // 캐릭터 속성 정보 디폴트로 출력
+        info_Index = e_InfoButtonSelected.Status;
+        CharaceterInfoPrint();
+
+
+
+        GameManager.Instance.PauseManager();
+    }
+    //인포창 Off 버튼
+    public void ClosePlayerInfoScreenButton()
+    {
+        // 버튼 UI가 클릭 상태라면, Off한다
+        foreach (var tmp in infoSelectButtons)
+        {
+            if (tmp.GetClickedActive() == true)
+                tmp.OnOffSpriteSetting();
+        }
+
+        // 디테일 정보 출력 도중이라면, 해당 화면 종료
+        if (isDetailScreenOpen == true)
+        {
+            isDetailScreenOpen = false;
+
+            var obj = printInfoDataField[0].transform.GetChild(10).GetComponent<Transform>();
+            obj.gameObject.SetActive(false);
+
+            for (int i = 0; i < infoSelectButtons.Length; i++)
+            {
+                infoSelectButtons[i].gameObject.SetActive(true);
+            }
+        }
+        else    // 정보창 종료
+        {
+            GameManager.Instance.PauseManager();
+            PlayerInfoScreen.SetActive(false);
+        }
+    }
+
+
+    // 캐릭터 데이터 출력
+    #region 캐릭터 인포 UI 관리
+
+
 
     // 플레이어 캐릭터 정보 출력
     void PlayerDataPrint()
@@ -693,9 +760,40 @@ public class UI_Manager : EnergyBarManager
     }
 
     // 캐릭터 상세 정보 출력 버튼
-    private void DetailedStatusInfoPrint()
+    public void DetailedStatusInfoPrint()
     {
+        // 상세 데이터 화면 출력 - 인스턴스 초기화 및 객체 활성화
+        isDetailScreenOpen = true;
+        var obj = printInfoDataField[0].transform.GetChild(10).GetComponent<Transform>();
+        obj.gameObject.SetActive(true);
+        var datas = GameManager.Instance.characterCls;
 
+        // 출력 인포타입 버튼 Active_False
+        for (int i=0; i< infoSelectButtons.Length; i++)
+        {
+            infoSelectButtons[i].gameObject.SetActive(false);
+        }
+
+        Transform content = obj.GetChild(0).GetChild(0).GetChild(0).GetComponent<Transform>();
+        TextMeshProUGUI[] statusTexts = new TextMeshProUGUI[7];
+
+        // 데이터 출력을 위한 TextMeshPro 배열에 저장
+        for(int i=0; i<5; i++)
+        {
+            statusTexts[i] = content.GetChild(1 + i).GetChild(2).GetComponent<TextMeshProUGUI>();
+        }
+        for(int i=0; i<2; i++)
+        {
+            statusTexts[5+i] = content.GetChild(8 + i).GetChild(2).GetComponent<TextMeshProUGUI>();
+        }
+
+        statusTexts[0].text = datas.GetMaxHp().ToString();
+        statusTexts[1].text = datas.GetAttack().ToString();
+        statusTexts[2].text = datas.GetDeffense().ToString();
+        statusTexts[3].text = datas.GetElementNum().ToString();
+        statusTexts[4].text = datas.GetStamina().ToString();
+        statusTexts[5].text = datas.GetCriticalPercentage().ToString() + "%";
+        statusTexts[6].text = datas.GetCriticalDamage().ToString();
     }
 
     #region 속성(Status) 프레임, 데이터 출력
@@ -703,7 +801,65 @@ public class UI_Manager : EnergyBarManager
 
 
     #endregion
+    #endregion
 
+
+    #region 무기 UI 관리
+    void EquippedWeaponPrint()
+    {
+        ItemClass equippedData = GameManager.Instance.GetUserClass().GetUserEquippedWeapon();
+        WeaponAndEquipCls equippedWeapon = equippedData as WeaponAndEquipCls; // 형변환
+
+        if (equippedWeapon != null)
+        {
+            Image WeaponImage = printInfoDataField[1].transform.GetChild(1).GetComponent<Image>();
+            TextMeshProUGUI weaponNameTxt = printInfoDataField[1].transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI weaponAttackPowerTxt = printInfoDataField[1].transform.GetChild(3).GetChild(2).GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI weaponStatusTxt = printInfoDataField[1].transform.GetChild(4).GetChild(2).GetComponent<TextMeshProUGUI>();
+            Image[] weaponStars = printInfoDataField[1].transform.GetChild(5).GetComponentsInChildren<Image>();
+            TextMeshProUGUI WeaponCurrentLevelTxt = printInfoDataField[1].transform.GetChild(6).GetChild(1).GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI WeaponMaxLevelTxt = printInfoDataField[1].transform.GetChild(6).GetChild(2).GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI weaponReforgeGradeTxt = printInfoDataField[1].transform.GetChild(7).GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI weaponSkillTxt = printInfoDataField[1].transform.GetChild(8).GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI weaponExplanTxt = printInfoDataField[1].transform.GetChild(9).GetComponent<TextMeshProUGUI>();
+
+            // 데이터 셋팅
+            weaponNameTxt.text = equippedWeapon.GetName();
+            weaponAttackPowerTxt.text = equippedWeapon.GetMainStat().ToString();
+            weaponStatusTxt.text = equippedWeapon.GetSubStat().ToString();
+            
+            foreach(var tmp in weaponStars) { tmp.enabled=false; }
+            int grade = equippedWeapon.GetGrade();
+            weaponStars[0].enabled = true;
+            for (int i= 0; i< grade; i++)
+                weaponStars[1+i].enabled = true;
+
+            WeaponCurrentLevelTxt.text = "LV."+equippedWeapon.GetLevel().ToString();
+            WeaponMaxLevelTxt.text = "/"+equippedWeapon.GetLimitLevel().ToString();
+
+
+        }
+    }
+
+    #endregion
+
+
+
+    #region 성유물 UI 관리
+
+
+    #endregion
+
+
+    #region 운명의 별자리 UI 관리
+
+
+    #endregion
+
+
+    #region 특성 UI 관리
+
+    #endregion
 
 
     #endregion

@@ -68,8 +68,8 @@
     <Compile Include="Assets\01Scripts\Element\PlantElement.cs" />
     <Compile Include="Assets\01Scripts\EnergyBarManager.cs" />
     <Compile Include="Assets\01Scripts\GameManager.cs" />
-    <Compile Include="Assets\01Scripts\Item.cs" />
     <Compile Include="Assets\01Scripts\Item\ItemClass.cs" />
+    <Compile Include="Assets\01Scripts\Item\WeaponAndEquipCls.cs" />
     <Compile Include="Assets\01Scripts\JoyStickController.cs" />
     <Compile Include="Assets\01Scripts\Monster\MobAngryMushroomAttack.cs" />
     <Compile Include="Assets\01Scripts\Monster\MobCactusAttack.cs" />
