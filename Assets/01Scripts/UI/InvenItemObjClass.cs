@@ -129,6 +129,9 @@ public class InvenItemObjClass : MonoBehaviour
     public void SetIsActive(bool isActive) { this.isActive = isActive; }
     public bool GetButtonClicked() { return isClicked; }    // 버튼 클릭 여부값 반환
     public bool GetIsActive() { return isActive; }
+    public Button GetButton() { return button; }
+    public ItemClass GetItemcls() { return itemCls; }
     public Sprite GetItemSprite() { return img_TopSpriteImg.sprite; }
+    public InvenItemObjClass GetInvenItemObjClass() { return this; }
 
 }

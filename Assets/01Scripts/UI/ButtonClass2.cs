@@ -270,5 +270,10 @@ public class ButtonClass2 : MonoBehaviour
         }
     }
 
+    public void SetSymbolSprite(Sprite sprite)
+    {
+        symbolImg.sprite = sprite;
+    }
+
 
 }

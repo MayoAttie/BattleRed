@@ -72,8 +72,8 @@ public class GameManager : Singleton<GameManager>
 
         List<ItemClass> weaponList = new List<ItemClass>
         {
-            new WeaponAndEquipCls("무기", "천공의 검", 5, true, 1, 100000, 1,20, "풍룡의 영광을 상징하는 기사검.\n잃어버렸다가 오늘날 되찾았다.\n현재 검에 바람 신의 축복이 깃들어 있으며, 푸른 하늘과 바람의 힘을 지니고 있다","" ,"치명타 확률이 4% 증가한다. 원소폭발 발동 시 파공의 기세를 획득한다: 이동속도+10%, 공격속도+10%. 일반 공격과 강공격이 명중 시 추가로 공격력 20%의 피해를 준다. 지속 시간: 12초",1,560,30),
-            new WeaponAndEquipCls("무기", "제례검", 4, false, 1, 65000, 3,20, "기나긴 세월을 거쳐 석화한 검은 의례적인 장식이 여전히 선명하게 보인다.\n시간의 바람에 씻긴 축복의 힘을 보유하고 있다", "","원소전투 스킬로 피해를 줄 때 40%의 확률로 해당 스킬의 재발동 대기시간이 초기화된다. 해당 효과는 30초마다 1회만 발동한다",1,470,25)
+            new WeaponAndEquipCls("무기", "천공의 검", 5, true, 1, 100000, 1,20, "풍룡의 영광을 상징하는 기사검.\n잃어버렸다가 오늘날 되찾았다.\n현재 검에 바람 신의 축복이 깃들어 있으며, 푸른 하늘과 바람의 힘을 지니고 있다","" ,"치명타 확률이 4% 증가한다. 원소폭발 발동 시 파공의 기세를 획득한다: 이동속도+10%, 공격속도+10%. 일반 공격과 강공격이 명중 시 추가로 공격력 20%의 피해를 준다. 지속 시간: 12초",1,560,12),
+            new WeaponAndEquipCls("무기", "제례검", 4, false, 1, 65000, 3,20, "기나긴 세월을 거쳐 석화한 검은 의례적인 장식이 여전히 선명하게 보인다.\n시간의 바람에 씻긴 축복의 힘을 보유하고 있다", "","원소전투 스킬로 피해를 줄 때 40%의 확률로 해당 스킬의 재발동 대기시간이 초기화된다. 해당 효과는 30초마다 1회만 발동한다",1,470,13.3f)
         };
         playerData.SetHadWeaponList(weaponList);
 
@@ -108,12 +108,14 @@ public class GameManager : Singleton<GameManager>
         playerData.SetHadGemList(gemList);
 
         List<ItemClass> foodList = new List<ItemClass>
-        {
-            new ItemClass("음식", "달콤달콤 닭고기 스튜", 3, false, 1, 1500, 1, "꿀에 버무려 구운 새고기. 탱탱한 새고기에 넘쳐흐르는 육즙, 게다가 아삭아삭한 달콤달콤꽃까지 정말 맛있다", ""),
+        {            new ItemClass("음식", "달콤달콤 닭고기 스튜", 3, false, 1, 1500, 1, "꿀에 버무려 구운 새고기. 탱탱한 새고기에 넘쳐흐르는 육즙, 게다가 아삭아삭한 달콤달콤꽃까지 정말 맛있다", ""),
             new ItemClass("음식", "무스프", 1, false, 3, 700, 1, "무를 주재료로 만든 야채수프. 여유로운 오후처럼 싱그럽고 소박한 농촌의 향기를 풍긴다.", ""),
 
         };
         playerData.SetHadFoodList(foodList);
+
+        playerData.SetUserEquippedWeapon(playerData.GetHadWeaponList().Find(item => item.GetIsActive() == true));
+        playerData.SetUserEquippedEquipment(playerData.GetHadEquipmentList().FindAll(item => item.GetIsActive() == true).ToArray());
     }
 
     void Start()

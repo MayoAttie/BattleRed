@@ -6,6 +6,7 @@ public class ItemSpritesSaver : Singleton<ItemSpritesSaver>
      * 0 - 천공의 검
      * 1 - 제례검
      */
+    [Header("무기 스프라이트")]
     public Sprite[] WeaponSprites;
 
     /* 장비 목록
@@ -14,6 +15,7 @@ public class ItemSpritesSaver : Singleton<ItemSpritesSaver>
      * 5~9 - 전투광
      * 10~14 - 피에 물든 기사도
      */
+    [Header("성유물 스프라이트")]
     public Sprite[] EquipSprites;
 
     /* 보석 목록
@@ -21,6 +23,7 @@ public class ItemSpritesSaver : Singleton<ItemSpritesSaver>
      * 3~5 - 정제용 하급 광물, 정제용 광물, 정제용 마법 광물
      * 6~8 - 야박석, 전기수정, 콜라피스
      */
+    [Header("광물 스프라이트")]
     public Sprite[] GemSprites;
 
     /* 음식 목록
@@ -29,6 +32,7 @@ public class ItemSpritesSaver : Singleton<ItemSpritesSaver>
      * 5~7 - 스테이크, 무스프, 몬드 감자전
      * 8~10 - 방랑자의 경험, 모험자의 경험, 영웅의 경험(경험치 책)
      */
+    [Header("음식 스프라이트")]
     public Sprite[] FoodSprites;
 
 
@@ -38,7 +42,15 @@ public class ItemSpritesSaver : Singleton<ItemSpritesSaver>
      *  2 - 3성 그라데이션
      *  3 - 디폴트 그라데이션
      */
+    [Header("배경 그라데이션 스프라이트")]
     public Sprite[] GradationSprite;
+
+    /*  기타 스프라이트 모음
+     *  0 - Back 스프라이트
+     *  1 - Close 스프라이트
+     */
+    [Header("기타 스프라이트")]
+    public Sprite[] SpritesSet;
 
 
     // 성급 색상 코드
