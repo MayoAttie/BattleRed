@@ -359,16 +359,6 @@ public class CharacterControlMng : Subject, Observer
         }
     }
 
-    #endregion
-
-
-
-    #region 옵저버 패턴
-
-    public void AtkLevelNotify(CharacterAttackMng.e_AttackLevel level){}
-
-    public void BlinkValueNotify(e_BlinkPos value){}
-
     public void GetBlinkEndNotify() // 블링크 종료됨을 Get하여, 반영
     {
         Debug.Log(nameof(GetBlinkEndNotify));
@@ -380,8 +370,20 @@ public class CharacterControlMng : Subject, Observer
 
     public void GetBlinkStartNotify()
     {
-        isBlinkStart = true;    
+        isBlinkStart = true;
     }
+
+    #endregion
+
+
+
+    #region 옵저버 패턴
+
+    public void AtkLevelNotify(CharacterAttackMng.e_AttackLevel level){}
+
+    public void BlinkValueNotify(e_BlinkPos value){}
+
+
 
 
     public void GetEnemyFindNotify(List<Transform> findList)

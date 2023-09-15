@@ -749,7 +749,10 @@ public class UI_Manager : EnergyBarManager
                 Button btn = obj.GetButton();
                 if (btn != null)
                 {
-                    btn.onClick.RemoveListener(() => WeaponChangeButtonEventHandler(obj));  // 버그 있는 것으로 추정
+                    // 모든 이벤트 리스너를 제거하고, 기존의 이벤트 리스너를 다시 부착한다.
+                    btn.onClick.RemoveAllListeners();
+                    btn.onClick.AddListener(() =>obj.OnClickEventer());
+                    btn.onClick.AddListener(() => obj.ClickedUIApply());
                 }
             }
             GameManager.Instance.WeaponItemPool.AllReturnToPool();  // 웨폰 UI 오브젝트풀 리턴
@@ -917,7 +920,7 @@ public class UI_Manager : EnergyBarManager
         }
 
     }
-
+    // 무기 교환 버튼 호출 함수
     public void WeaponChangeButtonClickEvent(ButtonClass2 clickedBtn)
     {
         if (isWeaponChangeBtnClicked) return;
@@ -971,6 +974,13 @@ public class UI_Manager : EnergyBarManager
         Transform scrollViewContentObj = printInfoDataField[1].transform.GetChild(12).GetChild(0).GetChild(0);
         GameManager.Instance.WeaponItemPool.AllReturnToPool();  // 오브젝트 풀 리턴
         WeaponPrintAtScroll(scrollViewContentObj);              // 콘텐트에 UI 출력
+        EquippedWeaponPrint();
+    }
+
+
+    public void WeaponUpgeadeButtonClickEvent()
+    {
+
     }
 
     #endregion

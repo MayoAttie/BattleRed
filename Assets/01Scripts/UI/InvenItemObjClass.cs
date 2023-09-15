@@ -56,7 +56,15 @@ public class InvenItemObjClass : MonoBehaviour
 
     private void OnClick()
     {
-        if(!isClicked)  // 클릭된 상태가 아닐 경우.
+
+        OnClickEventer();
+        ClickedUIApply();
+        onPressed.Invoke();
+    }
+
+    public void OnClickEventer()
+    {
+        if (!isClicked)  // 클릭된 상태가 아닐 경우.
         {
             // 클릭된 객체의 데이터를 전송
             UI_Manager.Instance.ClickedItemNotifyed(itemCls, this);
@@ -67,9 +75,6 @@ public class InvenItemObjClass : MonoBehaviour
             UI_Manager.Instance.ExpressFrameReset();
         }
 
-
-        ClickedUIApply();
-        onPressed.Invoke();
     }
 
     public void ClickedUIApply()

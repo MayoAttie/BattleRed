@@ -138,15 +138,20 @@ public class CharacterAttackMng : Subject, Observer
         Element.e_Element element = characMng.GetElement();
         nAtkLevel = (int)e_AttackLevel.AtkSkill;
 
+        // 공격 레벨 변경을 알림
         NotifyAtkLevel((e_AttackLevel)nAtkLevel);
+        // 캐릭터의 상태를 공격 상태로 설정
         characMng.GetCharacterClass().SetState(eCharactgerState.e_ATTACK);
     }
 
     public void AttackSkilAniStart()
     {
+        // 어두운 커튼이 활성화된 경우
         if (darkCurtain.activeSelf == true)
-            Invoke("CurtainOff", 1.1f);
+            Invoke("CurtainOff", 1.1f); // 1.1초 후에 CurtainOff 함수 호출
         SwordColider.SetActive(true);
+
+        // 공격 스킬 시작을 알림 -> 카메라/조명 제어 함수
         NotifyAttackSkillStart();
     }
     public void CurtainOff()
@@ -154,6 +159,8 @@ public class CharacterAttackMng : Subject, Observer
         if (darkCurtain.activeSelf == false)
             return;
         darkCurtain.SetActive(false);
+
+        // 공격 스킬 종료를 알림 -> 카메라/조명 제어 함수
         NotifyAttackSkillEnd();
     }
     public void AttackSkillAniEnd()
@@ -162,10 +169,11 @@ public class CharacterAttackMng : Subject, Observer
         if (characMng.GetCharacterClass().GetCurrnetElement().GetIsActive())
             characMng.GetCharacterClass().GetCurrnetElement().SetIsActive(false);
 
-        FlagValueReset();
+        // 스킬로 인한 특정 행동 강제 시, 발생할 문제를 해결하기 위한 각 제어 플래그 초기화
+        FlagValueReset();   
         nAtkLevel = (int)e_AttackLevel.AttackMode;
         
-        
+        // 공격 대기 모드로 전환
         NotifyAtkLevel((e_AttackLevel)nAtkLevel);
         characMng.GetCharacterClass().SetState(eCharactgerState.e_ATTACK);
     }
