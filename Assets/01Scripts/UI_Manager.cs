@@ -6,6 +6,7 @@ using TMPro;
 using System.Linq;
 using System.Reflection;
 using System.Data;
+using JetBrains.Annotations;
 
 public class UI_Manager : EnergyBarManager
 {
@@ -57,6 +58,7 @@ public class UI_Manager : EnergyBarManager
     private e_InfoButtonSelected info_Index;                // 선택한 정보 인덱스
     private bool isDetailScreenOpen;                        // 캐릭터 상세정보 프리팹 On/Off 플래그 변수
     private bool isWeaponChangeBtnClicked;                  // 무기 변경 클릭 제어 플래그
+    private bool isWeaponUpgradeBtnClicked;                 // 무기 업글 클릭 제어 플래그
     private ButtonClass2 weaponChangeButton;                // 무기 변경 버튼
 
 
@@ -91,7 +93,6 @@ public class UI_Manager : EnergyBarManager
         LimitBreaker,
         Skill
     }
-
     #endregion
 
 
@@ -604,6 +605,20 @@ public class UI_Manager : EnergyBarManager
         titleText.text = itemCls.GetName();
         bottomText.text = itemCls.GetContent();
 
+        ItemUISetterByItemGrade(itemCls, titleFrame, topFrame);
+
+
+        // 아이템 이미지 출력
+        topImage.sprite = clickedObj.GetItemSprite();
+
+        // 선택한 아이템 객체를 클래스 지역 변수에 저장
+        selectedObjAndItemCls = new Tuple<ItemClass, InvenItemObjClass>(itemCls,clickedObj);
+
+    }
+
+
+    void ItemUISetterByItemGrade(ItemClass itemCls, Image titleFrame, Image topFrame)
+    {
         // 등급에 따라서 색상 변경
         switch (itemCls.GetGrade())
         {
@@ -624,14 +639,31 @@ public class UI_Manager : EnergyBarManager
                 topFrame.sprite = ItemSpritesSaver.Instance.GradationSprite[3];
                 break;
         }
-
-        // 아이템 이미지 출력
-        topImage.sprite = clickedObj.GetItemSprite();
-
-        // 선택한 아이템 객체를 클래스 지역 변수에 저장
-        selectedObjAndItemCls = new Tuple<ItemClass, InvenItemObjClass>(itemCls,clickedObj);
-
     }
+    void ItemUISetterByItemGrade(WeaponAndEquipCls itemCls, Image titleFrame, Image topFrame)
+    {
+        // 등급에 따라서 색상 변경
+        switch (itemCls.GetGrade())
+        {
+            case 5:
+                titleFrame.color = ItemSpritesSaver.Instance.GetFiveStarColor();
+                topFrame.sprite = ItemSpritesSaver.Instance.GradationSprite[0];
+                break;
+            case 4:
+                titleFrame.color = ItemSpritesSaver.Instance.GetFourStarColor();
+                topFrame.sprite = ItemSpritesSaver.Instance.GradationSprite[1];
+                break;
+            case 3:
+                titleFrame.color = ItemSpritesSaver.Instance.GetThreeStarColor();
+                topFrame.sprite = ItemSpritesSaver.Instance.GradationSprite[2];
+                break;
+            default:
+                titleFrame.color = ItemSpritesSaver.Instance.GetOneStarColor();
+                topFrame.sprite = ItemSpritesSaver.Instance.GradationSprite[3];
+                break;
+        }
+    }
+
 
     public void ExpressFrameReset()
     {
@@ -655,17 +687,17 @@ public class UI_Manager : EnergyBarManager
         switch (info_Index)
         {
             case e_InfoButtonSelected.Status:
-                PlayerDataPrint();
                 PlayerInfoScreen.SetActive(true);
                 printInfoDataField[0].SetActive(true);
+                PlayerDataPrint();
                 // 상세화면 출력 오브젝트 False
                 var obj = printInfoDataField[0].transform.GetChild(10).GetComponent<Transform>();
                 obj.gameObject.SetActive(false);
                 break;
             case e_InfoButtonSelected.Weapon:
-                EquippedWeaponPrint();
                 PlayerInfoScreen.SetActive(true);
                 printInfoDataField[1].SetActive(true);
+                EquippedWeaponPrint();
                 break;
             case e_InfoButtonSelected.Equipment:
                 PlayerInfoScreen.SetActive(true);
@@ -736,8 +768,7 @@ public class UI_Manager : EnergyBarManager
         else if(isWeaponChangeBtnClicked)
         {
             InfoPrintTypeButtonActive();
-            // 스프라이트 이미지(ToClose) 변경
-            InfoObj_CloseButtion.GetComponent<ButtonClass2>().SetSymbolSprite(ItemSpritesSaver.Instance.SpritesSet[1]);
+            CloseButtonSpriteToClose();
             infoSelectButtons[1].OnOffSpriteSetting();              // 웨폰 인포 버튼 UI 활성화
             weaponChangeButton.AlphaValueChangeing();               // 무기 변경 버튼 알파값 변경
 
@@ -758,6 +789,17 @@ public class UI_Manager : EnergyBarManager
             GameManager.Instance.WeaponItemPool.AllReturnToPool();  // 웨폰 UI 오브젝트풀 리턴
             isWeaponChangeBtnClicked = false;
         }
+        // 무기 업글 버튼 클릭 시, 기능 변경
+        else if(isWeaponUpgradeBtnClicked)
+        {
+            InfoPrintTypeButtonActive();
+            CloseButtonSpriteToClose();
+
+            Transform screen = printInfoDataField[1].transform.GetChild(13).GetComponent<Transform>();    // 무기 업글 UI 오브젝트 인스턴스화
+            screen.gameObject.SetActive(false);
+
+            isWeaponUpgradeBtnClicked = false;
+        }
         else    // 종료
         {
             
@@ -766,6 +808,17 @@ public class UI_Manager : EnergyBarManager
         }
     }
 
+    private void CloseButtonSpriteToClose()
+    {
+        // 스프라이트 이미지(ToClose) 변경
+        InfoObj_CloseButtion.GetComponent<ButtonClass2>().SetSymbolSprite(ItemSpritesSaver.Instance.SpritesSet[1]);
+        infoSelectButtons[1].OnOffSpriteSetting();              // 웨폰 인포 버튼 UI 활성화
+    }
+    private void CloseButtonSpriteToBack()
+    {
+        // 스프라이트 이미지(ToBack) 변경
+        InfoObj_CloseButtion.GetComponent<ButtonClass2>().SetSymbolSprite(ItemSpritesSaver.Instance.SpritesSet[0]);
+    }
     private void InfoPrintTypeButtonUnActive()
     {
         // 출력 인포타입 버튼 Active_False
@@ -776,6 +829,7 @@ public class UI_Manager : EnergyBarManager
     }
     private void InfoPrintTypeButtonActive()
     {
+        // 출력 인포타입 버튼 Active_True
         for (int i = 0; i < infoSelectButtons.Length; i++)
         {
             infoSelectButtons[i].gameObject.SetActive(true);
@@ -855,6 +909,11 @@ public class UI_Manager : EnergyBarManager
     // 장비의 기본적인 데이터 출력을 담당하는 함수
     void EquippedWeaponPrint()
     {
+        // 무기 업글창 자식 객체 비활성화
+        Transform screen = printInfoDataField[1].transform.GetChild(13).GetComponent<Transform>();    // 무기 업글 UI 오브젝트 인스턴스화
+        screen.gameObject.SetActive(false);
+
+        // 무기 데이터 가져오기
         ItemClass equippedData = GameManager.Instance.GetUserClass().GetUserEquippedWeapon();
         WeaponAndEquipCls equippedWeapon = equippedData as WeaponAndEquipCls; // 형변환
 
@@ -868,7 +927,9 @@ public class UI_Manager : EnergyBarManager
             TextMeshProUGUI weaponReforgeGradeTxt = printInfoDataField[1].transform.GetChild(7).GetComponent<TextMeshProUGUI>();
             TextMeshProUGUI weaponExplanTxt = printInfoDataField[1].transform.GetChild(9).GetComponent<TextMeshProUGUI>();
             TextMeshProUGUI weaponSkillTxt = printInfoDataField[1].transform.GetChild(8).GetComponent<TextMeshProUGUI>();
-
+            Image WeaponImage = printInfoDataField[1].transform.GetChild(1).GetComponent<Image>();
+            TextMeshProUGUI weaponStatusLabelTxt = printInfoDataField[1].transform.GetChild(4).GetChild(1).GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI weaponStatusTxt = printInfoDataField[1].transform.GetChild(4).GetChild(2).GetComponent<TextMeshProUGUI>();
 
             // 데이터 출력
 
@@ -889,37 +950,44 @@ public class UI_Manager : EnergyBarManager
             weaponSkillTxt.text = equippedWeapon.GetEffectText();
 
 
-            WeaponKindDivider(equippedWeapon);  // 무기 종류에 따라 분기하여 출력하는 함수 호출
+            WeaponKindDivider(equippedWeapon, WeaponImage, weaponStatusLabelTxt, weaponStatusTxt);  // 무기 종류에 따라 분기하여 출력하는 함수 호출
         }
+
     }
 
     // 무기에 따라 달라지는 장비 데이터 출력을 담당하는 함수
-    void WeaponKindDivider(WeaponAndEquipCls weaponCls)
+    void WeaponKindDivider(WeaponAndEquipCls weaponCls, Image WeaponImage = null, TextMeshProUGUI weaponStatusLabelTxt = null, TextMeshProUGUI weaponStatusTxt = null)
     {
-        Image WeaponImage = printInfoDataField[1].transform.GetChild(1).GetComponent<Image>();
-        TextMeshProUGUI weaponStatusLabelTxt = printInfoDataField[1].transform.GetChild(4).GetChild(1).GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI weaponStatusTxt = printInfoDataField[1].transform.GetChild(4).GetChild(2).GetComponent<TextMeshProUGUI>();
-
         // 장비 이름에 따라 데이터 분기
-        switch(weaponCls.GetName())
+        switch (weaponCls.GetName())
         {
             case "천공의 검":
-                {
+            {
+                if (WeaponImage != null)
                     WeaponImage.sprite = ItemSpritesSaver.Instance.WeaponSprites[0];
-                    weaponStatusLabelTxt.text = "원소 충전 효율";
-                    weaponStatusTxt.text = weaponCls.GetSubStat().ToString()+"%";
-                }
-                break;
-            case "제례검":
-                {
-                    WeaponImage.sprite = ItemSpritesSaver.Instance.WeaponSprites[1];
-                    weaponStatusLabelTxt.text = "원소 충전 효율";
-                    weaponStatusTxt.text = weaponCls.GetSubStat().ToString() + "%";
-                }
-                break;
-        }
 
+                if (weaponStatusLabelTxt != null)
+                    weaponStatusLabelTxt.text = "원소 충전 효율";
+
+                if (weaponStatusTxt != null)
+                    weaponStatusTxt.text = weaponCls.GetSubStat().ToString() + "%";
+            }
+            break;
+            case "제례검":
+            {
+                if (WeaponImage != null)
+                    WeaponImage.sprite = ItemSpritesSaver.Instance.WeaponSprites[1];
+
+                if (weaponStatusLabelTxt != null)
+                    weaponStatusLabelTxt.text = "원소 충전 효율";
+
+                if (weaponStatusTxt != null)
+                    weaponStatusTxt.text = weaponCls.GetSubStat().ToString() + "%";
+            }
+            break;
+        }
     }
+
     // 무기 교환 버튼 호출 함수
     public void WeaponChangeButtonClickEvent(ButtonClass2 clickedBtn)
     {
@@ -929,8 +997,8 @@ public class UI_Manager : EnergyBarManager
         isWeaponChangeBtnClicked = true;
 
         InfoPrintTypeButtonUnActive();                          // 타입 선택 버튼 Active끄기
-        // 스프라이트 이미지(ToBack) 변경
-        InfoObj_CloseButtion.GetComponent<ButtonClass2>().SetSymbolSprite(ItemSpritesSaver.Instance.SpritesSet[0]);
+        CloseButtonSpriteToBack();
+
         // 스크롤뷰_콘텐트 객체 인스턴스화
         Transform scrollViewContentObj = printInfoDataField[1].transform.GetChild(12).GetChild(0).GetChild(0);
         clickedBtn.AlphaValueChangeing();                       // 클릭된 색상 유지
@@ -966,7 +1034,7 @@ public class UI_Manager : EnergyBarManager
         tmp.SetActive(false);                                                                   // 장착 중이던 아이템을 활성화 X
 
         ItemClass SelectItem = WeaponsList.Find(item => item.Equals(cls));              // 선택한 아이템 찾기
-        SelectItem.SetActive(true);
+        SelectItem.SetActive(true);                                                     // 장착할 아이템 활성화 O
         GameManager.Instance.GetUserClass().SetUserEquippedWeapon(SelectItem);          // 선택한 아이템 장착
 
 
@@ -977,10 +1045,179 @@ public class UI_Manager : EnergyBarManager
         EquippedWeaponPrint();
     }
 
-
+    //  무기 업그레이드 버튼 클릭 시 호출 함수
     public void WeaponUpgeadeButtonClickEvent()
     {
+        if (isWeaponUpgradeBtnClicked)  // 이미 클릭된 상태라면 리턴
+            return;
 
+        if(isWeaponChangeBtnClicked)    // 무기 교체 버튼이 클릭 된 상태라면, 클릭과 관련된 출력 함수를 Reset하기 위해, 종료 버튼 호출
+            ClosePlayerInfoScreenButton();
+
+        // UI 세팅
+        InfoPrintTypeButtonUnActive();
+        CloseButtonSpriteToBack();
+
+        Transform tmp = printInfoDataField[1].transform.GetChild(13).GetComponent<Transform>();    // 무기 업글 UI 오브젝트 인스턴스화
+        tmp.gameObject.SetActive(true);
+        isWeaponUpgradeBtnClicked = true;
+
+        PlayerInfoUI_Button[] buttons = new PlayerInfoUI_Button[3];
+        buttons = tmp.GetComponentsInChildren<PlayerInfoUI_Button>();          // 무기 업글 창에서 사용할 버튼 객체
+        string[] texts = { "상세", "돌파", "재련" };
+
+
+        // 무기 데이터 가져오기
+        ItemClass equippedData = GameManager.Instance.GetUserClass().GetUserEquippedWeapon();
+        WeaponAndEquipCls equippedWeapon = equippedData as WeaponAndEquipCls; // 형변환
+        var weaponImage = tmp.GetChild(3).GetComponent<Image>();
+        WeaponKindDivider(equippedWeapon, weaponImage); // 무기 일러스트 출력
+
+        int index = 0;
+        while (index < buttons.Length)
+        {
+            PlayerInfoUI_Button btnCls = buttons[index];
+            btnCls.SetText(texts[index]);   // 텍스트 변경
+
+            // 버튼에 연결되어 있는 기존의 리스너 이벤트 제거
+            Button obj = btnCls.GetButton();
+            obj.onClick.RemoveAllListeners();
+
+            // 설정한 텍스트에 따라서, 분기하여 분기하여 클릭 이벤트 리스너 설정
+            switch (btnCls.GetText())
+            {
+                case "상세":
+                    Debug.Log(index);
+                    obj.onClick.AddListener(() => WeaponUpgrade_DetailScreenButton(btnCls, equippedWeapon,tmp));
+                    break;
+                case "돌파":
+                    Debug.Log(index);
+                    obj.onClick.AddListener(() => WeaponUpgrade_LevelUpButton(btnCls, equippedWeapon, tmp));
+                    break;
+                case "재련":
+                    Debug.Log(index);
+                    obj.onClick.AddListener(() => WeaponUpgrade_ReforgeButton(btnCls, equippedWeapon, tmp));
+                    break;
+            }
+            index++;
+        }
+
+        // 데이터 출력 Off
+        for(int i=4; i<7; i++)
+        {
+            tmp.GetChild(i).GetComponent<Transform>().gameObject.SetActive(false);
+        }
+        // 디폴트 출력은 상세 정보 출력
+        PlayerInfoUI_Button cls = buttons[0];
+        WeaponUpgrade_DetailScreenButton(cls, equippedWeapon, tmp);
+    }
+
+    
+
+    // 무기 상세정보 출력 함수
+    private void WeaponUpgrade_DetailScreenButton(PlayerInfoUI_Button my, WeaponAndEquipCls equippedWeapon, Transform parents)
+    {
+        my.OnOffSpriteSetting();
+        ClickedButtonsSetActiveReset(my, parents,4);
+        var mainObject = parents.GetChild(4).GetComponent<Transform>();
+
+        Transform scrollContent = mainObject.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Transform>();
+        scrollContent.gameObject.SetActive(true);
+
+        // 라벨 UI 인스턴스화
+        Image labelBgr = scrollContent.transform.GetChild(0).GetComponent<Image>();
+        TextMeshProUGUI labelText = labelBgr.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+
+        labelText.text = equippedWeapon.GetName();                                       // 아이템 이름 출력
+
+        // 탑 프레임 UI 인스턴스화
+        Image TopFrame = scrollContent.transform.GetChild(1).GetComponent<Image>();         // 상단 프레임
+        Image weaponImg = TopFrame.transform.GetChild(0).GetComponent<Image>();             // 무기 이미지
+        Transform topContent = TopFrame.transform.GetChild(1).GetComponent<Transform>();
+        TextMeshProUGUI subStatusLabel = topContent.transform.GetChild(1).GetComponent<TextMeshProUGUI>();  // 서브 스탯 라벨
+        TextMeshProUGUI subStatusValue = topContent.transform.GetChild(2).GetComponent<TextMeshProUGUI>();  // 서브 스탯 값
+        TextMeshProUGUI mainStatusLabel = topContent.transform.GetChild(3).GetComponent<TextMeshProUGUI>();  // 메인 스탯 라벨
+        TextMeshProUGUI mainStatusValue = topContent.transform.GetChild(4).GetComponent<TextMeshProUGUI>();  // 메인 스탯 값
+        Image[] weaponStars = topContent.transform.GetChild(5).GetComponentsInChildren<Image>();
+
+        // 탑 프레임 데이터 출력
+        ItemUISetterByItemGrade(equippedWeapon, labelBgr, TopFrame);                    // 아이템 등급별 백그라운드 세팅
+        WeaponKindDivider(equippedWeapon, weaponImg, subStatusLabel, subStatusValue);    // 서브스텟 출력
+        mainStatusLabel.text = "기초공격력";                                               // 메인 스텟 출력
+        mainStatusValue.text = equippedWeapon.GetMainStat().ToString();                  // 메인 스텟 출력
+
+        // 성급 출력
+        foreach (var tmp in weaponStars) { tmp.enabled = false; }
+        int grade = equippedWeapon.GetGrade();
+        //weaponStars[0].enabled = true;
+        for (int i = 0; i < grade; i++)
+            weaponStars[i].enabled = true;
+
+
+
+        // 바텀 프레임 UI 인스턴스화
+        TextMeshProUGUI LevelTextVelue = scrollContent.GetChild(2).GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI LevelMaxText = scrollContent.GetChild(2).GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI ReforgeLevelText = scrollContent.GetChild(2).GetChild(1).GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI ReforgeGreadLevelText = scrollContent.GetChild(2).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI SkillContentText = scrollContent.GetChild(2).GetChild(2).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI ContentText = scrollContent.GetChild(2).GetChild(3).GetComponent<TextMeshProUGUI>();
+
+        // 바텀 프레임 데이터 출력
+        LevelTextVelue.text = "LV."+equippedWeapon.GetLevel().ToString();
+        LevelMaxText.text = "/ "+ equippedWeapon.GetLimitLevel().ToString();
+        ReforgeLevelText.text = equippedWeapon.GetEffectLevel().ToString();
+        ReforgeGreadLevelText.text = "재련 " + equippedWeapon.GetEffectLevel().ToString() + "단계";
+        SkillContentText.text = equippedWeapon.GetEffectText();
+        ContentText.text = equippedWeapon.GetContent();
+
+    }
+
+    private void WeaponUpgrade_LevelUpButton(PlayerInfoUI_Button my, WeaponAndEquipCls equippedWeapon, Transform parents)
+    {
+        my.OnOffSpriteSetting();
+        ClickedButtonsSetActiveReset(my, parents,5);
+        var mainObject = parents.GetChild(5).GetComponent<Transform>();
+
+
+        Debug.Log("돌파 버튼 클릭");
+    }
+    private void WeaponUpgrade_ReforgeButton(PlayerInfoUI_Button my, WeaponAndEquipCls equippedWeapon, Transform parents)
+    {
+        my.OnOffSpriteSetting();
+        ClickedButtonsSetActiveReset(my,parents,6);
+        var mainObject = parents.GetChild(6).GetComponent<Transform>();
+
+
+        Debug.Log("재련 버튼 클릭");
+    }
+
+    // 클릭한 객체를 제외한 나머지 객체의 UI 변경
+    private void ClickedButtonsSetActiveReset(PlayerInfoUI_Button my, Transform parents, int CurrentIndex)
+    {
+        Transform tmp = printInfoDataField[1].transform.GetChild(13).GetComponent<Transform>();    // 무기 업글 UI 오브젝트 인스턴스화
+        PlayerInfoUI_Button[] buttons = new PlayerInfoUI_Button[3];
+        buttons = tmp.GetComponentsInChildren<PlayerInfoUI_Button>();          // 무기 업글 창에서 사용할 버튼 객체
+
+        // 클릭 시 클릭한 객체를 제외한 나머지 UI 비활성화
+        foreach(var button in buttons)
+        {
+            if (button.Equals(my))
+                continue;
+
+            if (button.GetIsCicked() == true)
+                button.OnOffSpriteSetting();
+        }
+
+        // 데이터 출력 UI 오브젝트 활성화
+        for(int i = 4; i<7; i++)
+        {
+            var obj = parents.GetChild(i).GetComponent<Transform>();
+            obj.gameObject.SetActive(false);
+
+            if(i== CurrentIndex)
+                obj.gameObject.SetActive(true);
+        }
     }
 
     #endregion

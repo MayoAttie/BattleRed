@@ -69,5 +69,8 @@ public class PlayerInfoUI_Button : MonoBehaviour
     }
 
     public bool GetClickedActive() { return isClicked; }
-
+    public void SetText(string txt) { this.text.text = txt; }
+    public bool GetIsCicked() { return isClicked; }
+    public string GetText() { return text.text;}
+    public Button GetButton() { return button; }
 }
