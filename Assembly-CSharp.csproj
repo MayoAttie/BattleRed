@@ -99,6 +99,7 @@
     <Compile Include="Assets\01Scripts\UI\InventorySortSelectButton.cs" />
     <Compile Include="Assets\01Scripts\UI\ItemSpritesSaver.cs" />
     <Compile Include="Assets\01Scripts\UI\PlayerInfoUI_Button.cs" />
+    <Compile Include="Assets\01Scripts\UI\SelectButtonScript.cs" />
     <Compile Include="Assets\01Scripts\UI_Manager.cs" />
     <Compile Include="Assets\01Scripts\UserClass.cs" />
     <Compile Include="Assets\02Assets\UJoystick\Content\Script\Core\bl_Joystick.cs" />
