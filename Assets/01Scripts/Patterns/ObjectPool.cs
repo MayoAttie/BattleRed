@@ -5,6 +5,7 @@ public class ObjectPool<T> : MonoBehaviour where T : Component
 {
     public GameObject prefab;
     public int initialPoolSize;
+    Transform parentObj = null;
 
     private List<T> pool = new List<T>();
 
@@ -13,11 +14,12 @@ public class ObjectPool<T> : MonoBehaviour where T : Component
     {
         this.prefab = prefab;
         initialPoolSize = prefabPollSize;
-        InitializePool(parent);
+        parentObj = parent;
+        InitializePool();
     }
 
     // 오브젝트 풀 초기화
-    private void InitializePool(Transform parent = null)
+    private void InitializePool()
     {
         for (int i = 0; i < initialPoolSize; i++)
         {
@@ -25,9 +27,9 @@ public class ObjectPool<T> : MonoBehaviour where T : Component
             obj.gameObject.SetActive(false);
 
             // 만약 parent가 제공되었다면 부모로 설정
-            if (parent != null)
+            if (parentObj != null)
             {
-                obj.transform.SetParent(parent);
+                obj.transform.SetParent(parentObj);
             }
 
             pool.Add(obj);
@@ -59,15 +61,26 @@ public class ObjectPool<T> : MonoBehaviour where T : Component
     // 오브젝트 풀로 오브젝트 반환
     public void ReturnToPool(T obj)
     {
-        obj.gameObject.SetActive(false);
+        if (obj != null && parentObj != null)
+        {
+            obj.transform.SetParent(parentObj); // obj를 parentObj의 자식으로 이동
+            obj.gameObject.SetActive(false);
+        }
     }
 
     // 전체 오브젝트 풀 반환
     public void AllReturnToPool()
     {
-        foreach (T obj in pool)
+        if (parentObj != null)
         {
-            obj.gameObject.SetActive(false);
+            foreach (T obj in pool)
+            {
+                if (obj != null)
+                {
+                    obj.transform.SetParent(parentObj); // 각 객체를 parentObj의 자식으로 이동
+                    obj.gameObject.SetActive(false);
+                }
+            }
         }
     }
 

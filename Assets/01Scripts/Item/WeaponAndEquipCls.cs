@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using UnityEngine;
 
 public class WeaponAndEquipCls : ItemClass
@@ -9,20 +10,26 @@ public class WeaponAndEquipCls : ItemClass
     float nSubStat;               // 서브스텟
     int nEffectLevel;          // 재련 돌파 레벨
     string sEffectText;         // 재련 스킬 텍스트
+    int nCurrentExp;            // 현재 exp
+    int nMaxExp;                // 최대 exp
 
 
-    public WeaponAndEquipCls(string sTag, string sName, int nGrade, bool isActive, int nNumber, int nCost, int nLevel,int nLimitLevel, string sContent, string sSet, string sEffectText, int nEffectLevel, int nMainStat, float nSubStat) : base(sTag, sName, nGrade, isActive, nNumber, nCost, nLevel, sContent, sSet)
+    public WeaponAndEquipCls(string sTag, string sName, int nGrade, bool isActive, int nNumber, int nCost, int nLevel,int nLimitLevel, string sContent, string sSet, string sEffectText, int nEffectLevel, int nMainStat, float nSubStat, int nCurrentExp, int nMaxExp) : base(sTag, sName, nGrade, isActive, nNumber, nCost, nLevel, sContent, sSet)
     {
         this.nLimitLevel = nLimitLevel;
         this.sEffectText = sEffectText;
         this.nEffectLevel = nEffectLevel;
         this.nMainStat = nMainStat;
         this.nSubStat = nSubStat;
+        this.nCurrentExp = nCurrentExp;
+        this.nMaxExp = nMaxExp;
     }
 
     public int GetLimitLevel() { return nLimitLevel; }
     public int GetEffectLevel() { return nEffectLevel; }
     public string GetEffectText() { return sEffectText; }
+    public int GetCurrentExp() { return nCurrentExp; }
+    public int GetMaxExp() { return nMaxExp; }
     public int GetMainStat() { return nMainStat; }
     public float GetSubStat() { return nSubStat; }
 

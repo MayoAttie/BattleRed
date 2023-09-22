@@ -108,7 +108,6 @@ public class InventorySortSelectButton : MonoBehaviour
     // 선택된 인덱스를 제외한 나머지의 색을 감춤.
     public void HideButtonBackGround()
     {
-        UI_TextSettingInit();
 
         // 선택된 값을 제외하고, 버튼의 백그라운드를 보이지 않도록 초기화.
         switch (order)
@@ -186,8 +185,32 @@ public class InventorySortSelectButton : MonoBehaviour
         // 클릭한 버튼의 인덱스를 받아와서 처리할 로직을 구현
         UI_Manager.Instance.GetSortIndex(index);
         order = (UI_Manager.e_SortingOrder)index;
+        UI_TextSettingInit();
         HideButtonBackGround();
     }
     #endregion
 
+
+    public Button[] GetButtons()
+    {
+        Button[] buttons = { btn1_button, btn2_button, btn3_button, };
+        return buttons;
+    }
+    public void SetButtonsText(string[] texts)
+    {
+        if (texts.Length < 3) return;
+        btn1_InputTxt = texts[0];
+        btn2_InputTxt = texts[1];
+        btn3_InputTxt = texts[2];
+    }
+    public void StringUIApplyer()
+    {
+        btn1_Text.text = btn1_InputTxt;
+        btn2_Text.text = btn2_InputTxt;
+        btn3_Text.text = btn3_InputTxt;
+    }
+    public void SetSortingOrder(UI_Manager.e_SortingOrder sortOrder)
+    {
+        order = sortOrder;
+    }
 }

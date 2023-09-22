@@ -230,10 +230,7 @@ public class ButtonClass2 : MonoBehaviour
         }
     }
 
-    public void SetButtonTextInputter(string text)
-    {
-        inText.text = text;
-    }
+    
 
     public void AlphaValueChangeing()
     {
@@ -270,10 +267,9 @@ public class ButtonClass2 : MonoBehaviour
         }
     }
 
-    public void SetSymbolSprite(Sprite sprite)
-    {
-        symbolImg.sprite = sprite;
-    }
+    public void SetSymbolSprite(Sprite sprite){symbolImg.sprite = sprite;}
 
+    public Button GetButton(){return button;}
+    public void SetButtonTextInputter(string text) { inText.text = text; }
 
 }
