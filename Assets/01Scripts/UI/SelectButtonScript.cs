@@ -38,6 +38,7 @@ public class SelectButtonScript : MonoBehaviour
     }
     private void OnEnable()
     {
+        topBgr.color = ItemSpritesSaver.Instance.GetOneStarColor();
         isActive = false;
         isClicked = false;
     }
@@ -55,7 +56,7 @@ public class SelectButtonScript : MonoBehaviour
             hasInvoked = true;
         }
 
-        if(isClicked)
+        if(isActive)
             plusSymbolImg.enabled = false;
         else
             plusSymbolImg.enabled = true;
@@ -84,16 +85,16 @@ public class SelectButtonScript : MonoBehaviour
         if (!isClicked)
         {
             // 이미지 알파값을 80%로 변경
-            SetImageAlpha(topBgr, 0.8f);
-            SetImageAlpha(itemImage, 0.8f);
-            SetImageAlpha(plusSymbolImg, 0.8f);
+            SetImageAlpha(topBgr, 0.7f);
+            SetImageAlpha(itemImage, 0.7f);
+            SetImageAlpha(plusSymbolImg, 0.2f);
         }
         else
         {
             // 이미지 알파값을 원래 값으로 복원
-            SetImageAlpha(topBgr, 1);
-            SetImageAlpha(itemImage, 1);
-            SetImageAlpha(plusSymbolImg, 1);
+            SetImageAlpha(topBgr, 1f);
+            SetImageAlpha(itemImage, 1f);
+            SetImageAlpha(plusSymbolImg, 0.66f);
         }
 
         isClicked = !isClicked;
@@ -129,10 +130,14 @@ public class SelectButtonScript : MonoBehaviour
         }
     }
 
+    public Image GetTopBgr() { return topBgr; }
     public bool GetIsActive() { return isActive; }
     public Button GetButton() { return button; }
+    public Image GetItemImage() { return itemImage; }
+    public TextMeshProUGUI GetItemTxt() { return itemTxt; }
+    public ItemClass GetItemClass() { return itemCls; }
     public void SetItemSprite(Sprite sprite) { itemImage.sprite = sprite; }
     public void SetItemText(string text) { itemTxt.text = text; }
     public void SetIsActive(bool isActive) { this.isActive= isActive; }
-    public void SetItemcls(ItemClass itemCls) { this.itemCls = itemCls;}
+    public void SetItemCls(ItemClass itemCls) { this.itemCls = itemCls;}
 }
