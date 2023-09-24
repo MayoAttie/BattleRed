@@ -5,6 +5,7 @@ public class ItemSpritesSaver : Singleton<ItemSpritesSaver>
     /* 웨폰 목록
      * 0 - 천공의 검
      * 1 - 제례검
+     * 2 - 여명신검
      */
     [Header("무기 스프라이트")]
     public Sprite[] WeaponSprites;

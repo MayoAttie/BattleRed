@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
+using System.Threading;
+using Unity.Collections.LowLevel.Unsafe;
 
 public class UI_Manager : EnergyBarManager
 {
@@ -59,7 +62,7 @@ public class UI_Manager : EnergyBarManager
     private ButtonClass2 weaponChangeButton;                // 무기 변경 버튼
     private Transform OpenScrollToUpgradeMaterial;          // 무기 강화용 재화 출력용 스크롤 오브젝트
     private int nWeaponUpgradeExp;                          // 무기 레벨업용 경험치 변수
-    private List<ItemClass> list_ItemClsForWeaponUpgrade;   // 무기 레벨업용 아이템 재화 리스트
+    private Dictionary<ItemClass, SelectButtonScript> dic_ItemClsForWeaponUpgrade;  // 무기 레벨업용 아이템 재화 - 버튼 자료구조
 
 
     #endregion
@@ -124,7 +127,7 @@ public class UI_Manager : EnergyBarManager
         // 무기 창
         isWeaponChangeBtnClicked = false;   // 무기 전환 제어 변수
         nWeaponUpgradeExp = 0;
-        list_ItemClsForWeaponUpgrade = new List<ItemClass>();
+        dic_ItemClsForWeaponUpgrade = new Dictionary<ItemClass, SelectButtonScript>();
 
     }
 
@@ -1158,7 +1161,7 @@ public class UI_Manager : EnergyBarManager
         var mainObject = parents.GetChild(5).GetComponent<Transform>();
 
         // 데이터 초기화
-        list_ItemClsForWeaponUpgrade = new List<ItemClass>();
+        dic_ItemClsForWeaponUpgrade = new Dictionary<ItemClass, SelectButtonScript>();
         nWeaponUpgradeExp = 0;
 
         // 스텟 표기 UI 오브젝트
@@ -1211,7 +1214,9 @@ public class UI_Manager : EnergyBarManager
 
 
             // 모라 UI 출력
-            moraObj.GetChild(1).GetComponent<TextMeshProUGUI>().text = ((curLevelData*1000)* WeaponGrade*3).ToString();
+            var weaponTemp = GameManager.Instance.GetUserClass().GetUserEquippedWeapon() as WeaponAndEquipCls;
+            TextMeshProUGUI moraTextUI = moraObj.GetChild(1).GetComponent<TextMeshProUGUI>();
+            NeededCostForUpgrade(nWeaponUpgradeExp, weaponTemp.GetMaxExp() - weaponTemp.GetCurrentExp(), moraTextUI);
 
             // 상세 정보 UI 인스턴스화
             ButtonClass2 AllSelectButton = LevelUpBreak_Obj.GetChild(0).GetComponent<ButtonClass2>();
@@ -1229,7 +1234,7 @@ public class UI_Manager : EnergyBarManager
             SelectSortButton.SetButtonTextInputter("★3 재료");
 
             // 일괄 처리 버튼  클릭 이벤트 리스너 연결
-            AllSelectButton.GetButton().onClick.AddListener(() => AllClickWeaponButtonForUpgradeClickEventLeistener());
+            AllSelectButton.GetButton().onClick.AddListener(() => AllClickWeaponButtonForUpgradeClickEventLeistener(moraTextUI));
 
             // exp바 출력
             float currentExp = equippedWeapon.GetCurrentExp();
@@ -1256,7 +1261,8 @@ public class UI_Manager : EnergyBarManager
             // 오브젝트 풀로 채운 스크롤뷰 버튼에 이벤트 리스너 연결
             foreach(var tmp in selectButtonScripts)
             {
-                tmp.GetButton().onClick.AddListener(() => WeaponSelectForUpgradeBtnClickEVentListener(tmp));
+                Button btn = tmp.GetButton();
+                btn.onClick.AddListener(() => WeaponSelectForUpgradeBtnClickEVentListener(tmp, OpenScrollToUpgradeMaterial, moraTextUI));
             }
 
             // 업글용 무기 재료 출력 스크롤은 기본 SetFalse
@@ -1274,53 +1280,76 @@ public class UI_Manager : EnergyBarManager
 
 
     // WeaponPrintAtScroll_BySelectButton _ 스크롤뷰 _ 콘텐츠 버튼(SelectButton) 이벤트 리스너
-    void WeaponSelectForUpgradeBtnClickEVentListener(SelectButtonScript slectBtnCls)
+    void WeaponSelectForUpgradeBtnClickEVentListener(SelectButtonScript slectBtnCls, Transform objectSet, TextMeshProUGUI moraText)
     {
-        OpenScrollToUpgradeMaterial.gameObject.SetActive(true);
 
-        Transform scrollViewContentObj = OpenScrollToUpgradeMaterial.GetChild(1).GetChild(0).GetComponent<Transform>();
-        ButtonClass2 SortSelectButton = OpenScrollToUpgradeMaterial.GetChild(0).GetChild(0).GetComponent<ButtonClass2>();                                       // 정렬 선택 버튼(리스트 버튼 On/Off)
-        ButtonClass2 Descending_AscendingButton = OpenScrollToUpgradeMaterial.GetChild(0).GetChild(1).GetComponent<ButtonClass2>();                             // 내림차순/오름차순 버튼
-        InventorySortSelectButton SelectionButtonOnList = OpenScrollToUpgradeMaterial.GetChild(0).GetChild(2).GetComponent<InventorySortSelectButton>();        // 리스트 버튼
+        objectSet.gameObject.SetActive(true);
+        ResetToWeaponItemObjectPoolDatas(); // 오브젝트 풀 리셋
+
+
+        // 스크롤뷰 종료 버튼 활성화
+        Button outButton = objectSet.GetChild(4).GetComponent<Button>();
+        outButton.gameObject.SetActive(true);
+        outButton.onClick.AddListener(() => ScrollObjectOffButton(objectSet.gameObject, outButton));
+
+        Transform scrollViewContentObj = objectSet.GetChild(1).GetChild(0).GetComponent<Transform>();
+        ButtonClass2 SortSelectButton = objectSet.GetChild(0).GetChild(0).GetComponent<ButtonClass2>();                                       // 정렬 선택 버튼(리스트 버튼 On/Off)
+        ButtonClass2 Descending_AscendingButton = objectSet.GetChild(0).GetChild(1).GetComponent<ButtonClass2>();                             // 내림차순/오름차순 버튼
+        InventorySortSelectButton SelectionButtonOnList = objectSet.GetChild(0).GetChild(2).GetComponent<InventorySortSelectButton>();        // 리스트 버튼
 
         SelectionButtonOnList.gameObject.SetActive(false);
         WeaponPrintAtScroll(scrollViewContentObj);
 
         var datas = GameManager.Instance.WeaponItemPool.GetPoolList();
         
+        // 스크롤뷰 버튼 오브젝트 순회하며, 이벤트 리스너 연결 및 UI 데이터 초기화
         foreach(var tmp in datas)
         {
-            if (list_ItemClsForWeaponUpgrade.Find(data => tmp.GetItemcls().Equals(data)) != null)
+            // 비활성화되어 있는 객체는 스킵
+            if (tmp.gameObject.activeSelf == false)
+                continue;
+
+            // 장비하고 있는 아이템은 제외
+            if (tmp.GetItemcls().GetIsActive() == true)
             {
-                // list_ItemClsForWeaponUpgrade에 존재하는 객체(즉, 선택된 객체는 리턴)
                 GameManager.Instance.WeaponItemPool.ReturnToPool(tmp);
                 continue;
             }
 
+            if(dic_ItemClsForWeaponUpgrade.ContainsKey(tmp.GetItemcls()))
+                tmp.SetSelectBtnSpriteOn(true);
+
+            // 버튼 클릭 이벤트 리스너 해제 및 연결
             Button btn = tmp.GetButton();
-            btn.onClick.AddListener(()=> ClickMaterialItemForWeaponUpgrade(tmp, slectBtnCls));
-            tmp.EquippedItemUIPrint(false);
+            btn.onClick.RemoveAllListeners();
+            btn.onClick.AddListener(()=> ClickMaterialItemForWeaponUpgrade(tmp, slectBtnCls, moraText));
+            tmp.EquippedItemUIPrint(false); // 장비 중인 아이템 표시용 이미지는 필요 없으므로 False
         }
     }
 
-
     /*
      * nWeaponUpgradeExp
-       list_ItemClsForWeaponUpgrade 변수에 선택한 객체의 데이터 저장 후, 사용 버튼 시에, 해당 아이템을 강화 재료로 씀.
+       dic_ItemClsForWeaponUpgrade 변수에 선택한 객체의 데이터 저장 후, 사용 버튼 시에, 해당 아이템을 강화 재료로 씀.
      */
     // WeaponPrintAtScroll_BySelectButton _ 스크롤뷰 _ 콘텐츠 버튼(SelectButton) - 스크롤뷰 부착 오브젝트 클릭 이벤트 리스너
-    void ClickMaterialItemForWeaponUpgrade(InvenItemObjClass cls, SelectButtonScript selectBtnCls)
+    void ClickMaterialItemForWeaponUpgrade(InvenItemObjClass cls, SelectButtonScript selectBtnCls, TextMeshProUGUI moraText)
     {
         ItemClass tmp = cls.GetItemcls();
         WeaponAndEquipCls selecWeapon = tmp as WeaponAndEquipCls;
-        
-        if(list_ItemClsForWeaponUpgrade.Find(data => tmp == data)== null)
+
+        // 처음 선택하는 객체일 경우,
+        if(dic_ItemClsForWeaponUpgrade.ContainsKey(tmp) == false)
         {
-            if(selectBtnCls.GetIsActive() == false)
+            var equipWeapon = GameManager.Instance.GetUserClass().GetUserEquippedWeapon() as WeaponAndEquipCls;
+            int needExp = equipWeapon.GetMaxExp() - equipWeapon.GetCurrentExp();
+            if (selectBtnCls.GetIsActive() == false)
             {
-                list_ItemClsForWeaponUpgrade.Add(tmp);
+
+                // 리스트에 데이터 추가 및 exp 증가
+                dic_ItemClsForWeaponUpgrade.Add(tmp, selectBtnCls);
                 nWeaponUpgradeExp += selecWeapon.GetCurrentExp();
-                GameManager.Instance.WeaponItemPool.ReturnToPool(cls);      // 선택한 객체를 오브젝트풀 Return
+                cls.SetSelectBtnSpriteOn(true); // 선택했음을 UI로 표현
+                NeededCostForUpgrade(nWeaponUpgradeExp, needExp, moraText);
 
                 // 버튼 객체의 UI 작업
                 selectBtnCls.SetItemCls(tmp);
@@ -1332,44 +1361,67 @@ public class UI_Manager : EnergyBarManager
             }
             else
             {
-                WeaponAndEquipCls existCls = selectBtnCls.GetItemClass() as WeaponAndEquipCls;
-                nWeaponUpgradeExp -= existCls.GetCurrentExp();
-                list_ItemClsForWeaponUpgrade.Remove(selectBtnCls.GetItemClass());
-
-                if (tmp != null)
+                // 오브젝트 풀의 리스트를 순회하며 빈 객체에 데이터 추가.
+                var list = GameManager.Instance.SelectButtonScriptPool.GetPoolList();
+                foreach(var data in list)
                 {
-                    list_ItemClsForWeaponUpgrade.Add(tmp);
+                    if (data.GetIsActive()) // 이미 데이터를 가지고 있는 버튼의 경우, 넘어간다
+                        continue;
+
+                    // 선택한 데이터 추가
+                    dic_ItemClsForWeaponUpgrade.Add(tmp, data);
                     nWeaponUpgradeExp += selecWeapon.GetCurrentExp();
-                    GameManager.Instance.WeaponItemPool.ReturnToPool(cls);      // 선택한 객체를 오브젝트풀 Return
+                    cls.SetSelectBtnSpriteOn(true);
+                    NeededCostForUpgrade(nWeaponUpgradeExp, needExp, moraText);
 
                     // 버튼 객체의 UI 작업
-                    selectBtnCls.SetItemCls(tmp);
-                    selectBtnCls.SetIsActive(true);
-                    selectBtnCls.GetItemImage().enabled = true;
-                    WeaponKindDivider(selecWeapon, selectBtnCls.GetItemImage());
-                    selectBtnCls.SetItemText("LV. " + selecWeapon.GetLevel().ToString());
-                    ItemUISetterByItemGrade(tmp, selectBtnCls.GetTopBgr(), null);
+                    data.SetItemCls(tmp);
+                    data.SetIsActive(true);
+                    data.GetItemImage().enabled = true;
+                    WeaponKindDivider(selecWeapon, data.GetItemImage());
+                    data.SetItemText("LV. " + selecWeapon.GetLevel().ToString());
+                    ItemUISetterByItemGrade(tmp, data.GetTopBgr(), null);
+                    break;
                 }
-                else
+            }
+        }
+        else
+        {
+            if (cls.GetItemcls() == selectBtnCls.GetItemClass())
+            {
+                // 선택한 객체가 기존의 데이터와 동일한 객체일 경우에는 제외한다.
+                WeaponAndEquipCls existCls = selectBtnCls.GetItemClass() as WeaponAndEquipCls;
+                nWeaponUpgradeExp -= existCls.GetCurrentExp();
+                dic_ItemClsForWeaponUpgrade.Remove(selectBtnCls.GetItemClass());
+
+                SelectButtonToDefault(selectBtnCls);
+
+                cls.SetSelectBtnSpriteOn(false);
+            }
+            else
+            {
+                var datas = GameManager.Instance.WeaponItemPool.GetPoolList();
+                foreach (var item in datas)
                 {
-                    selectBtnCls.SetItemCls(null);
-                    selectBtnCls.SetIsActive(false);
-                    selectBtnCls.GetItemImage().enabled = false;
-                    selectBtnCls.SetItemText("-");
-                    selectBtnCls.GetTopBgr().color = ItemSpritesSaver.Instance.GetOneStarColor();
+                    if (item.GetItemcls() == cls.GetItemcls())
+                    {
+                        WeaponAndEquipCls existCls = item.GetItemcls() as WeaponAndEquipCls;
+                        nWeaponUpgradeExp -= existCls.GetCurrentExp();
+                        var btnObj = dic_ItemClsForWeaponUpgrade[item.GetItemcls()];
+                        SelectButtonToDefault(btnObj);
+                        dic_ItemClsForWeaponUpgrade.Remove(item.GetItemcls());
+
+
+                        item.SetSelectBtnSpriteOn(false);
+                        break;
+                    }
                 }
             }
         }
 
-
-
         Debug.Log(nameof(nWeaponUpgradeExp )+":"+ nWeaponUpgradeExp);
-        Debug.Log(nameof(list_ItemClsForWeaponUpgrade.Count) +":"+ list_ItemClsForWeaponUpgrade.Count);
-
-        ResetToWeaponItemObjectPoolDatas();
-        OpenScrollToUpgradeMaterial.gameObject.SetActive(false);
+        Debug.Log(nameof(dic_ItemClsForWeaponUpgrade.Count) +":"+ dic_ItemClsForWeaponUpgrade.Count);
     }
-
 
     // 무기 강화창(레벨업 파트) - SelectSortButton 버튼의 이벤트 리스너
     void SelectSortButtonClickEventListener(InventorySortSelectButton SelectionButtonOnList, ButtonClass2 SelectSortButton)
@@ -1409,9 +1461,51 @@ public class UI_Manager : EnergyBarManager
     }
 
     // 무기 강화창(레벨업 파트) - 일괄처리 버튼 이벤트 리스너
-    void AllClickWeaponButtonForUpgradeClickEventLeistener()
+    void AllClickWeaponButtonForUpgradeClickEventLeistener(TextMeshProUGUI moraText)
     {
+        var selectButtonList = GameManager.Instance.SelectButtonScriptPool.GetPoolList();
+        var weaponList = GameManager.Instance.GetUserClass().GetHadWeaponList();
+        var equipedWeapon = GameManager.Instance.GetUserClass().GetUserEquippedWeapon() as WeaponAndEquipCls;
 
+        // 보유하고 있는 아이템을 순회하며, 데이터를 출력한다
+        foreach (var item in weaponList)
+        {
+            if (item.GetIsActive() == true)
+                continue;
+            // 누적 경험치가 요구 경험치 이상이라면 반복문 탈출
+            if (nWeaponUpgradeExp >= equipedWeapon.GetMaxExp() - equipedWeapon.GetCurrentExp())
+            {
+                NeededCostForUpgrade(nWeaponUpgradeExp, equipedWeapon.GetMaxExp() - equipedWeapon.GetCurrentExp(), moraText);
+                break;
+            }
+
+            foreach (var btn in selectButtonList)
+            {
+                if (btn.GetIsActive() == true)
+                    continue;
+                //bool isActive = false;
+                if (dic_ItemClsForWeaponUpgrade.ContainsKey(item) == false)
+                {
+                    var weaponData = item as WeaponAndEquipCls;
+                    // 선택한 데이터 추가
+                    dic_ItemClsForWeaponUpgrade.Add(item, btn);
+                    nWeaponUpgradeExp += weaponData.GetCurrentExp();
+
+                    // 버튼 객체의 UI 작업
+                    btn.SetItemCls(item);
+                    btn.SetIsActive(true);
+                    btn.GetItemImage().enabled = true;
+                    WeaponKindDivider(weaponData, btn.GetItemImage());
+                    btn.SetItemText("LV. " + weaponData.GetLevel().ToString());
+                    ItemUISetterByItemGrade(item, btn.GetTopBgr(), null);
+                    break;
+                }
+            }
+        }
+    }
+    void NeededCostForUpgrade(int nExp, int needExp , TextMeshProUGUI textUI)
+    {
+        textUI.text = (Mathf.Min(nExp,needExp)*100).ToString();
     }
 
 
@@ -1581,6 +1675,8 @@ public class UI_Manager : EnergyBarManager
                     obj.SetItemSprite(ItemSpritesSaver.Instance.WeaponSprites[0]);
                 else if (data.GetName() == "제례검")
                     obj.SetItemSprite(ItemSpritesSaver.Instance.WeaponSprites[1]);
+                else if (data.GetName() == "여명신검")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.WeaponSprites[2]);
                 else { break; }
 
                 if (data.GetIsActive() == true) // 아이템이 활성 상태라면, 사용중임을 알림.
@@ -1621,6 +1717,8 @@ public class UI_Manager : EnergyBarManager
                     obj.SetItemSprite(ItemSpritesSaver.Instance.WeaponSprites[0]);
                 else if (data.GetName() == "제례검")
                     obj.SetItemSprite(ItemSpritesSaver.Instance.WeaponSprites[1]);
+                else if (data.GetName() == "여명신검")
+                    obj.SetItemSprite(ItemSpritesSaver.Instance.WeaponSprites[2]);
                 else { break; }
 
                 //if (data.GetIsActive() == true) // 아이템이 활성 상태라면, 사용중임을 알림.
@@ -1649,7 +1747,7 @@ public class UI_Manager : EnergyBarManager
             if (obj.gameObject.activeSelf == false)
                 continue;
             obj.transform.GetChild(0).GetChild(0).GetComponent<Image>().enabled = false;
-            obj.SetItemText("LV : ");
+            obj.SetItemText("-");
         }
     }
 
@@ -1678,6 +1776,18 @@ public class UI_Manager : EnergyBarManager
 
                     if (weaponStatusLabelTxt != null)
                         weaponStatusLabelTxt.text = "원소 충전 효율";
+
+                    if (weaponStatusTxt != null)
+                        weaponStatusTxt.text = weaponCls.GetSubStat().ToString() + "%";
+                }
+                break;
+            case "여명신검":
+                {
+                    if (WeaponImage != null)
+                        WeaponImage.sprite = ItemSpritesSaver.Instance.WeaponSprites[2];
+
+                    if (weaponStatusLabelTxt != null)
+                        weaponStatusLabelTxt.text = "치명타 피해";
 
                     if (weaponStatusTxt != null)
                         weaponStatusTxt.text = weaponCls.GetSubStat().ToString() + "%";
@@ -1769,6 +1879,22 @@ public class UI_Manager : EnergyBarManager
                     break;
             }
         }
+    }
+
+    void SelectButtonToDefault(SelectButtonScript cls)
+    {
+        cls.SetItemSprite(null);
+        cls.GetItemImage().enabled = false;
+        cls.SetIsActive(false);
+        cls.SetItemColor(1);
+        cls.SetItemText("-");
+        cls.SetItemCls(null);
+    }
+
+    private void ScrollObjectOffButton(GameObject obj, Button clickedButton)
+    {
+        clickedButton.gameObject.SetActive(false);
+        obj.gameObject.SetActive(false);
     }
 
 
