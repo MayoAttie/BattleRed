@@ -61,6 +61,7 @@
     <Compile Include="Assets\01Scripts\Character\CharacterClass.cs" />
     <Compile Include="Assets\01Scripts\Character\CharacterControlMng.cs" />
     <Compile Include="Assets\01Scripts\Character\CharacterManager.cs" />
+    <Compile Include="Assets\01Scripts\Character\CharacterUpgradeManager.cs" />
     <Compile Include="Assets\01Scripts\Character\SwordFunction.cs" />
     <Compile Include="Assets\01Scripts\EffectManager.cs" />
     <Compile Include="Assets\01Scripts\Element\Element.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="Assets\01Scripts\UI\ItemSpritesSaver.cs" />
     <Compile Include="Assets\01Scripts\UI\PlayerInfoUI_Button.cs" />
     <Compile Include="Assets\01Scripts\UI\SelectButtonScript.cs" />
+    <Compile Include="Assets\01Scripts\UI\UI_UseToolClass.cs" />
     <Compile Include="Assets\01Scripts\UI_Manager.cs" />
     <Compile Include="Assets\01Scripts\UserClass.cs" />
     <Compile Include="Assets\02Assets\UJoystick\Content\Script\Core\bl_Joystick.cs" />

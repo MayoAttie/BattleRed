@@ -73,7 +73,7 @@ public class GameManager : Singleton<GameManager>
         // 게임 데이터 초기화
         characterCls = new CharacterClass(300, 300, 0, 100, 50, 15, 1, 20, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true, 100);
         playerData.SetUserCharacter(characterCls);
-
+        playerData.SetMora(156000);
         List<ItemClass> weaponList = new List<ItemClass>
         {
             new WeaponAndEquipCls("무기", "천공의 검", 5, true, 1, 100000, 1,20, "풍룡의 영광을 상징하는 기사검.\n잃어버렸다가 오늘날 되찾았다.\n현재 검에 바람 신의 축복이 깃들어 있으며, 푸른 하늘과 바람의 힘을 지니고 있다","" ,"치명타 확률이 4% 증가한다. 원소폭발 발동 시 파공의 기세를 획득한다: 이동속도+10%, 공격속도+10%. 일반 공격과 강공격이 명중 시 추가로 공격력 20%의 피해를 준다. 지속 시간: 12초",1,560,12,100,1000),

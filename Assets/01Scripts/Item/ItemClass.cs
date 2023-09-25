@@ -25,6 +25,7 @@ public class ItemClass : Objects
     #region 게터세터
     public void SetNumber(int nNumber) { this.nNumber = nNumber; }
     public void SetCost(int nCost) { this.nCost = nCost; }
+    public void SetLevel(int nLevel) { this.nLevel= nLevel; }
     public int GetNumber() { return nNumber;}
     public int GetCost() { return nCost;}
     public int GetLevel() { return nLevel; }

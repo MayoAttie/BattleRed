@@ -32,5 +32,12 @@ public class WeaponAndEquipCls : ItemClass
     public int GetMaxExp() { return nMaxExp; }
     public int GetMainStat() { return nMainStat; }
     public float GetSubStat() { return nSubStat; }
+    public void SetCurrentExp(int nCurrentExp) { this.nCurrentExp = nCurrentExp; }
+    public void SetMaxExp(int nMaxExp) { this.nMaxExp = nMaxExp; }
+    public void SetLimitLevel(int nLimitLevel) { this.nLimitLevel = nLimitLevel;}
+    public void SetEffectLevel(int nEffectLevel) { this.nEffectLevel = nEffectLevel; }
+    public void SetSubStat(int nSubStat) { this.nSubStat = nSubStat;}
+    public void SetMainStat(int nMainStat) { this.nMainStat = nMainStat; }
+    public void SetEffectText(string sEffectText) { this.sEffectText = sEffectText; }
 
 }
