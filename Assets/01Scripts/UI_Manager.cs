@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using TMPro;
 using static CharacterUpgradeManager;
 using static UI_UseToolClass;
+using System.Linq.Expressions;
+
 public class UI_Manager : EnergyBarManager
 {
     // 싱글턴 인스턴스
@@ -718,6 +720,7 @@ public class UI_Manager : EnergyBarManager
 
             RestToSelectButtonScriptPoolDatas();
             ResetToWeaponItemObjectPoolDatas();
+            EquippedWeaponPrint();                  // 레벨업에 의한 데이터 변환에 대비한 UI 데이터 재출력
             isWeaponUpgradeBtnClicked = false;
         }
         else    // 종료
@@ -980,7 +983,7 @@ public class UI_Manager : EnergyBarManager
     #region 무기 업그레이드_상세정보
 
     //  무기 업그레이드 버튼 클릭 시 호출 함수
-    public void WeaponUpgeadeButtonClickEvent()
+    public void WeaponUpgeadeButtonClickEvent(int starter = 0)
     {
         if (isWeaponUpgradeBtnClicked)  // 이미 클릭된 상태라면 리턴
             return;
@@ -1038,6 +1041,7 @@ public class UI_Manager : EnergyBarManager
                     break;
             }
             index++;
+
         }
 
         // 데이터 출력 Off
@@ -1046,8 +1050,13 @@ public class UI_Manager : EnergyBarManager
             tmp.GetChild(i).GetComponent<Transform>().gameObject.SetActive(false);
         }
         // 디폴트 출력은 상세 정보 출력
-        PlayerInfoUI_Button cls = buttons[0];
-        WeaponUpgrade_DetailScreenButton(cls, equippedWeapon, tmp);
+        PlayerInfoUI_Button cls = buttons[starter];
+        if(starter==0)
+            WeaponUpgrade_DetailScreenButton(cls, equippedWeapon, tmp);
+        else if(starter ==1)
+            WeaponUpgrade_LevelUpButton(cls, equippedWeapon, tmp);
+        else if(starter ==2)
+            WeaponUpgrade_ReforgeButton(cls, equippedWeapon, tmp);
     }
 
 
@@ -1177,6 +1186,7 @@ public class UI_Manager : EnergyBarManager
         // 스텟 표기 UI 오브젝트
         Image MainStatBgr = mainObject.GetChild(0).gameObject.GetComponent<Image>();
         Image SubStatBgr = mainObject.GetChild(1).gameObject.GetComponent<Image>();
+        Image[] statImgs = { MainStatBgr, SubStatBgr };
 
         // 각 속성 별 UI 오브젝트
         Transform LevelLimitBreak_Obj = mainObject.GetChild(5).GetComponent<Transform>();
@@ -1199,27 +1209,27 @@ public class UI_Manager : EnergyBarManager
         if (curLevelData == maxLevelData)
         {
             LevelLimitBreak_Obj.gameObject.SetActive(true);
+
+
+            // 상세 정보 UI 인스턴스화
+            TextMeshProUGUI currentLevel = LevelLimitBreak_Obj.GetChild(5).GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI LimitLevel = LevelLimitBreak_Obj.GetChild(7).GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI[] levelTxts = { currentLevel, LimitLevel };
+
+            Image ArrawImg = LevelLimitBreak_Obj.GetChild(8).GetComponent<Image>();
+            Transform SelectButtonPos_1 = LevelLimitBreak_Obj.GetChild(0).GetComponent<Transform>();
+            Transform SelectButtonPos_2 = LevelLimitBreak_Obj.GetChild(1).GetComponent<Transform>();
+            Transform SelectButtonPos_3 = LevelLimitBreak_Obj.GetChild(2).GetComponent<Transform>();
+
+            // 스탯 및 데이터 출력
+            WeaponLevelUp_UI_Applyer(equippedWeapon, statImgs, levelTxts, ArrawImg);
+
+
         }
         // 현재레벨 != 한계레벨 (레벨업 가능)
         else
         {
             LevelUpBreak_Obj.gameObject.SetActive(true);
-
-            // 메인 스탯 UI 출력
-            MainStatBgr.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = equippedWeapon.GetMainStat().ToString(); // 주스탯 표기
-            MainStatBgr.transform.GetChild(2).gameObject.SetActive(false);
-            MainStatBgr.transform.GetChild(3).gameObject.SetActive(false);
-
-            // 서브 스탯 UI 출력
-            var subStatLabel = SubStatBgr.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-            var subStatText = SubStatBgr.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
-            WeaponKindDivider(equippedWeapon,null,subStatLabel,subStatText);
-            SubStatBgr.transform.GetChild(2).gameObject.SetActive(false);
-            SubStatBgr.transform.GetChild(3).gameObject.SetActive(false);
-
-            // 사용 버튼 UI 수정 및 이벤트 리스너 연결
-            useButtonObj.onClick.AddListener(() => WeaponLevelUpClickEventListener());
-            useBtn.GetChild(4).GetComponent<TextMeshProUGUI>().text = "강화";
 
             // 상세 정보 UI 인스턴스화
             ButtonClass2 AllSelectButton = LevelUpBreak_Obj.GetChild(0).GetComponent<ButtonClass2>();
@@ -1232,8 +1242,12 @@ public class UI_Manager : EnergyBarManager
             Image ExpProgressBar_Inline = LevelUpBreak_Obj.GetChild(7).GetComponent<Image>();
             img_ExpBar = ExpProgressBar_Inline;
             OpenScrollToUpgradeMaterial = LevelUpBreak_Obj.GetChild(8).GetComponent<Transform>();
-            float currentExp = equippedWeapon.GetCurrentExp();
-            float maxExp = equippedWeapon.GetMaxExp();
+
+            // 사용 버튼 UI 수정 및 이벤트 리스너 연결
+
+            TextMeshProUGUI[] levelTxts = { LevelText, LevelExpText };
+            useButtonObj.onClick.AddListener(() => WeaponLevelUpClickEventListener(statImgs, levelTxts));
+            useBtn.GetChild(4).GetComponent<TextMeshProUGUI>().text = "강화";
 
             // 모라 UI 출력
             var weaponTemp = GameManager.Instance.GetUserClass().GetUserEquippedWeapon() as WeaponAndEquipCls;
@@ -1246,12 +1260,12 @@ public class UI_Manager : EnergyBarManager
             // 일괄 처리 버튼  클릭 이벤트 리스너 연결
             AllSelectButton.GetButton().onClick.AddListener(() => AllClickWeaponButtonForUpgradeClickEventLeistener());
 
+            // 주스탯 및 서브 스탯 & EXP와 레벨 출력
+            WeaponLevelUp_UI_Applyer(equippedWeapon,statImgs, levelTxts);
+
             // exp바 출력
             ExpBarAlphaRevisePerpect(ExpProgressBar_Inline, equippedWeapon);
 
-            // 레벨 출력
-            LevelText.text = "LV. "+curLevelData.ToString();
-            LevelExpText.text = Mathf.Floor(currentExp).ToString() + "/" + Mathf.Floor(maxExp).ToString();
 
             // 리스트 버튼은 기본 비활성화
             SelectionButtonOnList.gameObject.SetActive(false);
@@ -1348,8 +1362,13 @@ public class UI_Manager : EnergyBarManager
         // 처음 선택하는 객체일 경우,
         if(dic_ItemClsForWeaponUpgrade.ContainsKey(tmp) == false)
         {
+
             var equipWeapon = GameManager.Instance.GetUserClass().GetUserEquippedWeapon() as WeaponAndEquipCls;
             int needExp = equipWeapon.GetMaxExp() - equipWeapon.GetCurrentExp();
+
+            if (nWeaponUpgradeExp >= needExp)   // 현재 누적 경험치가 요구 경험치를 초과 시, 리턴
+                return;
+
             if (selectBtnCls.GetIsActive() == false)
             {
 
@@ -1526,13 +1545,15 @@ public class UI_Manager : EnergyBarManager
            private TextMeshProUGUI txt_CurrentHaveMora;            // 보유 모라 표기
      */
     // 레벨업(강화)_by사용 버튼 이벤트 리스너
-    void WeaponLevelUpClickEventListener()
+    void WeaponLevelUpClickEventListener(Image[] statImages, TextMeshProUGUI[] levelTexts)
     {
         int mora = GameManager.Instance.GetUserClass().GetMora();
         if (mora >= nWeaponUpgradeCost)
         {
             var weaponCls = GameManager.Instance.GetUserClass().GetUserEquippedWeapon() as WeaponAndEquipCls;
-            WeaponExpUp_Upgrade(weaponCls,nWeaponUpgradeExp);   // 무기 경험치 업그레이드 클래스 호출하기
+            // 돌파 요구 단계에 도달 시, true를 반환 받는다.
+            bool isLimit = WeaponExpUp_Upgrade(weaponCls,nWeaponUpgradeExp);   // 무기 경험치 업그레이드 클래스 호출하기
+            Debug.Log(nameof(isLimit) + ":" + isLimit);
 
             // 유저 보유 모라 가져오기
             int haveMora = GameManager.Instance.GetUserClass().GetMora();
@@ -1556,17 +1577,18 @@ public class UI_Manager : EnergyBarManager
 
 
             // UI최신화
+            WeaponLevelUp_UI_Applyer(weaponCls,statImages, levelTexts);
             NeededCostForUpgrade(nWeaponUpgradeExp, 0, ref nWeaponUpgradeCost , txt_NeedMora, txt_CurrentHaveMora);
             ExpBarAlphaRevisePerpect(img_ExpBar, weaponCls);
+            if (isLimit)    // 돌파 단계 도달 시,
+            {
+                isWeaponUpgradeBtnClicked = false;
+                WeaponUpgeadeButtonClickEvent(1);   // 돌파 UI 출력을 위한 출력 함수 재호출
+            }
         }
     }
 
 
-
-    public void WeaponLevelUp_UI_Applyer()
-    {
-        
-    }
 
     // 레벨업(강화)_by돌파 버튼 이벤트 리스너
     void WeaponLimitBreakClickEventListener()

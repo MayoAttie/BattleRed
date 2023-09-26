@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using static HandlePauseTool;
 public class GameManager : Singleton<GameManager>
@@ -34,6 +35,7 @@ public class GameManager : Singleton<GameManager>
 
     // 게임 데이터
     private UserClass playerData;
+    private List<Tuple<string,List<WEAPON_EQUIP_STATE_DATA_BASE>>> list_WeaponAndEquipData;
 
 
     // 기타
@@ -49,6 +51,32 @@ public class GameManager : Singleton<GameManager>
         Gem,
         Food,
         Max
+    }
+    public struct WEAPON_EQUIP_STATE_DATA_BASE
+    {
+        public int LEVEL;
+        public int MAIN_STAT;
+        public float SUB_STAT;
+        public int LIMIT_LEVEL;
+
+        public WEAPON_EQUIP_STATE_DATA_BASE(int level, int mainStat, float subStat, int limitLevel)
+        {
+            LEVEL = level;
+            MAIN_STAT = mainStat;
+            SUB_STAT = subStat;
+            LIMIT_LEVEL = limitLevel;
+        }
+    }
+    public struct WEAPON_EQUIP_EFFECT_DATA_BASE
+    {
+        int EFFECT_LEVEL;
+        string EFFECT_TEXT;
+
+        public WEAPON_EQUIP_EFFECT_DATA_BASE(int eFFECT_LEVEL, string eFFECT_TEXT)
+        {
+            EFFECT_LEVEL = eFFECT_LEVEL;
+            EFFECT_TEXT = eFFECT_TEXT;
+        }
     }
     #endregion
 
@@ -69,6 +97,141 @@ public class GameManager : Singleton<GameManager>
         FoodItemPool = new ObjectPool<InvenItemObjClass>(InventoryItemObj, 5, objectPoolSavePos);
         SelectButtonScriptPool = new ObjectPool<SelectButtonScript>(SelectButton,5,objectPoolSavePos);
 
+        #region 무기 DB채우기
+        // DB채우기
+        list_WeaponAndEquipData = new List<Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>>()
+        {
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("천공의 검", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 46, 12,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 51, 12,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 56, 12,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 61, 12,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 66, 12,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 71, 12,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 76, 12,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 81, 12,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 86, 12,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 93, 12,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 98, 16.5f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 103, 16.5f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 108, 16.5f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 113, 16.5f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 118, 16.5f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 123, 16.5f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(17, 133, 16.5f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(18, 138, 16.5f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(19, 143, 16.5f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(20, 153, 21.2f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(21, 163, 21.2f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(22, 168, 21.2f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(23, 173, 21.2f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(24, 178, 21.2f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(25, 183, 21.2f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(26, 188, 21.2f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(27, 193, 21.2f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(28, 198, 21.2f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(29, 203, 21.2f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(30, 216, 21.2f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(31, 221, 26.1f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(32, 226, 26.1f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(33, 231, 26.1f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(34, 236, 26.1f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(35, 241, 26.1f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(36, 246, 26.1f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(37, 251, 26.1f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(38, 256, 26.1f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(39, 261, 26.1f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(40, 266, 30.9f,40),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("제례검", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 41, 13.3f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 45, 13.3f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 49, 13.3f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 53, 13.3f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 57, 13.3f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 61, 13.3f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 65, 13.3f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 69, 13.3f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 73, 13.3f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 85, 18.1f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 89, 18.1f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 93, 18.1f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 97, 18.1f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 101, 18.1f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 105, 18.1f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 109, 18.1f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(17, 113, 18.1f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(18, 117, 18.1f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(19, 121, 18.1f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(20, 125, 23.6f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(21, 129, 23.6f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(22, 133, 23.6f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(23, 137, 23.6f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(24, 141, 23.6f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(25, 145, 23.6f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(26, 149, 23.6f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(27, 153, 23.6f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(28, 157, 23.6f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(29, 161, 23.6f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(30, 165, 28.3f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(31, 172, 28.3f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(32, 178, 28.3f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(33, 182, 28.3f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(34, 186, 28.3f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(35, 190, 28.3f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(36, 194, 28.3f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(37, 198, 28.3f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(38, 202, 28.3f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(39, 206, 28.3f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(40, 210, 34.3f,40),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("여명신검", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 39, 10.2f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 42, 10.2f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 45, 10.2f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 48, 10.2f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 51, 10.2f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 54, 10.2f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 57, 10.2f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 60, 10.2f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 63, 10.2f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 67, 14.0f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 81, 14.0f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 84, 14.0f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 87, 14.0f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 90, 14.0f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 93, 14.0f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 101, 14.0f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(17, 104, 14.0f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(18, 107, 14.0f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(19, 110, 14.0f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(20, 113, 18.0f,20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(21, 117, 18.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(22, 121, 18.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(23, 124, 18.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(24, 127, 18.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(25, 131, 18.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(26, 134, 18.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(27, 138, 18.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(28, 141, 18.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(29, 145, 18.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(30, 148, 22.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(31, 153, 22.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(32, 156, 22.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(33, 160, 22.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(34, 163, 22.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(35, 167, 22.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(36, 174, 22.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(37, 178, 22.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(38, 172, 22.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(39, 185, 22.0f,40),
+                new WEAPON_EQUIP_STATE_DATA_BASE(40, 189, 26.3f,40),
+            })
+        };
+        #endregion
 
         // 게임 데이터 초기화
         characterCls = new CharacterClass(300, 300, 0, 100, 50, 15, 1, 20, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true, 100);
@@ -76,11 +239,12 @@ public class GameManager : Singleton<GameManager>
         playerData.SetMora(156000);
         List<ItemClass> weaponList = new List<ItemClass>
         {
-            new WeaponAndEquipCls("무기", "천공의 검", 5, true, 1, 100000, 1,20, "풍룡의 영광을 상징하는 기사검.\n잃어버렸다가 오늘날 되찾았다.\n현재 검에 바람 신의 축복이 깃들어 있으며, 푸른 하늘과 바람의 힘을 지니고 있다","" ,"치명타 확률이 4% 증가한다. 원소폭발 발동 시 파공의 기세를 획득한다: 이동속도+10%, 공격속도+10%. 일반 공격과 강공격이 명중 시 추가로 공격력 20%의 피해를 준다. 지속 시간: 12초",1,560,12,100,1000),
+            new WeaponAndEquipCls("무기", "천공의 검", 5, true, 1, 100000, 19,20, "풍룡의 영광을 상징하는 기사검.\n잃어버렸다가 오늘날 되찾았다.\n현재 검에 바람 신의 축복이 깃들어 있으며, 푸른 하늘과 바람의 힘을 지니고 있다","" ,"치명타 확률이 4% 증가한다. 원소폭발 발동 시 파공의 기세를 획득한다: 이동속도+10%, 공격속도+10%. 일반 공격과 강공격이 명중 시 추가로 공격력 20%의 피해를 준다. 지속 시간: 12초",1,560,12,900,1000),
             new WeaponAndEquipCls("무기", "제례검", 4, false, 1, 65000, 3,20, "기나긴 세월을 거쳐 석화한 검은 의례적인 장식이 여전히 선명하게 보인다.\n시간의 바람에 씻긴 축복의 힘을 보유하고 있다", "","원소전투 스킬로 피해를 줄 때 40%의 확률로 해당 스킬의 재발동 대기시간이 초기화된다. 해당 효과는 30초마다 1회만 발동한다",1,470,13.3f,416,800),
             new WeaponAndEquipCls("무기", "여명신검", 3, false, 1, 30000, 10,20, "오래전 아침 햇살처럼 빛나던 보검. 이 검을 가진 자는 근거 없는 자신감에 가득 차게 된다. 검신의 빛나던 발광 재료는 이미 사라졌다", "","HP가 90% 초과 시 치명타 확률이 14% 증가한다",1,266,10f,990,1208)
         };
         playerData.SetHadWeaponList(weaponList);
+        WeaponAndEquipItemStatusSet(weaponList);
 
         List<ItemClass> equipList = new List<ItemClass>
         {
@@ -121,6 +285,9 @@ public class GameManager : Singleton<GameManager>
 
         playerData.SetUserEquippedWeapon(playerData.GetHadWeaponList().Find(item => item.GetIsActive() == true));
         playerData.SetUserEquippedEquipment(playerData.GetHadEquipmentList().FindAll(item => item.GetIsActive() == true).ToArray());
+
+
+        
     }
 
     void Start()
@@ -383,11 +550,60 @@ public class GameManager : Singleton<GameManager>
     }
     #endregion
 
+    #region 기타
+    // 레벨에 따른, 장비의 메인 및 서브 스탯 설정 함수
+    public void WeaponAndEquipItemStatusSet(List<ItemClass> itemList)
+    {
+        foreach (var tmp in itemList)
+        {
+            WeaponAndEquipCls item = tmp as WeaponAndEquipCls;
+
+            var finder = list_WeaponAndEquipData.Find(data => data.Item1.Equals(item.GetName()));
+
+            if (finder != null) // finder가 null이 아닌 경우에만 처리
+            {
+                // finder가 참조하는 Tuple의 Item2에서 조건을 만족하는 WEAPON_EQUIP_STATE_DATA_BASE를 추출
+                var matchingData = finder.Item2.Find(inData => inData.LEVEL == item.GetLevel());
+                item.SetMainStat(matchingData.MAIN_STAT);
+                item.SetSubStat(matchingData.SUB_STAT);
+                item.SetLimitLevel(matchingData.LIMIT_LEVEL);
+            }
+        }
+    }
+    public void WeaponAndEquipItemStatusSet(ItemClass item)
+    {
+        WeaponAndEquipCls weItem = item as WeaponAndEquipCls;
+
+        var finder = list_WeaponAndEquipData.Find(data => data.Item1.Equals(item.GetName()));
+
+        if (finder != null) // finder가 null이 아닌 경우에만 처리
+        {
+            // finder가 참조하는 Tuple의 Item2에서 조건을 만족하는 WEAPON_EQUIP_STATE_DATA_BASE를 추출
+            var matchingData = finder.Item2.Find(inData => inData.LEVEL == item.GetLevel());
+            weItem.SetMainStat(matchingData.MAIN_STAT);
+            weItem.SetSubStat(matchingData.SUB_STAT);
+            weItem.SetLimitLevel(matchingData.LIMIT_LEVEL);
+        }
+    }
+    public void WeaponAndEquipItemStatusSet(WeaponAndEquipCls item)
+    {
+        var finder = list_WeaponAndEquipData.Find(data => data.Item1.Equals(item.GetName()));
+
+        if (finder != null) // finder가 null이 아닌 경우에만 처리
+        {
+            // finder가 참조하는 Tuple의 Item2에서 조건을 만족하는 WEAPON_EQUIP_STATE_DATA_BASE를 추출
+            var matchingData = finder.Item2.Find(inData => inData.LEVEL == item.GetLevel());
+            item.SetMainStat(matchingData.MAIN_STAT);
+            item.SetSubStat(matchingData.SUB_STAT);
+            item.SetLimitLevel(matchingData.LIMIT_LEVEL);
+        }
+    }
+    #endregion
 
 
     #region 게터세터
     public UserClass GetUserClass() { return playerData; }
-
+    public List<Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>> GetList_WeaponAndEquipDataBase(){return list_WeaponAndEquipData; }
 
 
     #endregion

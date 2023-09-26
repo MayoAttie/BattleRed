@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static UI_Manager;
-
+using static CharacterUpgradeManager;
 public class UI_UseToolClass
 {
 
@@ -223,6 +223,44 @@ public class UI_UseToolClass
                 break;
         }
     }
+    // 개발자가 입력한 데이터에 따라, 스탯 출력
+    public static void WeaponSubStatDivider(WeaponAndEquipCls weaponCls, float subStat, TextMeshProUGUI weaponStatusLabelTxt = null, TextMeshProUGUI weaponStatusTxt = null)
+    {
+        // 장비 이름에 따라 데이터 분기
+        switch (weaponCls.GetName())
+        {
+            case "천공의 검":
+                {
+
+                    if (weaponStatusLabelTxt != null)
+                        weaponStatusLabelTxt.text = "원소 충전 효율";
+
+                    if (weaponStatusTxt != null)
+                        weaponStatusTxt.text = subStat.ToString() + "%";
+                }
+                break;
+            case "제례검":
+                {
+
+                    if (weaponStatusLabelTxt != null)
+                        weaponStatusLabelTxt.text = "원소 충전 효율";
+
+                    if (weaponStatusTxt != null)
+                        weaponStatusTxt.text = subStat.ToString() + "%";
+                }
+                break;
+            case "여명신검":
+                {
+
+                    if (weaponStatusLabelTxt != null)
+                        weaponStatusLabelTxt.text = "치명타 피해";
+
+                    if (weaponStatusTxt != null)
+                        weaponStatusTxt.text = subStat.ToString() + "%";
+                }
+                break;
+        }
+    }
 
     public static void ItemUISetterByItemGrade(ItemClass itemCls, Image titleFrameColor = null, Image topFrameImage = null)
     {
@@ -359,4 +397,49 @@ public class UI_UseToolClass
         img_ExpBar.color = colorTmp;
     }
 
+
+    // statImages 0 - 메인스텟, 1 - 서브스텟  __ levelTexts 0 - 레벨, 1 - 경험치
+    public static void WeaponLevelUp_UI_Applyer(WeaponAndEquipCls weaponCls, Image[] statImages, TextMeshProUGUI[] levelTexts, Image arrowImg = null)
+    {
+        // 레벨 출력 크기가 2일 경우, 레벨업. 크기가 4일 경우, 돌파
+        if (arrowImg == null)
+        {
+            // 메인 스탯 UI 출력
+            statImages[0].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = weaponCls.GetMainStat().ToString(); // 주스탯 표기
+            statImages[0].transform.GetChild(2).gameObject.SetActive(false);
+            statImages[0].transform.GetChild(3).gameObject.SetActive(false);
+
+            // 서브 스탯 UI 출력
+            var subStatLabel = statImages[1].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            var subStatText = statImages[1].transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+            WeaponKindDivider(weaponCls, null, subStatLabel, subStatText);
+            statImages[1].transform.GetChild(2).gameObject.SetActive(false);
+            statImages[1].transform.GetChild(3).gameObject.SetActive(false);
+
+            // 레벨 및 exp 출력
+            levelTexts[0].text = "LV. " + weaponCls.GetLevel().ToString();
+            levelTexts[1].text = Mathf.Floor(weaponCls.GetCurrentExp()).ToString() + "/" + Mathf.Floor(weaponCls.GetMaxExp()).ToString();
+        }
+        else
+        {
+            float[] nextDatas = WeapomLimitBreakStateUp(weaponCls);
+            // 메인 스탯 UI 출력
+            statImages[0].transform.GetChild(2).gameObject.SetActive(true);
+            statImages[0].transform.GetChild(3).gameObject.SetActive(true);
+            statImages[0].transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = weaponCls.GetMainStat().ToString(); // 기존 주스탯 표기
+            statImages[0].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = nextDatas[0].ToString(); // 다음 주스탯 표기
+
+            // 서브 스탯 UI 출력
+            statImages[1].transform.GetChild(2).gameObject.SetActive(true);
+            statImages[1].transform.GetChild(3).gameObject.SetActive(true);
+            var subStatLabel = statImages[1].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            var subStatText = statImages[1].transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+            WeaponKindDivider(weaponCls, null, subStatLabel, subStatText);
+            
+            var subStatText_2 = statImages[1].transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+            WeaponSubStatDivider(weaponCls, nextDatas[1], null, subStatText_2); // 돌파 시 다음 데이터
+
+        }
+
+    }
 }
