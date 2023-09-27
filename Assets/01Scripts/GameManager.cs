@@ -550,7 +550,7 @@ public class GameManager : Singleton<GameManager>
     }
     #endregion
 
-    #region 기타
+    #region DB 관련 기능 함수
     // 레벨에 따른, 장비의 메인 및 서브 스탯 설정 함수
     public void WeaponAndEquipItemStatusSet(List<ItemClass> itemList)
     {
@@ -597,6 +597,30 @@ public class GameManager : Singleton<GameManager>
             item.SetSubStat(matchingData.SUB_STAT);
             item.SetLimitLevel(matchingData.LIMIT_LEVEL);
         }
+    }
+     
+    public int NextLimitLevelFinder(WeaponAndEquipCls item)
+    {
+        int nextValue =0;
+
+        int currentLevel = item.GetLimitLevel();
+        switch(currentLevel)
+        {
+            case 20:
+                nextValue = 40;
+                break;
+            case 40:
+                nextValue = 50;
+                break;
+            case 50:
+                nextValue = 60;
+                break;
+            case 60:
+                nextValue = -1;
+                break;
+        }
+        Debug.Log(nameof(nextValue)+":" +nextValue);
+        return nextValue;
     }
     #endregion
 

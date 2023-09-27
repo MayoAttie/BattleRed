@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static UI_Manager;
 using static CharacterUpgradeManager;
+
 public class UI_UseToolClass
 {
 
@@ -377,10 +378,11 @@ public class UI_UseToolClass
             Color color = fillAmountImage.color; // 현재 색상 정보 가져오기
             color.a = 0.5f; // 알파 값을 0.5로 설정
             fillAmountImage.color = color; // 변경된 색상 정보 설정
-            Debug.Log((weaponCls.GetCurrentExp() + nExp) + "weaponCls.GetMaxExp() : " + weaponCls.GetMaxExp());
             float nextExp = (float)(weaponCls.GetCurrentExp() + nExp) / (float)weaponCls.GetMaxExp();
             fillAmountImage.fillAmount = nextExp;
-            Debug.Log("fillamount : "+ nextExp);
+
+            //Debug.Log((weaponCls.GetCurrentExp() + nExp) + "weaponCls.GetMaxExp() : " + weaponCls.GetMaxExp());
+            //Debug.Log("fillamount : "+ nextExp);
         }
 
         int mora = GameManager.Instance.GetUserClass().GetMora();
@@ -401,7 +403,7 @@ public class UI_UseToolClass
     // statImages 0 - 메인스텟, 1 - 서브스텟  __ levelTexts 0 - 레벨, 1 - 경험치
     public static void WeaponLevelUp_UI_Applyer(WeaponAndEquipCls weaponCls, Image[] statImages, TextMeshProUGUI[] levelTexts, Image arrowImg = null)
     {
-        // 레벨 출력 크기가 2일 경우, 레벨업. 크기가 4일 경우, 돌파
+        // arrowImg가 널일 경우, 레벨업. 크기가 4일 경우, 돌파
         if (arrowImg == null)
         {
             // 메인 스탯 UI 출력
@@ -422,12 +424,14 @@ public class UI_UseToolClass
         }
         else
         {
+            Color nextSpotColor = ItemSpritesSaver.Instance.GetColorAtGarade(weaponCls.GetGrade());
             float[] nextDatas = WeapomLimitBreakStateUp(weaponCls);
             // 메인 스탯 UI 출력
             statImages[0].transform.GetChild(2).gameObject.SetActive(true);
             statImages[0].transform.GetChild(3).gameObject.SetActive(true);
             statImages[0].transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = weaponCls.GetMainStat().ToString(); // 기존 주스탯 표기
             statImages[0].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = nextDatas[0].ToString(); // 다음 주스탯 표기
+            statImages[0].transform.GetChild(1).GetComponent<TextMeshProUGUI>().color = nextSpotColor;
 
             // 서브 스탯 UI 출력
             statImages[1].transform.GetChild(2).gameObject.SetActive(true);
@@ -439,7 +443,35 @@ public class UI_UseToolClass
             var subStatText_2 = statImages[1].transform.GetChild(1).GetComponent<TextMeshProUGUI>();
             WeaponSubStatDivider(weaponCls, nextDatas[1], null, subStatText_2); // 돌파 시 다음 데이터
 
-        }
+            //레벨 데이터 출력
+            levelTexts[0].text = weaponCls.GetLevel().ToString()+"/"+weaponCls.GetLimitLevel().ToString();
+            int nextLimitLevel = GameManager.Instance.NextLimitLevelFinder(weaponCls);
+            if(nextLimitLevel != -1)    // -1을 반환받을 경우, 최대 돌파임을 나타냄
+            {
+                levelTexts[1].text = weaponCls.GetLimitLevel().ToString() +"/";
+                levelTexts[2].text = nextLimitLevel.ToString();
+                levelTexts[2].color = nextSpotColor;
+                levelTexts[2].fontStyle = FontStyles.Bold;
+            }
+            else
+            {
+                levelTexts[1].text = weaponCls.GetLimitLevel().ToString() + "/"; 
+                levelTexts[2].text = weaponCls.GetLimitLevel().ToString();
+                levelTexts[2].color = ItemSpritesSaver.Instance.GetColorAtGarade(weaponCls.GetGrade());
+                levelTexts[2].fontStyle = FontStyles.Bold;
+            }
 
+            arrowImg.enabled = true;
+
+        }
+    }
+
+    public static void ListButtonObject_UI_Initer(InventorySortSelectButton listBtnObj, string[] strings, e_SortingOrder initOrder)
+    {
+        listBtnObj.gameObject.SetActive(false);
+        listBtnObj.SetButtonsText(strings);                      // 버튼 텍스트 적용
+        listBtnObj.StringUIApplyer();                            // 버튼 텍스트 적용
+        listBtnObj.SetSortingOrder(initOrder);  
+        listBtnObj.HideButtonBackGround();
     }
 }

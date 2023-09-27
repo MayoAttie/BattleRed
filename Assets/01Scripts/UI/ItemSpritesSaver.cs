@@ -71,6 +71,20 @@ public class ItemSpritesSaver : Singleton<ItemSpritesSaver>
     public Color GetOneStarColor() { return OneStarColor; }
     public Color GetDarkColor() {  return DarkColor; }
     public Color GetBeigeColor() { return BeigeColor; }
+    public Color GetColorAtGarade(int grade)
+    {
+        switch(grade)
+        {
+            case 5:
+                return FiveStarColor;
+            case 4:
+                return FourStarColor;
+            case 3: 
+                return ThreeStarColor;
+            default:
+                return OneStarColor;
+        }
+    }
 
 
 }
