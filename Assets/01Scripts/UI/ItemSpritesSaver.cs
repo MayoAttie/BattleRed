@@ -36,6 +36,17 @@ public class ItemSpritesSaver : Singleton<ItemSpritesSaver>
     [Header("음식 스프라이트")]
     public Sprite[] FoodSprites;
 
+    /* 육성 소재 목록
+     * 0~2 - 슬라임 액
+     * 3~5 - 이능 두루마리
+     * 6~8 - 지맥 가지
+     * 9~11 - 혼돈 장치
+     * 12~15 - 칼바람 이빨
+     * 16~19 - 투사 사슬
+     */
+    [Header("육성 소재 스프라이트")]
+    public Sprite[] GrowMaterialSprite;
+
 
     /*  이미지 그라데이션 모음
      *  0 - 5성 그라데이션

@@ -5,8 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using static CharacterUpgradeManager;
 using static UI_UseToolClass;
-using System.Linq.Expressions;
-using UnityEngine.Rendering;
+
 
 public class UI_Manager : EnergyBarManager
 {
@@ -67,13 +66,15 @@ public class UI_Manager : EnergyBarManager
     private int nWeaponUpgradeCost;                         // 무기 강화용 요구 재화
     private TextMeshProUGUI txt_NeedMora;                   // 필요한 모라 표기
     private TextMeshProUGUI txt_CurrentHaveMora;            // 보유 모라 표기
+    private Transform popUpForUpgrade;                                              // 무기 강화 파트에서 사용할 팝업 객체
     private Dictionary<ItemClass, SelectButtonScript> dic_ItemClsForWeaponUpgrade;  // 무기 레벨업용 아이템 재화 - 버튼 자료구조
     private Image img_ExpBar;
     private e_SortingOrder allPull_OrderValue;                                      // 일괄처리 정렬 순서(Name==3성, Grade==5성, Level==4성)
     private e_SortingOrder weaponList_ForItemUpgradeResourceSortOrder;              // 무기 레벨업용 아이템 재화 출력 스크롤뷰 정렬 변수
     private bool isWeaponList_ForUpgradeResourceSortOrderAscending;                 // 무기 레벨업용 아이템 재화 출력 스크롤뷰 정렬 변수_내림차순/오름차순
-    private Transform scrollForUpgradeMaterials;
-    private SelectButtonScript selectBtn_ForUpgrade;                                         // 플레이어가 선택한 selectButon
+    private bool isLimitBreakPossible;                                              // 무기 돌파 가능 유무 _ 재화로 판단
+    private Transform scrollForUpgradeMaterials;                                    // 무기 레벨업용 아이템 재화 출력 스크롤뷰
+    private SelectButtonScript selectBtn_ForUpgrade;                                // 플레이어가 선택한 selectButon
     #endregion
 
 
@@ -928,6 +929,10 @@ public class UI_Manager : EnergyBarManager
     private void WeaponChangeFunction(InvenItemObjClass obj)
     {
         var cls = obj.GetItemcls();     //선택한 아이템 클래스
+
+        if (cls.GetTag() != "무기")
+            return;
+
         var WeaponsList = GameManager.Instance.GetUserClass().GetHadWeaponList();               // 보유하고 있는 아이템 리스트 인스턴스화
 
         ItemClass ExistingItem = GameManager.Instance.GetUserClass().GetUserEquippedWeapon();   // 기존 장착중인 아이템 가져오기
@@ -1163,6 +1168,9 @@ public class UI_Manager : EnergyBarManager
         Transform useBtn = mainObject.GetChild(2).GetComponent<Transform>();
         var useButtonObj = useBtn.GetComponentInChildren<Button>();
 
+        // 팝업 오브젝트 저장
+        popUpForUpgrade = mainObject.GetChild(9).GetComponent<Transform>();
+        popUpForUpgrade.gameObject.SetActive(false);
 
         int curLevelData = equippedWeapon.GetLevel();
         int maxLevelData = equippedWeapon.GetLimitLevel();
@@ -1173,7 +1181,7 @@ public class UI_Manager : EnergyBarManager
         LevelUpBreak_Obj.gameObject.SetActive(false);
 
         // 현재레벨 == 한계레벨 (돌파요구)
-        if (curLevelData == maxLevelData)
+        if (curLevelData == maxLevelData && equippedWeapon.GetCurrentExp()>= equippedWeapon.GetMaxExp())
         {
             LevelLimitBreak_Obj.gameObject.SetActive(true);
 
@@ -1188,7 +1196,7 @@ public class UI_Manager : EnergyBarManager
             Transform SelectButtonPos_1 = LevelLimitBreak_Obj.GetChild(0).GetComponent<Transform>();
             Transform SelectButtonPos_2 = LevelLimitBreak_Obj.GetChild(1).GetComponent<Transform>();
             Transform SelectButtonPos_3 = LevelLimitBreak_Obj.GetChild(2).GetComponent<Transform>();
-
+            isLimitBreakPossible = true;
 
             // 스탯 및 데이터 출력
             WeaponLevelUp_UI_Applyer(equippedWeapon, statImgs, levelTxts, ArrawImg);
@@ -1197,6 +1205,9 @@ public class UI_Manager : EnergyBarManager
             btnObjArr[0] = GameManager.Instance.SelectButtonScriptPool.GetFromPool(Vector3.zero,Quaternion.identity,SelectButtonPos_1);
             btnObjArr[1] = GameManager.Instance.SelectButtonScriptPool.GetFromPool(Vector3.zero,Quaternion.identity,SelectButtonPos_2);
             btnObjArr[2] = GameManager.Instance.SelectButtonScriptPool.GetFromPool(Vector3.zero,Quaternion.identity,SelectButtonPos_3);
+
+            // 각 버튼에 재료 UI 세팅
+            WeaponLimitBreakResourcePrintUI(btnObjArr, equippedWeapon);
 
             // 원하는 위치로 이동하려면 Anchors 및 Pivot 조정
             for (int i = 0; i < btnObjArr.Length; i++)
@@ -1278,7 +1289,6 @@ public class UI_Manager : EnergyBarManager
 
         Debug.Log("돌파 버튼 클릭");
     }
-
 
 
     /** 무기 레벨업 파트
@@ -1433,7 +1443,10 @@ public class UI_Manager : EnergyBarManager
             int needExp = equipWeapon.GetMaxExp() - equipWeapon.GetCurrentExp();
 
             if (nWeaponUpgradeExp >= needExp)   // 현재 누적 경험치가 요구 경험치를 초과 시, 리턴
+            {
+                PopUpScreenFunc(popUpForUpgrade, "최대 경험치에 도달했습니다!");
                 return;
+            }
 
             if (selectBtnCls.GetIsActive() == false)
             {
@@ -1577,6 +1590,12 @@ public class UI_Manager : EnergyBarManager
         var weaponList = GameManager.Instance.GetUserClass().GetHadWeaponList();
         var equipedWeapon = GameManager.Instance.GetUserClass().GetUserEquippedWeapon() as WeaponAndEquipCls;
 
+        if (nWeaponUpgradeExp >= equipedWeapon.GetMaxExp() - equipedWeapon.GetCurrentExp())
+        {
+            PopUpScreenFunc(popUpForUpgrade, "최대 경험치에 도달했습니다!");
+            return;
+        }
+
         // 보유하고 있는 아이템을 순회하며, 데이터를 출력한다
         foreach (var item in weaponList)
         {
@@ -1685,9 +1704,53 @@ public class UI_Manager : EnergyBarManager
 
 
     /** 무기 돌파 파트
+     *  주요 기능1 - 돌파 후, 다음 능력치 출력. 돌파에 필요한 재료들을 출력
+     *  주요 기능2 - 재료 조건 검사 후, 관련 클래스와 연계하여 무기 돌파 기능 구현
+     *  
+     *  WeaponLimitBreakResourcePrintButtonClickLeitener - 무기 돌파 재료 출력 UI 객체의 버튼(재화 획득 위치 출력 등과 연계 가능)
      *  
      *  
      */
+
+    // 무기 돌파 재료 UI 출력 함수
+    private void WeaponLimitBreakResourcePrintUI(SelectButtonScript[] btnUIs, WeaponAndEquipCls weaponCls)
+    {
+        var refItem = GameManager.Instance.GetList_WeaponAndEquipLimitBreakResourceData();
+        var refList = refItem.Find(tmp => tmp.Item1.Equals(weaponCls.GetName()));
+        var dataList = refList.Item2.FindAll(tmp => tmp.TARGET_ITEM_LEVEL.Equals(weaponCls.GetLimitLevel()));
+
+        for(int i=0; i< btnUIs.Length; i++)
+        {
+            var itemCls = dataList[i].RESOURCE_ITEM;
+            int num = dataList[i].RESOURCE_NUMBER;
+            Sprite spriteImg = WeaponAndEquipLimitBreak_UI_Dvider(itemCls);
+
+            btnUIs[i].SetIsActive(true);
+            btnUIs[i].SetItemCls(itemCls);                   // 클래스 세팅
+            btnUIs[i].SetItemSprite(spriteImg);              // 아이템 이미지 세팅
+            btnUIs[i].SetItemColor(itemCls.GetGrade());      // 색상 변환
+            btnUIs[i].SetItemText(num.ToString());           // 개수 출력
+            btnUIs[i].GetItemImage().enabled= true;
+
+            // 보유 여부 및 개수 판단으로 돌파 가능 여부 검사
+            var userData = GameManager.Instance.GetUserClass().GetHadGrowMaterialList().Find(tmp => tmp.GetName().Equals(itemCls.GetName()));
+            if (userData != null)
+            {
+                if(userData.GetNumber() < num)
+                {
+                    isLimitBreakPossible = false;
+                    btnUIs[i].GetItemTxt().color = Color.red;
+                }
+                btnUIs[i].GetItemTxt().color = Color.green;
+            }
+            else
+            {
+                isLimitBreakPossible = false;
+                btnUIs[i].GetItemTxt().color = Color.red;
+            }
+        }
+    }
+
     // 무기 돌파 재료 출력 버튼 클릭 함수
     private void WeaponLimitBreakResourcePrintButtonClickLeitener(SelectButtonScript btnCls)
     {
@@ -1795,6 +1858,7 @@ public class UI_Manager : EnergyBarManager
         }
         GameManager.Instance.WeaponItemPool.AllReturnToPool();  // 웨폰 UI 오브젝트풀 리턴
     }
+
 
     #region 정렬 레거시
 

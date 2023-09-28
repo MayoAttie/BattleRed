@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using static UI_Manager;
 using static CharacterUpgradeManager;
+using UnityEditor.Experimental.GraphView;
+using Unity.Collections;
 
 public class UI_UseToolClass
 {
@@ -351,6 +353,7 @@ public class UI_UseToolClass
     public static void SelectButtonToDefault(SelectButtonScript cls)
     {
         cls.SetItemSprite(null);
+        cls.GetItemTxt().color = Color.black;
         cls.GetItemImage().enabled = false;
         cls.SetIsActive(false);
         cls.SetItemColor(1);
@@ -403,7 +406,7 @@ public class UI_UseToolClass
     // statImages 0 - 메인스텟, 1 - 서브스텟  __ levelTexts 0 - 레벨, 1 - 경험치
     public static void WeaponLevelUp_UI_Applyer(WeaponAndEquipCls weaponCls, Image[] statImages, TextMeshProUGUI[] levelTexts, Image arrowImg = null)
     {
-        // arrowImg가 널일 경우, 레벨업. 크기가 4일 경우, 돌파
+        // arrowImg가 널일 경우, 레벨업. 아니면, 돌파
         if (arrowImg == null)
         {
             // 메인 스탯 UI 출력
@@ -474,4 +477,79 @@ public class UI_UseToolClass
         listBtnObj.SetSortingOrder(initOrder);  
         listBtnObj.HideButtonBackGround();
     }
+
+
+    public static void PopUpScreenFunc(Transform popObj, string popText)
+    {
+        popObj.gameObject.SetActive(true);
+        TextMeshProUGUI txt = popObj.GetChild(0).GetComponent<TextMeshProUGUI>();
+        txt.text = popText;
+        var aniMng = popObj.GetComponent<Animator>();
+        aniMng.SetTrigger("Start");
+    }
+
+    public static Sprite WeaponAndEquipLimitBreak_UI_Dvider(ItemClass cls)
+    {
+        Sprite img = null;
+        switch(cls.GetName())
+        {
+            case "칼바람 울프의 젖니":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[12];
+                break;
+            case "칼바람 울프의 이빨":
+                img= ItemSpritesSaver.Instance.GrowMaterialSprite[13];
+                break;
+            case "칼바람 울프의 부서진 이빨":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[14];
+                break;
+            case "지맥의 낡은 가지":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[6];
+                break;
+            case "지맥의 마른 잎":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[7];
+                break;
+            case "지맥의 새싹":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[8];
+                break;
+            case "슬라임 응축액":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[0];
+                break;
+            case "슬라임청":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[1];
+                break;
+            case "슬라임 원액":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[2];
+                break;
+            case "라이언 투사의 족쇄":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[16];
+                break;
+            case "라이언 투사의 쇠사슬":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[17];
+                break;
+            case "라이언 투사의 수갑":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[18];
+                break;
+            case "혼돈의 장치":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[9];
+                break;
+            case "혼돈의 회로":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[10];
+                break;
+            case "혼돈의 노심":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[11];
+                break;
+            case "이능 두루마리":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[3];
+                break;
+            case "봉마의 두루마리":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[4];
+                break;
+            case "금주의 두루마리":
+                img = ItemSpritesSaver.Instance.GrowMaterialSprite[5];
+                break;
+        }
+        return img;
+    }
+
+
 }

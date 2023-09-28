@@ -13,6 +13,7 @@ public class UserClass
     List<ItemClass> hadEquipmentList;           // 보유한 성유물 리스트
     List<ItemClass> hadGemList;                 // 보유한 광물 리스트
     List<ItemClass> hadFoodList;                // 보유한 음식 리스트
+    List<ItemClass> hadGrowMaterialList;        // 보유한 육성 재화 리스트
 
     DateTime userLastConnectTime;
 
@@ -68,6 +69,7 @@ public class UserClass
     public void SetHadEquipmentList(List<ItemClass> hadEquipmentList) { this.hadEquipmentList = hadEquipmentList; }
     public void SetHadGemList(List<ItemClass> hadGemList) { this.hadGemList = hadGemList; }
     public void SetHadFoodList(List<ItemClass> hadFoodList) { this.hadFoodList= hadFoodList; }
+    public void SetHadGrowMaterialList(List<ItemClass> hadGrowMaterialList) { this.hadGrowMaterialList= hadGrowMaterialList; }
     public void SetUserLastConnectTime(DateTime userLastConnectTime) { this.userLastConnectTime = userLastConnectTime; }
     public void SetMora(int nMora) { this.nMora = nMora; }
 
@@ -78,6 +80,7 @@ public class UserClass
     public List<ItemClass> GetHadEquipmentList() { return this.hadEquipmentList; }
     public List<ItemClass> GetHadGemList() { return this.hadGemList; }
     public List<ItemClass> GetHadFoodList() { return this.hadFoodList; }
+    public List<ItemClass> GetHadGrowMaterialList() { return this.hadGrowMaterialList; }
     public DateTime GetUserLastConnectTime() { return this.userLastConnectTime; }
     public int GetMora() { return this.nMora; }
 
