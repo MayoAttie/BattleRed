@@ -1165,7 +1165,7 @@ public class UI_Manager : EnergyBarManager
         Transform LevelUpBreak_Obj = mainObject.GetChild(6).GetComponent<Transform>();
         
         // 사용버튼 오브젝트
-        Transform useBtn = mainObject.GetChild(2).GetComponent<Transform>();
+        ButtonClass2 useBtn = mainObject.GetChild(2).GetComponent<ButtonClass2>();
         var useButtonObj = useBtn.GetComponentInChildren<Button>();
 
         // 팝업 오브젝트 저장
@@ -1218,6 +1218,9 @@ public class UI_Manager : EnergyBarManager
                 btnObjRectTransform.anchoredPosition = new Vector2(70f, -80f);
                 btnObjRectTransform.pivot = new Vector2(0.5f, 0.5f); // Pivot을 UI 요소 중심으로 설정
             }
+            useButtonObj.onClick.RemoveAllListeners();
+            useButtonObj.onClick.AddListener(() => useBtn.OnClick());
+            useButtonObj.onClick.AddListener(() => WeaponLimitBreakClickEventListener(equippedWeapon));
             
         }
         // 현재레벨 != 한계레벨 (레벨업 가능)
@@ -1240,8 +1243,10 @@ public class UI_Manager : EnergyBarManager
             // 사용 버튼 UI 수정 및 이벤트 리스너 연결
 
             TextMeshProUGUI[] levelTxts = { LevelText, LevelExpText };
+            useButtonObj.onClick.RemoveAllListeners();
+            useButtonObj.onClick.AddListener(() => useBtn.OnClick());
             useButtonObj.onClick.AddListener(() => WeaponLevelUpClickEventListener(statImgs, levelTxts));
-            useBtn.GetChild(4).GetComponent<TextMeshProUGUI>().text = "강화";
+            useBtn.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = "강화";
 
             // 모라 UI 출력
             var weaponTemp = GameManager.Instance.GetUserClass().GetUserEquippedWeapon() as WeaponAndEquipCls;
@@ -1736,12 +1741,15 @@ public class UI_Manager : EnergyBarManager
             var userData = GameManager.Instance.GetUserClass().GetHadGrowMaterialList().Find(tmp => tmp.GetName().Equals(itemCls.GetName()));
             if (userData != null)
             {
-                if(userData.GetNumber() < num)
+                int haveNum = userData.GetNumber();
+                if (haveNum < num)
                 {
                     isLimitBreakPossible = false;
                     btnUIs[i].GetItemTxt().color = Color.red;
                 }
                 btnUIs[i].GetItemTxt().color = Color.green;
+                // 등급에 비례해서 요구 가격 계산
+                nWeaponUpgradeCost += (int)(haveNum * userData.GetGrade() * 1000);
             }
             else
             {
@@ -1754,13 +1762,35 @@ public class UI_Manager : EnergyBarManager
     // 무기 돌파 재료 출력 버튼 클릭 함수
     private void WeaponLimitBreakResourcePrintButtonClickLeitener(SelectButtonScript btnCls)
     {
+        
     }
 
 
 
     // 레벨업(강화)_by돌파 버튼 이벤트 리스너
-    void WeaponLimitBreakClickEventListener()
+    void WeaponLimitBreakClickEventListener(WeaponAndEquipCls weapon)
     {
+        // 필요 모라 조건 검사 및, 돌파 가능 여부 확인 후 돌파 진행
+        int mora = GameManager.Instance.GetUserClass().GetMora();
+        if(mora >= nWeaponUpgradeCost && isLimitBreakPossible == true)
+        {
+            WeaponLimitBreakFunction(weapon);
+
+            // 유저 보유 모라 가져오기
+            int haveMora = GameManager.Instance.GetUserClass().GetMora();
+            haveMora -= nWeaponUpgradeCost;
+            // 모라 최신화
+            GameManager.Instance.GetUserClass().SetMora(haveMora);
+
+
+            // UI 최신화
+            isWeaponUpgradeBtnClicked = false;
+            WeaponUpgeadeButtonClickEvent(1);   // 돌파 UI 출력을 위한 출력 함수 재호출
+            ResetToWeaponItemObjectPoolDatas();
+            ResetToSelectButtonScriptPoolDatas();
+        }
+
+
     }
 
 

@@ -46,4 +46,27 @@ public class CharacterUpgradeManager
 
         return result;
     }
+
+    public static void WeaponLimitBreakFunction(WeaponAndEquipCls weapon)
+    {
+        int curLevel = weapon.GetLimitLevel();
+        int nextLimitLevel = 0;
+        switch(curLevel)
+        {
+            case 20:
+                nextLimitLevel = 40;
+                break;
+            case 40:
+                nextLimitLevel = 50;
+                break;
+            case 50:
+                nextLimitLevel = 60;
+                break;
+            case 60:
+                break;
+        }
+        // 0이 아닐 경우, 돌파
+        if (nextLimitLevel != 0)
+            weapon.SetLimitLevel(nextLimitLevel);
+    }
 }

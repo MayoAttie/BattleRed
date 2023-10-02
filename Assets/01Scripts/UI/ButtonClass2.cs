@@ -184,7 +184,7 @@ public class ButtonClass2 : MonoBehaviour
         hasInvoked = false;
     }
 
-    private void OnClick()
+    public void OnClick()
     {
         AlphaValueChangeing();
 
