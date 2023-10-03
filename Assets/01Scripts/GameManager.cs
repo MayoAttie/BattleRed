@@ -37,6 +37,7 @@ public class GameManager : Singleton<GameManager>
     private List<WeaponAndEquipCls> WeaponAndEquipmentDataList;
     private List<Tuple<string,List<WEAPON_EQUIP_STATE_DATA_BASE>>> list_WeaponAndEquipData;
     private List<Tuple<string, List<WEAPON_EQUIP_LIMIT_BREAK_RESOURCE_DATA>>> list_WeaponAndEquipLimitBreakResourceData;
+    private List<Tuple<string, List<WEAPON_EQUIP_EFFECT_DATA_BASE>>> list_WeaponAndEquipReforgeGradeData;
 
     // 기타
     [SerializeField] Transform objectPoolSavePos;
@@ -82,8 +83,8 @@ public class GameManager : Singleton<GameManager>
     }
     public struct WEAPON_EQUIP_EFFECT_DATA_BASE         // 무기 및 성유물의 재련 능력치 테이블
     {
-        int EFFECT_LEVEL;
-        string EFFECT_TEXT;
+        public int EFFECT_LEVEL;
+        public string EFFECT_TEXT;
 
         public WEAPON_EQUIP_EFFECT_DATA_BASE(int eFFECT_LEVEL, string eFFECT_TEXT)
         {
@@ -336,6 +337,36 @@ public class GameManager : Singleton<GameManager>
         };
         #endregion
 
+        #region 무기/성유물 재련 DB 채우기
+        list_WeaponAndEquipReforgeGradeData = new List<Tuple<string, List<WEAPON_EQUIP_EFFECT_DATA_BASE>>>()
+        {
+            new Tuple<string, List<WEAPON_EQUIP_EFFECT_DATA_BASE>>("천공의 검", new List<WEAPON_EQUIP_EFFECT_DATA_BASE>
+            {
+                new WEAPON_EQUIP_EFFECT_DATA_BASE(1,"치명타 확률이 <color=#00FFFF>4%</color> 증가한다. 원소폭발 발동 시 파공의 기세를 획득한다: 이동 속도 +10%, 공격 속도 +10% 일반 공격과 강공격이 명중 시 추가로 공격력 <color=#00FFFF>20%</color>의 피해를 준다. 지속 시간: 12초"),
+                new WEAPON_EQUIP_EFFECT_DATA_BASE(2,"치명타 확률이 <color=#00FFFF>5%</color> 증가한다. 원소폭발 발동 시 파공의 기세를 획득한다: 이동 속도 +10%, 공격 속도 +10% 일반 공격과 강공격이 명중 시 추가로 공격력 <color=#00FFFF>25%</color>의 피해를 준다. 지속 시간: 12초"),
+                new WEAPON_EQUIP_EFFECT_DATA_BASE(3,"치명타 확률이 <color=#00FFFF>6%</color> 증가한다. 원소폭발 발동 시 파공의 기세를 획득한다: 이동 속도 +10%, 공격 속도 +10% 일반 공격과 강공격이 명중 시 추가로 공격력 <color=#00FFFF>30%</color>의 피해를 준다. 지속 시간: 12초"),
+                new WEAPON_EQUIP_EFFECT_DATA_BASE(4,"치명타 확률이 <color=#00FFFF>7%</color> 증가한다. 원소폭발 발동 시 파공의 기세를 획득한다: 이동 속도 +10%, 공격 속도 +10% 일반 공격과 강공격이 명중 시 추가로 공격력 <color=#00FFFF>35%</color>의 피해를 준다. 지속 시간: 12초"),
+                new WEAPON_EQUIP_EFFECT_DATA_BASE(5,"치명타 확률이 <color=#00FFFF>8%</color> 증가한다. 원소폭발 발동 시 파공의 기세를 획득한다: 이동 속도 +10%, 공격 속도 +10% 일반 공격과 강공격이 명중 시 추가로 공격력 <color=#00FFFF>40%</color>의 피해를 준다. 지속 시간: 12초")
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_EFFECT_DATA_BASE>>("제례검", new List<WEAPON_EQUIP_EFFECT_DATA_BASE>
+            {
+                new WEAPON_EQUIP_EFFECT_DATA_BASE(1,"원소 전투 스킬로 피해를 줄 때 <color=#00FFFF>40%</color>의 확률로 해당 스킬의 재발동 대기시간이 초기화된다. 해당 효과는 <color=#00FFFF>30초</color>마다 1번 발동한다"),
+                new WEAPON_EQUIP_EFFECT_DATA_BASE(2,"원소 전투 스킬로 피해를 줄 때 <color=#00FFFF>50%</color>의 확률로 해당 스킬의 재발동 대기시간이 초기화된다. 해당 효과는 <color=#00FFFF>26초</color>마다 1번 발동한다"),
+                new WEAPON_EQUIP_EFFECT_DATA_BASE(3,"원소 전투 스킬로 피해를 줄 때 <color=#00FFFF>60%</color>의 확률로 해당 스킬의 재발동 대기시간이 초기화된다. 해당 효과는 <color=#00FFFF>22초</color>마다 1번 발동한다"),
+                new WEAPON_EQUIP_EFFECT_DATA_BASE(4,"원소 전투 스킬로 피해를 줄 때 <color=#00FFFF>70%</color>의 확률로 해당 스킬의 재발동 대기시간이 초기화된다. 해당 효과는 <color=#00FFFF>19초</color>마다 1번 발동한다"),
+                new WEAPON_EQUIP_EFFECT_DATA_BASE(5,"원소 전투 스킬로 피해를 줄 때 <color=#00FFFF>80%</color>의 확률로 해당 스킬의 재발동 대기시간이 초기화된다. 해당 효과는 <color=#00FFFF>16초</color>마다 1번 발동한다")
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_EFFECT_DATA_BASE>>("여멍신검",new List<WEAPON_EQUIP_EFFECT_DATA_BASE>
+            {
+                new WEAPON_EQUIP_EFFECT_DATA_BASE(1,"HP가 90% 초과 시 치명타 확률이 <color=#00FFFF>14%</color> 증가한다."),
+                new WEAPON_EQUIP_EFFECT_DATA_BASE(2,"HP가 90% 초과 시 치명타 확률이 <color=#00FFFF>17.5%</color> 증가한다."),
+                new WEAPON_EQUIP_EFFECT_DATA_BASE(3,"HP가 90% 초과 시 치명타 확률이 <color=#00FFFF>21%</color> 증가한다."),
+                new WEAPON_EQUIP_EFFECT_DATA_BASE(4,"HP가 90% 초과 시 치명타 확률이 <color=#00FFFF>24.5%</color> 증가한다."),
+                new WEAPON_EQUIP_EFFECT_DATA_BASE(5,"HP가 90% 초과 시 치명타 확률이 <color=#00FFFF>28%</color> 증가한다.")
+            })
+        };
+        #endregion
+
 
         // 유저 게임 데이터 초기화
         characterCls = new CharacterClass(300, 300, 0, 100, 50, 15, 1, 20, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true, 100);
@@ -343,9 +374,9 @@ public class GameManager : Singleton<GameManager>
         playerData.SetMora(156000);
         List<ItemClass> weaponList = new List<ItemClass>
         {
-            new WeaponAndEquipCls("무기", "천공의 검", 5, true, 1, 100000, 19,20, "풍룡의 영광을 상징하는 기사검.\n잃어버렸다가 오늘날 되찾았다.\n현재 검에 바람 신의 축복이 깃들어 있으며, 푸른 하늘과 바람의 힘을 지니고 있다","" ,"치명타 확률이 4% 증가한다. 원소폭발 발동 시 파공의 기세를 획득한다: 이동속도+10%, 공격속도+10%. 일반 공격과 강공격이 명중 시 추가로 공격력 20%의 피해를 준다. 지속 시간: 12초",1,560,12,900,1000),
-            new WeaponAndEquipCls("무기", "제례검", 4, false, 1, 65000, 3,20, "기나긴 세월을 거쳐 석화한 검은 의례적인 장식이 여전히 선명하게 보인다.\n시간의 바람에 씻긴 축복의 힘을 보유하고 있다", "","원소전투 스킬로 피해를 줄 때 40%의 확률로 해당 스킬의 재발동 대기시간이 초기화된다. 해당 효과는 30초마다 1회만 발동한다",1,470,13.3f,416,800),
-            new WeaponAndEquipCls("무기", "여명신검", 3, false, 1, 30000, 10,20, "오래전 아침 햇살처럼 빛나던 보검. 이 검을 가진 자는 근거 없는 자신감에 가득 차게 된다. 검신의 빛나던 발광 재료는 이미 사라졌다", "","HP가 90% 초과 시 치명타 확률이 14% 증가한다",1,266,10f,990,1208)
+            new WeaponAndEquipCls("무기", "천공의 검", 5, true, 1, 100000, 19,20, "풍룡의 영광을 상징하는 기사검.\n잃어버렸다가 오늘날 되찾았다.\n현재 검에 바람 신의 축복이 깃들어 있으며, 푸른 하늘과 바람의 힘을 지니고 있다","" ,"치명타 확률이 <color=#00FFFF>4%</color> 증가한다. 원소폭발 발동 시 파공의 기세를 획득한다: 이동 속도 +10%, 공격 속도 +10% 일반 공격과 강공격이 명중 시 추가로 공격력 <color=#00FFFF>20%</color>의 피해를 준다. 지속 시간: 12초",1,560,12,900,1000),
+            new WeaponAndEquipCls("무기", "제례검", 4, false, 1, 65000, 3,20, "기나긴 세월을 거쳐 석화한 검은 의례적인 장식이 여전히 선명하게 보인다.\n시간의 바람에 씻긴 축복의 힘을 보유하고 있다", "","원소 전투 스킬로 피해를 줄 때 <color=#00FFFF>40%</color>의 확률로 해당 스킬의 재발동 대기시간이 초기화된다. 해당 효과는 <color=#00FFFF>30초</color>마다 1번 발동한다",1,470,13.3f,416,800),
+            new WeaponAndEquipCls("무기", "여명신검", 3, false, 1, 30000, 10,20, "오래전 아침 햇살처럼 빛나던 보검. 이 검을 가진 자는 근거 없는 자신감에 가득 차게 된다. 검신의 빛나던 발광 재료는 이미 사라졌다", "","HP가 90% 초과 시 치명타 확률이 <color=#00FFFF>14%</color> 증가한다.",1,266,10f,990,1208)
         };
         playerData.SetHadWeaponList(weaponList);
         WeaponAndEquipItemStatusSet(weaponList);
@@ -389,7 +420,9 @@ public class GameManager : Singleton<GameManager>
 
         List<ItemClass> growList = new List<ItemClass>
         {
-            new ItemClass("육성 아이템","칼바람 울프의 젖니",1,false,6,500,0,"늑대 무리는 그의 축복을 받은 근위병이다. 새끼 늑대의 젖니라도 상당한 저력을 가지고 있다.\n과거의 신들은 인간을 사랑한다는 책임을 짊어지고 있었다. 따라서, 늑대 무리를 인솔하지만 버림받은 아이를 입양하고 방랑자들을 받아들인 「안드리우스」는 아주 이상하다","")
+            new ItemClass("육성 아이템","칼바람 울프의 젖니",1,false,6,500,0,"늑대 무리는 그의 축복을 받은 근위병이다. 새끼 늑대의 젖니라도 상당한 저력을 가지고 있다.\n과거의 신들은 인간을 사랑한다는 책임을 짊어지고 있었다. 따라서, 늑대 무리를 인솔하지만 버림받은 아이를 입양하고 방랑자들을 받아들인 「안드리우스」는 아주 이상하다",""),
+            new ItemClass("육성 아이템","슬라임 응축액",1,false,5,500,0,"슬라임을 덮고 있는 걸쭉한 액체. 각지의 원소 공방에서 가장 흔히 보이는 원료이다",""),
+            new ItemClass("육성 아이템","지맥의 낡은 가지",1,false,6,500,0,"지하 깊은 곳의 마른 나뭇가지. 오랜 세월이 지났지만 알록달록한 나무껍질에서 내재된 힘을 느낄 수 있다",""),
         };
         playerData.SetHadGrowMaterialList(growList);
 
@@ -708,7 +741,6 @@ public class GameManager : Singleton<GameManager>
             item.SetLimitLevel(matchingData.LIMIT_LEVEL);
         }
     }
-     
     public int NextLimitLevelFinder(WeaponAndEquipCls item)
     {
         int nextValue =0;
@@ -732,6 +764,23 @@ public class GameManager : Singleton<GameManager>
         Debug.Log(nameof(nextValue)+":" +nextValue);
         return nextValue;
     }
+    public string NextReforgeEffectData(WeaponAndEquipCls item)
+    {
+        string str = string.Empty;
+        var finder = list_WeaponAndEquipReforgeGradeData.Find(data => data.Item1.Equals(item.GetName()));
+        var nextData = finder.Item2.Find(tmp => tmp.EFFECT_LEVEL.Equals(item.GetEffectLevel() + 1));
+        str = nextData.EFFECT_TEXT;
+        return str;
+    }
+    public void SetReforgeEffectData(WeaponAndEquipCls item)
+    {
+        string str = string.Empty;
+        var finder = list_WeaponAndEquipReforgeGradeData.Find(data => data.Item1.Equals(item.GetName()));
+        var nextData = finder.Item2.Find(tmp => tmp.EFFECT_LEVEL.Equals(item.GetEffectLevel()));
+        str = nextData.EFFECT_TEXT;
+        item.SetEffectText(str);
+    }
+
     #endregion
 
 
@@ -741,6 +790,10 @@ public class GameManager : Singleton<GameManager>
     public List<Tuple<string, List<WEAPON_EQUIP_LIMIT_BREAK_RESOURCE_DATA>>> GetList_WeaponAndEquipLimitBreakResourceData()
     {
         return list_WeaponAndEquipLimitBreakResourceData;
+    }
+    public List<Tuple<string,List<WEAPON_EQUIP_EFFECT_DATA_BASE>>> GetList_WeaponAndEquipReforgeGradeData()
+    {
+        return list_WeaponAndEquipReforgeGradeData;
     }
 
 

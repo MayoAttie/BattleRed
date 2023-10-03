@@ -120,7 +120,6 @@ public class InventorySortSelectButton : MonoBehaviour
                     img.enabled = false; // SetActive 대신 enabled 사용
                 btn1_Text.color = Color.white;
                 btn2_Text.color = Color.white;
-
                 RevealButtonBackGround(3);
                 break;
             // 2번
@@ -131,7 +130,6 @@ public class InventorySortSelectButton : MonoBehaviour
                     img.enabled = false; // SetActive 대신 enabled 사용
                 btn1_Text.color = Color.white;
                 btn3_Text.color = Color.white;
-
                 RevealButtonBackGround(2);
                 break;
             // 1번
@@ -142,8 +140,46 @@ public class InventorySortSelectButton : MonoBehaviour
                     img.enabled = false; // SetActive 대신 enabled 사용
                 btn2_Text.color = Color.white;
                 btn3_Text.color = Color.white;
-
                 RevealButtonBackGround(1);
+                break;
+            default: break;
+        }
+    }
+    public void HideButtonBackGround(int index)
+    {
+
+        // 선택된 값을 제외하고, 버튼의 백그라운드를 보이지 않도록 초기화.
+        switch (index)
+        {
+            // 0번 버튼 제외 나머지 숨김,
+            case 0:
+                foreach (Image img in btn2_Images)
+                    img.enabled = false; // SetActive 대신 enabled 사용
+                foreach (Image img in btn3_Images)
+                    img.enabled = false; // SetActive 대신 enabled 사용
+                btn2_Text.color = Color.white;
+                btn3_Text.color = Color.white;
+                RevealButtonBackGround(1);
+                break;
+            // 1번 버튼 제외 나머지 숨김,
+            case 1:
+                foreach (Image img in btn1_Images)
+                    img.enabled = false; // SetActive 대신 enabled 사용
+                foreach (Image img in btn3_Images)
+                    img.enabled = false; // SetActive 대신 enabled 사용
+                btn1_Text.color = Color.white;
+                btn3_Text.color = Color.white;
+                RevealButtonBackGround(2);
+                break;
+            // 2번 버튼 제외 나머지 숨김,
+            case 2:
+                foreach (Image img in btn1_Images)
+                    img.enabled = false; // SetActive 대신 enabled 사용
+                foreach (Image img in btn2_Images)
+                    img.enabled = false; // SetActive 대신 enabled 사용
+                btn1_Text.color = Color.white;
+                btn2_Text.color = Color.white;
+                RevealButtonBackGround(3);
                 break;
             default: break;
         }
@@ -198,7 +234,7 @@ public class InventorySortSelectButton : MonoBehaviour
     }
     public void SetButtonsText(string[] texts)
     {
-        if (texts.Length < 3) return;
+        if (texts.Length > 3) return;
         btn1_InputTxt = texts[0];
         btn2_InputTxt = texts[1];
         btn3_InputTxt = texts[2];

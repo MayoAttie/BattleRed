@@ -5,8 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static UI_Manager;
 using static CharacterUpgradeManager;
-using UnityEditor.Experimental.GraphView;
-using Unity.Collections;
+using System.Linq;
 
 public class UI_UseToolClass
 {
@@ -22,6 +21,23 @@ public class UI_UseToolClass
         // isActive가 true인 아이템과 false인 아이템을 나눕니다.
         List<ItemClass> activeItems = clsList.FindAll(item => item.GetIsActive());
         List<ItemClass> inactiveItems = clsList.FindAll(item => !item.GetIsActive());
+
+        List<WeaponAndEquipCls> weaponActiveList = new List<WeaponAndEquipCls>();
+        List<WeaponAndEquipCls> weaponInActiveList = new List<WeaponAndEquipCls>();
+
+        if (selected_SortOrder == e_SortingOrder.ExpOrder)
+        {
+            weaponActiveList = activeItems
+                            .Where(item => item is WeaponAndEquipCls)
+                            .Select(item => (WeaponAndEquipCls)item)
+                            .ToList();
+
+            weaponInActiveList = inactiveItems
+                            .Where(item => item is WeaponAndEquipCls)
+                            .Select(item => (WeaponAndEquipCls)item)
+                            .ToList();
+        }
+
 
 
         // isActive가 true인 아이템을 먼저 정렬합니다.
@@ -44,6 +60,12 @@ public class UI_UseToolClass
                     activeItems.Sort((item1, item2) => string.Compare(item1.GetName(), item2.GetName()));
                 else
                     activeItems.Sort((item1, item2) => string.Compare(item2.GetName(), item1.GetName()));
+                break;
+            case e_SortingOrder.ExpOrder:
+                if (isAscending)
+                    weaponActiveList.Sort((item1, item2) => item1.GetCurrentExp().CompareTo(item2.GetCurrentExp()));
+                else
+                    weaponActiveList.Sort((item1, item2) => item2.GetCurrentExp().CompareTo(item1.GetCurrentExp()));
                 break;
             default:
                 break;
@@ -70,14 +92,29 @@ public class UI_UseToolClass
                 else
                     inactiveItems.Sort((item1, item2) => string.Compare(item2.GetName(), item1.GetName()));
                 break;
+            case e_SortingOrder.ExpOrder:
+                if (isAscending)
+                    weaponInActiveList.Sort((item1, item2) => item1.GetCurrentExp().CompareTo(item2.GetCurrentExp()));
+                else
+                    weaponInActiveList.Sort((item1, item2) => item2.GetCurrentExp().CompareTo(item1.GetCurrentExp()));
+                break;
             default:
                 break;
         }
 
         // 두 그룹을 병합합니다.
-        clsList.Clear();
-        clsList.AddRange(activeItems);
-        clsList.AddRange(inactiveItems);
+        if(selected_SortOrder != e_SortingOrder.ExpOrder)
+        {
+            clsList.Clear();
+            clsList.AddRange(activeItems);
+            clsList.AddRange(inactiveItems);
+        }
+        else
+        {
+            clsList.Clear();
+            clsList.AddRange(weaponActiveList);
+            clsList.AddRange(weaponInActiveList);
+        }
     }
 
     // 게임매니저의 데이터를 참조하여, 무기들을 스크롤뷰 콘텐츠에 출력 <ObjectPool<InvenItemObjClass> WeaponItemPool <- 웨폰 데이터 출력>
@@ -468,7 +505,7 @@ public class UI_UseToolClass
 
         }
     }
-
+    // 리스트 버튼에 초기 데이터 세팅
     public static void ListButtonObject_UI_Initer(InventorySortSelectButton listBtnObj, string[] strings, e_SortingOrder initOrder)
     {
         listBtnObj.gameObject.SetActive(false);
