@@ -121,7 +121,7 @@ public class UI_UseToolClass
     public static void WeaponPrintAtScroll(Transform content, e_SortingOrder selected_SortOrder, bool isAscending, List<InvenItemObjClass> openUI_ItemList)
     {
         var itemClses = GameManager.Instance.GetUserClass().GetHadWeaponList();      // 저장된 아이템 목록
-
+        openUI_ItemList.Clear();
         SortingItemList(itemClses, selected_SortOrder, isAscending);
 
 
@@ -587,6 +587,12 @@ public class UI_UseToolClass
         }
         return img;
     }
-
+    public static void ButtonClass2_Reset(ButtonClass2 btnCls)
+    {
+        btnCls.GetButton().onClick.AddListener(btnCls.OnClick);
+        btnCls.GetButton().onClick.AddListener(btnCls.OnButtonDown);
+        btnCls.GetButton().onClick.AddListener(btnCls.OnButtonUp);
+    }
 
 }
+

@@ -70,11 +70,15 @@ public class UI_Manager : EnergyBarManager
     private Dictionary<ItemClass, SelectButtonScript> dic_ItemClsForWeaponUpgrade;  // 무기 레벨업용 아이템 재화 - 버튼 자료구조
     private Image img_ExpBar;
     private e_SortingOrder allPull_OrderValue;                                      // 일괄처리 정렬 순서(Name==3성, Grade==5성, Level==4성)
-    private e_SortingOrder weaponList_ForItemUpgradeResourceSortOrder;              // 무기 레벨업용 아이템 재화 출력 스크롤뷰 정렬 변수
-    private bool isWeaponList_ForUpgradeResourceSortOrderAscending;                 // 무기 레벨업용 아이템 재화 출력 스크롤뷰 정렬 변수_내림차순/오름차순
+    private e_SortingOrder weaponList_ForItemUpgradeResourceSortOrder;              // 무기 강화용 아이템 재화 출력 스크롤뷰 정렬 변수
+    private bool isWeaponList_ForUpgradeResourceSortOrderAscending;                 // 무기 강화용 아이템 재화 출력 스크롤뷰 정렬 변수_내림차순/오름차순
     private bool isLimitBreakPossible;                                              // 무기 돌파 가능 유무 _ 재화로 판단
     private Transform scrollForUpgradeMaterials;                                    // 무기 레벨업용 아이템 재화 출력 스크롤뷰
     private SelectButtonScript selectBtn_ForUpgrade;                                // 플레이어가 선택한 selectButon
+
+    // 성유물 창 관련
+    
+
     #endregion
 
 
@@ -378,7 +382,7 @@ public class UI_Manager : EnergyBarManager
                     obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[12]);
                 else if (data.GetName() == "피에 물든 강철 심장")
                     obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[13]);
-                else if (data.GetName() == "피에 물든 기사의 술잔")
+                else if (data.GetName() == "피에 물든 기사의 시계")
                     obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[14]);
                 else { break; }
 
@@ -1044,7 +1048,11 @@ public class UI_Manager : EnergyBarManager
         foreach (var button in buttons)
         {
             if (button.Equals(my))
+            {
+                if (button.GetClickedActive() == false)
+                    button.OnOffSpriteSetting();
                 continue;
+            }
 
             if (button.GetIsCicked() == true)
                 button.OnOffSpriteSetting();
@@ -1172,7 +1180,7 @@ public class UI_Manager : EnergyBarManager
         
         // 사용버튼 오브젝트
         ButtonClass2 useBtn = mainObject.GetChild(2).GetComponent<ButtonClass2>();
-        var useButtonObj = useBtn.GetComponentInChildren<Button>();
+        var useButtonObj = useBtn.GetButton();
 
         // 팝업 오브젝트 저장
         popUpForUpgrade = mainObject.GetChild(9).GetComponent<Transform>();
@@ -1225,7 +1233,7 @@ public class UI_Manager : EnergyBarManager
                 btnObjRectTransform.pivot = new Vector2(0.5f, 0.5f); // Pivot을 UI 요소 중심으로 설정
             }
             useButtonObj.onClick.RemoveAllListeners();
-            useButtonObj.onClick.AddListener(() => useBtn.OnClick());
+            ButtonClass2_Reset(useBtn);
             useButtonObj.onClick.AddListener(() => WeaponLimitBreakClickEventListener(equippedWeapon));
             useBtn.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = "돌파";
 
@@ -1251,7 +1259,7 @@ public class UI_Manager : EnergyBarManager
 
             TextMeshProUGUI[] levelTxts = { LevelText, LevelExpText };
             useButtonObj.onClick.RemoveAllListeners();
-            useButtonObj.onClick.AddListener(() => useBtn.OnClick());
+            ButtonClass2_Reset(useBtn);
             useButtonObj.onClick.AddListener(() => WeaponLevelUpClickEventListener(statImgs, levelTxts));
             useBtn.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = "강화";
 
@@ -1286,6 +1294,9 @@ public class UI_Manager : EnergyBarManager
             foreach (var tmp in selectButtonScripts)
             {
                 Button btn = tmp.GetButton();
+                btn.onClick.RemoveAllListeners();
+                btn.onClick.AddListener(() => tmp.OnClickEventListener());
+                btn.onClick.AddListener(() => ScrollViewOpenButtonClickEvent(tmp, OpenScrollToUpgradeMaterial));
                 btn.onClick.AddListener(() => WeaponSelectForUpgradeBtnClickEventListener(tmp, OpenScrollToUpgradeMaterial));
             }
 
@@ -1321,24 +1332,18 @@ public class UI_Manager : EnergyBarManager
     // WeaponPrintAtScroll_BySelectButton _ 스크롤뷰 _ 콘텐츠 버튼(SelectButton) 이벤트 리스너
     void WeaponSelectForUpgradeBtnClickEventListener(SelectButtonScript slectBtnCls, Transform objectSet)
     {
-        objectSet.gameObject.SetActive(true);
-        ResetToWeaponItemObjectPoolDatas();         // 오브젝트 풀 리셋
-        selectBtn_ForUpgrade = slectBtnCls;         // 플레이어가 클릭한 버튼 저장
-
-        // 스크롤뷰 종료 버튼 활성화
-        Button outButton = objectSet.GetChild(7).GetComponent<Button>();
-        outButton.gameObject.SetActive(true);
-        outButton.onClick.AddListener(() => ScrollObjectOffButton(objectSet.gameObject, outButton));
-
-        scrollForUpgradeMaterials = objectSet.GetChild(1).GetChild(0).GetComponent<Transform>();
         ButtonClass2 SortSelectButton = objectSet.GetChild(2).GetComponent<ButtonClass2>();                                       // 정렬 선택 버튼(리스트 버튼 On/Off)
         ButtonClass2 Descending_AscendingButton = objectSet.GetChild(3).GetComponent<ButtonClass2>();                             // 내림차순/오름차순 버튼
         InventorySortSelectButton SelectionButtonOnList = objectSet.GetChild(4).GetComponent<InventorySortSelectButton>();        // 리스트 버튼
-        
+
         // 버튼 리스너 연결
+        SortSelectButton.GetComponentInChildren<Button>().onClick.RemoveAllListeners();
         SortSelectButton.GetComponentInChildren<Button>().onClick.AddListener(()
             => WeaponPrintAtScroll_ForUpgrade_SortOrderBtnClick(SelectionButtonOnList, SortSelectButton));
+
+        Descending_AscendingButton.GetComponentInChildren<Button>().onClick.RemoveAllListeners();
         Descending_AscendingButton.GetComponentInChildren<Button>().onClick.AddListener(WeaponPrintAtScroll_ForUpgrade_AscendingBtnClick);
+        Descending_AscendingButton.GetComponentInChildren<Button>().onClick.AddListener(()=> PrintDataAtScrollViewForUpMaterials(selectBtn_ForUpgrade));
 
         // 정렬 디폴트 값 및 리스트 버튼 데이터 초기화
         weaponList_ForItemUpgradeResourceSortOrder = e_SortingOrder.ExpOrder;
@@ -1404,8 +1409,13 @@ public class UI_Manager : EnergyBarManager
 
         // 리스트 버튼 객체에 이벤트 리스너 
         buttons[0].onClick.AddListener(() => SortOrderForUpgradeResorceWeapon(selectBtnListObj, "희귀도", selectBtn)); // 희귀도
+        buttons[0].onClick.AddListener(() => PrintDataAtScrollViewForUpMaterials(selectBtn_ForUpgrade)); // 희귀도
+
         buttons[1].onClick.AddListener(() => SortOrderForUpgradeResorceWeapon(selectBtnListObj, "레벨", selectBtn)); // 레벨
+        buttons[1].onClick.AddListener(() => PrintDataAtScrollViewForUpMaterials(selectBtn_ForUpgrade)); // 레벨
+
         buttons[2].onClick.AddListener(() => SortOrderForUpgradeResorceWeapon(selectBtnListObj, "기초경험치", selectBtn)); // 기초경험치
+        buttons[2].onClick.AddListener(() => PrintDataAtScrollViewForUpMaterials(selectBtn_ForUpgrade)); // 기초경험치
     }
 
 
@@ -1439,7 +1449,6 @@ public class UI_Manager : EnergyBarManager
         selectBtn.SetButtonTextInputter(index);
 
         ResetToWeaponItemObjectPoolDatas();
-        PrintDataAtScrollViewForUpMaterials(selectBtn_ForUpgrade);
     }
 
 
@@ -1449,7 +1458,6 @@ public class UI_Manager : EnergyBarManager
         isWeaponList_ForUpgradeResourceSortOrderAscending = !isWeaponList_ForUpgradeResourceSortOrderAscending;
 
         ResetToWeaponItemObjectPoolDatas();
-        PrintDataAtScrollViewForUpMaterials(selectBtn_ForUpgrade);
     }
 
     /*
@@ -1713,10 +1721,11 @@ public class UI_Manager : EnergyBarManager
             // UI최신화
             if (isLimit)    // 돌파 단계 도달 시,
             {
-                isWeaponUpgradeBtnClicked = false;
-                WeaponUpgeadeButtonClickEvent(1);   // 돌파 UI 출력을 위한 출력 함수 재호출
+                //isWeaponUpgradeBtnClicked = false;
                 ResetToWeaponItemObjectPoolDatas();
                 ResetToSelectButtonScriptPoolDatas();
+                ClosePlayerInfoScreenButton();
+                WeaponUpgeadeButtonClickEvent(1);   // 돌파 UI 출력을 위한 출력 함수 재호출
             }
             else
             {
@@ -1807,10 +1816,11 @@ public class UI_Manager : EnergyBarManager
 
 
             // UI 최신화
-            isWeaponUpgradeBtnClicked = false;
-            WeaponUpgeadeButtonClickEvent(1);   // 돌파 UI 출력을 위한 출력 함수 재호출
+            //isWeaponUpgradeBtnClicked = false;
             ResetToWeaponItemObjectPoolDatas();
             ResetToSelectButtonScriptPoolDatas();
+            ClosePlayerInfoScreenButton();
+            WeaponUpgeadeButtonClickEvent(1);   // 돌파 UI 출력을 위한 출력 함수 재호출
         }
         else
         {
@@ -1829,6 +1839,10 @@ public class UI_Manager : EnergyBarManager
     {
         if (isWeaponUpgradeDetailObjClicked[2] == true)
             return;
+
+        // 오브젝트풀 리턴
+        ResetToWeaponItemObjectPoolDatas();
+        ResetToSelectButtonScriptPoolDatas();
 
         my.OnOffSpriteSetting();
         ClickedButtonsSetActiveReset(my,parents,6);
@@ -1850,16 +1864,19 @@ public class UI_Manager : EnergyBarManager
         txt_NeedMora = mainObject.GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
         txt_CurrentHaveMora = mainObject.GetChild(2).GetChild(1).GetComponent<TextMeshProUGUI>();
         txt_CurrentHaveMora.text = GameManager.Instance.GetUserClass().GetMora().ToString();
-        
         // 사용 버튼
         ButtonClass2 cls_UseButton = mainObject.GetChild(3).GetComponent<ButtonClass2>();
-
         // 선택 버튼 위치 좌표 트랜스폼
         Transform tr_WeaponResourceSelectPos = mainObject.GetChild(7).GetComponent<Transform>();
+        // 스크롤뷰 오브젝트
+        Transform tr_ScrollViewObjectSet = mainObject.GetChild(9).GetComponent<Transform>();
+        ButtonClass2 cls_selectSortButton = tr_ScrollViewObjectSet.GetChild(2).GetComponent<ButtonClass2>();
+        ButtonClass2 cls_Descending_AscendingButton = tr_ScrollViewObjectSet.GetChild(3).GetComponent<ButtonClass2>();
+        InventorySortSelectButton cls_SelectionButtonOnList = tr_ScrollViewObjectSet.GetChild(4).GetComponent<InventorySortSelectButton>();
 
 
         /// 객체에 데이터 출력
-        
+
         // 기본 텍스트 데이터
         txt_ReforgeLevelText.text = equippedWeapon.GetEffectLevel().ToString() + "단계";
         txt_WeaponName.text = equippedWeapon.GetName();
@@ -1871,27 +1888,42 @@ public class UI_Manager : EnergyBarManager
         // 재료 무기 선택용 버튼 오브젝트 출력
         SelectButtonScript btnObj = GameManager.Instance.SelectButtonScriptPool.GetFromPool(Vector3.zero, Quaternion.identity, tr_WeaponResourceSelectPos);
         SelectButtonToDefault(btnObj);
-
         // 원하는 위치로 이동하려면 Anchors 및 Pivot 조정
         RectTransform btnObjRectTransform = btnObj.GetComponent<RectTransform>();
-
         // 앵커와 피봇을 center-middle로 설정
         btnObjRectTransform.anchorMin = new Vector2(0.5f, 0.5f);
         btnObjRectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         btnObjRectTransform.pivot = new Vector2(0.5f, 0.5f);
-
         // 원하는 위치로 이동
         btnObjRectTransform.anchoredPosition = new Vector2(0f, 0f);
-
         // 무기 선택 버튼 UI 출력
+
 
         // 버튼 클릭 이벤트 함수 연결
         //btnObj.GetComponentInChildren<Button>().onClick.AddListener();
+        btnObj.GetButton().onClick.AddListener(() => ScrollViewOpenButtonClickEvent(btnObj, tr_ScrollViewObjectSet));
+        btnObj.GetButton().onClick.AddListener(() => WeaponReforge_ButtonClickEvent(tr_ScrollViewObjectSet));
+        
+        cls_selectSortButton.GetButton().onClick.RemoveAllListeners();
+        cls_selectSortButton.GetButton().onClick.AddListener(() => WeaponReforge_SortOrderBtnClick(cls_SelectionButtonOnList, cls_selectSortButton, tr_ScrollViewObjectSet));
+        
+        cls_Descending_AscendingButton.GetButton().onClick.RemoveAllListeners();
+        cls_Descending_AscendingButton.GetButton().onClick.AddListener(WeaponPrintAtScroll_ForUpgrade_AscendingBtnClick);
+        cls_Descending_AscendingButton.GetButton().onClick.AddListener(()=>WeaponReforge_ButtonClickEvent(tr_ScrollViewObjectSet));
 
+        //스크롤뷰 객체
+        // 정렬 디폴트 값 및 리스트 버튼 데이터 초기화
+        weaponList_ForItemUpgradeResourceSortOrder = e_SortingOrder.ExpOrder;
+        isWeaponList_ForUpgradeResourceSortOrderAscending = false;
+        string[] strings = { "희귀도", "레벨", "기초경험치" };
+        ListButtonObject_UI_Initer(cls_SelectionButtonOnList, strings, e_SortingOrder.ExpOrder);
+        cls_SelectionButtonOnList.HideButtonBackGround(2);
 
 
         /// 사용 버튼 연결 및 객체 작업
-
+        cls_UseButton.GetButton().onClick.RemoveAllListeners();
+        ButtonClass2_Reset(cls_UseButton);
+        cls_UseButton.GetButton().onClick.AddListener(() => WeaponReforge_UseButtonClickEvent());
 
 
         // 제어 플래그 수정
@@ -1899,8 +1931,121 @@ public class UI_Manager : EnergyBarManager
         isWeaponUpgradeDetailObjClicked[1] = false;
         isWeaponUpgradeDetailObjClicked[2] = true;
 
-        // 오브젝트풀 리턴
-        ResetToSelectButtonScriptPoolDatas();
+        tr_ScrollViewObjectSet.gameObject.SetActive(false);
+
+
+    }
+    // 무기 선택 버튼 클릭_스크롤 뷰 데이터 출력
+    void WeaponReforge_ButtonClickEvent(Transform mainObj)
+    {
+        // 객체 인스턴스화
+        InventorySortSelectButton cls_SelectionButtonOnList = mainObj.GetChild(4).GetComponent<InventorySortSelectButton>();
+        
+        WeaponPrintAtScroll(scrollForUpgradeMaterials, weaponList_ForItemUpgradeResourceSortOrder, isWeaponList_ForUpgradeResourceSortOrderAscending, openUI_ItemList);
+        var datas = GameManager.Instance.WeaponItemPool.GetPoolList();
+        ItemClass equip = GameManager.Instance.GetUserClass().GetUserEquippedWeapon();
+
+        foreach(var tmp in datas)
+        {
+            // 비활성화되어 있는 객체는 스킵
+            if (tmp.gameObject.activeSelf == false)
+                continue;
+
+            // 장비하고 있는 아이템은 제외
+            if (tmp.GetItemcls().GetIsActive() == true)
+            {
+                GameManager.Instance.WeaponItemPool.ReturnToPool(tmp);
+                continue;
+            }
+            // 장비하고 있는 아이템과 일치하지 않는 경우는 제외
+            if(tmp.GetItemcls().GetName() != equip.GetName())
+            {
+                GameManager.Instance.WeaponItemPool.ReturnToPool(tmp);
+                continue;
+            }
+            // 선택한 아이템과 동일한 경우도 제외
+            if(tmp.GetItemcls() == selectBtn_ForUpgrade.GetItemClass())
+            {
+                GameManager.Instance.WeaponItemPool.ReturnToPool(tmp);
+                continue;
+            }
+
+            // 버튼 클릭 이벤트 리스너 해제 및 연결
+            Button btn = tmp.GetButton();
+            btn.onClick.RemoveAllListeners();
+            btn.onClick.AddListener(() => WeaponReforge_SelectResource(tmp, mainObj));
+            tmp.EquippedItemUIPrint(false); // 장비 중인 아이템 표시용 이미지는 필요 없으므로 False
+        }
+
+    }
+    // 재화로 소모할 동일 장비 클릭 이벤트 리스너
+    void WeaponReforge_SelectResource(InvenItemObjClass cls, Transform mainObj)
+    {
+        ItemClass itemCls = cls.GetItemcls();
+        WeaponAndEquipCls weaponCls = itemCls as WeaponAndEquipCls;
+
+        nWeaponUpgradeCost += itemCls.GetGrade() * 1000;
+        txt_NeedMora.text = nWeaponUpgradeCost.ToString();
+
+        // 버튼 객체 UI 작업
+        selectBtn_ForUpgrade.SetIsActive(true);
+        selectBtn_ForUpgrade.GetItemImage().enabled = true;
+        selectBtn_ForUpgrade.SetItemCls(itemCls);
+        WeaponKindDivider(weaponCls, selectBtn_ForUpgrade.GetItemImage());
+        ItemUISetterByItemGrade(itemCls, selectBtn_ForUpgrade.GetTopBgr(), null);
+        selectBtn_ForUpgrade.SetItemText("LV. " + weaponCls.GetLevel().ToString());
+
+        mainObj.gameObject.SetActive(false);
+    }
+
+    // 정렬 선택 버튼 클릭 이벤트 리스너
+    void WeaponReforge_SortOrderBtnClick(InventorySortSelectButton selectBtnListObj, ButtonClass2 selectBtn, Transform mainObj)
+    {
+        selectBtnListObj.gameObject.SetActive(true);
+
+        Button[] buttons = selectBtnListObj.GetButtons();
+
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            buttons[i].onClick.RemoveAllListeners();
+        }
+
+        // 리스트 버튼 객체에 이벤트 리스너 
+        buttons[0].onClick.AddListener(() => SortOrderForUpgradeResorceWeapon(selectBtnListObj, "희귀도", selectBtn)); // 희귀도
+        buttons[0].onClick.AddListener(() => WeaponReforge_ButtonClickEvent(mainObj));                              // 희귀도
+
+        buttons[1].onClick.AddListener(() => SortOrderForUpgradeResorceWeapon(selectBtnListObj, "레벨", selectBtn)); // 레벨
+        buttons[1].onClick.AddListener(() => WeaponReforge_ButtonClickEvent(mainObj));                              // 레벨
+
+        buttons[2].onClick.AddListener(() => SortOrderForUpgradeResorceWeapon(selectBtnListObj, "기초경험치", selectBtn)); // 기초경험치
+        buttons[2].onClick.AddListener(() => WeaponReforge_ButtonClickEvent(mainObj));                                  // 기초경험치
+    }
+    // 재련_ 사용버튼 클릭
+    void WeaponReforge_UseButtonClickEvent()
+    {
+        if(nWeaponUpgradeCost<=GameManager.Instance.GetUserClass().GetMora() && selectBtn_ForUpgrade.GetItemClass() != null)
+        {
+            WeaponAndEquipCls weaponCls = GameManager.Instance.GetUserClass().GetUserEquippedWeapon() as WeaponAndEquipCls;
+
+            var removeTmp = GameManager.Instance.GetUserClass().GetHadWeaponList().Find(tmp => tmp.Equals(selectBtn_ForUpgrade.GetItemClass()));
+            GameManager.Instance.GetUserClass().GetHadWeaponList().Remove(removeTmp);
+
+            int havMora = GameManager.Instance.GetUserClass().GetMora();
+            GameManager.Instance.GetUserClass().SetMora(havMora - nWeaponUpgradeCost);
+            txt_CurrentHaveMora.text = GameManager.Instance.GetUserClass().GetMora().ToString();
+            txt_NeedMora.text = "0";
+            nWeaponUpgradeCost = 0;
+
+            // 유저 무기 데이터 수정
+            WeaponReforgeFunction(weaponCls);
+
+            // UI 반영
+            //isWeaponUpgradeBtnClicked = false;
+            ResetToWeaponItemObjectPoolDatas();
+            ResetToSelectButtonScriptPoolDatas();
+            ClosePlayerInfoScreenButton();
+            WeaponUpgeadeButtonClickEvent(2);
+        }
     }
     #endregion
 
@@ -1964,7 +2109,24 @@ public class UI_Manager : EnergyBarManager
         }
         GameManager.Instance.WeaponItemPool.AllReturnToPool();  // 웨폰 UI 오브젝트풀 리턴
     }
+    private void ScrollViewOpenButtonClickEvent(SelectButtonScript clickedBtn, Transform mainobj)
+    {
+        mainobj.gameObject.SetActive(true);
+        ResetToWeaponItemObjectPoolDatas();
+        selectBtn_ForUpgrade = clickedBtn;
+        // 객체 인스턴스화
+        InventorySortSelectButton cls_SelectionButtonOnList = mainobj.GetChild(4).GetComponent<InventorySortSelectButton>();
+        scrollForUpgradeMaterials = mainobj.GetChild(1).GetChild(0).GetComponent<Transform>();
+ 
+        // 리스트버튼은 기본 False
+        cls_SelectionButtonOnList.gameObject.SetActive(false);
 
+        // 스크롤뷰 종료 버튼 활성화
+        Button outButton = mainobj.GetChild(7).GetComponent<Button>();
+        outButton.gameObject.SetActive(true);
+        outButton.onClick.RemoveAllListeners();
+        outButton.onClick.AddListener(() => ScrollObjectOffButton(mainobj.gameObject, outButton));
+    }
 
     #region 정렬 레거시
 

@@ -7,28 +7,39 @@ public class CharacterUpgradeManager
     // 돌파 상태 도달 시, true 반환
     public static bool WeaponExpUp_Upgrade(WeaponAndEquipCls weapon, int nWeaponUpgradeExp)
     {
+        var data = GameManager.Instance.GetUserClass().GetHadWeaponList().Find(tmp => tmp.Equals(weapon));
+        var weaponData = data as WeaponAndEquipCls;
+
         int curExp = weapon.GetCurrentExp();
         int nextExp = curExp + nWeaponUpgradeExp;
         bool isLimit = false;
         weapon.SetCurrentExp(nextExp);
+        weaponData.SetCurrentExp(nextExp);
 
         while(weapon.GetCurrentExp() >= weapon.GetMaxExp())
         {
             if(weapon.GetLimitLevel()>weapon.GetLevel())
             {
                 int curLevel = weapon.GetLevel();
+
                 weapon.SetLevel(curLevel+1);
+                weaponData.SetLevel(curLevel+1);
+
                 weapon.SetMaxExp((int)(weapon.GetMaxExp()*1.6f));
+                weaponData.SetMaxExp(weapon.GetMaxExp());
             }
             else // 돌파단계 도달
             {
                 weapon.SetCurrentExp(weapon.GetMaxExp());
+                weaponData.SetCurrentExp(weapon.GetMaxExp());
+
                 isLimit = true; ;
                 break;
             }
         }
         // 장비의 메인 및 서브 스탯 데이터 수정
         GameManager.Instance.WeaponAndEquipItemStatusSet(weapon);
+        GameManager.Instance.WeaponAndEquipItemStatusSet(weaponData);
         return isLimit;
     }
 
@@ -49,6 +60,9 @@ public class CharacterUpgradeManager
 
     public static void WeaponLimitBreakFunction(WeaponAndEquipCls weapon)
     {
+        var data = GameManager.Instance.GetUserClass().GetHadWeaponList().Find(tmp => tmp.Equals(weapon));
+        var weaponData = data as WeaponAndEquipCls;
+
         int curLevel = weapon.GetLimitLevel();
         int nextLimitLevel = 0;
         switch(curLevel)
@@ -67,6 +81,25 @@ public class CharacterUpgradeManager
         }
         // 0이 아닐 경우, 돌파
         if (nextLimitLevel != 0)
+        {
             weapon.SetLimitLevel(nextLimitLevel);
+            weaponData.SetLimitLevel(nextLimitLevel);
+        }
+    }
+
+    // 재련 후, 데이터 수정
+    public static void WeaponReforgeFunction(WeaponAndEquipCls weapon)
+    {
+        var data = GameManager.Instance.GetUserClass().GetHadWeaponList().Find(tmp => tmp.Equals(weapon));
+        var weaponData = data as WeaponAndEquipCls;
+
+        int curLevel = weapon.GetEffectLevel();
+        weapon.SetEffectLevel(curLevel+1);
+        weaponData.SetEffectLevel(curLevel+1);
+
+        string nextStr = GameManager.Instance.NextReforgeEffectData(weapon);
+        weapon.SetEffectText(nextStr);
+        weaponData.SetEffectText(nextStr);
+
     }
 }
