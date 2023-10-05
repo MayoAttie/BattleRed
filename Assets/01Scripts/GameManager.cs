@@ -56,11 +56,11 @@ public class GameManager : Singleton<GameManager>
     public struct WEAPON_EQUIP_STATE_DATA_BASE  // 무기 및 성유물 스탯 테이블
     {
         public int LEVEL;
-        public int MAIN_STAT;
+        public float MAIN_STAT;
         public float SUB_STAT;
         public int LIMIT_LEVEL;
 
-        public WEAPON_EQUIP_STATE_DATA_BASE(int level, int mainStat, float subStat, int limitLevel)
+        public WEAPON_EQUIP_STATE_DATA_BASE(int level, float mainStat, float subStat, int limitLevel)
         {
             LEVEL = level;
             MAIN_STAT = mainStat;
@@ -300,7 +300,469 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(38, 172, 22.0f,40),
                 new WEAPON_EQUIP_STATE_DATA_BASE(39, 185, 22.0f,40),
                 new WEAPON_EQUIP_STATE_DATA_BASE(40, 189, 26.3f,40),
-            })
+            }),
+            // 성유물 _ 레벨: 성유물 능력치 티어, 주능력치:주능력치, 서브 능력치:-
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("꽃_3성", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 430, 0,   12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 552, 0,   12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 674, 0,   12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 796, 0,   12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 918, 0,   12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 1040, 0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 1162, 0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 1283, 0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 1405, 0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 1527, 0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 1649, 0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 1771, 0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 1893, 0, 12),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("꽃_4성", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 645, 0,   16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 828, 0,   16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 1011, 0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 1194, 0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 1377, 0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 1559, 0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 1742, 0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 1925, 0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 2108, 0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 2291, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 2474, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 2657, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 2839, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 3022, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 3388, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 3571, 0, 16),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("꽃_5성", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 717,  0,  20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 920,  0,  20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 1123, 0,  20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 1326, 0,  20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 1530, 0,  20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 1733, 0,  20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 1936, 0,  20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 2139, 0,  20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 2342, 0,  20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 2545, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 2749, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 2952, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 3155, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 3358, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 3561, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 3764, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(17, 3967, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(18, 4171, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(19, 4374, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(20, 4780, 0, 20),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("깃털_3성", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 28,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 36,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 44,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 52,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 60,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 68,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 76,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 84,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 91,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 99,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 107, 0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 115, 0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 123, 0, 12),
+
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("깃털_4성", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 42,  0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 54,  0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 66,  0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 78,  0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 90,  0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 102,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 113,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 125,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 137,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 149, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 161, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 173, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 185, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 197, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 209, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 221, 0, 16),
+
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("깃털_5성", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 47,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 60,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 73,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 86,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 100,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 113,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 126,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 139,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 152,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 166, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 179, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 192, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 205, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 219, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 232, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 245, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(17, 258, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(18, 272, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(19, 285, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(20, 311, 0, 20),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_3성_체퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 5.2f,   0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 6.7f,   0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 8.2f,   0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 9.7f,   0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 11.2f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 12.7f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 14.2f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 15.6f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 17.1f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 18.6f, 0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 20.1f, 0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 21.6f, 0, 12),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_3성_공퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 5.2f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 6.7f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 8.2f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 9.7f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 11.2f, 0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 12.7f, 0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 14.2f, 0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 15.6f, 0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 17.1f, 0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 18.6f, 0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 20.1f, 0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 21.6f, 0, 12),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_3성_방퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 6.6f,   0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 8.4f,   0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 10.3f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 12.1f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 14.0f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 15.8f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 17.7f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 19.6f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 21.4f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 23.3f, 0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 25.1f, 0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 27.0f, 0, 12),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_3성_원마", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 21f,    0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 26.9f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 32.9f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 38.8f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 44.8f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 50.7f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 56.7f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 62.6f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 68.5f,  0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 74.5f, 0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 80.4f, 0, 12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 86.4f, 0, 12),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_4성_체퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 6.3f,   0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 8.1f,   0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 9.9f,   0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 11.6f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 13.4f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 15.2f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 17f,    0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 18.8f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 20.6f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 22.3f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 24.1f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 25.9f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 27.7f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 29.5f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 31.3f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 33f,   0, 16),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_4성_공퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 6.3f,  0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 8.1f,  0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 9.9f,  0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 11.6f, 0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 13.4f, 0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 15.2f, 0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 17f,   0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 18.8f, 0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 20.6f, 0,  16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 22.3f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 24.1f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 25.9f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 27.7f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 29.5f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 31.3f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 33f,   0, 16),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_4성_방퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 7.9f,   0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 10.1f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 12.3f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 14.6f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 16.8f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 19f,    0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 21.2f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 23.5f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 25.7f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 27.9f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 30.2f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 32.4f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 34.6f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 26.8f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 39.1f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 41.3f, 0, 16),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_4성_원마", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 25.2f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 32.3f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 39.4f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 46.6f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 53.7f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 60.8f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 68f,    0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 75.1f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 82.2f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 89.4f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 96.5f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 103.6f,0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 110.8f,0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 117.9f,0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 125f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 132.2f,0, 16),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_5성_체퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 7f,     0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 9.0f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 11f,    0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 12.9f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 14.9f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 16.9f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 18.9f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 20.9f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 22.8f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 24.8f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 26.8f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 28.8f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 30.8f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 32.8f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 34.7f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 36.7f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(17, 38.7f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(18, 40.7f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(19, 42.7f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(20, 46.8f, 0, 20),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_5성_공퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 7f,     0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 9.0f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 11f,    0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 12.9f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 14.9f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 16.9f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 18.9f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 20.9f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 22.8f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 24.8f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 26.8f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 28.8f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 30.8f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 32.8f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 34.7f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 36.7f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(17, 38.7f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(18, 40.7f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(19, 42.7f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(20, 46.8f, 0, 20),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_5성_방퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 8.7f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 11.2f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 13.7f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 16.2f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 18.6f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 21.1f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 23.6f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 26.1f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 28.6f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 31f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 33.5f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 36f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 38.5f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 40.9f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 43.4f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 45.9f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(17, 48.4f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(18, 50.8f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(19, 53.3f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(20, 58.3f, 0, 20),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_5성_원마", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 28f,     0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 35.9f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 43.8f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 51.8f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 59.7f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 67.6f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 75.5f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 83.5f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 91.4f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 99.3f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 107.2f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 115.2f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 123.1f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 131f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 138.9f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 146.9f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(17, 154.8f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(18, 162.7f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(19, 170.6f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(20, 186.5f, 0, 20),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_3성_치확", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 3.5f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 4.5f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 5.5f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 6.5f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 7.5f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 8.4f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 9.4f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 10.4f, 0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 11.4f, 0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 12.4f,0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 13.4f,0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 14.4f,0,  12),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_3성_치뎀", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 7f,     0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 9f,     0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 11f,    0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 12.9f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 14.9f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 16.9f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 18.9f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 20.9f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 22.8f,  0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 24.8f, 0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 26.8f, 0,  12),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 28.8f, 0,  12),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_4성_치확", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 4.2f,   0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 5.4f,   0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 6.6f,   0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 7.8f,   0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 9f,     0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 10.1f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 11.3f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 12.5f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 13.7f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 14.9f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 16.1f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 17.3f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 18.5f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 19.7f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 20.8f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 22f,   0, 16),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_4성_치뎀", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 8.4f,   0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 10.8f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 13.1f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 15.5f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 17.9f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 20.3f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 22.7f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 25f,    0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 27.4f,  0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 29.8f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 32.2f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 34.5f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 36.9f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 39.3f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 41.7f, 0, 16),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 44.1f, 0, 16),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_5성_치확", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 4.7f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 6f,     0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 7.3f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 8.6f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 9.9f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 11.3f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 12.6f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 13.9f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 15.2f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 16.6f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 17.9f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 19.2f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 20.5f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 21.8f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 23.2f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 24.5f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(17, 25.8f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(18, 27.1f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(19, 28.4f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(20, 31.1f, 0, 20),
+            }),
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_5성_치뎀", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            {
+                new WEAPON_EQUIP_STATE_DATA_BASE(1, 9.3f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(2, 12f,    0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(3, 14.6f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(4, 17.3f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(5, 19.9f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(6, 22.5f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(7, 25.2f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(8, 27.8f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(9, 30.5f,  0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(10, 33.1f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(11, 35.7f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(12, 38.4f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(13, 41f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(14, 43.7f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(15, 46.3f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(16, 49f,   0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(17, 51.6f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(18, 54.2f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(19, 56.9f, 0, 20),
+                new WEAPON_EQUIP_STATE_DATA_BASE(20, 62.2f, 0, 20),
+            }),
+            
         };
         #endregion
 
@@ -696,6 +1158,7 @@ public class GameManager : Singleton<GameManager>
     #endregion
 
     #region DB 관련 기능 함수
+    // 무기
     // 레벨에 따른, 장비의 메인 및 서브 스탯 설정 함수
     public void WeaponAndEquipItemStatusSet(List<ItemClass> itemList)
     {
@@ -783,6 +1246,51 @@ public class GameManager : Singleton<GameManager>
         item.SetEffectText(str);
     }
 
+
+    //성유물
+    public void StatusRandomSelector(WeaponAndEquipCls item)
+    {
+        int nGrade = item.GetGrade();
+        string tag = item.GetTag();
+        if(tag == "깃털" && tag == "꽃")
+        {
+            switch(nGrade)
+            {
+                case 5:
+                    break;
+                case 4:
+                    break;
+                case 3:
+                    break;
+            }
+        }
+        else if(tag == "성배" || tag == "시계")
+        {
+            switch (nGrade)
+            {
+                case 5:
+
+                    break;
+                case 4:
+                    break;
+                case 3:
+                    break;
+            }
+        }
+        else if(tag == "왕관")
+        {
+            switch (nGrade)
+            {
+                case 5:
+
+                    break;
+                case 4:
+                    break;
+                case 3:
+                    break;
+            }
+        }
+    }
     #endregion
 
 

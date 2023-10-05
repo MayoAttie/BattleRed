@@ -639,6 +639,7 @@ public class UI_Manager : EnergyBarManager
             case e_InfoButtonSelected.Equipment:
                 PlayerInfoScreen.SetActive(true);
                 printInfoDataField[2].SetActive(true);
+                EquipmentPrint();
                 break;
             case e_InfoButtonSelected.LimitBreaker:
                 PlayerInfoScreen.SetActive(true);
@@ -1661,6 +1662,7 @@ public class UI_Manager : EnergyBarManager
 
             foreach (var btn in selectButtonList)
             {
+                if (btn.gameObject.activeSelf == false) continue;
                 if (btn.GetIsActive() == true)      // 액티브가 활성화라면, 이미 재화로써 선택한 무기임
                     continue;
                 //bool isActive = false;
@@ -2054,7 +2056,40 @@ public class UI_Manager : EnergyBarManager
 
 
     #region 성유물 UI 관리
+    void EquipmentPrint()
+    {
+        // 장비 중인 성유물 객체 데이터 프린트 함수
+        PrintEquippedEquipment();
 
+        ///버튼 객체 인스턴스화
+        ButtonClass2 cls_MoreInformationBtn = printInfoDataField[2].transform.GetChild(5).GetComponent<ButtonClass2>();
+        ButtonClass2 cls_ChangeButton = printInfoDataField[2].transform.GetChild(8).GetComponent<ButtonClass2>();
+
+
+    }
+    // 장비 중인 성유물 객체 데이터 프린트 함수
+    void PrintEquippedEquipment()
+    {
+        /// 인스턴스 초기화
+        // 기본 능력치
+        TextMeshProUGUI txtHp = printInfoDataField[2].transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txtAtk = printInfoDataField[2].transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txtDef = printInfoDataField[2].transform.GetChild(3).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txtElemnt = printInfoDataField[2].transform.GetChild(4).GetComponent<TextMeshProUGUI>();
+        // 세트 효과
+        TextMeshProUGUI txtSetSynergy_1 = printInfoDataField[2].transform.GetChild(6).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txtSetSynergy_2 = printInfoDataField[2].transform.GetChild(7).GetComponent<TextMeshProUGUI>();
+
+        var EquipmentList = GameManager.Instance.GetUserClass().GetUserEquippedEquipment();
+        int hp = 0;
+        int atk = 0;
+        int def = 0;
+        int element = 0;
+        foreach(var tmp in EquipmentList)
+        {
+            var reData = tmp as WeaponAndEquipCls;
+        }
+    }
 
     #endregion
 
