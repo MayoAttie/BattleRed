@@ -21,7 +21,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 2}
-  m_MinSize: {x: 875, y: 300}
+  m_MinSize: {x: 875, y: 492}
   m_MaxSize: {x: 10000, y: 10000}
   m_Maximized: 1
 --- !u!114 &2
@@ -112,10 +112,10 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 939
-  m_MinSize: {x: 909, y: 442}
-  m_MaxSize: {x: 22004, y: 14021}
+  m_MinSize: {x: 908, y: 442}
+  m_MaxSize: {x: 22003, y: 14021}
   vertical: 0
-  controlID: 184
+  controlID: 178
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -215,10 +215,10 @@ MonoBehaviour:
     y: 0
     width: 1023
     height: 939
-  m_MinSize: {x: 708, y: 371}
-  m_MaxSize: {x: 18003, y: 14021}
+  m_MinSize: {x: 707, y: 371}
+  m_MaxSize: {x: 18002, y: 14021}
   vertical: 1
-  controlID: 185
+  controlID: 179
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -241,8 +241,8 @@ MonoBehaviour:
     y: 0
     width: 1023
     height: 620
-  m_MinSize: {x: 708, y: 271}
-  m_MaxSize: {x: 18003, y: 10021}
+  m_MinSize: {x: 707, y: 271}
+  m_MaxSize: {x: 18002, y: 10021}
   vertical: 0
   controlID: 180
 --- !u!114 &11
@@ -316,8 +316,8 @@ MonoBehaviour:
     y: 0
     width: 388
     height: 620
-  m_MinSize: {x: 276, y: 71}
-  m_MaxSize: {x: 4001, y: 4021}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 20}
   m_Panes:
   - {fileID: 20}
@@ -479,9 +479,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 1009.85614, y: 505.81024, z: -131.33795}
+    m_Target: {x: 691.93384, y: 532.5876, z: -115.111015}
     speed: 2
-    m_Value: {x: 1009.85614, y: 505.81024, z: -131.33795}
+    m_Value: {x: 691.93384, y: 532.5876, z: -115.111015}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -531,9 +531,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 880.22815
+    m_Target: 693.68787
     speed: 2
-    m_Value: 880.22815
+    m_Value: 693.68787
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -872,9 +872,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 10390000
-      m_LastClickedID: 14608
-      m_ExpandedIDs: 66fbffff
+      m_SelectedIDs: a0b2ffff
+      m_LastClickedID: -19808
+      m_ExpandedIDs: 66fbffff103900002c3900007a390000023a0000483a0000d63a0000fe3b00004e3c00008c3c0000d63c0000243f0000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -937,19 +937,19 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/05Textures/Weapon
+    - Assets/01Scripts
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/05Textures/Weapon
+  - Assets/01Scripts
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\programming\UnityGame\BattleRed
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 4e540000
-    m_LastClickedID: 21582
+    m_SelectedIDs: b6530000
+    m_LastClickedID: 21430
     m_ExpandedIDs: 00000000b4530000b6530000b8530000ba530000bc530000be530000c0530000c2530000c4530000c6530000c8530000ca530000cc530000ce530000d0530000d2530000d4530000d6530000d8530000da530000dc53000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -1071,7 +1071,7 @@ MonoBehaviour:
     m_PrefName: Preview_InspectorPreview
   m_PreviewWindow: {fileID: 0}
   m_LastInspectedObjectInstanceID: -1
-  m_LastVerticalScrollValue: 100
+  m_LastVerticalScrollValue: 0
 --- !u!114 &21
 MonoBehaviour:
   m_ObjectHideFlags: 52

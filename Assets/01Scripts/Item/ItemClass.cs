@@ -30,5 +30,6 @@ public class ItemClass : Objects
     public int GetCost() { return nCost;}
     public int GetLevel() { return nLevel; }
     public string GetContent() { return sContent; }
+    public string GetSet() { return sSet;}
     #endregion
 }

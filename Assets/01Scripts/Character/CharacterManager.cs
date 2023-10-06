@@ -75,7 +75,6 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     // 캐릭터 애니메이터 제어 함수
     public void CharacterStateActor()
     {
-
         switch (clsCharacter.GetState())
         {
             case CharacterClass.eCharactgerState.e_Idle:
@@ -179,32 +178,29 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     // 버튼 쿨타임 함수
     IEnumerator ButtonClickedCoolTime(float time, ButtonClass ClickedBtnCls)
     {
-        isClickedCoolCheck = true;
-        float elapsedTime = 0f;
+        isClickedCoolCheck = true; // 클릭 쿨타임 중임을 나타내는 플래그를 true로 설정
+
+        float elapsedTime = 0f; // 경과 시간 초기화
         float fillAmountStart = 0f;
         float fillAmountEnd = 1f;
-        float duration = time;
+        float duration = time; // 쿨타임 지속 시간 설정
 
         while (elapsedTime < duration)
         {
-            // 버튼 쿨타임만큼 fillAmount 하기
+            // 시간에 따른 fillAmount를 계산하여 버튼의 내부 이미지에 설정
             float t = elapsedTime / duration;
             float currentFillAmount = Mathf.Lerp(fillAmountStart, fillAmountEnd, t);
             ClickedBtnCls.SetInsideImageFillAmount(currentFillAmount);
 
-            elapsedTime += Time.deltaTime;
-            yield return null;
+            elapsedTime += Time.deltaTime; // 경과 시간 업데이트
+            yield return null; // 한 프레임을 기다림
         }
 
+        // 쿨타임이 종료된 후 fillAmount를 최종 값으로 설정
         ClickedBtnCls.SetInsideImageFillAmount(fillAmountEnd);
 
         SatelliteObj.SetActive(false);
-        isClickedCoolCheck = false;
-    }
-    // 속성 애니메이션 파티클 SetOff
-    void OffSatellite()
-    {
-        SatelliteObj.SetActive(false);
+        isClickedCoolCheck = false; // 클릭 쿨타임이 끝났음을 나타내는 플래그를 false로 설정
     }
 
     // 원소 상태 표기 용 파티클 애니메이션 색상 전환

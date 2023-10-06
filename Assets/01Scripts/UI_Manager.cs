@@ -5,7 +5,8 @@ using UnityEngine.UI;
 using TMPro;
 using static CharacterUpgradeManager;
 using static UI_UseToolClass;
-
+using UnityEditor.PackageManager.Requests;
+using System.Collections;
 
 public class UI_Manager : EnergyBarManager
 {
@@ -77,7 +78,7 @@ public class UI_Manager : EnergyBarManager
     private SelectButtonScript selectBtn_ForUpgrade;                                // 플레이어가 선택한 selectButon
 
     // 성유물 창 관련
-    
+    private bool isDetailScreenOpenForEquip;                // 성유물 상세정보 창 오픈
 
     #endregion
 
@@ -698,16 +699,16 @@ public class UI_Manager : EnergyBarManager
             var obj = printInfoDataField[0].transform.GetChild(10).GetComponent<Transform>();
             obj.gameObject.SetActive(false);
 
-            InfoPrintTypeButtonActive();
+            InfoPrintTypeButtonActive();                            // 인포 UI 버튼 활성화
+            infoSelectButtons[0].OnOffSpriteSetting();
         }
         // 무기 교체 버튼 클릭 시, 기능 변경
         else if(isWeaponChangeBtnClicked)
         {
             InfoPrintTypeButtonActive();
-            CloseButtonSpriteToClose();
+            CloseButtonSpriteToClose();                             // Close 스프라이트로 버튼 심볼 교체
             infoSelectButtons[1].OnOffSpriteSetting();              // 웨폰 인포 버튼 UI 활성화
             weaponChangeButton.AlphaValueChangeing();               // 무기 변경 버튼 알파값 변경
-
             ResetToWeaponItemObjectPoolDatas();
             isWeaponChangeBtnClicked = false;
         }
@@ -722,15 +723,24 @@ public class UI_Manager : EnergyBarManager
             }
 
             InfoPrintTypeButtonActive();
-            CloseButtonSpriteToClose();
+            CloseButtonSpriteToClose();                             // Close 스프라이트로 버튼 심볼 교체
+            infoSelectButtons[1].OnOffSpriteSetting();              // 웨폰 인포 버튼 UI 활성화
 
             Transform screen = printInfoDataField[1].transform.GetChild(13).GetComponent<Transform>();    // 무기 업글 UI 오브젝트 인스턴스화
             screen.gameObject.SetActive(false);
 
-            ResetToSelectButtonScriptPoolDatas();
-            ResetToWeaponItemObjectPoolDatas();
+            ResetToSelectButtonScriptPoolDatas();   // Pool 리턴 및 초기화
+            ResetToWeaponItemObjectPoolDatas();     // Pool 리턴 및 초기화
             EquippedWeaponPrint();                  // 레벨업에 의한 데이터 변환에 대비한 UI 데이터 재출력
             isWeaponUpgradeBtnClicked = false;
+        }
+        else if(isDetailScreenOpenForEquip) // 성유물 - 성유물 상세정보 창 출력
+        {
+            isDetailScreenOpenForEquip = false;
+            var obj = printInfoDataField[2].transform.GetChild(9).GetComponent<Transform>();
+            obj.gameObject.SetActive(false);
+            InfoPrintTypeButtonActive();
+            infoSelectButtons[2].OnOffSpriteSetting();
         }
         else    // 종료
         {
@@ -745,7 +755,6 @@ public class UI_Manager : EnergyBarManager
     {
         // 스프라이트 이미지(ToClose) 변경
         InfoObj_CloseButtion.GetComponent<ButtonClass2>().SetSymbolSprite(ItemSpritesSaver.Instance.SpritesSet[1]);
-        infoSelectButtons[1].OnOffSpriteSetting();              // 웨폰 인포 버튼 UI 활성화
     }
     private void CloseButtonSpriteToBack()
     {
@@ -2064,31 +2073,299 @@ public class UI_Manager : EnergyBarManager
         ///버튼 객체 인스턴스화
         ButtonClass2 cls_MoreInformationBtn = printInfoDataField[2].transform.GetChild(5).GetComponent<ButtonClass2>();
         ButtonClass2 cls_ChangeButton = printInfoDataField[2].transform.GetChild(8).GetComponent<ButtonClass2>();
+        var detailPrintobj = printInfoDataField[2].transform.GetChild(9).GetComponent<Transform>();
+        detailPrintobj.gameObject.SetActive(false);
+
+        // 상세정보 출력 버튼 이벤트 리스너 연결
+        cls_MoreInformationBtn.GetButton().onClick.RemoveAllListeners();
+        ButtonClass2_Reset(cls_MoreInformationBtn);
+        cls_MoreInformationBtn.GetButton().onClick.AddListener(()=>DetailedEquipInfoPrint());
+
+        // 성유물 교체 버튼 이벤트 리스너 연결
 
 
     }
-    // 장비 중인 성유물 객체 데이터 프린트 함수
+    // 장비 중인 성유물 객체 데이터 프린트 함수_최상단 기본 창
     void PrintEquippedEquipment()
     {
         /// 인스턴스 초기화
         // 기본 능력치
-        TextMeshProUGUI txtHp = printInfoDataField[2].transform.GetChild(1).GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI txtAtk = printInfoDataField[2].transform.GetChild(2).GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI txtDef = printInfoDataField[2].transform.GetChild(3).GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI txtElemnt = printInfoDataField[2].transform.GetChild(4).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txtHp = printInfoDataField[2].transform.GetChild(1).GetChild(2).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txtAtk = printInfoDataField[2].transform.GetChild(2).GetChild(2).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txtDef = printInfoDataField[2].transform.GetChild(3).GetChild(2).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txtElemnt = printInfoDataField[2].transform.GetChild(4).GetChild(2).GetComponent<TextMeshProUGUI>();
         // 세트 효과
         TextMeshProUGUI txtSetSynergy_1 = printInfoDataField[2].transform.GetChild(6).GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI txtSetSynergy_2 = printInfoDataField[2].transform.GetChild(7).GetComponent<TextMeshProUGUI>();
 
         var EquipmentList = GameManager.Instance.GetUserClass().GetUserEquippedEquipment();
-        int hp = 0;
-        int atk = 0;
-        int def = 0;
-        int element = 0;
-        foreach(var tmp in EquipmentList)
+        
+        // 세트 효과 파악
+        Dictionary<string, int> setFinder = new Dictionary<string, int>();
+        txtSetSynergy_1.text = "";
+        txtSetSynergy_2.text = "";
+
+        var datas = ReturnEquipmentStatSum(EquipmentList, setFinder);
+
+        int hp = (int)datas[0];
+        int atk = (int)datas[1];
+        int def = (int)datas[2];
+        int element = (int)datas[3];
+
+        // 세트 효과를 기본 능력치에 반영 및, UI에 출력함
+        foreach (var kvp in setFinder)
         {
-            var reData = tmp as WeaponAndEquipCls;
+            string set = kvp.Key;   // 세트 키 가져오기
+            int count = kvp.Value; // 세트 개수 가져오기
+
+            if(count >=4)
+            {
+                var db = GameManager.Instance.GetList_EquipmentSetSynergyData();
+                var dbItem1 = db.Find(tmp => tmp.EQUIPMENT_SET_NAME.Equals(set) && tmp.EQUIPMENT_SET_NUMBER == 2);
+                var dbItem2 = db.Find(tmp => tmp.EQUIPMENT_SET_NAME.Equals(set) && tmp.EQUIPMENT_SET_NUMBER == 4);
+                ApplyEquipmentEffect(dbItem1, ref atk, ref def, ref hp, ref element);
+                ApplyEquipmentEffect(dbItem2, ref atk, ref def, ref hp, ref element);
+
+                txtSetSynergy_1.text = set + "\n" + "2세트 "+ dbItem1.EQUIPMENT_SET_EFFECT_TEXT;
+                txtSetSynergy_2.text = set + "\n" + "4세트 "+ dbItem2.EQUIPMENT_SET_EFFECT_TEXT;
+                break;
+            }
+            else if(count >=2)
+            {
+                var db = GameManager.Instance.GetList_EquipmentSetSynergyData();
+                var dbItem = db.Find(tmp => tmp.EQUIPMENT_SET_NAME.Equals(set) && tmp.EQUIPMENT_SET_NUMBER == 2);
+
+                ApplyEquipmentEffect(dbItem, ref atk, ref def, ref hp, ref element);
+
+                if (txtSetSynergy_1.text == "")
+                    txtSetSynergy_1.text = set + "\n" + "2세트 " + dbItem.EQUIPMENT_SET_EFFECT_TEXT;
+                else
+                    txtSetSynergy_2.text = set + "\n" + "2세트 " + dbItem.EQUIPMENT_SET_EFFECT_TEXT;
+                continue;
+            }
         }
+
+
+        txtHp.text = hp.ToString();
+        txtDef.text = def.ToString();
+        txtAtk.text = atk.ToString();
+        txtElemnt.text = element.ToString();
+    }
+    // 중복 코드를 메서드로 추출 - hp, atk, def, element, criRate, criDamage 순서로 반환
+    float[] ReturnEquipmentStatSum(ItemClass[] EquipmentList, Dictionary<string, int> setFinder)
+    {
+        // 기본 데이터
+        float hp = 0;
+        float atk = 0;
+        float def = 0;
+        float element = 0;
+        float criticalRate = 0;
+        float criticalDamage = 0;
+
+        // 세트 효과 파악
+        foreach (var tmp in EquipmentList)
+        {
+            if (tmp == null)
+                continue;
+            var reData = tmp as WeaponAndEquipCls;
+            // 기본 데이터 출력
+            if (reData.GetTag() == "꽃")
+                hp += (int)reData.GetMainStat();
+            else if (reData.GetTag() == "깃털")
+                atk += (int)reData.GetMainStat();
+            else
+            {
+                string reDataText = reData.GetEffectText(); // reData.GetEffectText()로부터 문자열 가져오기
+                string pivot = ""; // pivot 문자열 초기화
+
+                if (reDataText.Length > 7)
+                {
+                    // 8번째 값부터 끝까지의 부분을 pivot에 저장
+                    pivot = reDataText.Substring(7);
+                }
+                //Debug.Log("pivot :: => "+pivot);
+                switch (pivot)
+                {
+                    case "공격력":
+                        {
+                            float mul = reData.GetMainStat() * 0.01f;
+                            int atkPluser = (int)(mul * atk);
+                            atk += atkPluser;
+                        }
+                        break;
+                    case "방어력":
+                        {
+                            float mul = reData.GetMainStat() * 0.01f;
+                            int defPluser = (int)(mul * def);
+                            def += defPluser;
+                        }
+                        break;
+                    case "체력":
+                        {
+                            float mul = reData.GetMainStat() * 0.01f;
+                            int hpPluser = (int)(mul * hp);
+                            hp += hpPluser;
+                        }
+                        break;
+                    case "원소 마스터리":
+                        {
+                            int value = (int)reData.GetMainStat();
+                            element += value;
+                        }
+                        break;
+                    case "치명타 확률":
+                        {
+                            float vlaue = reData.GetMainStat();
+                            criticalRate+= vlaue;
+                        }
+                        break;
+                    case "치명타 피해":
+                        {
+                            float value = reData.GetMainStat();
+                            criticalDamage+= value;
+                        }
+                        break;
+                    default: break;
+                }
+            }
+
+            // Dictionary에 키가 없으면 0으로 초기화하고 1을 더함
+            string set = reData.GetSet();
+            if (!setFinder.ContainsKey(set))
+                setFinder[set] = 0;
+
+            setFinder[set]++;
+
+        }
+
+        float[] answers = {hp, atk, def, element, criticalRate , criticalDamage };
+        return answers;
+
+    }
+    // 성유물 데이터에 따라 성유물 스탯 수정
+    void ApplyEquipmentEffect(GameManager.EQUIPMENT_SET_SYNERGY_DATA_BASE dbItem, ref int atk, ref int def, ref int hp, ref int element)
+    {
+        float mul = dbItem.EQUIPMENT_SET_EFFECT_VALUE * 0.01f;
+        int pluser = 0;
+        
+        if(dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("공격력"))
+        {
+            pluser = (int)(mul * atk);
+            atk += pluser;
+        }
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("방어력"))
+        {
+            pluser = (int)(mul * def);
+            def += pluser;
+        }
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("체력"))
+        {
+            pluser = (int)(mul * hp);
+            hp += pluser;
+        }
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("원소 마스터리"))
+            element += (int)dbItem.EQUIPMENT_SET_EFFECT_VALUE;
+        //Debug.Log("pluser :: => " + pluser);
+    }
+    void ApplyEquipmentEffect(GameManager.EQUIPMENT_SET_SYNERGY_DATA_BASE dbItem, ref int atk, ref int def, ref int hp, ref int element, ref float citicalRate, ref float criticalDamage)
+    {
+        float mul = dbItem.EQUIPMENT_SET_EFFECT_VALUE * 0.01f;
+        int pluser = 0;
+
+        if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("공격력"))
+        {
+            pluser = (int)(mul * atk);
+            atk += pluser;
+        }
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("방어력"))
+        {
+            pluser = (int)(mul * def);
+            def += pluser;
+        }
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("체력"))
+        {
+            pluser = (int)(mul * hp);
+            hp += pluser;
+        }
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("원소 마스터리"))
+            element += (int)dbItem.EQUIPMENT_SET_EFFECT_VALUE;
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("치명타 확률"))
+            citicalRate += dbItem.EQUIPMENT_SET_EFFECT_VALUE;
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("치명타 데미지"))
+            criticalDamage += dbItem.EQUIPMENT_SET_EFFECT_VALUE;
+    }
+
+    // 상세 정보창 출력
+    void DetailedEquipInfoPrint()
+    {
+        // 상세 데이터 화면 출력 - 인스턴스 초기화 및 객체 활성화
+        //isDetailScreenOpen = true;
+        InfoPrintTypeButtonUnActive();
+        isDetailScreenOpenForEquip = true;
+        var obj = printInfoDataField[2].transform.GetChild(9).GetComponent<Transform>();
+        obj.gameObject.SetActive(true);
+
+        Transform content = obj.GetChild(0).GetChild(0).GetChild(0).GetComponent<Transform>();
+        TextMeshProUGUI[] statusTexts = new TextMeshProUGUI[7];
+        // 데이터 출력을 위한 TextMeshPro 배열에 저장
+        for (int i = 0; i < 5; i++)
+        {
+            statusTexts[i] = content.GetChild(1 + i).GetChild(2).GetComponent<TextMeshProUGUI>();
+        }
+        for (int i = 0; i < 2; i++)
+        {
+            statusTexts[5 + i] = content.GetChild(8 + i).GetChild(2).GetComponent<TextMeshProUGUI>();
+        }
+
+
+        // 출력 데이터 연산
+        var EquipmentList = GameManager.Instance.GetUserClass().GetUserEquippedEquipment();
+
+        // 세트 효과 파악
+        Dictionary<string, int> setFinder = new Dictionary<string, int>();
+
+        var equipDatas = ReturnEquipmentStatSum(EquipmentList, setFinder);
+
+        int hp = (int)equipDatas[0];
+        int atk = (int)equipDatas[1];
+        int def = (int)equipDatas[2];
+        int element = (int)equipDatas[3];
+        float criticalRate = equipDatas[4];
+        float criticalDamage = equipDatas[5];
+        int stamina = 0;
+
+
+        // 세트 효과를 기본 능력치에 반영 및, UI에 출력함
+        foreach (var kvp in setFinder)
+        {
+            string set = kvp.Key;   // 세트 키 가져오기
+            int count = kvp.Value; // 세트 개수 가져오기
+
+            if (count >= 4)
+            {
+                var db = GameManager.Instance.GetList_EquipmentSetSynergyData();
+                var dbItem1 = db.Find(tmp => tmp.EQUIPMENT_SET_NAME.Equals(set) && tmp.EQUIPMENT_SET_NUMBER == 2);
+                var dbItem2 = db.Find(tmp => tmp.EQUIPMENT_SET_NAME.Equals(set) && tmp.EQUIPMENT_SET_NUMBER == 4);
+                ApplyEquipmentEffect(dbItem1, ref atk, ref def, ref hp, ref element, ref criticalRate, ref criticalDamage);
+                ApplyEquipmentEffect(dbItem2, ref atk, ref def, ref hp, ref element, ref criticalRate, ref criticalDamage);
+                break;
+            }
+            else if (count >= 2)
+            {
+                var db = GameManager.Instance.GetList_EquipmentSetSynergyData();
+                var dbItem = db.Find(tmp => tmp.EQUIPMENT_SET_NAME.Equals(set) && tmp.EQUIPMENT_SET_NUMBER == 2);
+                ApplyEquipmentEffect(dbItem, ref atk, ref def, ref hp, ref element, ref criticalRate, ref criticalDamage);
+                continue;
+            }
+        }
+
+        statusTexts[0].text = hp.ToString();
+        statusTexts[1].text = atk.ToString();
+        statusTexts[2].text = def.ToString();
+        statusTexts[3].text = element.ToString();
+        statusTexts[4].text = stamina.ToString();
+        statusTexts[5].text = criticalRate.ToString() + "%";
+        statusTexts[6].text = criticalDamage.ToString();
     }
 
     #endregion

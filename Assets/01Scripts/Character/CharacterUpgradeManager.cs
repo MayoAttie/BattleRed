@@ -38,8 +38,8 @@ public class CharacterUpgradeManager
             }
         }
         // 장비의 메인 및 서브 스탯 데이터 수정
-        GameManager.Instance.WeaponAndEquipItemStatusSet(weapon);
-        GameManager.Instance.WeaponAndEquipItemStatusSet(weaponData);
+        GameManager.Instance.WeaponItemStatusSet(weapon);
+        GameManager.Instance.WeaponItemStatusSet(weaponData);
         return isLimit;
     }
 

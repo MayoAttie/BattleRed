@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static HandlePauseTool;
 public class GameManager : Singleton<GameManager>
 {
@@ -33,11 +34,12 @@ public class GameManager : Singleton<GameManager>
 
     // 게임 데이터
     private UserClass playerData;
-    private List<ItemClass> ItemDataList;
-    private List<WeaponAndEquipCls> WeaponAndEquipmentDataList;
+    private List<ItemClass> ItemDataList;   // 디폴트 아이템 리스트
+    private List<WeaponAndEquipCls> WeaponAndEquipmentDataList; // 디폴트 무기/성유물 아이템 리스트
     private List<Tuple<string,List<WEAPON_EQUIP_STATE_DATA_BASE>>> list_WeaponAndEquipData;
     private List<Tuple<string, List<WEAPON_EQUIP_LIMIT_BREAK_RESOURCE_DATA>>> list_WeaponAndEquipLimitBreakResourceData;
     private List<Tuple<string, List<WEAPON_EQUIP_EFFECT_DATA_BASE>>> list_WeaponAndEquipReforgeGradeData;
+    private List<EQUIPMENT_SET_SYNERGY_DATA_BASE> list_EquipmentSetSynergyData;
 
     // 기타
     [SerializeField] Transform objectPoolSavePos;
@@ -90,6 +92,23 @@ public class GameManager : Singleton<GameManager>
         {
             EFFECT_LEVEL = eFFECT_LEVEL;
             EFFECT_TEXT = eFFECT_TEXT;
+        }
+    }
+    public struct EQUIPMENT_SET_SYNERGY_DATA_BASE
+    {
+        public string EQUIPMENT_SET_NAME;
+        public int EQUIPMENT_SET_NUMBER;
+        public string EQUIPMENT_SET_EFFECT_TEXT;
+        public string EQUIPMENT_SET_EFFECT_ELEMENT;
+        public float EQUIPMENT_SET_EFFECT_VALUE;
+
+        public EQUIPMENT_SET_SYNERGY_DATA_BASE(string eQUIPMENT_SET_NAME, int eQUIPMENT_SET_NUMBER, string eQUIPMENT_SET_EFFECT_TEXT, string eQUIPMENT_SET_EFFECT_ELEMENT, float eQUIPMENT_SET_EFFECT_VALUE)
+        {
+            EQUIPMENT_SET_NAME = eQUIPMENT_SET_NAME;
+            EQUIPMENT_SET_NUMBER = eQUIPMENT_SET_NUMBER;
+            EQUIPMENT_SET_EFFECT_TEXT = eQUIPMENT_SET_EFFECT_TEXT;
+            EQUIPMENT_SET_EFFECT_ELEMENT = eQUIPMENT_SET_EFFECT_ELEMENT;
+            EQUIPMENT_SET_EFFECT_VALUE = eQUIPMENT_SET_EFFECT_VALUE;
         }
     }
     #endregion
@@ -302,7 +321,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(40, 189, 26.3f,40),
             }),
             // 성유물 _ 레벨: 성유물 능력치 티어, 주능력치:주능력치, 서브 능력치:-
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("꽃_3성", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("3성_꽃", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 430, 0,   12),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 552, 0,   12),
@@ -318,7 +337,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(12, 1771, 0, 12),
                 new WEAPON_EQUIP_STATE_DATA_BASE(13, 1893, 0, 12),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("꽃_4성", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("4성_꽃", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 645, 0,   16),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 828, 0,   16),
@@ -337,7 +356,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(15, 3388, 0, 16),
                 new WEAPON_EQUIP_STATE_DATA_BASE(16, 3571, 0, 16),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("꽃_5성", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("5성_꽃", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 717,  0,  20),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 920,  0,  20),
@@ -360,7 +379,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(19, 4374, 0, 20),
                 new WEAPON_EQUIP_STATE_DATA_BASE(20, 4780, 0, 20),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("깃털_3성", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("3성_깃털", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 28,  0,  12),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 36,  0,  12),
@@ -377,7 +396,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(13, 123, 0, 12),
 
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("깃털_4성", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("4성_깃털", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 42,  0,  16),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 54,  0,  16),
@@ -397,7 +416,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(16, 221, 0, 16),
 
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("깃털_5성", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("5성_깃털", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 47,   0, 20),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 60,   0, 20),
@@ -420,7 +439,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(19, 285, 0, 20),
                 new WEAPON_EQUIP_STATE_DATA_BASE(20, 311, 0, 20),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_3성_체퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("3성_성유물_체력", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 5.2f,   0, 12),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 6.7f,   0, 12),
@@ -435,7 +454,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(11, 20.1f, 0, 12),
                 new WEAPON_EQUIP_STATE_DATA_BASE(12, 21.6f, 0, 12),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_3성_공퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("3성_성유물_공격력", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 5.2f,  0,  12),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 6.7f,  0,  12),
@@ -450,7 +469,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(11, 20.1f, 0, 12),
                 new WEAPON_EQUIP_STATE_DATA_BASE(12, 21.6f, 0, 12),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_3성_방퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("3성_성유물_방어력", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 6.6f,   0, 12),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 8.4f,   0, 12),
@@ -465,7 +484,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(11, 25.1f, 0, 12),
                 new WEAPON_EQUIP_STATE_DATA_BASE(12, 27.0f, 0, 12),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_3성_원마", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("3성_성유물_원소 마스터리", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 21f,    0, 12),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 26.9f,  0, 12),
@@ -480,7 +499,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(11, 80.4f, 0, 12),
                 new WEAPON_EQUIP_STATE_DATA_BASE(12, 86.4f, 0, 12),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_4성_체퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("4성_성유물_체력", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 6.3f,   0, 16),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 8.1f,   0, 16),
@@ -499,7 +518,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(15, 31.3f, 0, 16),
                 new WEAPON_EQUIP_STATE_DATA_BASE(16, 33f,   0, 16),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_4성_공퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("4성_성유물_공격력", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 6.3f,  0,  16),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 8.1f,  0,  16),
@@ -518,7 +537,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(15, 31.3f, 0, 16),
                 new WEAPON_EQUIP_STATE_DATA_BASE(16, 33f,   0, 16),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_4성_방퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("4성_성유물_방어력", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 7.9f,   0, 16),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 10.1f,  0, 16),
@@ -537,7 +556,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(15, 39.1f, 0, 16),
                 new WEAPON_EQUIP_STATE_DATA_BASE(16, 41.3f, 0, 16),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_4성_원마", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("4성_성유물_원소 마스터리", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 25.2f,  0, 16),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 32.3f,  0, 16),
@@ -556,7 +575,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(15, 125f,  0, 16),
                 new WEAPON_EQUIP_STATE_DATA_BASE(16, 132.2f,0, 16),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_5성_체퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("5성_성유물_체력", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 7f,     0, 20),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 9.0f,   0, 20),
@@ -579,7 +598,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(19, 42.7f, 0, 20),
                 new WEAPON_EQUIP_STATE_DATA_BASE(20, 46.8f, 0, 20),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_5성_공퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("5성_성유물_공격력", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 7f,     0, 20),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 9.0f,   0, 20),
@@ -602,7 +621,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(19, 42.7f, 0, 20),
                 new WEAPON_EQUIP_STATE_DATA_BASE(20, 46.8f, 0, 20),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_5성_방퍼", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("5성_성유물_방어력", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 8.7f,   0, 20),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 11.2f,  0, 20),
@@ -625,7 +644,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(19, 53.3f, 0, 20),
                 new WEAPON_EQUIP_STATE_DATA_BASE(20, 58.3f, 0, 20),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_5성_원마", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("5성_성유물_원소 마스터리", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 28f,     0, 20),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 35.9f,   0, 20),
@@ -648,7 +667,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(19, 170.6f, 0, 20),
                 new WEAPON_EQUIP_STATE_DATA_BASE(20, 186.5f, 0, 20),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_3성_치확", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("3성_성유물_치명타 확률", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 3.5f,  0,  12),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 4.5f,  0,  12),
@@ -663,7 +682,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(11, 13.4f,0,  12),
                 new WEAPON_EQUIP_STATE_DATA_BASE(12, 14.4f,0,  12),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_3성_치뎀", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("3성_성유물_치명타 피해", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 7f,     0,  12),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 9f,     0,  12),
@@ -678,7 +697,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(11, 26.8f, 0,  12),
                 new WEAPON_EQUIP_STATE_DATA_BASE(12, 28.8f, 0,  12),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_4성_치확", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("4성_성유물_치명타 확률", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 4.2f,   0, 16),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 5.4f,   0, 16),
@@ -697,7 +716,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(15, 20.8f, 0, 16),
                 new WEAPON_EQUIP_STATE_DATA_BASE(16, 22f,   0, 16),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_4성_치뎀", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("4성_성유물_치명타 피해", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 8.4f,   0, 16),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 10.8f,  0, 16),
@@ -716,7 +735,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(15, 41.7f, 0, 16),
                 new WEAPON_EQUIP_STATE_DATA_BASE(16, 44.1f, 0, 16),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_5성_치확", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("5성_성유물_치명타 확률", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 4.7f,   0, 20),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 6f,     0, 20),
@@ -739,7 +758,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_STATE_DATA_BASE(19, 28.4f, 0, 20),
                 new WEAPON_EQUIP_STATE_DATA_BASE(20, 31.1f, 0, 20),
             }),
-            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("성유물_5성_치뎀", new List<WEAPON_EQUIP_STATE_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_STATE_DATA_BASE>>("5성_성유물_치명타 피해", new List<WEAPON_EQUIP_STATE_DATA_BASE>
             {
                 new WEAPON_EQUIP_STATE_DATA_BASE(1, 9.3f,   0, 20),
                 new WEAPON_EQUIP_STATE_DATA_BASE(2, 12f,    0, 20),
@@ -829,6 +848,18 @@ public class GameManager : Singleton<GameManager>
         };
         #endregion
 
+        #region 성유물 세트효과 DB 채우기
+        list_EquipmentSetSynergyData = new List<EQUIPMENT_SET_SYNERGY_DATA_BASE>()
+        {
+            new EQUIPMENT_SET_SYNERGY_DATA_BASE("행자의 마음",2,"공격력+18%","공격력",18),
+            new EQUIPMENT_SET_SYNERGY_DATA_BASE("행자의 마음",4,"HP가 50%를 초과하는 적에게 가하는 피해가 30% 증가한다","피해량",30),
+            new EQUIPMENT_SET_SYNERGY_DATA_BASE("전투광",2,"치명타 확률+12%","치명타 확률",12),
+            new EQUIPMENT_SET_SYNERGY_DATA_BASE("전투광",4,"HP 70% 미만 시 치명타 확률이 추가로 24% 증가한다","치명타 확률",24),
+            new EQUIPMENT_SET_SYNERGY_DATA_BASE("피에 물든 기사도",2,"공격력+18%","공격력",18),
+            new EQUIPMENT_SET_SYNERGY_DATA_BASE("피에 물든 기사도",4,"해당 성유물 세트를 장착한 캐릭터가 한손검, 양손검, 장병기를 사용 시 캐릭터의 일반 공격으로 가하는 피해가 35% 증가한다","일반 공격",35),
+        };
+        #endregion
+
 
         // 유저 게임 데이터 초기화
         characterCls = new CharacterClass(300, 300, 0, 100, 50, 15, 1, 20, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true, 100);
@@ -843,7 +874,7 @@ public class GameManager : Singleton<GameManager>
             new WeaponAndEquipCls("무기", "여명신검", 3, false, 1, 30000, 10,20, "오래전 아침 햇살처럼 빛나던 보검. 이 검을 가진 자는 근거 없는 자신감에 가득 차게 된다. 검신의 빛나던 발광 재료는 이미 사라졌다", "","HP가 90% 초과 시 치명타 확률이 <color=#00FFFF>14%</color> 증가한다.",1,266,10f,990,1208)
         };
         playerData.SetHadWeaponList(weaponList);
-        WeaponAndEquipItemStatusSet(weaponList);
+        WeaponItemStatusSet(weaponList);
 
         List<ItemClass> equipList = new List<ItemClass>
         {
@@ -865,7 +896,10 @@ public class GameManager : Singleton<GameManager>
             new WeaponAndEquipCls("꽃", "피에 물든 강철 심장", 5, false, 1, 51000, 1, 20, "피에 검게 물들어 강철과 같은 강도를 가지게 될 정도로 말라버린 꽃.\n과거 이 꽃의 주인에겐 일종의 기념품이지 않았을까", "피에 물든 기사도", "", 1,660,18,160,400),
             new WeaponAndEquipCls("모래", "피에 물든 기사의 시계", 5, false, 1, 55000, 1, 20, "기사가 과거에 사용했던 시계. 안의 액체가 모두 굳어 시계의 기능을 상실했다", "피에 물든 기사도", "", 1,35,20,266,400)
         };
+        EquipStatusRandomSelector(equipList);
+        EquipItemStatusSet(equipList);
         playerData.SetHadEquipmentList(equipList);
+
 
         List<ItemClass> gemList = new List<ItemClass>
         {
@@ -1158,9 +1192,12 @@ public class GameManager : Singleton<GameManager>
     #endregion
 
     #region DB 관련 기능 함수
-    // 무기
+    /// <summary>
+    /// 무기 - 무기는 GetName 값을 기준으로 데이터를 참조한다. 
+    /// 무기는 이름을 기준으로, DB 데이터를 구분하며, 이름 - 레벨 순으로 참조하면 된다.
+    /// </summary>
     // 레벨에 따른, 장비의 메인 및 서브 스탯 설정 함수
-    public void WeaponAndEquipItemStatusSet(List<ItemClass> itemList)
+    public void WeaponItemStatusSet(List<ItemClass> itemList)
     {
         foreach (var tmp in itemList)
         {
@@ -1178,7 +1215,7 @@ public class GameManager : Singleton<GameManager>
             }
         }
     }
-    public void WeaponAndEquipItemStatusSet(ItemClass item)
+    public void WeaponItemStatusSet(ItemClass item)
     {
         WeaponAndEquipCls weItem = item as WeaponAndEquipCls;
 
@@ -1193,7 +1230,7 @@ public class GameManager : Singleton<GameManager>
             weItem.SetLimitLevel(matchingData.LIMIT_LEVEL);
         }
     }
-    public void WeaponAndEquipItemStatusSet(WeaponAndEquipCls item)
+    public void WeaponItemStatusSet(WeaponAndEquipCls item)
     {
         var finder = list_WeaponAndEquipData.Find(data => data.Item1.Equals(item.GetName()));
 
@@ -1206,6 +1243,8 @@ public class GameManager : Singleton<GameManager>
             item.SetLimitLevel(matchingData.LIMIT_LEVEL);
         }
     }
+
+    //다음 돌파 한계 레벨 반환 함수
     public int NextLimitLevelFinder(WeaponAndEquipCls item)
     {
         int nextValue =0;
@@ -1229,6 +1268,8 @@ public class GameManager : Singleton<GameManager>
         Debug.Log(nameof(nextValue)+":" +nextValue);
         return nextValue;
     }
+
+    // 다음 단계 재련 효과 텍스트 반환 함수
     public string NextReforgeEffectData(WeaponAndEquipCls item)
     {
         string str = string.Empty;
@@ -1237,6 +1278,7 @@ public class GameManager : Singleton<GameManager>
         str = nextData.EFFECT_TEXT;
         return str;
     }
+    // 현재 재련 단계에 해당하는 효과 텍스트 세팅 함수
     public void SetReforgeEffectData(WeaponAndEquipCls item)
     {
         string str = string.Empty;
@@ -1247,49 +1289,134 @@ public class GameManager : Singleton<GameManager>
     }
 
 
-    //성유물
-    public void StatusRandomSelector(WeaponAndEquipCls item)
+    /// <summary>
+    /// 성유물 - 성유물은 GetEffectText 값을 기준으로 데이터를 참조한다. 
+    /// 이는, 성유물의 경우 이름을 기준으로 DB 데이터를 구분하지 않기 때문
+    /// </summary>
+    public void EquipItemStatusSet(List<ItemClass> itemList)
+    {
+        foreach (var tmp in itemList)
+        {
+            WeaponAndEquipCls item = tmp as WeaponAndEquipCls;
+            string str = item.GetEffectText();  // 성유물의 EffectText는, DB의 칼럼 값을 저장한다.
+
+            var finder = list_WeaponAndEquipData.Find(data => data.Item1.Equals(str));
+
+            if (finder != null) // finder가 null이 아닌 경우에만 처리
+            {
+                // finder가 참조하는 Tuple의 Item2에서 조건을 만족하는 WEAPON_EQUIP_STATE_DATA_BASE를 추출
+                var matchingData = finder.Item2.Find(inData => inData.LEVEL == item.GetLevel());
+                item.SetMainStat(matchingData.MAIN_STAT);
+                item.SetSubStat(matchingData.SUB_STAT);
+                item.SetLimitLevel(matchingData.LIMIT_LEVEL);
+            }
+        }
+    }
+    public void EquipItemStatusSet(ItemClass item)
+    {
+        WeaponAndEquipCls weItem = item as WeaponAndEquipCls;
+
+        var finder = list_WeaponAndEquipData.Find(data => data.Item1.Equals(weItem.GetEffectText()));
+
+        if (finder != null) // finder가 null이 아닌 경우에만 처리
+        {
+            // finder가 참조하는 Tuple의 Item2에서 조건을 만족하는 WEAPON_EQUIP_STATE_DATA_BASE를 추출
+            var matchingData = finder.Item2.Find(inData => inData.LEVEL == item.GetLevel());
+            weItem.SetMainStat(matchingData.MAIN_STAT);
+            weItem.SetSubStat(matchingData.SUB_STAT);
+            weItem.SetLimitLevel(matchingData.LIMIT_LEVEL);
+        }
+    }
+    public void EquipItemStatusSet(WeaponAndEquipCls item)
+    {
+        var finder = list_WeaponAndEquipData.Find(data => data.Item1.Equals(item.GetEffectText()));
+
+        if (finder != null) // finder가 null이 아닌 경우에만 처리
+        {
+            // finder가 참조하는 Tuple의 Item2에서 조건을 만족하는 WEAPON_EQUIP_STATE_DATA_BASE를 추출
+            var matchingData = finder.Item2.Find(inData => inData.LEVEL == item.GetLevel());
+            item.SetMainStat(matchingData.MAIN_STAT);
+            item.SetSubStat(matchingData.SUB_STAT);
+            item.SetLimitLevel(matchingData.LIMIT_LEVEL);
+        }
+    }
+
+    // 랜덤 성유물 능력치 부여 함수
+    public void EquipStatusRandomSelector(List<ItemClass> itemList)
+    {
+        foreach(ItemClass tmp in itemList)
+        {
+            var item = tmp as WeaponAndEquipCls;
+            int nGrade = item.GetGrade();
+            string tag = item.GetTag();
+            string str = "";
+            // 등급 분류
+            switch (nGrade)
+            {
+                case 5:
+                    str += "5성_";
+                    break;
+                case 4:
+                    str += "4성_";
+                    break;
+                case 3:
+                    str += "3성_";
+                    break;
+            }
+            // 태그 분류
+            if (tag == "꽃" || tag == "깃털")
+                str += tag;
+            else
+            {
+                str += "성유물_";
+                string[] offset = { "치명타 피해", "치명타 확률", "원소 마스터리", "방어력", "공격력", "체력", "방어력", "체력", "원소 마스터리", "공격력" };
+
+                // 현재 시간을 시드로 사용하여 랜덤 객체 생성
+                //System.Random random = new System.Random(DateTime.Now.Millisecond);
+
+                // 무작위로 offset 배열에서 값을 선택
+                int index = UnityEngine.Random.Range(0, offset.Length);
+                string selectedOffset = offset[index];
+
+                str += selectedOffset;
+            }
+            item.SetEffectText(str);
+        }
+    }
+    public void EquipStatusRandomSelector(WeaponAndEquipCls item)
     {
         int nGrade = item.GetGrade();
         string tag = item.GetTag();
-        if(tag == "깃털" && tag == "꽃")
+        string str = "";
+        // 등급 분류
+        switch(nGrade)
         {
-            switch(nGrade)
-            {
-                case 5:
-                    break;
-                case 4:
-                    break;
-                case 3:
-                    break;
-            }
+            case 5:
+                str += "5성_";
+                break;
+            case 4:
+                str += "4성_";
+                break;
+            case 3:
+                str += "3성_";
+                break;
         }
-        else if(tag == "성배" || tag == "시계")
+        // 태그 분류
+        if(tag == "꽃" || tag == "깃털")
+            str += tag;
+        else
         {
-            switch (nGrade)
-            {
-                case 5:
+            str += "성유물_";
+            string[] offset = { "치명타 피해", "치명타 확률", "원소 마스터리", "방어력", "공격력", "체력", "방어력", "체력", "원소 마스터리", "공격력" };
 
-                    break;
-                case 4:
-                    break;
-                case 3:
-                    break;
-            }
-        }
-        else if(tag == "왕관")
-        {
-            switch (nGrade)
-            {
-                case 5:
+            // 무작위로 offset 배열에서 값을 선택
+            System.Random random = new System.Random();
+            int index = random.Next(0, offset.Length);
+            string selectedOffset = offset[index];
 
-                    break;
-                case 4:
-                    break;
-                case 3:
-                    break;
-            }
+            str += selectedOffset;
         }
+        item.SetEffectText(str);
     }
     #endregion
 
@@ -1304,6 +1431,10 @@ public class GameManager : Singleton<GameManager>
     public List<Tuple<string,List<WEAPON_EQUIP_EFFECT_DATA_BASE>>> GetList_WeaponAndEquipReforgeGradeData()
     {
         return list_WeaponAndEquipReforgeGradeData;
+    }
+    public List<EQUIPMENT_SET_SYNERGY_DATA_BASE> GetList_EquipmentSetSynergyData()
+    {
+        return list_EquipmentSetSynergyData;
     }
 
 
