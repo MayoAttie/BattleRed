@@ -139,13 +139,8 @@ public class UI_UseToolClass
                 if (obj.gameObject.activeSelf == false || obj.GetIsActive() == true)
                     continue;
 
-                if (data.GetName() == "천공의 검")
-                    obj.SetItemSprite(ItemSpritesSaver.Instance.WeaponSprites[0]);
-                else if (data.GetName() == "제례검")
-                    obj.SetItemSprite(ItemSpritesSaver.Instance.WeaponSprites[1]);
-                else if (data.GetName() == "여명신검")
-                    obj.SetItemSprite(ItemSpritesSaver.Instance.WeaponSprites[2]);
-                else { break; }
+                var reData = data as WeaponAndEquipCls;
+                WeaponKindDivider(reData, obj.GetTopItemImage());
 
                 if (data.GetIsActive() == true) // 아이템이 활성 상태라면, 사용중임을 알림.
                     obj.EquippedItemUIPrint(true);
@@ -181,13 +176,9 @@ public class UI_UseToolClass
                 if (obj.gameObject.activeSelf == false || obj.GetIsActive() == true)
                     continue;
 
-                if (data.GetName() == "천공의 검")
-                    obj.SetItemSprite(ItemSpritesSaver.Instance.WeaponSprites[0]);
-                else if (data.GetName() == "제례검")
-                    obj.SetItemSprite(ItemSpritesSaver.Instance.WeaponSprites[1]);
-                else if (data.GetName() == "여명신검")
-                    obj.SetItemSprite(ItemSpritesSaver.Instance.WeaponSprites[2]);
-                else { break; }
+                var reData = data as WeaponAndEquipCls;
+                WeaponKindDivider(reData, obj.GetItemImage());
+
 
                 //if (data.GetIsActive() == true) // 아이템이 활성 상태라면, 사용중임을 알림.
                 //    obj.EquippedItemUIPrint(true);
@@ -263,6 +254,101 @@ public class UI_UseToolClass
                 break;
         }
     }
+    // 성유물에 따라 달라지는 장비 데이터 출력을 담당하는 함수
+    public static void EquipmentKindDivider(WeaponAndEquipCls weaponCls, Image equipImage = null, TextMeshProUGUI equipStatusLabelTxt = null, TextMeshProUGUI equipStatusTxt = null)
+    {
+        string reDataText = weaponCls.GetEffectText(); // reData.GetEffectText()로부터 문자열 가져오기
+        string pivot = ""; // pivot 문자열 초기화
+        if (reDataText.Length > 7) // 8번째 값부터 끝까지의 부분을 pivot에 저장
+            pivot = reDataText.Substring(7);
+
+        // 장비 이름에 따라 데이터 분기
+
+        // 아이템 이미지 출력
+        if(equipImage!= null)
+        {
+            switch (weaponCls.GetName())
+            {
+                case "이국의 술잔":
+                    equipImage.sprite = ItemSpritesSaver.Instance.EquipSprites[0];
+                    break;
+                case "귀향의 깃털":
+                    equipImage.sprite = ItemSpritesSaver.Instance.EquipSprites[1];
+                    break;
+                case "이별의 모자":
+                    equipImage.sprite = ItemSpritesSaver.Instance.EquipSprites[2];
+                    break;
+                case "옛 벗의 마음":
+                    equipImage.sprite = ItemSpritesSaver.Instance.EquipSprites[3];
+                    break;
+                case "빛을 좆는 돌":
+                    equipImage.sprite = ItemSpritesSaver.Instance.EquipSprites[4];
+                    break;
+                case "전투광의 해골잔":
+                    equipImage.sprite = ItemSpritesSaver.Instance.EquipSprites[5];
+                    break;
+                case "전투광의 깃털":
+                    equipImage.sprite = ItemSpritesSaver.Instance.EquipSprites[6];
+                    break;
+                case "전투광의 귀면":
+                    equipImage.sprite = ItemSpritesSaver.Instance.EquipSprites[7];
+                    break;
+                case "전투광의 장미":
+                    equipImage.sprite = ItemSpritesSaver.Instance.EquipSprites[8];
+                    break;
+                case "전투광의 시계":
+                    equipImage.sprite = ItemSpritesSaver.Instance.EquipSprites[9];
+                    break;
+                case "피에 물든 기사의 술잔":
+                    equipImage.sprite = ItemSpritesSaver.Instance.EquipSprites[10];
+                    break;
+                case "피에 물든 검은 깃털":
+                    equipImage.sprite = ItemSpritesSaver.Instance.EquipSprites[11];
+                    break;
+                case "피에 물든 철가면":
+                    equipImage.sprite = ItemSpritesSaver.Instance.EquipSprites[12];
+                    break;
+                case "피에 물든 강철 심장":
+                    equipImage.sprite = ItemSpritesSaver.Instance.EquipSprites[13];
+                    break;
+                case "피에 물든 기사의 시계":
+                    equipImage.sprite = ItemSpritesSaver.Instance.EquipSprites[14];
+                    break;
+                default:break;
+            }
+        }
+
+        // 스탯 라벨 출력
+        if (equipStatusLabelTxt != null)
+            equipStatusLabelTxt.text = pivot;
+
+        if(equipStatusTxt!= null)   // 스탯 표기 텍스트 출력
+        {
+            switch(pivot)
+            {
+                case "공격력":
+                    equipStatusTxt.text = weaponCls.GetMainStat().ToString();
+                    break;
+                case "방어력":
+                    equipStatusTxt.text = weaponCls.GetMainStat().ToString();
+                    break;
+                case "체력":
+                    equipStatusTxt.text = weaponCls.GetMainStat().ToString();
+                    break;
+                case "원소 마스터리":
+                    equipStatusTxt.text = weaponCls.GetMainStat().ToString();
+                    break;
+                case "치명타 확률":
+                    equipStatusTxt.text = weaponCls.GetMainStat().ToString() + " %";
+                    break;
+                case "치명타 피해":
+                    equipStatusTxt.text = weaponCls.GetMainStat().ToString();
+                    break;
+                default: break;
+            }
+        }
+    }
+
     // 개발자가 입력한 데이터에 따라, 스탯 출력
     public static void WeaponSubStatDivider(WeaponAndEquipCls weaponCls, float subStat, TextMeshProUGUI weaponStatusLabelTxt = null, TextMeshProUGUI weaponStatusTxt = null)
     {
@@ -592,6 +678,157 @@ public class UI_UseToolClass
         btnCls.GetButton().onClick.AddListener(btnCls.OnClick);
         btnCls.GetButton().onClick.AddListener(btnCls.OnButtonDown);
         btnCls.GetButton().onClick.AddListener(btnCls.OnButtonUp);
+    }
+
+    /// <summary>
+    /// 성유물 UI tools
+    /// 
+    /// 
+    /// </summary>
+
+    // 성유물 아이템들의 스탯을 리턴 - hp, atk, def, element, criRate, criDamage 순서로 반환
+    public static float[] ReturnEquipmentStatSum(ItemClass[] EquipmentList, Dictionary<string, int> setFinder)
+    {
+        // 기본 데이터
+        float hp = 0;
+        float atk = 0;
+        float def = 0;
+        float element = 0;
+        float criticalRate = 0;
+        float criticalDamage = 0;
+
+        // 세트 효과 파악
+        foreach (var tmp in EquipmentList)
+        {
+            if (tmp == null)
+                continue;
+            var reData = tmp as WeaponAndEquipCls;
+            // 기본 데이터 출력
+            if (reData.GetTag() == "꽃")
+                hp += (int)reData.GetMainStat();
+            else if (reData.GetTag() == "깃털")
+                atk += (int)reData.GetMainStat();
+            else
+            {
+                string reDataText = reData.GetEffectText(); // reData.GetEffectText()로부터 문자열 가져오기
+                string pivot = ""; // pivot 문자열 초기화
+
+                if (reDataText.Length > 7)
+                {
+                    // 8번째 값부터 끝까지의 부분을 pivot에 저장
+                    pivot = reDataText.Substring(7);
+                }
+                //Debug.Log("pivot :: => "+pivot);
+                switch (pivot)
+                {
+                    case "공격력":
+                        {
+                            float mul = reData.GetMainStat() * 0.01f;
+                            int atkPluser = (int)(mul * atk);
+                            atk += atkPluser;
+                        }
+                        break;
+                    case "방어력":
+                        {
+                            float mul = reData.GetMainStat() * 0.01f;
+                            int defPluser = (int)(mul * def);
+                            def += defPluser;
+                        }
+                        break;
+                    case "체력":
+                        {
+                            float mul = reData.GetMainStat() * 0.01f;
+                            int hpPluser = (int)(mul * hp);
+                            hp += hpPluser;
+                        }
+                        break;
+                    case "원소 마스터리":
+                        {
+                            int value = (int)reData.GetMainStat();
+                            element += value;
+                        }
+                        break;
+                    case "치명타 확률":
+                        {
+                            float vlaue = reData.GetMainStat();
+                            criticalRate += vlaue;
+                        }
+                        break;
+                    case "치명타 피해":
+                        {
+                            float value = reData.GetMainStat();
+                            criticalDamage += value;
+                        }
+                        break;
+                    default: break;
+                }
+            }
+
+            // Dictionary에 키가 없으면 0으로 초기화하고 1을 더함
+            string set = reData.GetSet();
+            if (!setFinder.ContainsKey(set))
+                setFinder[set] = 0;
+
+            setFinder[set]++;
+
+        }
+
+        float[] answers = { hp, atk, def, element, criticalRate, criticalDamage };
+        return answers;
+
+    }
+
+    // 성유물 데이터에 따라 성유물 스탯 수정
+    public static void ApplyEquipmentEffect(GameManager.EQUIPMENT_SET_SYNERGY_DATA_BASE dbItem, ref int atk, ref int def, ref int hp, ref int element)
+    {
+        float mul = dbItem.EQUIPMENT_SET_EFFECT_VALUE * 0.01f;
+        int pluser = 0;
+
+        if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("공격력"))
+        {
+            pluser = (int)(mul * atk);
+            atk += pluser;
+        }
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("방어력"))
+        {
+            pluser = (int)(mul * def);
+            def += pluser;
+        }
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("체력"))
+        {
+            pluser = (int)(mul * hp);
+            hp += pluser;
+        }
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("원소 마스터리"))
+            element += (int)dbItem.EQUIPMENT_SET_EFFECT_VALUE;
+        //Debug.Log("pluser :: => " + pluser);
+    }
+    public static void ApplyEquipmentEffect(GameManager.EQUIPMENT_SET_SYNERGY_DATA_BASE dbItem, ref int atk, ref int def, ref int hp, ref int element, ref float citicalRate, ref float criticalDamage)
+    {
+        float mul = dbItem.EQUIPMENT_SET_EFFECT_VALUE * 0.01f;
+        int pluser = 0;
+
+        if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("공격력"))
+        {
+            pluser = (int)(mul * atk);
+            atk += pluser;
+        }
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("방어력"))
+        {
+            pluser = (int)(mul * def);
+            def += pluser;
+        }
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("체력"))
+        {
+            pluser = (int)(mul * hp);
+            hp += pluser;
+        }
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("원소 마스터리"))
+            element += (int)dbItem.EQUIPMENT_SET_EFFECT_VALUE;
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("치명타 확률"))
+            citicalRate += dbItem.EQUIPMENT_SET_EFFECT_VALUE;
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("치명타 데미지"))
+            criticalDamage += dbItem.EQUIPMENT_SET_EFFECT_VALUE;
     }
 
 }

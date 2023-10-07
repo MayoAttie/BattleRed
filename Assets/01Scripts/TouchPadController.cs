@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
-public class TouchPadController : Singleton<TouchPadController>, IPointerDownHandler, IDragHandler, IPointerUpHandler
+public class TouchPadController : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
     public enum e_TouchSlideDic
     {
@@ -68,6 +68,25 @@ public class TouchPadController : Singleton<TouchPadController>, IPointerDownHan
             slideDic = e_TouchSlideDic.Right;
         else if (smoothDirection.x < -0.9)
             slideDic = e_TouchSlideDic.Left;
+        else
+            slideDic = e_TouchSlideDic.None;
+
+        return slideDic;
+    }
+    public e_TouchSlideDic GetDirection()
+    {
+        // 현재 방향을 부드럽게 보정하여 저장
+        smoothDirection = Vector2.MoveTowards(smoothDirection, direction, smoothing);
+
+        // 보정된 방향을 기준으로 슬라이드 방향 판별
+        if (smoothDirection.x > 0.9f)
+            slideDic = e_TouchSlideDic.Right;
+        else if (smoothDirection.x < -0.9f)
+            slideDic = e_TouchSlideDic.Left;
+        else if (smoothDirection.y > 0.9f)
+            slideDic = e_TouchSlideDic.Up;
+        else if (smoothDirection.y < -0.9f)
+            slideDic = e_TouchSlideDic.Down;
         else
             slideDic = e_TouchSlideDic.None;
 

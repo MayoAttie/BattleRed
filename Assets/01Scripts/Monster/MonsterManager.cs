@@ -94,12 +94,12 @@ public class MonsterManager : MonoBehaviour, Observer
         hitted = monster.GetMonsterHittedElement().GetElement(); // 몬스터 피격 원소 체크
         hp = monster.GetMonsterCurrentHp(); // 몬스터 hp 체크
         state = monster.GetMonsterState();  // 몬스터 상태 반영
-        Monster_AI_Process();
+        Monster_AI_Process();               // AI 종합 제어 함수
         MonsterAnimationController();       // 몬스터 애니메이션 컨틀롤러
         if(isDead)
-            StartCoroutine(WaitForDeadAnimation());
+            StartCoroutine(WaitForDeadAnimation()); // 사망 함수
 
-        MonsterHpMngBroadCastPosition();
+        MonsterHpMngBroadCastPosition();            // 몬스터 HP바 위치 포지션 수정
     }
     private void FixedUpdate()
     {
@@ -241,9 +241,8 @@ public class MonsterManager : MonoBehaviour, Observer
             // 도착 지점에 약간의 보정값을 추가한 임계값 설정
             float stoppingDistanceWithCorrection = navMeshController.stoppingDistance + 0.5f;
 
-            // 이동 시간이 지나면 대기 상태로 변경
             if (navMeshController.remainingDistance <= stoppingDistanceWithCorrection)
-            {
+            {   // 보정된 도착지 값 안에 들어왔을 경우에, 새로운 경로를 찾고 도착지로 설정
                 Vector3 randomPosition = GetRandomPosition();
                 navMeshController.SetDestination(randomPosition);
             }
@@ -321,17 +320,17 @@ public class MonsterManager : MonoBehaviour, Observer
     {
         switch (monster.GetMonsterState())
         {
-            case Monster.e_MonsterState.Idle:
+            case Monster.e_MonsterState.Idle:               // 정지
                 MobAnimator.SetInteger("Controller", 0);
                 MobAnimator.SetFloat("zPos", fPosZ);
                 MobAnimator.SetFloat("xPos", fPosX);
                 break;
-            case Monster.e_MonsterState.Walk:
+            case Monster.e_MonsterState.Walk:               // 이동
                 MobAnimator.SetInteger("Controller", -1);
                 MobAnimator.SetFloat("zPos", fPosZ);
                 MobAnimator.SetFloat("xPos", fPosX);
                 break;
-            case Monster.e_MonsterState.Attack:
+            case Monster.e_MonsterState.Attack:             // 공격
                 if(monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel.Chase)
                 {
                     MobAnimator.SetInteger("Controller", -1);

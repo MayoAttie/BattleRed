@@ -137,6 +137,7 @@ public class InvenItemObjClass : MonoBehaviour
     public Button GetButton() { return button; }
     public ItemClass GetItemcls() { return itemCls; }
     public Sprite GetItemSprite() { return img_TopSpriteImg.sprite; }
+    public Image GetTopItemImage() { return img_TopSpriteImg; }
     public InvenItemObjClass GetInvenItemObjClass() { return this; }
     public void SetSelectBtnSpriteOn(bool isActive){ img_SelectExpress.enabled=isActive;}
 

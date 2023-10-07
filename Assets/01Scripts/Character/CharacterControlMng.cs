@@ -10,7 +10,7 @@ public class CharacterControlMng : Subject, Observer
     [SerializeField] CharacterController controller;      // 캐릭터 컨트롤러
     [SerializeField] Transform groundCheck;               // 지면 체크를 위한 위치 정보를 저장하는 변수
     [SerializeField] LayerMask groundMask;                // 지면을 나타내는 레이어 정보를 저장하는 변수
-
+    [SerializeField] TouchPadController TouchController;
 
     Vector3 velocity;
     bool isGrounded;                            // 지면인지 체크
@@ -211,7 +211,7 @@ public class CharacterControlMng : Subject, Observer
     private void RotateCharacter()
     {
         e_TouchSlideDic touchDic;
-        touchDic = TouchPadController.Instance.GetDirectionHorizontal();
+        touchDic = TouchController.GetDirectionHorizontal();
 
         // 만약 수평 방향 입력이 오른쪽(Right)으로 감지된 경우
         if (touchDic == e_TouchSlideDic.Right)
