@@ -270,6 +270,8 @@ public class ButtonClass2 : MonoBehaviour
     public void SetSymbolSprite(Sprite sprite){symbolImg.sprite = sprite;}
 
     public Button GetButton(){return button;}
+    public Image GetBackGroundImg() { return background; }
+    public Image GetSymbolImg() { return symbolImg; }   
     public void SetButtonTextInputter(string text) { inText.text = text; }
 
 }

@@ -5,8 +5,8 @@ using UnityEngine.UI;
 using TMPro;
 using static CharacterUpgradeManager;
 using static UI_UseToolClass;
-using System.Collections;
-using UnityEditor;
+using static GameManager;
+using System.Reflection;
 
 public class UI_Manager : EnergyBarManager
 {
@@ -79,9 +79,12 @@ public class UI_Manager : EnergyBarManager
 
     // 성유물 창 관련
     private bool isDetailScreenOpenForEquip;                // 성유물 상세정보 창 오픈
+    private bool isEquipmentPrintScrollOpen;                // 성유물 리스트 스크롤뷰 오픈
     private TouchPadController touchPad;                    // 성유물 회전 선택 객체 처리용 터치패드
     private TouchPadController.e_TouchSlideDic touchDic;    // 성유물 회전 선택 객체 처리용 터치 방향
     private ButtonRotateSetCls rotateBtnObj;                // 성유물 회전 선택 객체
+    private e_SortingOrder scrollPrintEquipOrder;           // 성유물 스크롤 뷰 출력 정렬 변수
+    private bool isScrollPrintEquipAscending;               // 성유물 스크롤 뷰 출력 정렬 변수     
     #endregion
 
 
@@ -150,7 +153,7 @@ public class UI_Manager : EnergyBarManager
     }
     private void Update()
     {
-        if (touchPad.gameObject.activeSelf == true)
+        if (touchPad != null && touchPad.gameObject.activeSelf == true)
         {
             touchDic = touchPad.GetDirectionHorizontal();
             if (touchDic == TouchPadController.e_TouchSlideDic.Right)
@@ -326,7 +329,7 @@ public class UI_Manager : EnergyBarManager
                 WeaponPrintAtScroll(scrollContent, selected_SortOrder, isAscending, openUI_ItemList);
                 break;
             case GameManager.e_PoolItemType.Equip:     //장비
-                EquipPrintAtScroll();
+                EquipPrintAtScroll(scrollContent, selected_SortOrder, isAscending, openUI_ItemList);
                 break;
             case GameManager.e_PoolItemType.Gem:       //광물
                 GemPrintAtScroll();
@@ -352,81 +355,7 @@ public class UI_Manager : EnergyBarManager
 
 
 
-    // 게임매니저의 데이터를 참조하여, 장비들을 스크롤뷰 콘텐츠에 출력
-    void EquipPrintAtScroll()
-    {
-        var itemClses = GameManager.Instance.GetUserClass().GetHadEquipmentList();      // 저장된 아이템 목록
-
-        SortingItemList(itemClses, selected_SortOrder, isAscending);
-
-
-        // 오브젝트 풀로, UI객체 생성
-        GameManager.Instance.ItemToObjPool(itemClses.Count, GameManager.e_PoolItemType.Equip, scrollContent);
-        // 오브젝트 풀에 저장된 리스트 인스턴스화
-
-        var datas = GameManager.Instance.EquipItemPool.GetPoolList();
-
-
-        foreach (ItemClass data in itemClses)
-        {
-            foreach (InvenItemObjClass obj in datas)
-            {
-                if (obj.gameObject.activeSelf == false || obj.GetIsActive() == true)
-                    continue;
-
-                var reData = data as WeaponAndEquipCls;
-
-                EquipmentKindDivider(reData, obj.GetTopItemImage());
-
-                #region 레거시
-
-                //if (data.GetName() == "이국의 술잔")
-                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[0]);
-                //else if (data.GetName() == "귀향의 깃털")
-                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[1]);
-                //else if (data.GetName() == "이별의 모자")
-                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[2]);
-                //else if (data.GetName() == "옛 벗의 마음")
-                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[3]);
-                //else if (data.GetName() == "빛을 좆는 돌")
-                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[4]);   
-
-                //else if (data.GetName() == "전투광의 해골잔")
-                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[5]);
-                //else if (data.GetName() == "전투광의 깃털")
-                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[6]);
-                //else if (data.GetName() == "전투광의 귀면")
-                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[7]);
-                //else if (data.GetName() == "전투광의 장미")
-                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[8]);
-                //else if (data.GetName() == "전투광의 시계")
-                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[9]);
-
-                //else if (data.GetName() == "피에 물든 기사의 술잔")
-                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[10]);
-                //else if (data.GetName() == "피에 물든 검은 깃털")
-                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[11]);
-                //else if (data.GetName() == "피에 물든 철가면")
-                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[12]);
-                //else if (data.GetName() == "피에 물든 강철 심장")
-                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[13]);
-                //else if (data.GetName() == "피에 물든 기사의 시계")
-                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[14]);
-                //else { break; }
-                #endregion
-
-                if (data.GetIsActive() == true) // 아이템이 활성 상태라면, 사용중임을 알림.
-                    obj.EquippedItemUIPrint(true);
-
-                obj.SetItemColor(data.GetGrade());
-                obj.SetItemText("LV : " + data.GetLevel().ToString());
-                obj.SetIsActive(true);
-                obj.SetItemcls(data);
-                openUI_ItemList.Add(obj);
-                break;
-            }
-        }
-    }
+    
 
     // 게임매니저의 데이터를 참조하여, 광물들을 스크롤뷰 콘텐츠에 출력
     void GemPrintAtScroll()
@@ -737,7 +666,7 @@ public class UI_Manager : EnergyBarManager
             CloseButtonSpriteToClose();                             // Close 스프라이트로 버튼 심볼 교체
             infoSelectButtons[1].OnOffSpriteSetting();              // 웨폰 인포 버튼 UI 활성화
             weaponChangeButton.AlphaValueChangeing();               // 무기 변경 버튼 알파값 변경
-            ResetToWeaponItemObjectPoolDatas();
+            ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);
             isWeaponChangeBtnClicked = false;
         }
         // 무기 업글 버튼 클릭 시, 기능 변경
@@ -745,7 +674,7 @@ public class UI_Manager : EnergyBarManager
         {
             if(OpenScrollToUpgradeMaterial != null && OpenScrollToUpgradeMaterial.gameObject.activeSelf == true)
             {   // 무기 강화용 재화 출력용 스크롤 오브젝트가 Ative상태라면, 비활성화
-                ResetToWeaponItemObjectPoolDatas();
+                ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);
                 OpenScrollToUpgradeMaterial.gameObject.SetActive(false);
                 return;
             }
@@ -758,19 +687,32 @@ public class UI_Manager : EnergyBarManager
             screen.gameObject.SetActive(false);
 
             ResetToSelectButtonScriptPoolDatas();   // Pool 리턴 및 초기화
-            ResetToWeaponItemObjectPoolDatas();     // Pool 리턴 및 초기화
+            ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);     // Pool 리턴 및 초기화
             EquippedWeaponPrint();                  // 레벨업에 의한 데이터 변환에 대비한 UI 데이터 재출력
             isWeaponUpgradeBtnClicked = false;
         }
         else if(isDetailScreenOpenForEquip) // 성유물 - 성유물 상세정보 창 출력
         {
             isDetailScreenOpenForEquip = false;
-            var obj = printInfoDataField[2].transform.GetChild(9).GetComponent<Transform>();
+            var obj = printInfoDataField[2].transform.GetChild(1).GetChild(6).GetComponent<Transform>();
             obj.gameObject.SetActive(false);
             InfoPrintTypeButtonActive();
             infoSelectButtons[2].OnOffSpriteSetting();
 
             RotateEquipEquipMentPrint();            // 성유물 기본 창의 회전 성유물 UI 오브젝트 재활성화
+        }
+        else if(isEquipmentPrintScrollOpen)         // 보유 성유물 리스트 ScrollView에 출력 중일 때,
+        {
+            CloseButtonSpriteToClose();
+            printInfoDataField[2].transform.GetChild(1).gameObject.SetActive(true);
+            printInfoDataField[2].transform.GetChild(6).gameObject.SetActive(false);
+            ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Equip);      // 오브젝트 풀 리턴
+            PrintEquippedEquipment();                // 기본 데이터 재출력'
+            rotateBtnObj.AnimationActiveOn();
+            RotateEquipEquipMentPrint();             // 성유물 기본 창의 회전 성유물 UI 오브젝트 재활성화
+            InfoPrintTypeButtonActive();             // 버튼 UI 재활성화 
+            infoSelectButtons[2].OnOffSpriteSetting();
+            isEquipmentPrintScrollOpen = false;
         }
         else    // 종료
         {
@@ -1377,10 +1319,10 @@ public class UI_Manager : EnergyBarManager
         // 버튼 리스너 연결
         SortSelectButton.GetComponentInChildren<Button>().onClick.RemoveAllListeners();
         SortSelectButton.GetComponentInChildren<Button>().onClick.AddListener(()
-            => WeaponPrintAtScroll_ForUpgrade_SortOrderBtnClick(SelectionButtonOnList, SortSelectButton));
+            => WeaponPrintAtScroll_ForUpgrade_SortOrderBtnClick(SelectionButtonOnList, SortSelectButton, e_PoolItemType.Weapon));
 
         Descending_AscendingButton.GetComponentInChildren<Button>().onClick.RemoveAllListeners();
-        Descending_AscendingButton.GetComponentInChildren<Button>().onClick.AddListener(WeaponPrintAtScroll_ForUpgrade_AscendingBtnClick);
+        Descending_AscendingButton.GetComponentInChildren<Button>().onClick.AddListener(()=>AscendingValueReversalFunction(ref isWeaponList_ForUpgradeResourceSortOrderAscending, e_PoolItemType.Weapon));
         Descending_AscendingButton.GetComponentInChildren<Button>().onClick.AddListener(()=> PrintDataAtScrollViewForUpMaterials(selectBtn_ForUpgrade));
 
         // 정렬 디폴트 값 및 리스트 버튼 데이터 초기화
@@ -1434,7 +1376,7 @@ public class UI_Manager : EnergyBarManager
      */
     // 정렬 버튼 파트(일괄처리 _ )
     // WeaponPrintAtScroll_BySelectButton _ 스크롤뷰 _ 정렬 버튼 이벤트 리스너
-    private void WeaponPrintAtScroll_ForUpgrade_SortOrderBtnClick(InventorySortSelectButton selectBtnListObj, ButtonClass2 selectBtn)
+    private void WeaponPrintAtScroll_ForUpgrade_SortOrderBtnClick(InventorySortSelectButton selectBtnListObj, ButtonClass2 selectBtn, e_PoolItemType type)
     {
         selectBtnListObj.gameObject.SetActive(true);
 
@@ -1446,56 +1388,14 @@ public class UI_Manager : EnergyBarManager
         }
 
         // 리스트 버튼 객체에 이벤트 리스너 
-        buttons[0].onClick.AddListener(() => SortOrderForUpgradeResorceWeapon(selectBtnListObj, "희귀도", selectBtn)); // 희귀도
+        buttons[0].onClick.AddListener(() => SortOrderForUpgradeResorce(selectBtnListObj, "희귀도", selectBtn, type, ref weaponList_ForItemUpgradeResourceSortOrder)); // 희귀도
         buttons[0].onClick.AddListener(() => PrintDataAtScrollViewForUpMaterials(selectBtn_ForUpgrade)); // 희귀도
 
-        buttons[1].onClick.AddListener(() => SortOrderForUpgradeResorceWeapon(selectBtnListObj, "레벨", selectBtn)); // 레벨
+        buttons[1].onClick.AddListener(() => SortOrderForUpgradeResorce(selectBtnListObj, "레벨", selectBtn, type, ref weaponList_ForItemUpgradeResourceSortOrder)); // 레벨
         buttons[1].onClick.AddListener(() => PrintDataAtScrollViewForUpMaterials(selectBtn_ForUpgrade)); // 레벨
 
-        buttons[2].onClick.AddListener(() => SortOrderForUpgradeResorceWeapon(selectBtnListObj, "기초경험치", selectBtn)); // 기초경험치
+        buttons[2].onClick.AddListener(() => SortOrderForUpgradeResorce(selectBtnListObj, "기초경험치", selectBtn, type, ref weaponList_ForItemUpgradeResourceSortOrder)); // 기초경험치
         buttons[2].onClick.AddListener(() => PrintDataAtScrollViewForUpMaterials(selectBtn_ForUpgrade)); // 기초경험치
-    }
-
-
-    // WeaponPrintAtScroll_BySelectButton _ 스크롤뷰 _ 정렬_리스트 버튼 이벤트 리스너
-    private void SortOrderForUpgradeResorceWeapon(InventorySortSelectButton selectBtnListObj, string index ,ButtonClass2 selectBtn)
-    {
-        e_SortingOrder tmp = e_SortingOrder.ExpOrder;
-        int indexNum = 0;
-        if (index == "희귀도")
-        {
-            tmp = e_SortingOrder.GradeOrder;
-            indexNum = 0;
-        }
-        else if (index == "레벨")
-        {
-            tmp = e_SortingOrder.LevelOrder;
-            indexNum = 1;
-        }
-        else if (index == "기초경험치")
-        {
-            tmp = e_SortingOrder.ExpOrder;
-            indexNum = 2;
-
-        }
-        selectBtnListObj.SetSortingOrder(tmp);
-        weaponList_ForItemUpgradeResourceSortOrder = tmp;
-        Debug.Log("allPull_OrderValue" + " == " + weaponList_ForItemUpgradeResourceSortOrder);
-
-        selectBtnListObj.HideButtonBackGround(indexNum);
-        selectBtnListObj.gameObject.SetActive(false);  // 비활성화
-        selectBtn.SetButtonTextInputter(index);
-
-        ResetToWeaponItemObjectPoolDatas();
-    }
-
-
-    // WeaponPrintAtScroll_BySelectButton _ 스크롤뷰 _ 정렬_오름차/내림차순 버튼 이벤트 리스너
-    private void WeaponPrintAtScroll_ForUpgrade_AscendingBtnClick()
-    {
-        isWeaponList_ForUpgradeResourceSortOrderAscending = !isWeaponList_ForUpgradeResourceSortOrderAscending;
-
-        ResetToWeaponItemObjectPoolDatas();
     }
 
     /*
@@ -1761,7 +1661,7 @@ public class UI_Manager : EnergyBarManager
             if (isLimit)    // 돌파 단계 도달 시,
             {
                 //isWeaponUpgradeBtnClicked = false;
-                ResetToWeaponItemObjectPoolDatas();
+                ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);
                 ResetToSelectButtonScriptPoolDatas();
                 ClosePlayerInfoScreenButton();
                 WeaponUpgeadeButtonClickEvent(1);   // 돌파 UI 출력을 위한 출력 함수 재호출
@@ -1856,7 +1756,7 @@ public class UI_Manager : EnergyBarManager
 
             // UI 최신화
             //isWeaponUpgradeBtnClicked = false;
-            ResetToWeaponItemObjectPoolDatas();
+            ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);
             ResetToSelectButtonScriptPoolDatas();
             ClosePlayerInfoScreenButton();
             WeaponUpgeadeButtonClickEvent(1);   // 돌파 UI 출력을 위한 출력 함수 재호출
@@ -1880,7 +1780,7 @@ public class UI_Manager : EnergyBarManager
             return;
 
         // 오브젝트풀 리턴
-        ResetToWeaponItemObjectPoolDatas();
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);
         ResetToSelectButtonScriptPoolDatas();
 
         my.OnOffSpriteSetting();
@@ -1947,7 +1847,7 @@ public class UI_Manager : EnergyBarManager
         cls_selectSortButton.GetButton().onClick.AddListener(() => WeaponReforge_SortOrderBtnClick(cls_SelectionButtonOnList, cls_selectSortButton, tr_ScrollViewObjectSet));
         
         cls_Descending_AscendingButton.GetButton().onClick.RemoveAllListeners();
-        cls_Descending_AscendingButton.GetButton().onClick.AddListener(WeaponPrintAtScroll_ForUpgrade_AscendingBtnClick);
+        cls_Descending_AscendingButton.GetButton().onClick.AddListener(() => AscendingValueReversalFunction(ref isWeaponList_ForUpgradeResourceSortOrderAscending, e_PoolItemType.Weapon));
         cls_Descending_AscendingButton.GetButton().onClick.AddListener(()=>WeaponReforge_ButtonClickEvent(tr_ScrollViewObjectSet));
 
         //스크롤뷰 객체
@@ -2050,13 +1950,13 @@ public class UI_Manager : EnergyBarManager
         }
 
         // 리스트 버튼 객체에 이벤트 리스너 
-        buttons[0].onClick.AddListener(() => SortOrderForUpgradeResorceWeapon(selectBtnListObj, "희귀도", selectBtn)); // 희귀도
+        buttons[0].onClick.AddListener(() => SortOrderForUpgradeResorce(selectBtnListObj, "희귀도", selectBtn, e_PoolItemType.Weapon, ref weaponList_ForItemUpgradeResourceSortOrder)); // 희귀도
         buttons[0].onClick.AddListener(() => WeaponReforge_ButtonClickEvent(mainObj));                              // 희귀도
 
-        buttons[1].onClick.AddListener(() => SortOrderForUpgradeResorceWeapon(selectBtnListObj, "레벨", selectBtn)); // 레벨
+        buttons[1].onClick.AddListener(() => SortOrderForUpgradeResorce(selectBtnListObj, "레벨", selectBtn, e_PoolItemType.Weapon, ref weaponList_ForItemUpgradeResourceSortOrder)); // 레벨
         buttons[1].onClick.AddListener(() => WeaponReforge_ButtonClickEvent(mainObj));                              // 레벨
 
-        buttons[2].onClick.AddListener(() => SortOrderForUpgradeResorceWeapon(selectBtnListObj, "기초경험치", selectBtn)); // 기초경험치
+        buttons[2].onClick.AddListener(() => SortOrderForUpgradeResorce(selectBtnListObj, "기초경험치", selectBtn, e_PoolItemType.Weapon, ref weaponList_ForItemUpgradeResourceSortOrder)); // 기초경험치
         buttons[2].onClick.AddListener(() => WeaponReforge_ButtonClickEvent(mainObj));                                  // 기초경험치
     }
     // 재련_ 사용버튼 클릭
@@ -2080,7 +1980,7 @@ public class UI_Manager : EnergyBarManager
 
             // UI 반영
             //isWeaponUpgradeBtnClicked = false;
-            ResetToWeaponItemObjectPoolDatas();
+            ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);
             ResetToSelectButtonScriptPoolDatas();
             ClosePlayerInfoScreenButton();
             WeaponUpgeadeButtonClickEvent(2);
@@ -2099,9 +1999,9 @@ public class UI_Manager : EnergyBarManager
         PrintEquippedEquipment();
 
         ///버튼 객체 인스턴스화
-        ButtonClass2 cls_MoreInformationBtn = printInfoDataField[2].transform.GetChild(5).GetComponent<ButtonClass2>();
-        ButtonClass2 cls_ChangeButton = printInfoDataField[2].transform.GetChild(8).GetComponent<ButtonClass2>();
-        var detailPrintobj = printInfoDataField[2].transform.GetChild(9).GetComponent<Transform>();
+        ButtonClass2 cls_MoreInformationBtn = printInfoDataField[2].transform.GetChild(1).GetChild(4).GetComponent<ButtonClass2>();
+        ButtonClass2 cls_ChangeButton = printInfoDataField[2].transform.GetChild(1).GetChild(5).GetComponent<ButtonClass2>();
+        var detailPrintobj = printInfoDataField[2].transform.GetChild(1).GetChild(6).GetComponent<Transform>();
         detailPrintobj.gameObject.SetActive(false);
 
         // 상세정보 출력 버튼 이벤트 리스너 연결
@@ -2109,17 +2009,28 @@ public class UI_Manager : EnergyBarManager
         ButtonClass2_Reset(cls_MoreInformationBtn);
         cls_MoreInformationBtn.GetButton().onClick.AddListener(()=>DetailedEquipInfoPrint());
 
+
         // 변수 관리
         touchDic = TouchPadController.e_TouchSlideDic.None;
 
         // 성유물 교체 버튼 이벤트 리스너 연결 
-
+        cls_ChangeButton.GetButton().onClick.RemoveAllListeners();
+        ButtonClass2_Reset(cls_ChangeButton);
+        cls_ChangeButton.GetButton().onClick.AddListener(() => WhenEquipPrint_SelectEquipMover(0)); // 디폴트는 0번
 
         // 터치패드 인스턴스화
-        touchPad = printInfoDataField[2].transform.GetChild(11).GetComponent<TouchPadController>();
+        touchPad = printInfoDataField[2].transform.GetChild(4).GetComponent<TouchPadController>();
         // 성유물 회전 버튼 이벤트 리스너 연결 및 데이터 출력
-        rotateBtnObj = printInfoDataField[2].transform.GetChild(10).GetComponent<ButtonRotateSetCls>();
+        rotateBtnObj = printInfoDataField[2].transform.GetChild(5).GetComponent<ButtonRotateSetCls>();
         RotateEquipEquipMentPrint();
+
+        // 스크롤뷰 객체 비활성화
+        printInfoDataField[2].transform.GetChild(6).gameObject.SetActive(false);
+
+        // 정렬 변수 초기화
+        scrollPrintEquipOrder = e_SortingOrder.ExpOrder;
+        isScrollPrintEquipAscending = false;
+
 
     }
     // 장비 중인 성유물 객체 데이터 프린트 함수_최상단 기본 창
@@ -2127,13 +2038,13 @@ public class UI_Manager : EnergyBarManager
     {
         /// 인스턴스 초기화
         // 기본 능력치
-        TextMeshProUGUI txtHp = printInfoDataField[2].transform.GetChild(1).GetChild(2).GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI txtAtk = printInfoDataField[2].transform.GetChild(2).GetChild(2).GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI txtDef = printInfoDataField[2].transform.GetChild(3).GetChild(2).GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI txtElemnt = printInfoDataField[2].transform.GetChild(4).GetChild(2).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txtHp = printInfoDataField[2].transform.GetChild(1).GetChild(0).GetChild(2).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txtAtk = printInfoDataField[2].transform.GetChild(1).GetChild(1).GetChild(2).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txtDef = printInfoDataField[2].transform.GetChild(1).GetChild(2).GetChild(2).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txtElemnt = printInfoDataField[2].transform.GetChild(1).GetChild(3).GetChild(2).GetComponent<TextMeshProUGUI>();
         // 세트 효과
-        TextMeshProUGUI txtSetSynergy_1 = printInfoDataField[2].transform.GetChild(6).GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI txtSetSynergy_2 = printInfoDataField[2].transform.GetChild(7).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txtSetSynergy_1 = printInfoDataField[2].transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txtSetSynergy_2 = printInfoDataField[2].transform.GetChild(3).GetComponent<TextMeshProUGUI>();
 
         var EquipmentList = GameManager.Instance.GetUserClass().GetUserEquippedEquipment();
         
@@ -2190,7 +2101,6 @@ public class UI_Manager : EnergyBarManager
     }
     void RotateEquipEquipMentPrint()
     {
-
         touchPad.gameObject.SetActive(true);
         rotateBtnObj.gameObject.SetActive(true);
 
@@ -2200,12 +2110,18 @@ public class UI_Manager : EnergyBarManager
         var equips = GameManager.Instance.GetUserClass().GetUserEquippedEquipment();    // 장착한 성유물
         for (int i = 0; i < equips.Length; i++)
         {
+            int num = i;
+            btns[i].onClick.RemoveAllListeners();                                       // 버튼 함수 해제1
+            btns[i].onClick.AddListener(() => WhenEquipPrint_SelectEquipMover(num));      // 버튼 함수 연결
             if (equips[i] == null)
                 continue;
             var item = equips[i] as WeaponAndEquipCls;
             EquipmentKindDivider(item, insideimgs[i]);
             ItemUISetterByItemGrade(item, imgs[i]);
-            insideimgs[i].enabled = true;
+            
+            Color imageColor = insideimgs[i].color;      // 이미지의 현재 색상을 가져옴
+            imageColor.a = 1f;                           // 알파값을 0으로 설정하여 투명하게 만듦
+            insideimgs[i].color = imageColor;            // 이미지의 색상을 변경
         }
     }
     
@@ -2218,7 +2134,7 @@ public class UI_Manager : EnergyBarManager
 
         InfoPrintTypeButtonUnActive();
         isDetailScreenOpenForEquip = true;
-        var obj = printInfoDataField[2].transform.GetChild(9).GetComponent<Transform>();
+        var obj = printInfoDataField[2].transform.GetChild(1).GetChild(6).GetComponent<Transform>();
         obj.gameObject.SetActive(true);
 
         Transform content = obj.GetChild(0).GetChild(0).GetChild(0).GetComponent<Transform>();
@@ -2284,6 +2200,117 @@ public class UI_Manager : EnergyBarManager
         statusTexts[6].text = criticalDamage.ToString();
     }
 
+
+    /** 회전 성유물 버튼 객체
+     *  버튼Obj세트 0~4번 // => 애니메이션 1~5 // 가장 좌측 버튼 객체로부터 시작하여 반시계방향으로 돌며 ++1
+     *  0 - 꽃
+     *  1 - 깃털
+     *  2 - 시계
+     *  3 - 성배
+     *  4 - 왕관
+     */
+    // 보유 성유물 스크롤뷰 출력 함수
+    void PrintHadEquipmentAtScroll(int index)
+    {
+        var mainObj = printInfoDataField[2].transform.GetChild(6).GetComponent<Transform>();
+        ButtonClass2[] buttons = new ButtonClass2[5];
+        for(int i=0; i<5; i++)                  //  성유물 타입 버튼 인스턴스화
+            buttons[i] = mainObj.GetChild(i+7).GetComponent<ButtonClass2>();
+
+        // 버튼 객체의 UI 세팅 및 버튼 리스너 연결
+        for(int i =0; i<buttons.Length; i++)
+        {
+            int num = i;
+            // 클릭 리스너 할당
+            buttons[num].GetButton().onClick.RemoveAllListeners();
+            ButtonClass2_Reset(buttons[num]);
+            buttons[num].GetButton().onClick.AddListener(() => WhenEquipPrint_SelectEquipMover(num));
+
+            buttons[i].GetBackGroundImg().enabled = false;
+            buttons[i].GetSymbolImg().color = Color.white;
+            // 버튼 UI 수정
+            if (i == index)
+            {
+                buttons[i].GetBackGroundImg().enabled|= true;
+                buttons[i].GetSymbolImg().color = ItemSpritesSaver.Instance.GetDarkColor();
+            }
+        }
+
+        // 스크롤뷰 콘텐츠 객체 인스턴스화
+        Transform scrollContent = mainObj.GetChild(1).GetChild(0).GetComponent<Transform>();
+        
+        // 정렬 선택 버튼 객체 인스턴스화 및 관련 함수와 데이터 연결
+        InventorySortSelectButton btnListObj = mainObj.GetChild(4).GetComponent<InventorySortSelectButton>();
+        btnListObj.gameObject.SetActive(false);
+        ButtonClass2 selectOrderBtn = mainObj.GetChild(2).GetComponent<ButtonClass2>();
+        ButtonClass2 selectAscendingBtn = mainObj.GetChild(3).GetComponent<ButtonClass2>();
+
+
+        EquipPrintAtScroll(scrollContent, scrollPrintEquipOrder, isScrollPrintEquipAscending);
+        
+    }
+
+    // 리스트 출력 했을 때, 선택한 성유물 객체를 이동함 
+    void WhenEquipPrint_SelectEquipMover(int index)
+    {
+        // 초기 세팅
+        CloseButtonSpriteToBack();
+        InfoPrintTypeButtonUnActive();
+        isEquipmentPrintScrollOpen = true;
+        printInfoDataField[2].transform.GetChild(1).gameObject.SetActive(false);
+        printInfoDataField[2].transform.GetChild(6).gameObject.SetActive(true);
+        touchPad.gameObject.SetActive(false);
+        rotateBtnObj.SetAniControl_Play(index);         // 성유물 선택 애니메이션 호출
+        
+
+        // 스크롤뷰 출력 함수
+        PrintHadEquipmentAtScroll(index);
+
+        var mainObj = printInfoDataField[2].transform.GetChild(6).GetComponent<Transform>();
+        InventorySortSelectButton btnListObj = mainObj.GetChild(4).GetComponent<InventorySortSelectButton>();
+        btnListObj.gameObject.SetActive(false);
+
+        // 정렬 디폴트 값 및 리스트 버튼 데이터 초기화
+        string[] strings = { "희귀도", "레벨", "기초경험치" };
+        ListButtonObject_UI_Initer(btnListObj, strings, e_SortingOrder.ExpOrder);
+        btnListObj.HideButtonBackGround(2);
+
+        // 정렬 선택 버튼 리스너 연결
+        ButtonClass2 selectOrderBtn = mainObj.GetChild(2).GetComponent<ButtonClass2>();
+        Button selectBtn = selectOrderBtn.GetButton();
+        selectBtn.onClick.RemoveAllListeners();
+        ButtonClass2_Reset(selectOrderBtn);
+        selectBtn.onClick.AddListener(() => EquipScroll_SortOrderBtnClick(btnListObj, selectOrderBtn, index));
+
+        // 오름차/내림차순 버튼 리스너 연결
+        ButtonClass2 selectAscendingBtn = mainObj.GetChild(3).GetComponent<ButtonClass2>();
+        selectAscendingBtn.GetButton().onClick.RemoveAllListeners();
+        ButtonClass2_Reset(selectAscendingBtn);
+        selectAscendingBtn.GetButton().onClick.AddListener(() => AscendingValueReversalFunction(ref isScrollPrintEquipAscending, e_PoolItemType.Equip));
+        selectAscendingBtn.GetButton().onClick.AddListener(() => PrintHadEquipmentAtScroll(index));
+    }
+    // 성유물 출력 정렬 선택 버튼 이벤트 리스너
+    void EquipScroll_SortOrderBtnClick(InventorySortSelectButton selectBtnListObj, ButtonClass2 selectBtn, int index)
+    {
+        selectBtnListObj.gameObject.SetActive(true);
+
+        Button[] buttons = selectBtnListObj.GetButtons();
+
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            buttons[i].onClick.RemoveAllListeners();
+        }
+
+        // 리스트 버튼 객체에 이벤트 리스너 
+        buttons[0].onClick.AddListener(() => SortOrderForUpgradeResorce(selectBtnListObj, "희귀도", selectBtn, e_PoolItemType.Equip, ref scrollPrintEquipOrder)); // 희귀도
+        buttons[0].onClick.AddListener(() => PrintHadEquipmentAtScroll(index));                              
+
+        buttons[1].onClick.AddListener(() => SortOrderForUpgradeResorce(selectBtnListObj, "레벨", selectBtn, e_PoolItemType.Equip, ref scrollPrintEquipOrder)); // 레벨
+        buttons[1].onClick.AddListener(() => PrintHadEquipmentAtScroll(index));                             
+
+        buttons[2].onClick.AddListener(() => SortOrderForUpgradeResorce(selectBtnListObj, "기초경험치", selectBtn, e_PoolItemType.Equip, ref scrollPrintEquipOrder)); // 기초경험치
+        buttons[2].onClick.AddListener(() => PrintHadEquipmentAtScroll(index));                                  
+    }
     #endregion
 
 
@@ -2302,24 +2329,7 @@ public class UI_Manager : EnergyBarManager
 
     #region 기타 및 툴
 
-    private void ResetToWeaponItemObjectPoolDatas()
-    {
-        // 오브젝트 풀로 가져온 각 버튼에 Button이벤트를 Remove함
-        var objList = GameManager.Instance.WeaponItemPool.GetPoolList();
-        foreach (var obj in objList)
-        {
-            //if (obj.gameObject.activeSelf == false) continue;
-            Button btn = obj.GetButton();
-            if (btn != null)
-            {
-                // 모든 이벤트 리스너를 제거하고, 기존의 이벤트 리스너를 다시 부착한다.
-                btn.onClick.RemoveAllListeners();
-                btn.onClick.AddListener(() => obj.OnClickEventer());
-                btn.onClick.AddListener(() => obj.ClickedUIApply());
-            }
-        }
-        GameManager.Instance.WeaponItemPool.AllReturnToPool();  // 웨폰 UI 오브젝트풀 리턴
-    }
+
     private void ResetToSelectButtonScriptPoolDatas()
     {
         // 오브젝트 풀로 가져온 각 버튼에 Button이벤트를 Remove함
@@ -2340,7 +2350,7 @@ public class UI_Manager : EnergyBarManager
     private void ScrollViewOpenButtonClickEvent(SelectButtonScript clickedBtn, Transform mainobj)
     {
         mainobj.gameObject.SetActive(true);
-        ResetToWeaponItemObjectPoolDatas();
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);
         selectBtn_ForUpgrade = clickedBtn;
         // 객체 인스턴스화
         InventorySortSelectButton cls_SelectionButtonOnList = mainobj.GetChild(4).GetComponent<InventorySortSelectButton>();
@@ -2354,6 +2364,14 @@ public class UI_Manager : EnergyBarManager
         outButton.gameObject.SetActive(true);
         outButton.onClick.RemoveAllListeners();
         outButton.onClick.AddListener(() => ScrollObjectOffButton(mainobj.gameObject, outButton));
+    }
+
+    // 정렬_오름차/내림차순 버튼 이벤트 리스너
+    private void AscendingValueReversalFunction(ref bool isAscending, GameManager.e_PoolItemType poolType)
+    {
+        isAscending = !isAscending;
+
+        ResetToWeaponItemObjectPoolDatas(poolType);
     }
 
     #region 정렬 레거시

@@ -90,20 +90,20 @@ public class MonsterAttack : MonoBehaviour, Observer
     {
         if (target == null && isBattle)
         {
-            isChase = false;
+            isChase = false;    // 타깃이 없을 경우 추적 중지
         }
 
-        if (!isChase)
+        if (!isChase)   // 추적이 중지일 경우에는 전투를 해제.
         {
             isBattle = false;
             MonsterManager mng = gameObject.GetComponent<MonsterManager>();
-            mng.GetMonsterClass().SetMonsterState(Monster.e_MonsterState.None);
-            mng.SetBattleActive(false);
-            gameObject.GetComponent<AttackRange>().Detach(this);
+            mng.GetMonsterClass().SetMonsterState(Monster.e_MonsterState.None);     // 몬스터 매니저에 전투 중지를 알림
+            mng.SetBattleActive(false);                                             // 몬스터 매니저에 전투 중지를 알림
+            gameObject.GetComponent<AttackRange>().Detach(this);                    // 옵저버 패턴 해제
         }
         else
         {
-            gameObject.GetComponent<AttackRange>().Attach(this);
+            gameObject.GetComponent<AttackRange>().Attach(this);                    // 옵저버 패턴 해제
         }
 
     }

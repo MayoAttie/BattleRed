@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using static UI_Manager;
 using static CharacterUpgradeManager;
 using System.Linq;
+using static GameManager;
 
 public class UI_UseToolClass
 {
@@ -116,6 +117,56 @@ public class UI_UseToolClass
             clsList.AddRange(weaponInActiveList);
         }
     }
+    // 타입에 따라 분기하여, 오브젝트 풀 데이터를 리셋해주는 함수
+    public static void ResetToWeaponItemObjectPoolDatas(e_PoolItemType type)
+    {
+        List<InvenItemObjClass> objList = new List<InvenItemObjClass>();
+        // 오브젝트 풀로 가져온 각 버튼에 Button이벤트를 Remove함
+        switch (type)
+        {
+            case e_PoolItemType.Weapon:
+                objList = GameManager.Instance.WeaponItemPool.GetPoolList();
+                break;
+            case e_PoolItemType.Equip:
+                objList = GameManager.Instance.EquipItemPool.GetPoolList();
+                break;
+            case e_PoolItemType.Gem:
+                objList = GameManager.Instance.GemItemPool.GetPoolList();
+                break;
+            case e_PoolItemType.Food:
+                objList = GameManager.Instance.FoodItemPool.GetPoolList();
+                break;
+
+        }
+        foreach (var obj in objList)
+        {
+            //if (obj.gameObject.activeSelf == false) continue;
+            Button btn = obj.GetButton();
+            if (btn != null)
+            {
+                // 모든 이벤트 리스너를 제거하고, 기존의 이벤트 리스너를 다시 부착한다.
+                btn.onClick.RemoveAllListeners();
+                btn.onClick.AddListener(() => obj.OnClickEventer());
+                btn.onClick.AddListener(() => obj.ClickedUIApply());
+            }
+        }
+        // UI 오브젝트풀 리턴
+        switch (type)
+        {
+            case e_PoolItemType.Weapon:
+                GameManager.Instance.WeaponItemPool.AllReturnToPool();
+                break;
+            case e_PoolItemType.Equip:
+                GameManager.Instance.EquipItemPool.AllReturnToPool();
+                break;
+            case e_PoolItemType.Gem:
+                GameManager.Instance.GemItemPool.AllReturnToPool();
+                break;
+            case e_PoolItemType.Food:
+                GameManager.Instance.FoodItemPool.AllReturnToPool();
+                break;
+        }
+    }
 
     // 게임매니저의 데이터를 참조하여, 무기들을 스크롤뷰 콘텐츠에 출력 <ObjectPool<InvenItemObjClass> WeaponItemPool <- 웨폰 데이터 출력>
     public static void WeaponPrintAtScroll(Transform content, e_SortingOrder selected_SortOrder, bool isAscending, List<InvenItemObjClass> openUI_ItemList)
@@ -150,6 +201,82 @@ public class UI_UseToolClass
                 obj.SetIsActive(true);
                 obj.SetItemcls(data);
                 openUI_ItemList.Add(obj);
+                break;
+            }
+        }
+    }
+    // 게임매니저의 데이터를 참조하여, 장비들을 스크롤뷰 콘텐츠에 출력
+    public static void EquipPrintAtScroll(Transform content, e_SortingOrder selected_SortOrder, bool isAscending, List<InvenItemObjClass> openUI_ItemList = null)
+    {
+        var itemClses = GameManager.Instance.GetUserClass().GetHadEquipmentList();      // 저장된 아이템 목록
+
+        SortingItemList(itemClses, selected_SortOrder, isAscending);
+
+
+        // 오브젝트 풀로, UI객체 생성
+        GameManager.Instance.ItemToObjPool(itemClses.Count, GameManager.e_PoolItemType.Equip, content);
+        // 오브젝트 풀에 저장된 리스트 인스턴스화
+
+        var datas = GameManager.Instance.EquipItemPool.GetPoolList();
+
+
+        foreach (ItemClass data in itemClses)
+        {
+            foreach (InvenItemObjClass obj in datas)
+            {
+                if (obj.gameObject.activeSelf == false || obj.GetIsActive() == true)
+                    continue;
+
+                var reData = data as WeaponAndEquipCls;
+
+                EquipmentKindDivider(reData, obj.GetTopItemImage());
+
+                #region 레거시
+
+                //if (data.GetName() == "이국의 술잔")
+                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[0]);
+                //else if (data.GetName() == "귀향의 깃털")
+                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[1]);
+                //else if (data.GetName() == "이별의 모자")
+                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[2]);
+                //else if (data.GetName() == "옛 벗의 마음")
+                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[3]);
+                //else if (data.GetName() == "빛을 좆는 돌")
+                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[4]);   
+
+                //else if (data.GetName() == "전투광의 해골잔")
+                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[5]);
+                //else if (data.GetName() == "전투광의 깃털")
+                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[6]);
+                //else if (data.GetName() == "전투광의 귀면")
+                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[7]);
+                //else if (data.GetName() == "전투광의 장미")
+                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[8]);
+                //else if (data.GetName() == "전투광의 시계")
+                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[9]);
+
+                //else if (data.GetName() == "피에 물든 기사의 술잔")
+                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[10]);
+                //else if (data.GetName() == "피에 물든 검은 깃털")
+                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[11]);
+                //else if (data.GetName() == "피에 물든 철가면")
+                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[12]);
+                //else if (data.GetName() == "피에 물든 강철 심장")
+                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[13]);
+                //else if (data.GetName() == "피에 물든 기사의 시계")
+                //    obj.SetItemSprite(ItemSpritesSaver.Instance.EquipSprites[14]);
+                //else { break; }
+                #endregion
+
+                if (data.GetIsActive() == true) // 아이템이 활성 상태라면, 사용중임을 알림.
+                    obj.EquippedItemUIPrint(true);
+
+                obj.SetItemColor(data.GetGrade());
+                obj.SetItemText("LV : " + data.GetLevel().ToString());
+                obj.SetIsActive(true);
+                obj.SetItemcls(data);
+                if(openUI_ItemList!= null)
+                    openUI_ItemList.Add(obj);
                 break;
             }
         }
@@ -829,6 +956,38 @@ public class UI_UseToolClass
             citicalRate += dbItem.EQUIPMENT_SET_EFFECT_VALUE;
         else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("치명타 데미지"))
             criticalDamage += dbItem.EQUIPMENT_SET_EFFECT_VALUE;
+    }
+
+    // 정렬 리스트 버튼, 기능 함수 => (희귀도, 레벨, 기초경험치)
+    public static void SortOrderForUpgradeResorce(InventorySortSelectButton selectBtnListObj, string index, ButtonClass2 selectBtn, e_PoolItemType type, ref e_SortingOrder order)
+    {
+        e_SortingOrder tmp = e_SortingOrder.ExpOrder;
+        int indexNum = 0;
+        if (index == "희귀도")
+        {
+            tmp = e_SortingOrder.GradeOrder;
+            indexNum = 0;
+        }
+        else if (index == "레벨")
+        {
+            tmp = e_SortingOrder.LevelOrder;
+            indexNum = 1;
+        }
+        else if (index == "기초경험치")
+        {
+            tmp = e_SortingOrder.ExpOrder;
+            indexNum = 2;
+
+        }
+        selectBtnListObj.SetSortingOrder(tmp);
+        order = tmp;
+        Debug.Log("allPull_OrderValue" + " == " + order);
+
+        selectBtnListObj.HideButtonBackGround(indexNum);
+        selectBtnListObj.gameObject.SetActive(false);  // 비활성화
+        selectBtn.SetButtonTextInputter(index);
+
+        ResetToWeaponItemObjectPoolDatas(type);
     }
 
 }

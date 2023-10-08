@@ -20,7 +20,7 @@ public class ButtonRotateSetCls : MonoBehaviour
         for (int i = 0; i < 5; i++)
         { 
             images[i] = transform.GetChild(i).GetComponent<Image>();
-            buttons[i] = images[i].transform.GetChild(0).GetComponent<Button>();
+            buttons[i] = images[i].GetComponentInChildren<Button>();
             insideImages[i] = images[i].transform.GetChild(0).GetComponent<Image>();
         }
 
@@ -28,9 +28,13 @@ public class ButtonRotateSetCls : MonoBehaviour
     }
     private void OnEnable()
     {
-        animator.SetBool("ani", true);
+        animator.SetInteger("controller", 0);
         for (int i = 0; i < 5; i++)
-            insideImages[i].enabled = false;
+        {
+            Color imageColor = insideImages[i].color; // 이미지의 현재 색상을 가져옴
+            imageColor.a = 0f;                          // 알파값을 0으로 설정하여 투명하게 만듦
+            insideImages[i].color = imageColor;         // 이미지의 색상을 변경
+        }
     }
 
     // Getter 메서드
@@ -45,19 +49,26 @@ public class ButtonRotateSetCls : MonoBehaviour
     public void AnimationActiveOff()
     {
         currentAnimationTime = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
-        animator.SetBool("ani", false);
+        animator.SetInteger("controller", -1);
     }
     public void AnimationActiveOn()
     {
         animator.Play("ButtonRotationAnimaiton", 0, currentAnimationTime);
-        animator.SetBool("ani", true);
-
+        animator.SetInteger("controller", 0);
     }
 
     // 애니메이션 속도를 조절하는 메서드 (음수일 경우, 역재생)
     public void SetAnimationSpeed(float speedValue)
     {
         animator.SetFloat("Speed", speedValue);
+    }
+
+    // 인덱스 값에 따라 애니메이션을 호출하는 함수
+    public void SetAniControl_Play(int index)
+    {
+        currentAnimationTime = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+        animator.SetFloat("Speed", 1);
+        animator.SetInteger("controller", index+1);
     }
 
 }
