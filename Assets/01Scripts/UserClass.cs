@@ -67,6 +67,7 @@ public class UserClass
     public void SetUserEquippedEquipment(ItemClass userEquippedEquipment, int index) { this.userEquippedEquipment[index] = userEquippedEquipment; }
     public void SetHadWeaponList(List<ItemClass> hadWeaponList) { this.hadWeaponList = hadWeaponList; }
     public void SetHadEquipmentList(List<ItemClass> hadEquipmentList) { this.hadEquipmentList = hadEquipmentList; }
+    public void SetEquipedEquipmentList(ItemClass equipEquipment,int index) { this.userEquippedEquipment[index] = equipEquipment; }
     public void SetHadGemList(List<ItemClass> hadGemList) { this.hadGemList = hadGemList; }
     public void SetHadFoodList(List<ItemClass> hadFoodList) { this.hadFoodList= hadFoodList; }
     public void SetHadGrowMaterialList(List<ItemClass> hadGrowMaterialList) { this.hadGrowMaterialList= hadGrowMaterialList; }

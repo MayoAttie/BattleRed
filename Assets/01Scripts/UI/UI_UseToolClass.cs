@@ -140,6 +140,7 @@ public class UI_UseToolClass
         }
         foreach (var obj in objList)
         {
+            obj.SetIsActive(false);
             //if (obj.gameObject.activeSelf == false) continue;
             Button btn = obj.GetButton();
             if (btn != null)
@@ -447,32 +448,45 @@ public class UI_UseToolClass
 
         // 스탯 라벨 출력
         if (equipStatusLabelTxt != null)
-            equipStatusLabelTxt.text = pivot;
+        {
+            if (weaponCls.GetTag() == "꽃")
+                equipStatusLabelTxt.text = "체력";
+            else if (weaponCls.GetTag() == "깃털")
+                equipStatusLabelTxt.text = "공격력";
+            else
+                equipStatusLabelTxt.text = pivot;
+        }
 
         if(equipStatusTxt!= null)   // 스탯 표기 텍스트 출력
         {
-            switch(pivot)
+            if(weaponCls.GetTag()=="꽃" || weaponCls.GetTag() == "깃털")
+                equipStatusTxt.text = weaponCls.GetMainStat().ToString();
+            else
             {
-                case "공격력":
-                    equipStatusTxt.text = weaponCls.GetMainStat().ToString();
-                    break;
-                case "방어력":
-                    equipStatusTxt.text = weaponCls.GetMainStat().ToString();
-                    break;
-                case "체력":
-                    equipStatusTxt.text = weaponCls.GetMainStat().ToString();
-                    break;
-                case "원소 마스터리":
-                    equipStatusTxt.text = weaponCls.GetMainStat().ToString();
-                    break;
-                case "치명타 확률":
-                    equipStatusTxt.text = weaponCls.GetMainStat().ToString() + " %";
-                    break;
-                case "치명타 피해":
-                    equipStatusTxt.text = weaponCls.GetMainStat().ToString();
-                    break;
-                default: break;
+                switch (pivot)
+                {
+                    case "공격력":
+                        equipStatusTxt.text = weaponCls.GetMainStat().ToString()+"%";
+                        break;
+                    case "방어력":
+                        equipStatusTxt.text = weaponCls.GetMainStat().ToString() + "%";
+                        break;
+                    case "체력":
+                        equipStatusTxt.text = weaponCls.GetMainStat().ToString() + "%";
+                        break;
+                    case "원소 마스터리":
+                        equipStatusTxt.text = weaponCls.GetMainStat().ToString();
+                        break;
+                    case "치명타 확률":
+                        equipStatusTxt.text = weaponCls.GetMainStat().ToString() + " %";
+                        break;
+                    case "치명타 피해":
+                        equipStatusTxt.text = weaponCls.GetMainStat().ToString();
+                        break;
+                    default: break;
+                }
             }
+
         }
     }
 
@@ -976,6 +990,36 @@ public class UI_UseToolClass
         else if (index == "기초경험치")
         {
             tmp = e_SortingOrder.ExpOrder;
+            indexNum = 2;
+
+        }
+        selectBtnListObj.SetSortingOrder(tmp);
+        order = tmp;
+        Debug.Log("allPull_OrderValue" + " == " + order);
+
+        selectBtnListObj.HideButtonBackGround(indexNum);
+        selectBtnListObj.gameObject.SetActive(false);  // 비활성화
+        selectBtn.SetButtonTextInputter(index);
+
+        ResetToWeaponItemObjectPoolDatas(type);
+    }
+    public static void SortOrderForChange(InventorySortSelectButton selectBtnListObj, string index, ButtonClass2 selectBtn, e_PoolItemType type, ref e_SortingOrder order)
+    {
+        e_SortingOrder tmp = e_SortingOrder.ExpOrder;
+        int indexNum = 0;
+        if (index == "이름")
+        {
+            tmp = e_SortingOrder.NameOrder;
+            indexNum = 0;
+        }
+        else if (index == "레벨")
+        {
+            tmp = e_SortingOrder.LevelOrder;
+            indexNum = 1;
+        }
+        else if (index == "희귀도")
+        {
+            tmp = e_SortingOrder.GradeOrder;
             indexNum = 2;
 
         }

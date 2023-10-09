@@ -1353,6 +1353,7 @@ public class UI_Manager : EnergyBarManager
             // 장비하고 있는 아이템은 제외
             if (tmp.GetItemcls().GetIsActive() == true)
             {
+                tmp.SetIsActive(false);
                 GameManager.Instance.WeaponItemPool.ReturnToPool(tmp);
                 continue;
             }
@@ -1893,18 +1894,21 @@ public class UI_Manager : EnergyBarManager
             // 장비하고 있는 아이템은 제외
             if (tmp.GetItemcls().GetIsActive() == true)
             {
+                tmp.SetIsActive(false);
                 GameManager.Instance.WeaponItemPool.ReturnToPool(tmp);
                 continue;
             }
             // 장비하고 있는 아이템과 일치하지 않는 경우는 제외
             if(tmp.GetItemcls().GetName() != equip.GetName())
             {
+                tmp.SetIsActive(false);
                 GameManager.Instance.WeaponItemPool.ReturnToPool(tmp);
                 continue;
             }
             // 선택한 아이템과 동일한 경우도 제외
             if(tmp.GetItemcls() == selectBtn_ForUpgrade.GetItemClass())
             {
+                tmp.SetIsActive(false);
                 GameManager.Instance.WeaponItemPool.ReturnToPool(tmp);
                 continue;
             }
@@ -2009,7 +2013,6 @@ public class UI_Manager : EnergyBarManager
         ButtonClass2_Reset(cls_MoreInformationBtn);
         cls_MoreInformationBtn.GetButton().onClick.AddListener(()=>DetailedEquipInfoPrint());
 
-
         // 변수 관리
         touchDic = TouchPadController.e_TouchSlideDic.None;
 
@@ -2024,12 +2027,23 @@ public class UI_Manager : EnergyBarManager
         rotateBtnObj = printInfoDataField[2].transform.GetChild(5).GetComponent<ButtonRotateSetCls>();
         RotateEquipEquipMentPrint();
 
+        // 정렬 변수 초기화
+        scrollPrintEquipOrder = e_SortingOrder.GradeOrder;
+        isScrollPrintEquipAscending = false;
+
         // 스크롤뷰 객체 비활성화
         printInfoDataField[2].transform.GetChild(6).gameObject.SetActive(false);
+        // 스크롤뷰 객체 내부 UI객체 초기 세팅
+        InventorySortSelectButton btnListObj = printInfoDataField[2].transform.GetChild(6).GetChild(4).GetComponent<InventorySortSelectButton>();
+        // 정렬 디폴트 값 및 리스트 버튼 데이터 초기화
+        string[] strings = { "이름", "레벨", "희귀도" };
+        ListButtonObject_UI_Initer(btnListObj, strings, scrollPrintEquipOrder);
+        btnListObj.HideButtonBackGround(2);
+        
+        ButtonClass2 selectOrderBtn = printInfoDataField[2].transform.GetChild(6).GetChild(2).GetComponent<ButtonClass2>();
+        selectOrderBtn.SetButtonTextInputter("희귀도");
 
-        // 정렬 변수 초기화
-        scrollPrintEquipOrder = e_SortingOrder.ExpOrder;
-        isScrollPrintEquipAscending = false;
+
 
 
     }
@@ -2047,7 +2061,9 @@ public class UI_Manager : EnergyBarManager
         TextMeshProUGUI txtSetSynergy_2 = printInfoDataField[2].transform.GetChild(3).GetComponent<TextMeshProUGUI>();
 
         var EquipmentList = GameManager.Instance.GetUserClass().GetUserEquippedEquipment();
-        
+        // 세트 텍스트 오리지널 컬러
+        Color originColor = new Color(163f / 255f, 210f / 255f, 113f / 255f);
+
         // 세트 효과 파악
         Dictionary<string, int> setFinder = new Dictionary<string, int>();
         txtSetSynergy_1.text = "";
@@ -2092,6 +2108,8 @@ public class UI_Manager : EnergyBarManager
                 continue;
             }
         }
+        txtSetSynergy_1.color = originColor;
+        txtSetSynergy_2.color = originColor;
 
         txtHp.text = hp.ToString();
         txtDef.text = def.ToString();
@@ -2112,7 +2130,7 @@ public class UI_Manager : EnergyBarManager
         {
             int num = i;
             btns[i].onClick.RemoveAllListeners();                                       // 버튼 함수 해제1
-            btns[i].onClick.AddListener(() => WhenEquipPrint_SelectEquipMover(num));      // 버튼 함수 연결
+            btns[i].onClick.AddListener(() => WhenEquipPrint_SelectEquipMover(num));                        // 버튼 함수 연결
             if (equips[i] == null)
                 continue;
             var item = equips[i] as WeaponAndEquipCls;
@@ -2205,13 +2223,15 @@ public class UI_Manager : EnergyBarManager
      *  버튼Obj세트 0~4번 // => 애니메이션 1~5 // 가장 좌측 버튼 객체로부터 시작하여 반시계방향으로 돌며 ++1
      *  0 - 꽃
      *  1 - 깃털
-     *  2 - 시계
+     *  2 - 모래
      *  3 - 성배
      *  4 - 왕관
      */
     // 보유 성유물 스크롤뷰 출력 함수
     void PrintHadEquipmentAtScroll(int index)
     {
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Equip);
+
         var mainObj = printInfoDataField[2].transform.GetChild(6).GetComponent<Transform>();
         ButtonClass2[] buttons = new ButtonClass2[5];
         for(int i=0; i<5; i++)                  //  성유물 타입 버튼 인스턴스화
@@ -2245,9 +2265,28 @@ public class UI_Manager : EnergyBarManager
         ButtonClass2 selectOrderBtn = mainObj.GetChild(2).GetComponent<ButtonClass2>();
         ButtonClass2 selectAscendingBtn = mainObj.GetChild(3).GetComponent<ButtonClass2>();
 
-
+        // 데이터 출력, 후 태그를 비교하여, 일치하는 데이터를 제외한 나머지는 오브젝트 풀 리턴
         EquipPrintAtScroll(scrollContent, scrollPrintEquipOrder, isScrollPrintEquipAscending);
-        
+        string[] tags = { "꽃", "깃털", "모래", "성배", "왕관" };
+
+        var equipPool = GameManager.Instance.EquipItemPool;
+        foreach(var obj in equipPool.GetPoolList())
+        {
+            if (obj.gameObject.activeSelf == false) continue;
+            obj.GetButton().onClick.RemoveAllListeners();
+            if (obj.GetItemcls().GetTag().Equals(tags[index]))
+            {
+                obj.GetButton().onClick.AddListener(() => EquipmentChangeFunction(obj, index));
+                continue;
+            }
+
+            obj.SetIsActive(false);
+            equipPool.ReturnToPool(obj);
+        }
+
+        // 선택한 성유물의 데이터 출력
+        var itemClass = GameManager.Instance.GetUserClass().GetUserEquippedEquipment()[index] as WeaponAndEquipCls;
+        EquipmentUI_Print(itemClass, mainObj);
     }
 
     // 리스트 출력 했을 때, 선택한 성유물 객체를 이동함 
@@ -2261,19 +2300,15 @@ public class UI_Manager : EnergyBarManager
         printInfoDataField[2].transform.GetChild(6).gameObject.SetActive(true);
         touchPad.gameObject.SetActive(false);
         rotateBtnObj.SetAniControl_Play(index);         // 성유물 선택 애니메이션 호출
-        
+
 
         // 스크롤뷰 출력 함수
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Equip);
         PrintHadEquipmentAtScroll(index);
 
         var mainObj = printInfoDataField[2].transform.GetChild(6).GetComponent<Transform>();
         InventorySortSelectButton btnListObj = mainObj.GetChild(4).GetComponent<InventorySortSelectButton>();
         btnListObj.gameObject.SetActive(false);
-
-        // 정렬 디폴트 값 및 리스트 버튼 데이터 초기화
-        string[] strings = { "희귀도", "레벨", "기초경험치" };
-        ListButtonObject_UI_Initer(btnListObj, strings, e_SortingOrder.ExpOrder);
-        btnListObj.HideButtonBackGround(2);
 
         // 정렬 선택 버튼 리스너 연결
         ButtonClass2 selectOrderBtn = mainObj.GetChild(2).GetComponent<ButtonClass2>();
@@ -2288,6 +2323,10 @@ public class UI_Manager : EnergyBarManager
         ButtonClass2_Reset(selectAscendingBtn);
         selectAscendingBtn.GetButton().onClick.AddListener(() => AscendingValueReversalFunction(ref isScrollPrintEquipAscending, e_PoolItemType.Equip));
         selectAscendingBtn.GetButton().onClick.AddListener(() => PrintHadEquipmentAtScroll(index));
+
+        // 세트 효과 출력
+        var item = GameManager.Instance.GetUserClass().GetUserEquippedEquipment()[index] as WeaponAndEquipCls;
+        EquipUI_SetSynergyPrint(item);
     }
     // 성유물 출력 정렬 선택 버튼 이벤트 리스너
     void EquipScroll_SortOrderBtnClick(InventorySortSelectButton selectBtnListObj, ButtonClass2 selectBtn, int index)
@@ -2302,15 +2341,161 @@ public class UI_Manager : EnergyBarManager
         }
 
         // 리스트 버튼 객체에 이벤트 리스너 
-        buttons[0].onClick.AddListener(() => SortOrderForUpgradeResorce(selectBtnListObj, "희귀도", selectBtn, e_PoolItemType.Equip, ref scrollPrintEquipOrder)); // 희귀도
+        buttons[0].onClick.AddListener(() => SortOrderForChange(selectBtnListObj, "이름", selectBtn, e_PoolItemType.Equip, ref scrollPrintEquipOrder)); // 희귀도
+        buttons[0].onClick.AddListener(() => selectBtnListObj.HideButtonBackGround(0));
         buttons[0].onClick.AddListener(() => PrintHadEquipmentAtScroll(index));                              
 
-        buttons[1].onClick.AddListener(() => SortOrderForUpgradeResorce(selectBtnListObj, "레벨", selectBtn, e_PoolItemType.Equip, ref scrollPrintEquipOrder)); // 레벨
+        buttons[1].onClick.AddListener(() => SortOrderForChange(selectBtnListObj, "레벨", selectBtn, e_PoolItemType.Equip, ref scrollPrintEquipOrder)); // 레벨
+        buttons[1].onClick.AddListener(() => selectBtnListObj.HideButtonBackGround(1));
         buttons[1].onClick.AddListener(() => PrintHadEquipmentAtScroll(index));                             
 
-        buttons[2].onClick.AddListener(() => SortOrderForUpgradeResorce(selectBtnListObj, "기초경험치", selectBtn, e_PoolItemType.Equip, ref scrollPrintEquipOrder)); // 기초경험치
+        buttons[2].onClick.AddListener(() => SortOrderForChange(selectBtnListObj, "희귀도", selectBtn, e_PoolItemType.Equip, ref scrollPrintEquipOrder)); // 기초경험치
+        buttons[2].onClick.AddListener(() => selectBtnListObj.HideButtonBackGround(2));
         buttons[2].onClick.AddListener(() => PrintHadEquipmentAtScroll(index));                                  
     }
+    // 성유물 교체 함수
+    private void EquipmentChangeFunction(InvenItemObjClass obj, int index)
+    {
+        var cls = obj.GetItemcls();     //선택한 아이템 클래스
+        var reCls = cls as WeaponAndEquipCls;
+        var inImage = rotateBtnObj.GetInsideImages()[index];
+        var outImage = rotateBtnObj.GetImages()[index];
+        string[] tags = { "꽃", "깃털", "모래", "성배", "왕관" };
+        if (cls.GetTag() != tags[index])
+            return;
+
+        var equipList = GameManager.Instance.GetUserClass().GetHadEquipmentList(); // 보유하고 있는 아이템 리스트 인스턴스화
+        var equipedEquipList = GameManager.Instance.GetUserClass().GetUserEquippedEquipment();  // 착용하고 있는 아이템 리스트 인스턴스화
+
+        // 선택한 아이템과 장착한 아이템이 같지 않을 경우,
+        if(equipedEquipList[index]!= null && obj.GetItemcls().Equals(equipedEquipList[index]) == false)
+        {
+            ItemClass ExistingItem = equipedEquipList[index];                                               // 기존 장착중인 아이템 가져오기
+            ItemClass tmp = equipList.Find(item => item.Equals(ExistingItem));                              // 기존 장착중인 아이템 리스트에서 찾기
+            tmp.SetActive(false);                                                                           // 장착 중이던 아이템을 활성화 X
+
+            ItemClass SelectItem = equipList.Find(item => item.Equals(cls));                        // 선택한 아이템 찾기
+            SelectItem.SetActive(true);                                                             // 장착할 아이템 활성화 O
+            GameManager.Instance.GetUserClass().SetEquipedEquipmentList(SelectItem, index);         // 선택한 아이템 장착
+
+            // 회전 선택 버튼에 이미지 부여
+            EquipmentKindDivider(reCls, inImage);
+            ItemUISetterByItemGrade(reCls, outImage);
+
+            // 선택한 아이템의 세트 효과 출력
+            EquipUI_SetSynergyPrint(reCls);
+        }
+        else if(equipedEquipList[index] == null)
+        {
+            // 선택한 성유물 파츠의 착용 여부가 null일 경우, 바로 장착
+            ItemClass SelectItem = equipList.Find(item => item.Equals(cls));                        // 선택한 아이템 찾기
+            SelectItem.SetActive(true);                                                             // 장착할 아이템 활성화 O
+            GameManager.Instance.GetUserClass().SetEquipedEquipmentList(SelectItem, index);         // 선택한 아이템 장착
+
+            // 회전 선택 버튼에 이미지 부여
+            EquipmentKindDivider(reCls, inImage);
+            ItemUISetterByItemGrade(reCls, outImage);
+
+            // inImage의 알파 값을 최대 (1.0)로 설정
+            Color inImageColor = inImage.color;
+            inImageColor.a = 1.0f;
+            inImage.color = inImageColor;
+
+            // 선택한 아이템의 세트 효과 출력
+            EquipUI_SetSynergyPrint(reCls);
+        }
+        else
+        {
+            //조건문을 모두 통과했다면, 장착했던 장비==선택한 장비이기에, 장착했던 장비를 해제한다.
+            ItemClass ExistingItem = equipedEquipList[index]; // 기존 장착중인 아이템 가져오기
+            ItemClass tmp = equipList.Find(item => item.Equals(ExistingItem));                              // 기존 장착중인 아이템 리스트에서 찾기
+            tmp.SetActive(false);                                                                           // 장착 중이던 아이템을 활성화 X
+            equipedEquipList[index] = null;                                                                            // 장착 해제
+
+            // 회전 선택 버튼에 이미지 부여
+            outImage.color = Color.white;
+
+            // inImage의 알파 값을 최저(0.0f)로 설정
+            Color inImageColor = inImage.color;
+            inImageColor.a = 0f;
+            inImage.color = inImageColor;
+
+            // 아이템 세트 효과 지우기
+            EquipUI_SetSynergyPrint(null);
+        }
+        // 새로 변경된 UI 사항을 ScrollView에 출력
+        PrintHadEquipmentAtScroll(index);
+    }
+    // 장착 한 성유물 정보 출력
+    void EquipmentUI_Print(ItemClass itemCls, Transform mainObj)
+    {
+        TextMeshProUGUI txt_Name = mainObj.GetChild(12).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txt_Type = mainObj.GetChild(13).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txt_MainStatLabel = mainObj.GetChild(14).GetChild(1).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txt_MainStatValue = mainObj.GetChild(14).GetChild(2).GetComponent<TextMeshProUGUI>();
+        Image[] img_Stars = mainObj.GetChild(15).GetComponentsInChildren<Image>();
+        TextMeshProUGUI txt_Level = mainObj.GetChild(16).GetChild(0).GetComponent<TextMeshProUGUI>();
+        if(itemCls!= null)
+        {
+            // 데이터 출력
+            var reCls = itemCls as WeaponAndEquipCls;
+            txt_Name.text = reCls.GetName();
+            txt_Type.text = reCls.GetTag();
+            EquipmentKindDivider(reCls, null, txt_MainStatLabel, txt_MainStatValue);
+            foreach (var tmp in img_Stars) tmp.enabled = false;
+            for (int i = 0; i < reCls.GetGrade(); i++)
+                img_Stars[i].enabled = true;
+            txt_Level.text = "LV." + reCls.GetLevel().ToString();
+        }
+        else
+        {
+            txt_Name.text = "";
+            txt_Type.text = "";
+            txt_MainStatLabel.text = "";
+            txt_MainStatValue.text = "";
+            foreach (var tmp in img_Stars) tmp.enabled = false;
+            txt_Level.text = "";
+        }
+
+
+    }
+    void EquipUI_SetSynergyPrint(WeaponAndEquipCls itemCls)
+    {
+        Color originColor = new Color(163f / 255f, 210f / 255f, 113f / 255f);
+        TextMeshProUGUI set1 = printInfoDataField[2].transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI set2 = printInfoDataField[2].transform.GetChild(3).GetComponent<TextMeshProUGUI>();
+        set1.color = originColor;
+        set2.color = originColor;
+
+        if(itemCls!= null)
+        {
+            string set = itemCls.GetSet();
+            var db = GameManager.Instance.GetList_EquipmentSetSynergyData();
+            var dbItem1 = db.Find(tmp => tmp.EQUIPMENT_SET_NAME.Equals(set) && tmp.EQUIPMENT_SET_NUMBER == 2);
+            var dbItem2 = db.Find(tmp => tmp.EQUIPMENT_SET_NAME.Equals(set) && tmp.EQUIPMENT_SET_NUMBER == 4);
+
+            set1.text = set + "\n" + "2세트 " + dbItem1.EQUIPMENT_SET_EFFECT_TEXT;
+            set2.text = set + "\n" + "4세트 " + dbItem2.EQUIPMENT_SET_EFFECT_TEXT;
+
+            int cnt = 0;
+            foreach (var tmp in GameManager.Instance.GetUserClass().GetUserEquippedEquipment())
+            {
+                if (tmp != null && tmp.GetSet() == set)
+                    cnt++;
+            }
+
+            if (cnt < 4)
+                set2.color = Color.gray;
+            if (cnt < 2)
+                set1.color = Color.gray;
+        }
+        else
+        {
+            set1.text = "";
+            set2.text = ""; 
+        }
+    }
+
     #endregion
 
 
@@ -2373,6 +2558,7 @@ public class UI_Manager : EnergyBarManager
 
         ResetToWeaponItemObjectPoolDatas(poolType);
     }
+
 
     #region 정렬 레거시
 
