@@ -85,6 +85,10 @@ public class UI_Manager : EnergyBarManager
     private ButtonRotateSetCls rotateBtnObj;                // 성유물 회전 선택 객체
     private e_SortingOrder scrollPrintEquipOrder;           // 성유물 스크롤 뷰 출력 정렬 변수
     private bool isScrollPrintEquipAscending;               // 성유물 스크롤 뷰 출력 정렬 변수     
+    private int nSelected_EquipIndex;                       // 선택한 성유물 타입 인덱스 변수
+    private bool isUpgrade_Info_Open;                       // 성유물 업그레이드 버튼 클릭 변수
+    private bool[] isEquipUpgradeDetailObjClicked;          // 성유물 업글 창_상세창 제어 플래그
+
     #endregion
 
 
@@ -703,6 +707,20 @@ public class UI_Manager : EnergyBarManager
         }
         else if(isEquipmentPrintScrollOpen)         // 보유 성유물 리스트 ScrollView에 출력 중일 때,
         {
+            if(isUpgrade_Info_Open)// 성유물 강화 버튼 클릭 이벤트 실행중일때
+            {
+                printInfoDataField[2].transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
+                printInfoDataField[2].transform.GetChild(2).gameObject.SetActive(true);
+                printInfoDataField[2].transform.GetChild(3).gameObject.SetActive(true);
+                printInfoDataField[2].transform.GetChild(7).gameObject.SetActive(false);
+                WhenEquipPrint_SelectEquipMover(nSelected_EquipIndex);
+                CloseButtonSpriteToClose();
+                Debug.Log("nSelected_EquipIndex :: " + nSelected_EquipIndex);
+
+                isUpgrade_Info_Open = false;
+                return;
+            }
+
             CloseButtonSpriteToClose();
             printInfoDataField[2].transform.GetChild(1).gameObject.SetActive(true);
             printInfoDataField[2].transform.GetChild(6).gameObject.SetActive(false);
@@ -1018,15 +1036,15 @@ public class UI_Manager : EnergyBarManager
 
 
     // 클릭한 객체를 제외한 나머지 객체의 UI 변경
-    private void ClickedButtonsSetActiveReset(PlayerInfoUI_Button my, Transform parents, int CurrentIndex)
+    private void ClickedButtonsSetActiveReset(PlayerInfoUI_Button my, Transform parents, int CurrentIndex, int[] loopValue)
     {
-        Transform tmp = printInfoDataField[1].transform.GetChild(13).GetComponent<Transform>();    // 무기 업글 UI 오브젝트 인스턴스화
         PlayerInfoUI_Button[] buttons = new PlayerInfoUI_Button[3];
-        buttons = tmp.GetComponentsInChildren<PlayerInfoUI_Button>();          // 무기 업글 창에서 사용할 버튼 객체
+        buttons = parents.GetComponentsInChildren<PlayerInfoUI_Button>();          // 무기 업글 창에서 사용할 버튼 객체
 
         // 클릭 시 클릭한 객체를 제외한 나머지 UI 비활성화
         foreach (var button in buttons)
         {
+            if (button == null) continue;
             if (button.Equals(my))
             {
                 if (button.GetClickedActive() == false)
@@ -1039,7 +1057,7 @@ public class UI_Manager : EnergyBarManager
         }
 
         // 데이터 출력 UI 오브젝트 활성화
-        for (int i = 4; i < 7; i++)
+        for (int i = loopValue[0]; i < loopValue[1]; i++)
         {
             var obj = parents.GetChild(i).GetComponent<Transform>();
             obj.gameObject.SetActive(false);
@@ -1057,7 +1075,7 @@ public class UI_Manager : EnergyBarManager
             return;
 
         my.OnOffSpriteSetting();
-        ClickedButtonsSetActiveReset(my, parents,4);
+        ClickedButtonsSetActiveReset(my, parents,4, new int[] {4,7});
         var mainObject = parents.GetChild(4).GetComponent<Transform>();
 
         Transform scrollContent = mainObject.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Transform>();
@@ -1136,7 +1154,7 @@ public class UI_Manager : EnergyBarManager
             return;
 
         my.OnOffSpriteSetting();
-        ClickedButtonsSetActiveReset(my, parents, 5);
+        ClickedButtonsSetActiveReset(my, parents, 5, new int[] {4,7});
         var mainObject = parents.GetChild(5).GetComponent<Transform>();
 
         // 모라 TextMeshPro 인스턴스화
@@ -1785,7 +1803,7 @@ public class UI_Manager : EnergyBarManager
         ResetToSelectButtonScriptPoolDatas();
 
         my.OnOffSpriteSetting();
-        ClickedButtonsSetActiveReset(my,parents,6);
+        ClickedButtonsSetActiveReset(my,parents,6, new int[] { 4, 7 });
         var mainObject = parents.GetChild(6).GetComponent<Transform>();
 
         // 지역 변수 초기화
@@ -2015,6 +2033,8 @@ public class UI_Manager : EnergyBarManager
 
         // 변수 관리
         touchDic = TouchPadController.e_TouchSlideDic.None;
+        nSelected_EquipIndex = 0;
+        isUpgrade_Info_Open = false;
 
         // 성유물 교체 버튼 이벤트 리스너 연결 
         cls_ChangeButton.GetButton().onClick.RemoveAllListeners();
@@ -2043,6 +2063,15 @@ public class UI_Manager : EnergyBarManager
         ButtonClass2 selectOrderBtn = printInfoDataField[2].transform.GetChild(6).GetChild(2).GetComponent<ButtonClass2>();
         selectOrderBtn.SetButtonTextInputter("희귀도");
 
+
+        // 스크롤뷰 - 강화 버튼 이벤트리스너 연결 작업
+        var upgradeBtn = printInfoDataField[2].transform.GetChild(6).GetChild(17).GetComponent<ButtonClass2>();
+        upgradeBtn.GetButton().onClick.RemoveAllListeners();
+        ButtonClass2_Reset(upgradeBtn);
+        upgradeBtn.GetButton().onClick.AddListener(() => EquipmentUpgradeButtonClickEvent(0));
+
+        // 불필요한 객체 비활성화
+        printInfoDataField[2].transform.GetChild(7).gameObject.SetActive(false);
 
 
 
@@ -2230,6 +2259,7 @@ public class UI_Manager : EnergyBarManager
     // 보유 성유물 스크롤뷰 출력 함수
     void PrintHadEquipmentAtScroll(int index)
     {
+        nSelected_EquipIndex = index;
         ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Equip);
 
         var mainObj = printInfoDataField[2].transform.GetChild(6).GetComponent<Transform>();
@@ -2292,23 +2322,25 @@ public class UI_Manager : EnergyBarManager
     // 리스트 출력 했을 때, 선택한 성유물 객체를 이동함 
     void WhenEquipPrint_SelectEquipMover(int index)
     {
+        nSelected_EquipIndex = index;
         // 초기 세팅
         CloseButtonSpriteToBack();
         InfoPrintTypeButtonUnActive();
         isEquipmentPrintScrollOpen = true;
         printInfoDataField[2].transform.GetChild(1).gameObject.SetActive(false);
-        printInfoDataField[2].transform.GetChild(6).gameObject.SetActive(true);
+        //printInfoDataField[2].transform.GetChild(6).gameObject.SetActive(true);
         touchPad.gameObject.SetActive(false);
         rotateBtnObj.SetAniControl_Play(index);         // 성유물 선택 애니메이션 호출
 
 
-        // 스크롤뷰 출력 함수
-        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Equip);
-        PrintHadEquipmentAtScroll(index);
-
         var mainObj = printInfoDataField[2].transform.GetChild(6).GetComponent<Transform>();
+        mainObj.gameObject.SetActive(true);
         InventorySortSelectButton btnListObj = mainObj.GetChild(4).GetComponent<InventorySortSelectButton>();
         btnListObj.gameObject.SetActive(false);
+
+        // 스크롤뷰 출력 함수
+        //ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Equip);
+        PrintHadEquipmentAtScroll(index);
 
         // 정렬 선택 버튼 리스너 연결
         ButtonClass2 selectOrderBtn = mainObj.GetChild(2).GetComponent<ButtonClass2>();
@@ -2495,6 +2527,175 @@ public class UI_Manager : EnergyBarManager
             set2.text = ""; 
         }
     }
+    void EquipUI_SetSynergyPrint(WeaponAndEquipCls itemCls, TextMeshProUGUI setTxt1, TextMeshProUGUI setTxt2)
+    {
+        Color originColor = new Color(163f / 255f, 210f / 255f, 113f / 255f);
+        TextMeshProUGUI set1 = printInfoDataField[2].transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI set2 = printInfoDataField[2].transform.GetChild(3).GetComponent<TextMeshProUGUI>();
+        set1.color = originColor;
+        set2.color = originColor;
+
+        if (itemCls != null)
+        {
+            string set = itemCls.GetSet();
+            var db = GameManager.Instance.GetList_EquipmentSetSynergyData();
+            var dbItem1 = db.Find(tmp => tmp.EQUIPMENT_SET_NAME.Equals(set) && tmp.EQUIPMENT_SET_NUMBER == 2);
+            var dbItem2 = db.Find(tmp => tmp.EQUIPMENT_SET_NAME.Equals(set) && tmp.EQUIPMENT_SET_NUMBER == 4);
+
+            setTxt1.text = set + "\n" + "2세트 " + dbItem1.EQUIPMENT_SET_EFFECT_TEXT;
+            setTxt2.text = set + "\n" + "4세트 " + dbItem2.EQUIPMENT_SET_EFFECT_TEXT;
+
+            int cnt = 0;
+            foreach (var tmp in GameManager.Instance.GetUserClass().GetUserEquippedEquipment())
+            {
+                if (tmp != null && tmp.GetSet() == set)
+                    cnt++;
+            }
+
+            if (cnt < 4)
+                setTxt2.color = Color.gray;
+            if (cnt < 2)
+                setTxt1.color = Color.gray;
+        }
+        else
+        {
+            setTxt1.text = "";
+            setTxt2.text = "";
+        }
+    }
+
+    /* 강화 버튼 클릭
+     * 상세정보, 강화 창 출력
+     * 관련 함수 구현
+    **/
+
+    void EquipmentUpgradeButtonClickEvent(int index)
+    {
+        isUpgrade_Info_Open = true;
+        touchPad.gameObject.SetActive(false);
+
+        InfoPrintTypeButtonUnActive();
+        CloseButtonSpriteToBack();
+        infoSelectButtons[2].OnOffSpriteSetting();
+
+        printInfoDataField[2].transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
+        printInfoDataField[2].transform.GetChild(2).gameObject.SetActive(false);
+        printInfoDataField[2].transform.GetChild(3).gameObject.SetActive(false);
+        printInfoDataField[2].transform.GetChild(6).gameObject.SetActive(false);
+
+        // 강화/정보 출력을 담당하는 UI 객체 인스턴스화 및 활성화
+        var mainObj = printInfoDataField[2].transform.GetChild(7).GetComponent<Transform>();
+        mainObj.gameObject.SetActive(true);
+        mainObj.GetChild(0).gameObject.SetActive(false);    // 상세정보 창은 우선 SetFalse
+        mainObj.GetChild(1).gameObject.SetActive(false);    // 강화 창은 우선 SetFalse
+
+        isEquipUpgradeDetailObjClicked = new bool[2] { false,false };
+        string[] texts = { "상세", "강화" };
+
+        PlayerInfoUI_Button[] btnObjs = mainObj.GetComponentsInChildren<PlayerInfoUI_Button>();
+
+        for(int i=0; i<btnObjs.Length; i++)
+        {
+            var btnObj = btnObjs[i];
+
+            btnObj.SetText(texts[i]);
+
+            // 버튼에 연결되어 있는 기존 리스너 이벤트 제거
+            Button btn = btnObj.GetButton();
+            btn.onClick.RemoveAllListeners();
+
+            switch(btnObj.GetText())
+            {
+                case "상세":
+                    btnObj.GetButton().onClick.AddListener(() => EquipmentDetailPrint(btnObj,mainObj));
+                    break;
+                case "강화":
+                    btnObj.GetButton().onClick.AddListener(() => EquipmentUpgradePrint(btnObj, mainObj));
+                    break;
+            }
+        }
+
+        // index에 따른 UI 출력 함수 연결
+        // 디폴트 출력은 상세 정보 출력
+        PlayerInfoUI_Button button = btnObjs[index];
+        if(index == 0)
+            EquipmentDetailPrint(button, mainObj);
+        else if(index ==1)
+            EquipmentUpgradePrint(button, mainObj);
+    }
+
+    #region 성유물 _ 상세정보 및 업그레이드 출력
+    void EquipmentDetailPrint(PlayerInfoUI_Button typeBtnObj, Transform mainObj)
+    {
+        if (isEquipUpgradeDetailObjClicked[0] == true)
+            return;
+        typeBtnObj.OnOffSpriteSetting();
+        ClickedButtonsSetActiveReset(typeBtnObj, mainObj, 0, new int[2] { 0, 3 });
+
+        ButtonClass2 useButton = mainObj.GetChild(2).GetComponent<ButtonClass2>();
+        useButton.gameObject.SetActive(false);
+
+        WeaponAndEquipCls itemCls = GameManager.Instance.GetUserClass().GetUserEquippedEquipment()[nSelected_EquipIndex] as WeaponAndEquipCls;
+
+        // 객체 인스턴스화 및 데이터 출력
+        Transform content = mainObj.GetChild(0).GetChild(0).GetChild(0).GetComponent<Transform>();
+        
+        // 라벨 프레임
+        Image LabelFrame = content.GetChild(0).GetComponent<Image>();
+        TextMeshProUGUI labelText = LabelFrame.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        ItemUISetterByItemGrade(itemCls, LabelFrame);
+        labelText.text = itemCls.GetName();
+
+        // 탑 프레임
+        Image TopFrame = content.GetChild(1).GetComponent<Image>();
+        Image EquipImg = TopFrame.transform.GetChild(0).GetComponent<Image>();
+        TextMeshProUGUI txt_Tag = TopFrame.transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txt_StatLabel = TopFrame.transform.GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI txt_StatValue = TopFrame.transform.GetChild(1).GetChild(2).GetComponent<TextMeshProUGUI>();
+        Image[] img_Stars = TopFrame.transform.GetChild(1).GetChild(3).GetComponentsInChildren<Image>();
+
+        ItemUISetterByItemGrade(itemCls, null, TopFrame);
+        txt_Tag.text = itemCls.GetTag();
+        EquipmentKindDivider(itemCls,EquipImg,txt_StatLabel,txt_StatValue);
+        foreach(var img in img_Stars) img.enabled= false;
+        for(int i=0; i<itemCls.GetGrade(); i++)
+            img_Stars[i].enabled= true;
+
+        // 바텀 프레임
+        Image BottomFrame = content.GetChild(2).GetComponent<Image>();
+        TextMeshProUGUI levelText = BottomFrame.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI setText = BottomFrame.transform.GetChild(1).GetComponent<TextMeshProUGUI>();    
+        TextMeshProUGUI setSynergy_1_text = BottomFrame.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI setSynergy_2_text = BottomFrame.transform.GetChild(3).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI Content_text = BottomFrame.transform.GetChild(4).GetComponent<TextMeshProUGUI>();
+        Button btn_FindGetItem = BottomFrame.transform.GetChild(6).GetComponent<Button>();
+
+        levelText.text = "Lv. "+itemCls.GetLevel().ToString();
+        setText.text = itemCls.GetSet();
+        EquipUI_SetSynergyPrint(itemCls,setSynergy_1_text,setSynergy_2_text);
+        Content_text.text = itemCls.GetContent();
+
+        isEquipUpgradeDetailObjClicked[0] = true;
+        isEquipUpgradeDetailObjClicked[1] = false;
+    }
+
+    void EquipmentUpgradePrint(PlayerInfoUI_Button typeBtnObj, Transform mainObj)
+    {
+        if (isEquipUpgradeDetailObjClicked[1] == true)
+            return;
+        typeBtnObj.OnOffSpriteSetting();
+        ClickedButtonsSetActiveReset(typeBtnObj, mainObj, 1, new int[2] { 0, 2 });
+
+        ButtonClass2 useButton = mainObj.GetChild(2).GetComponent<ButtonClass2>();
+        useButton.gameObject.SetActive(true);
+        useButton.GetButton().onClick.RemoveAllListeners();
+
+        isEquipUpgradeDetailObjClicked[0] = false;
+        isEquipUpgradeDetailObjClicked[1] = true;
+    }
+
+    #endregion
+
 
     #endregion
 
