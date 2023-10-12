@@ -169,6 +169,8 @@ public class CharacterAttackMng : Subject, Observer
         if (characMng.GetCharacterClass().GetCurrnetElement().GetIsActive())
             characMng.GetCharacterClass().GetCurrnetElement().SetIsActive(false);
 
+        SwordColider.SetActive(false);
+
         // 스킬로 인한 특정 행동 강제 시, 발생할 문제를 해결하기 위한 각 제어 플래그 초기화
         FlagValueReset();   
         nAtkLevel = (int)e_AttackLevel.AttackMode;

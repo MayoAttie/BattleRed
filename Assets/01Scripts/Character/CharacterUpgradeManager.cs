@@ -43,6 +43,40 @@ public class CharacterUpgradeManager
         return isLimit;
     }
 
+    public static void EquipmentExpUp_Upgrade(WeaponAndEquipCls equip, int nWeaponUpgradeExp)
+    {
+        var data = GameManager.Instance.GetUserClass().GetHadEquipmentList().Find(tmp => tmp.Equals(equip));
+        var equipData = data as WeaponAndEquipCls;
+
+        int curExp = equip.GetCurrentExp();
+        int nextExp = curExp + nWeaponUpgradeExp;
+        equip.SetCurrentExp(nextExp);
+        equipData.SetCurrentExp(nextExp);
+
+        while (equip.GetCurrentExp() >= equip.GetMaxExp())
+        {
+            if (equip.GetLimitLevel() > equip.GetLevel())
+            {
+                int curLevel = equip.GetLevel();
+
+                equip.SetLevel(curLevel + 1);
+                equipData.SetLevel(curLevel + 1);
+
+                equip.SetMaxExp((int)(equip.GetMaxExp() * 1.6f));
+                equipData.SetMaxExp(equip.GetMaxExp());
+            }
+            else // 돌파단계 도달
+            {
+                equip.SetCurrentExp(equip.GetMaxExp());
+                equipData.SetCurrentExp(equip.GetMaxExp());
+
+                break;
+            }
+        }
+        GameManager.Instance.EquipItemStatusSet(equip);
+        GameManager.Instance.EquipItemStatusSet(equipData);
+    }
+
     // 돌파 시, 다음 능력치 리턴(0-메인스탯, 1-서브스탯)
     public static float[] WeapomLimitBreakStateUp(WeaponAndEquipCls weapon)
     {

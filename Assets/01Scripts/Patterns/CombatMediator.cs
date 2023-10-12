@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data.Common;
 using UnityEngine;
 using static Element_Interaction;
 using static HandlePauseTool;
@@ -9,6 +8,7 @@ using static HandlePauseTool;
 // 옵저버 패턴 활용을 위한 Subject 상속
 public class CombatMediator : Subject ,ICombatMediator
 {
+    
     private void OnEnable()
     {
         // 게임매니저의 이벤트에 구독
