@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static HandlePauseTool;
+using static CharacterUpgradeManager;
 public class GameManager : Singleton<GameManager>
 {
     #region 변수
@@ -862,7 +863,7 @@ public class GameManager : Singleton<GameManager>
 
 
         // 유저 게임 데이터 초기화
-        characterCls = new CharacterClass(300, 300, 0, 100, 50, 15, 1, 20, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true, 100);
+        characterCls = new CharacterClass(300, 300, 0, 100, 50, 15, 1, 20, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true, 100,20);
         playerData.SetUserCharacter(characterCls);
         playerData.SetMora(156000);
         List<ItemClass> weaponList = new List<ItemClass>
@@ -928,7 +929,8 @@ public class GameManager : Singleton<GameManager>
         playerData.SetUserEquippedEquipment(playerData.GetHadEquipmentList().FindAll(item => item.GetIsActive() == true).ToArray());
 
 
-        
+        CharacterDataReviseToWeapon();
+        CharacterDataReviseToEquipment();
     }
 
     void Start()

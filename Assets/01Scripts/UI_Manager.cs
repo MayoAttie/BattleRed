@@ -229,25 +229,39 @@ public class UI_Manager : EnergyBarManager
 
             // 해당 객체를 유저 데이터의 착용 장비로 설정
             if(findData.GetTag() == "무기")
+            {
+                CharacterDataReviseWhenWeaponTakeOff();
                 GameManager.Instance.GetUserClass().SetUserEquippedWeapon(findData);
+                CharacterDataReviseToWeapon();
+            }
             else
             {
                 switch(findData.GetTag())
                 {
                     case "꽃":
+                        CharacterDataReviseWhenEquipmentTakeOff(0);
                         GameManager.Instance.GetUserClass().SetUserEquippedEquipment(findData, 0);
+                        CharacterDataReviseToEquipment(0);
                         break; 
                     case "깃털":
+                        CharacterDataReviseWhenEquipmentTakeOff(1);
                         GameManager.Instance.GetUserClass().SetUserEquippedEquipment(findData, 1);
+                        CharacterDataReviseToEquipment(1);
                         break;
                     case "모래":
+                        CharacterDataReviseWhenEquipmentTakeOff(2);
                         GameManager.Instance.GetUserClass().SetUserEquippedEquipment(findData, 2);
+                        CharacterDataReviseToEquipment(2);
                         break;
                     case "성배":
+                        CharacterDataReviseWhenEquipmentTakeOff(3);
                         GameManager.Instance.GetUserClass().SetUserEquippedEquipment(findData, 3);
+                        CharacterDataReviseToEquipment(3);
                         break;
                     case "왕관":
+                        CharacterDataReviseWhenEquipmentTakeOff(4);
                         GameManager.Instance.GetUserClass().SetUserEquippedEquipment(findData, 4);
+                        CharacterDataReviseToEquipment(4);
                         break;
                 }
             }
@@ -807,14 +821,14 @@ public class UI_Manager : EnergyBarManager
         InfoPrintTypeButtonUnActive();
 
         Transform content = obj.GetChild(0).GetChild(0).GetChild(0).GetComponent<Transform>();
-        TextMeshProUGUI[] statusTexts = new TextMeshProUGUI[7];
+        TextMeshProUGUI[] statusTexts = new TextMeshProUGUI[8];
 
         // 데이터 출력을 위한 TextMeshPro 배열에 저장
         for(int i=0; i<5; i++)
         {
             statusTexts[i] = content.GetChild(1 + i).GetChild(2).GetComponent<TextMeshProUGUI>();
         }
-        for(int i=0; i<2; i++)
+        for(int i=0; i<3; i++)
         {
             statusTexts[5+i] = content.GetChild(8 + i).GetChild(2).GetComponent<TextMeshProUGUI>();
         }
@@ -826,6 +840,7 @@ public class UI_Manager : EnergyBarManager
         statusTexts[4].text = datas.GetStamina().ToString();
         statusTexts[5].text = datas.GetCriticalPercentage().ToString() + "%";
         statusTexts[6].text = datas.GetCriticalDamage().ToString();
+        statusTexts[7].text = datas.GetElementCharge().ToString();
     }
 
     #region 속성(Status) 프레임, 데이터 출력
@@ -939,6 +954,7 @@ public class UI_Manager : EnergyBarManager
 
         var WeaponsList = GameManager.Instance.GetUserClass().GetHadWeaponList();               // 보유하고 있는 아이템 리스트 인스턴스화
 
+        CharacterDataReviseWhenWeaponTakeOff(); // 아이템 데이터 감산
         ItemClass ExistingItem = GameManager.Instance.GetUserClass().GetUserEquippedWeapon();   // 기존 장착중인 아이템 가져오기
         ItemClass tmp = WeaponsList.Find(item => item.Equals(ExistingItem));                    // 기존 장착중인 아이템 리스트에서 찾기
         tmp.SetActive(false);                                                                   // 장착 중이던 아이템을 활성화 X
@@ -946,7 +962,7 @@ public class UI_Manager : EnergyBarManager
         ItemClass SelectItem = WeaponsList.Find(item => item.Equals(cls));              // 선택한 아이템 찾기
         SelectItem.SetActive(true);                                                     // 장착할 아이템 활성화 O
         GameManager.Instance.GetUserClass().SetUserEquippedWeapon(SelectItem);          // 선택한 아이템 장착
-
+        CharacterDataReviseToWeapon();          // 아이템 데이터 증가
 
         // 새로 장착하여 변경된 아이템들을 UI에 출력
         Transform scrollViewContentObj = printInfoDataField[1].transform.GetChild(12).GetChild(0).GetChild(0);
@@ -2457,6 +2473,7 @@ public class UI_Manager : EnergyBarManager
         // 선택한 아이템과 장착한 아이템이 같지 않을 경우,
         if(equipedEquipList[index]!= null && obj.GetItemcls().Equals(equipedEquipList[index]) == false)
         {
+            CharacterDataReviseWhenEquipmentTakeOff(index);
             ItemClass ExistingItem = equipedEquipList[index];                                               // 기존 장착중인 아이템 가져오기
             ItemClass tmp = equipList.Find(item => item.Equals(ExistingItem));                              // 기존 장착중인 아이템 리스트에서 찾기
             tmp.SetActive(false);                                                                           // 장착 중이던 아이템을 활성화 X
@@ -2464,6 +2481,7 @@ public class UI_Manager : EnergyBarManager
             ItemClass SelectItem = equipList.Find(item => item.Equals(cls));                        // 선택한 아이템 찾기
             SelectItem.SetActive(true);                                                             // 장착할 아이템 활성화 O
             GameManager.Instance.GetUserClass().SetEquipedEquipmentList(SelectItem, index);         // 선택한 아이템 장착
+            CharacterDataReviseToEquipment(index);
 
             // 회전 선택 버튼에 이미지 부여
             EquipmentKindDivider(reCls, inImage);
@@ -2494,6 +2512,7 @@ public class UI_Manager : EnergyBarManager
         else
         {
             //조건문을 모두 통과했다면, 장착했던 장비==선택한 장비이기에, 장착했던 장비를 해제한다.
+            CharacterDataReviseWhenEquipmentTakeOff(index);
             ItemClass ExistingItem = equipedEquipList[index]; // 기존 장착중인 아이템 가져오기
             ItemClass tmp = equipList.Find(item => item.Equals(ExistingItem));                              // 기존 장착중인 아이템 리스트에서 찾기
             tmp.SetActive(false);                                                                           // 장착 중이던 아이템을 활성화 X
