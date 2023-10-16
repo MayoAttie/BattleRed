@@ -863,7 +863,7 @@ public class GameManager : Singleton<GameManager>
 
 
         // 유저 게임 데이터 초기화
-        characterCls = new CharacterClass(300, 300, 0, 100, 50, 15, 1, 20, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true, 100,20);
+        characterCls = new CharacterClass(300, 300, 0, 100, 50,20, 1, 20, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true, 100,20);
         playerData.SetUserCharacter(characterCls);
         playerData.SetMora(156000);
         List<ItemClass> weaponList = new List<ItemClass>
@@ -1004,6 +1004,7 @@ public class GameManager : Singleton<GameManager>
                 }
                 break;
         }
+
 
         #region 레거시
         //// 오브젝트 풀을 이용해 몬스터 생성

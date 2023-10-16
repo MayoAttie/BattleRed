@@ -381,23 +381,25 @@ public class CombatMediator : Subject ,ICombatMediator
             // 체력감소에 따른 HP바 반영
             monHpMng.HpBarFill_End(rangeMob.GetMonsterMaxHp(), rangeMob.GetMonsterCurrentHp(), false);
 
+            var monPos = monMng.GetMonsterHeadPosition();
+
             // 속성별 데미지 띄우기
             switch (elementType)
             {
                 case Element.e_Element.Fire:
-                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monMng.GetMonsterHeadPosition(), Color.red);
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monPos, Color.red);
                     break;
                 case Element.e_Element.Water:
-                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monMng.GetMonsterHeadPosition(), Color.blue);
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monPos, Color.blue);
                     break;
                 case Element.e_Element.Plant:
-                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monMng.GetMonsterHeadPosition(), Color.green);
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monPos, Color.green);
                     break;
                 case Element.e_Element.Lightning:
-                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monMng.GetMonsterHeadPosition(), new Color(0.5f, 0f, 0.5f));
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monPos, new Color(0.5f, 0f, 0.5f));
                     break;
                 case Element.e_Element.Wind:
-                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monMng.GetMonsterHeadPosition(), Color.cyan);
+                    DamageTextManager.Instance.CreateFloatingText(damage.ToString(), monPos, Color.cyan);
                     break;
             }
         }

@@ -2481,7 +2481,7 @@ public class UI_Manager : EnergyBarManager
             ItemClass SelectItem = equipList.Find(item => item.Equals(cls));                        // 선택한 아이템 찾기
             SelectItem.SetActive(true);                                                             // 장착할 아이템 활성화 O
             GameManager.Instance.GetUserClass().SetEquipedEquipmentList(SelectItem, index);         // 선택한 아이템 장착
-            CharacterDataReviseToEquipment(index);
+            CharacterDataReviseToEquipment(index);                                                  // 착용한 장비 데이터 수정
 
             // 회전 선택 버튼에 이미지 부여
             EquipmentKindDivider(reCls, inImage);
@@ -2496,6 +2496,7 @@ public class UI_Manager : EnergyBarManager
             ItemClass SelectItem = equipList.Find(item => item.Equals(cls));                        // 선택한 아이템 찾기
             SelectItem.SetActive(true);                                                             // 장착할 아이템 활성화 O
             GameManager.Instance.GetUserClass().SetEquipedEquipmentList(SelectItem, index);         // 선택한 아이템 장착
+            CharacterDataReviseToEquipment(index);                                                  // 착용한 장비 데이터 수정
 
             // 회전 선택 버튼에 이미지 부여
             EquipmentKindDivider(reCls, inImage);

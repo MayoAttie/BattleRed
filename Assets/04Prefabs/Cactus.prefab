@@ -606,7 +606,7 @@ GameObject:
   - component: {fileID: 5460565520645760143}
   - component: {fileID: 346434181745609543}
   - component: {fileID: 8082224225760863434}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: MonsterCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -767,7 +767,7 @@ GameObject:
   - component: {fileID: 8659185499322021409}
   - component: {fileID: 6588138502946470267}
   - component: {fileID: 4316551787342724568}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: HPbarOutline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1021,7 +1021,7 @@ GameObject:
   - component: {fileID: 3989049399452611561}
   - component: {fileID: 496427419815857145}
   - component: {fileID: 5100947551455970062}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: HPbarInline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1237,6 +1237,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: DamageText
+      objectReference: {fileID: 0}
+    - target: {fileID: 2983121475680294186, guid: 83b2ee5eb5434cb49bd414083cfa7b3d,
+        type: 3}
+      propertyPath: m_Layer
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2983121475680294186, guid: 83b2ee5eb5434cb49bd414083cfa7b3d,
         type: 3}

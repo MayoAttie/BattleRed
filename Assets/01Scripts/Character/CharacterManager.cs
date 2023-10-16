@@ -19,7 +19,11 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     private float runZ;                         // 캐릭터 애니메이션 플로트 변수
     [SerializeField] GameObject SatelliteObj;   // 원소 체크용 위성 객체
     bool isClickedCoolCheck;                    // 버튼 쿨타임 코루틴 객체
+    bool isMonsterSpwan;                        // 스폰 제어 플래그
+    private float timer;                        // 스폰 타이머
+    private float updateInterval;               // 스폰 타이머
 
+    public List<Transform> targetsListIn10Range;       // 범위 내 몬스터 객체 리스트
 
     public int characterHp;                             //테스트용
     public CharacterClass.eCharactgerState clsState;    //테스트 확인용
@@ -29,8 +33,11 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     private void Awake()
     {
         isBattle = false;
+
+        targetsListIn10Range = new List<Transform>();
         gameObject.GetComponent<CharacterAttackMng>().Attach(this);     // 옵저버패턴 부착
         gameObject.GetComponent<CharacterControlMng>().Attach(this);    // 옵저버패턴 부착
+        gameObject.GetComponent<CharacterViewRange>().Attach(this);
         aniController = gameObject.GetComponent<Animator>();            // 애니메이터 초기화
         SatelliteObj.gameObject.SetActive(false);                       // 원소 상태 표시용 위성 SetFalse
     }
@@ -46,12 +53,16 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     {
         // 게임매니저의 이벤트에 구독
         GameManager.OnPauseStateChanged += HandlePauseStateChanged;
+        isMonsterSpwan = false;
+        timer = 0.0f;
+        updateInterval = 1f; // 1초
     }
 
     private void OnDisable()
     {
         // 게임매니저의 이벤트 구독 해제
         GameManager.OnPauseStateChanged -= HandlePauseStateChanged;
+
     }
 
     private void Update()
@@ -66,7 +77,15 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     }
     private void FixedUpdate()
     {
-        World_InCharacterCheck();
+        if (!isBattle)
+        {
+            timer += Time.fixedDeltaTime;
+            if (timer >= updateInterval)
+            {
+                World_InCharacterCheck();
+                timer = 0.0f; // 타이머 초기화
+            }
+        }
     }
 
     #region 애니메이션 제어
@@ -237,17 +256,35 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
     void World_InCharacterCheck()
     {
-        // 몬스터 레이어를 가진 객체를 배열에 저장
-        int SpwanPoint = LayerMask.NameToLayer("SpwanPoint");
-        // 탐색범위 10
-        Collider[] colliders = Physics.OverlapSphere(transform.position, 10, 1 << SpwanPoint);
-        if(colliders.Length > 0 )
+        if(isMonsterSpwan==false)
         {
-            foreach (Collider collider in colliders)
+            isMonsterSpwan = true;
+            if (targetsListIn10Range.Count <= 0)
             {
-                GameManager.Instance.MonsterSpawn(collider.transform);
+                // 몬스터 레이어를 가진 객체를 배열에 저장
+                int SpwanPoint = LayerMask.NameToLayer("SpwanPoint");
+                int monsterLayer = LayerMask.NameToLayer("Monster");
+                // 탐색범위 10
+                Collider[] colliders = Physics.OverlapSphere(transform.position, 10, 1 << SpwanPoint);
+                Collider[] Mobcolliders = Physics.OverlapSphere(transform.position, 10, 1 << monsterLayer);
+                if (Mobcolliders.Length > 0)
+                {
+                    isMonsterSpwan = false;
+                    return;
+                }
+
+                if (colliders.Length > 0)
+                {
+                    foreach (Collider collider in colliders)
+                    {
+                        GameManager.Instance.MonsterSpawn(collider.transform);
+                    }
+                }
             }
+
+            isMonsterSpwan = false;
         }
+
         
     }
         
@@ -302,8 +339,12 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     }
 
 
+    // 적 탐지 옵저버 패턴
+    public void GetEnemyFindNotify(List<Transform> findList)
+    {
+        targetsListIn10Range = findList;
+    }
 
-    public void GetEnemyFindNotify(List<Transform> findList){}
     public void AttackSkillStartNotify(){}
 
     public void AttackSkillEndNotify(){}

@@ -321,7 +321,7 @@ GameObject:
   - component: {fileID: 779722595170584775}
   - component: {fileID: 8744461594889163913}
   - component: {fileID: 1166277119010437934}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -451,7 +451,7 @@ GameObject:
   - component: {fileID: 4522347339250171035}
   - component: {fileID: 5383135375472353696}
   - component: {fileID: 8241989020526363435}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: HpbarInline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -645,7 +645,7 @@ GameObject:
   - component: {fileID: 1168919179748805757}
   - component: {fileID: 3742277909845250291}
   - component: {fileID: 3305137315917080386}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: HpbarOutline
   m_TagString: Untagged
   m_Icon: {fileID: 0}

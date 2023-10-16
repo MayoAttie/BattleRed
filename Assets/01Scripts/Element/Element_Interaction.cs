@@ -579,7 +579,7 @@ public class Element_Interaction : Singleton<Element_Interaction>
         return damage;
     }
 
-    // 번개+바람, 확산 범위 반환
+    // 풀+바람, 확산 범위 반환
     public static float c_PlantToWind(CharacterClass chCls)
     {
         float range;
@@ -587,7 +587,7 @@ public class Element_Interaction : Singleton<Element_Interaction>
         range = chCls.GetElementNum() * 0.4f;
         return range;
     }
-    // 번개+바람, 데미지 반환
+    // 풀+바람, 데미지 반환
     public static int c_PlantToWindGetDamage(CharacterClass chCls, Monster mobCls)
     {
         int damage;
