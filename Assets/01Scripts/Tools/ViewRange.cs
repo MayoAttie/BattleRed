@@ -20,6 +20,8 @@ public class ViewRange : Subject
             angle = _angle;
         }
     }
+    [Header("폴리곤 ViewRange 활성화")]
+    public bool isViewRangeActive;
 
     // 두 간선을 저장할 구조체
     public struct Edge
@@ -79,7 +81,8 @@ public class ViewRange : Subject
     private void LateUpdate()
     {
         // 폴리곤 범위 그리기 함수 호출
-        DrawFieldOfView();
+        if(isViewRangeActive)
+            DrawFieldOfView();
     }
 
     #region 부채꼴, 캐릭터 유닛시야 코드

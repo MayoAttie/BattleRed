@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static TouchPadController;
 using static HandlePauseTool;
+using UnityEngine.AI;
 
 public class CharacterControlMng : Subject, Observer
 {
@@ -22,7 +23,7 @@ public class CharacterControlMng : Subject, Observer
     bool isConsecutiveBlink;                    //
 
     float jumpHeight = 2f;                      // 점프 높이
-    float groundDistance = 1.4f;                // 지면과의 거리
+    float groundDistance = 0f;                // 지면과의 거리
     public float zPos;                          // 제어용 좌표 값
     public float xPos;                          // 제어용 좌표 값
     public float runX;                          // 달리기 제어용 변수
@@ -240,13 +241,13 @@ public class CharacterControlMng : Subject, Observer
         if (Mathf.Abs(xPos - 1f) < 0.1f)
         {
             // 오른쪽으로 방향 전환 (90도 회전)
-            Quaternion targetRotation = Quaternion.Euler(0f, transform.eulerAngles.y + 90f, 0f);
+            Quaternion targetRotation = Quaternion.Euler(0f, transform.eulerAngles.y + 150f, 0f);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
         else if (Mathf.Abs(xPos + 1f) < 0.1f)
         {
             // 왼쪽으로 방향 전환 (90도 회전)
-            Quaternion targetRotation = Quaternion.Euler(0f, transform.eulerAngles.y - 90f, 0f);
+            Quaternion targetRotation = Quaternion.Euler(0f, transform.eulerAngles.y - 150f, 0f);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
         else if (Mathf.Abs(zPos + 1f) < 0.06f)

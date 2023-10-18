@@ -30,6 +30,8 @@ public class CameraController : MonoBehaviour, Observer
     [Range(.0f, 1.0f)]
     public float LerpSpeed = .1f;
 
+    public float FixDuration = 1.0f;  // 고정 기간 (1초)
+
     [Space(10.0f)]
     [Tooltip("Collision parameters")]
     public TraceInfo RayTrace = new TraceInfo { Thickness = .2f };
@@ -73,6 +75,8 @@ public class CameraController : MonoBehaviour, Observer
     
     private float _pitch;
     private float _distance;
+    private Vector3 _jumpStartPos;
+    private float _fixEndTime = 0f;
 
     public void Awake()
     {
@@ -107,7 +111,20 @@ public class CameraController : MonoBehaviour, Observer
         // 캐릭터 위에 원하는 높이를 계산.
         var desiredPosition = result + Vector3.up * DesiredHeight;
 
-        if (resultDistance <= _distance)    // closest collision
+        // 점프 감지
+        if (CharacterManager.Instance.GetCharacterClass().GetState() == CharacterClass.eCharactgerState.e_JUMP)
+        {
+            // 점프 상태일 때
+            _jumpStartPos = Target.position;  // 점프 시작 위치 업데이트
+            _fixEndTime = Time.time + FixDuration;  // 고정 종료 시간 설정
+        }
+
+        if (Time.time < _fixEndTime)
+        {
+            // 고정 기간 중
+            transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        }
+        else if (resultDistance <= _distance)    // closest collision
         {
             transform.position = desiredPosition;
             _distance = resultDistance;
