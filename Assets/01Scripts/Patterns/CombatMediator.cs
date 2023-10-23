@@ -24,7 +24,7 @@ public class CombatMediator : Subject ,ICombatMediator
 
     #region 캐릭터
     // 캐릭터 평타 공격 판정 함수
-    public void Mediator_CharacterAttack(CharacterClass character, MonsterManager targetMonster)
+    public void Mediator_CharacterAttack(CharacterClass character, CharacterManager characMng, MonsterManager targetMonster)
     {
         // 몬스터 체력 감소 UI표시를 위한 함수 호출
         var mobHpMng = targetMonster.GetMonsterHPMng();
@@ -60,6 +60,11 @@ public class CombatMediator : Subject ,ICombatMediator
         //몬스터 피깎
         int tmp = mobCurrentHp - damage;
         mobMng.SetMonsterCurrentHP(tmp);
+
+        // 피격당한 몬스터의 플레이어 추적
+        targetMonster.WhenHittedChaseToTarget(characMng);
+        // 스턴치 누적
+        targetMonster.HitStrunPointAccumulate(5);
 
         // 몬스터 체력 감소 UI 마무리 함수 호출
         mobHpMng.HpBarFill_End(mobMaxHp, tmp, false);
@@ -349,7 +354,11 @@ public class CombatMediator : Subject ,ICombatMediator
                 break;
         }
 
-        
+        // 피격당한 몬스터의 플레이어 추적
+        mobManager.WhenHittedChaseToTarget(characMng);
+        // 스턴치 누적
+        mobManager.HitStrunPointAccumulate(20);
+
     }
 
     //확산(확산 범위, 피해량, 피해량 보정값, 부착될 원소타입)

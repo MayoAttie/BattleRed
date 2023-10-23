@@ -37,6 +37,8 @@ public class Monster : Objects
     private int nMonsterExp;
     private int nMonsterAtkPower;
     private int nMonsterDef;
+    private float fSturnPoint;
+    private float fCurrentSturnPoint;
     private float fMonsterSpeed;
     private float fMonsterRotationSpeed;
     private float fMonsterHeadPos;
@@ -44,7 +46,7 @@ public class Monster : Objects
     private Element monsterHaveElement;
     private Element monsterHittedElement;
 
-    public Monster(string sTag, string sName, int nGrade, bool isActive,e_MonsterState monsterState, e_MonsterType monsterType, int nMonsterMaxHp, int nMonsterCurrnetHp, int nMonsterExp, int nMonsterAtkPower, int nMonsterDef, float fMonsterSpeed, float fMonsterRotationSpeed, Element.e_Element element, float fMonsterHeadPos)
+    public Monster(string sTag, string sName, int nGrade, bool isActive,e_MonsterState monsterState, e_MonsterType monsterType, int nMonsterMaxHp, int nMonsterCurrnetHp, int nMonsterExp, int nMonsterAtkPower, int nMonsterDef, float fMonsterSpeed, float fMonsterRotationSpeed, Element.e_Element element, float fMonsterHeadPos, float fSturnPoint)
         : base(sTag, sName, nGrade, isActive)
     {
         this.monsterType = monsterType;
@@ -57,9 +59,12 @@ public class Monster : Objects
         this.monsterState = monsterState;
         this.fMonsterRotationSpeed = fMonsterRotationSpeed;
         this.fMonsterHeadPos = fMonsterHeadPos;
+        this.fSturnPoint = fSturnPoint;
         isQuicken = false;
         monsterHaveElement = new Element(element, true, false);
         monsterHittedElement= new Element(Element.e_Element.None, false, false);
+        fCurrentSturnPoint = 0;
+
     }
 
     public Monster()
@@ -80,6 +85,8 @@ public class Monster : Objects
     public void SetMonsterHittedElement(Element element) { monsterHittedElement= element; }
     public void SetIsQuicken(bool isQuicken) { this.isQuicken = isQuicken; }
     public void SetMonsterHeadPos(float fMonsterHeadPos) {this.fMonsterHeadPos = fMonsterHeadPos; }
+    public void SetMonsterSturnPoint(float fSturnPoint) {  this.fSturnPoint= fSturnPoint; }
+    public void SetCurrentSturnPoint(float fCurrentSturnPoint) { this.fCurrentSturnPoint= fCurrentSturnPoint; }
 
 
     public e_MonsterState GetMonsterState() { return monsterState; }
@@ -95,6 +102,8 @@ public class Monster : Objects
     public Element GetMonsterHittedElement() { return monsterHittedElement; }
     public bool GetIsQuicken() { return isQuicken; }
     public float GetMonsterHeadPos() { return fMonsterHeadPos; }
+    public float GetMonsterSturnPoint() { return fSturnPoint; }
+    public float GetCurrentSturnPoint() { return fCurrentSturnPoint; }
 
     #endregion
 

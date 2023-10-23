@@ -17,6 +17,7 @@ public class MonsterManager : MonoBehaviour, Observer
     float fPosZ;                // 이동제어 용 실수 변수
     bool isBattle;              // 전투 체크 변수
     bool isHit;                 // 히트 체크 변수
+    bool isSturn;               // 스턴 체크 변수
     bool isDead;                // 죽음 체크 변수
     bool isIdle;                // 아이들 상태 유무 변수
     bool isDeadFlag;
@@ -113,10 +114,32 @@ public class MonsterManager : MonoBehaviour, Observer
     {
         if (monster.GetMonsterCurrentHp() > 0)
         {
-            if (isHit == true)
+            if (isHit == true || isSturn)
             {
-                monster.SetMonsterState(e_MonsterState.Hit);
+                if (isHit)
+                { 
+                    monster.SetMonsterState(e_MonsterState.Hit);
 
+                    // 애니메이션 동작 완료 시, 공격 상태 전환 및 히트 상태 해제
+                    if (MobAnimator.GetCurrentAnimatorStateInfo(0).IsName("Hit") &&
+                    MobAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+                    {
+                        isHit = false;
+                        monster.SetMonsterState(e_MonsterState.Attack);
+                    }
+                }
+                else if(isSturn)
+                {
+                    monster.SetMonsterState(e_MonsterState.Sturn);
+
+                    // 애니메이션 동작 완료 시, 공격 상태 전환 및 스턴 상태 해제
+                    if (MobAnimator.GetCurrentAnimatorStateInfo(0).IsName("Sturn") &&
+                    MobAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+                    {
+                        isSturn = false;
+                        monster.SetMonsterState(e_MonsterState.Attack);
+                    }
+                }
             }
             else if (monster.GetMonsterState() == e_MonsterState.Attack)
             {
@@ -187,6 +210,43 @@ public class MonsterManager : MonoBehaviour, Observer
         }
 
     }
+
+    public void WhenHittedChaseToTarget(CharacterManager userManager)
+    {
+        if (monster.GetMonsterState() == e_MonsterState.Attack)
+            return;
+
+        monster.SetMonsterState(Monster.e_MonsterState.Attack);
+        monsterAtk.TargetInputter(userManager.transform);
+    }
+
+    //히트 시, 경직 누적 함수
+    public void HitStrunPointAccumulate(float fPoint)
+    {
+        float maxSturnPoint = monster.GetMonsterSturnPoint();
+        float currentSturnPoint = monster.GetCurrentSturnPoint();
+        float tmp = fPoint + currentSturnPoint;
+
+        // 경직도 계산
+        if (tmp > maxSturnPoint)
+        {
+            monster.SetCurrentSturnPoint(0);
+
+            // Random.Range를 사용하여 0부터 1 사이의 랜덤한 값(실수) 생성
+            float randomValue = Random.Range(0f, 1f);
+
+            // 50% 확률로 isHit 또는 isSturn 설정
+            if (randomValue <= 0.5f)
+                isHit = true;
+            else
+                isSturn = true;
+        }
+        else
+        {
+            monster.SetCurrentSturnPoint(tmp);
+        }
+    }
+
 
     #region Move_AI
     // 이동 및 순찰 제어 함수
@@ -366,8 +426,10 @@ public class MonsterManager : MonoBehaviour, Observer
                 MobAnimator.SetInteger("Controller", 1);
                 break;
             case Monster.e_MonsterState.Hit:
+                MobAnimator.SetInteger("Controller", 2);
                 break;
             case Monster.e_MonsterState.Sturn:
+                MobAnimator.SetInteger("Controller", 3);
                 break;
             case Monster.e_MonsterState.Die:
                 MobAnimator.SetInteger("Controller", 4);
@@ -444,6 +506,7 @@ public class MonsterManager : MonoBehaviour, Observer
     public bool GetBattleActive(){return isBattle;}
     public MonsterHp GetMonsterHPMng() { return monsterHPMng; }
     public bool GetDetectedActive() { return isDetected;}
+    public bool GetIsHit() { return isHit;}
 
     public Vector3 GetMonsterHeadPosition()
     {
@@ -480,6 +543,7 @@ public class MonsterManager : MonoBehaviour, Observer
             }
         }
     }
+
 
     public void AttackSkillStartNotify(){}
 

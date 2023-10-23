@@ -14,7 +14,8 @@ public class SwordFunction : CombatMediator
         if (other.gameObject.layer == LayerMask.NameToLayer("Monster"))
         {
             character = CharacterManager.Instance.GetCharacterClass();
-            CharacterAttackMng.e_AttackLevel attackLevel = CharacterManager.Instance.GetCharacterAtkLevel();
+            var characeterMng = CharacterManager.Instance;
+            CharacterAttackMng.e_AttackLevel attackLevel = characeterMng.GetCharacterAtkLevel();
 
             // 평타 공격인지 체크
             if (attackLevel == CharacterAttackMng.e_AttackLevel.Attack1 ||
@@ -22,14 +23,14 @@ public class SwordFunction : CombatMediator
                attackLevel == CharacterAttackMng.e_AttackLevel.Attack3)
             {
                 var mob = other.gameObject.GetComponent<MonsterManager>();
-                Mediator_CharacterAttack(character, mob);                                   // 상속받은 중재자 패턴의 데미지 로직 함수 호출
+                Mediator_CharacterAttack(character, characeterMng, mob);                                   // 상속받은 중재자 패턴의 데미지 로직 함수 호출
                 EffectManager.Instance.EffectCreate(this.gameObject.transform, 0);
             }
             else if(attackLevel == CharacterAttackMng.e_AttackLevel.AtkSkill)   // 스킬 공격 판정
             {
                 character.GetCurrnetElement().SetIsActive(true);
                 var mob = other.gameObject.GetComponent<MonsterManager>();
-                Mediator_CharacterSkillAttack(character, CharacterManager.Instance, mob);   // 상속받은 중재자 패턴의 데미지 로직 함수 호출
+                Mediator_CharacterSkillAttack(character, characeterMng, mob);   // 상속받은 중재자 패턴의 데미지 로직 함수 호출
             }
             gameObject.SetActive(false);
         }

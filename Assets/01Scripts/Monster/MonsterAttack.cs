@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.AI;
 using static HandlePauseTool;
@@ -60,6 +61,9 @@ public class MonsterAttack : MonoBehaviour, Observer
         if (isBattle == false)
             return;
 
+        if (monsterCls.GetMonsterState() == Monster.e_MonsterState.Hit || monsterCls.GetMonsterState() == Monster.e_MonsterState.Sturn) // 히트 혹은 스턴 상태일 경우, 리턴
+            return;
+
         TargetChaseMove();
     }
 
@@ -82,6 +86,10 @@ public class MonsterAttack : MonoBehaviour, Observer
     {
         TargetList = targets;
         target = targets[0].gameObject;
+    }
+    public void TargetInputter(Transform target)
+    {
+        this.target = target.gameObject;
     }
 
 
