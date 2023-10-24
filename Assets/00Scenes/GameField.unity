@@ -14783,6 +14783,53 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &599412597
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 599412598}
+  - component: {fileID: 599412599}
+  m_Layer: 0
+  m_Name: ItemDropManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &599412598
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 599412597}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1106756943}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &599412599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 599412597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9b8b9c13f2fd324bb31a01476763996, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ItemObject:
+  - {fileID: 2309590442184372203, guid: 1899f78d0af63ca4793ac63495451f96, type: 3}
+  - {fileID: 2828382796796185277, guid: 86730bd4cb8367648bf1ac44771416b1, type: 3}
+  - {fileID: 989923697534502564, guid: 275ec57f39547994588c7dd4621cc955, type: 3}
 --- !u!1 &603873460
 GameObject:
   m_ObjectHideFlags: 0
@@ -26300,6 +26347,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 042a25c0c807df64082373f2cad559ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isViewRangeActive: 0
   viewRadius: 10
   viewAngle: 360
   targetMask:
@@ -26526,6 +26574,7 @@ MonoBehaviour:
   Target: {fileID: 123540197}
   Distance: 3
   LerpSpeed: 0.1
+  FixDuration: 1
   RayTrace:
     Thickness: 0.2
     CollisionMask:
@@ -28509,6 +28558,7 @@ Transform:
   - {fileID: 718547516}
   - {fileID: 1477125554}
   - {fileID: 781706232}
+  - {fileID: 599412598}
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -32027,6 +32077,10 @@ MonoBehaviour:
     type: 3}
   SelectButton: {fileID: 1403533531044819808, guid: 801709efbf5d8234eaf8065d88dbfb81,
     type: 3}
+  DropItemObject:
+  - {fileID: 2309590442184372203, guid: 1899f78d0af63ca4793ac63495451f96, type: 3}
+  - {fileID: 2828382796796185277, guid: 86730bd4cb8367648bf1ac44771416b1, type: 3}
+  - {fileID: 989923697534502564, guid: 275ec57f39547994588c7dd4621cc955, type: 3}
   BottomCanvas: {fileID: 485999302}
   TopCanvas: {fileID: 238076343}
   HpCamera: {fileID: 1744279925}

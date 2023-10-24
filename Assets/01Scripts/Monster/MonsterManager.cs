@@ -185,11 +185,12 @@ public class MonsterManager : MonoBehaviour, Observer
         switch (name)
         {
             case "Cactus":
-                if (monsterManager != null)
-                    GameManager.Instance.CactusPool.ReturnToPool(monsterManager);
+                ItemDropManager.Instance.ItemDrop(this.transform, "무기");    // 무기 드랍
+                GameManager.Instance.CactusPool.ReturnToPool(monsterManager);
                 break;
             case "MushroomAngry":
-                    GameManager.Instance.MushroomAngryPool.ReturnToPool(monsterManager);
+                ItemDropManager.Instance.ItemDrop(this.transform, "성유물");   // 성유물 드랍
+                GameManager.Instance.MushroomAngryPool.ReturnToPool(monsterManager);
                 break;
             default: break;
         }
