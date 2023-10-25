@@ -14,6 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 using System.Collections.Generic;
 using UnityEngine;
+using static TouchPadController;
 
 public class CameraController : MonoBehaviour, Observer
 {
@@ -47,6 +48,16 @@ public class CameraController : MonoBehaviour, Observer
     public Light LightObject;
     // 미니맵 카메라
     public Camera MiniMapCamera;
+
+
+    // 플레이어 시야 상하 회전
+    [Header("플레이어 시야 관련")]
+    public float touchSensitivity = 2.0f;
+    public float minRotationX = -90.0f;
+    public float maxRotationX = 90.0f;
+    private float rotationX = 0.0f;
+    public TouchPadController touchPad;
+
 
     #endregion
 
@@ -91,6 +102,11 @@ public class CameraController : MonoBehaviour, Observer
         _pitch = Mathf.DeltaAngle(0, -transform.localEulerAngles.x);
         _distance = Distance;
 
+    }
+
+    public void Update()
+    {
+        RotateCamera();
     }
 
 
@@ -171,6 +187,35 @@ public class CameraController : MonoBehaviour, Observer
 
             // 충돌이 발생하지 않은 경우 false를 반환합니다.
             return false;
+        }
+    }
+
+    private void RotateCamera()
+    {
+        e_TouchSlideDic touchDic;
+        touchDic = touchPad.GetDirection();
+
+        // 만약 수평 방향 입력이 위쪽(Up)으로 감지된 경우
+        if (touchDic == e_TouchSlideDic.Up)
+        {
+            // 터치의 이동량에 따라 카메라의 상 회전 조절
+            float deltaY = -1 * touchSensitivity;
+            rotationX += deltaY;
+            rotationX = Mathf.Clamp(rotationX, minRotationX, maxRotationX);
+
+            // 카메라의 상하 회전 적용
+            transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
+        }
+        // 만약 수평 방향 입력이 아래쪽(Down)으로 감지된 경우
+        else if (touchDic == e_TouchSlideDic.Down)
+        {
+            // 터치의 이동량에 따라 카메라의 하 회전 조절
+            float deltaY = 1 * touchSensitivity;
+            rotationX += deltaY;
+            rotationX = Mathf.Clamp(rotationX, minRotationX, maxRotationX);
+
+            // 카메라의 상하 회전 적용
+            transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
         }
     }
 

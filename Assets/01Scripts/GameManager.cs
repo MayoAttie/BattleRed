@@ -14,6 +14,7 @@ public class GameManager : Singleton<GameManager>
     public GameObject InventoryItemObj;
     public GameObject SelectButton;
     public GameObject[] DropItemObject;
+    public GameObject DropItem_UI;
 
     // 오브젝트 풀
     public ObjectPool<MonsterManager> CactusPool;
@@ -27,6 +28,7 @@ public class GameManager : Singleton<GameManager>
     public ObjectPool<DropItem> DropItem_1Pool;
     public ObjectPool<DropItem> DropItem_2Pool;
     public ObjectPool<DropItem> DropItem_3Pool;
+    public ObjectPool<DropItem_UI> DropItemUI_Pool;
 
 
     // 캔버스
@@ -137,7 +139,7 @@ public class GameManager : Singleton<GameManager>
         DropItem_1Pool = new ObjectPool<DropItem>(DropItemObject[0],3,objectPoolSavePos);
         DropItem_2Pool = new ObjectPool<DropItem>(DropItemObject[1],3,objectPoolSavePos);
         DropItem_3Pool = new ObjectPool<DropItem>(DropItemObject[2],3,objectPoolSavePos);
-
+        DropItemUI_Pool = new ObjectPool<DropItem_UI>(DropItem_UI, 5, objectPoolSavePos);
 
         #region 디폴트 아이템 데이터 DB 테이블 채우기
         ItemDataList = new List<ItemClass>

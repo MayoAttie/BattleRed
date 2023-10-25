@@ -71,6 +71,7 @@
     <Compile Include="Assets\01Scripts\EnergyBarManager.cs" />
     <Compile Include="Assets\01Scripts\GameManager.cs" />
     <Compile Include="Assets\01Scripts\Item\DropItem.cs" />
+    <Compile Include="Assets\01Scripts\Item\DropItem_UI.cs" />
     <Compile Include="Assets\01Scripts\Item\ItemClass.cs" />
     <Compile Include="Assets\01Scripts\Item\ItemDropManager.cs" />
     <Compile Include="Assets\01Scripts\Item\WeaponAndEquipCls.cs" />

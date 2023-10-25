@@ -23,6 +23,10 @@ public class TouchPadController : MonoBehaviour, IPointerDownHandler, IDragHandl
     private int pointerID;  // 터치의 고유 ID
     private e_TouchSlideDic slideDic;  // 터치의 슬라이드 방향을 나타내는 열거형 변수
 
+
+
+
+
     void Awake()
     {
         direction = Vector2.zero;  // 초기 방향을 제로 벡터로 설정

@@ -2,9 +2,81 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
+using UnityEngine.UI;
+using TMPro;
+using static UI_UseToolClass;
 public class ItemDropManager : Singleton<ItemDropManager>
 {
+    public Camera mainCamera;
+    public Transform dropItemCrollView;
+    public LayerMask itemLayer;
+    public LayerMask groundLayer;
+    public float pickupRange = 3f;
+
+    private bool isCreate;
+
+    private List<DropItem_UI> dropUI_list;
+    int id_index;
+
+    private void Awake()
+    {
+        dropUI_list = new List<DropItem_UI>();
+    }
+
+    private void FixedUpdate()
+    {
+        // 플레이어 아이템 추적
+        Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward); // 플레이어 카메라의 위치와 정면 방향으로 ray 발사
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, pickupRange, groundLayer)) // Ground 레이어와 충돌한 경우
+        {
+            Vector3 center = hit.point; // 충돌 지점을 중심으로 한 OverlapSphere 사용
+            float radius = 2f; // 반지름
+
+            Collider[] colliders = Physics.OverlapSphere(center, radius, itemLayer);
+            if (colliders.Length > 0)
+            {
+                foreach(var collider in colliders)
+                {
+                    isCreate = true;
+                    var itemComponent = collider.GetComponent<DropItem>();
+                    foreach (var tmp in dropUI_list)
+                    {
+                        // 동일한 id값을 가지는 UI 객체가 없을 경우에는 생성을 true
+                        if(tmp.Id== itemComponent.Id)
+                        {
+                            isCreate = false;
+                            break;
+                        }
+                    }
+                    if(isCreate)    // ui 객체를 생성한다.
+                    {
+                        var uiObj = GameManager.Instance.DropItemUI_Pool.GetFromPool(Vector3.zero, Quaternion.identity, dropItemCrollView);
+                        WeaponKindDivider(itemComponent.GetItemCls() as WeaponAndEquipCls, uiObj.ImgSymbol);
+                        uiObj.Text.text = itemComponent.GetItemCls().GetName();
+                        uiObj.Id = itemComponent.Id;
+                        uiObj.Button.onClick.RemoveAllListeners();  // 기존의 버튼 리스너 해제
+                        // 버튼 리스너 연결
+
+                        dropUI_list.Add(uiObj);
+                    }
+                }
+            }
+            else
+            {
+                GameManager.Instance.DropItemUI_Pool.AllReturnToPool();
+                dropUI_list.Clear();
+            }
+        }
+        else
+        {
+            GameManager.Instance.DropItemUI_Pool.AllReturnToPool();
+            dropUI_list.Clear();
+        }
+    }
+
+
     public void ItemDrop(Transform _position, string index)
     {
         Vector3 dropPosition = GetGroundPosition(_position);
@@ -15,6 +87,8 @@ public class ItemDropManager : Singleton<ItemDropManager>
                     // 무기 아이템을 오부잭투 풀로 반환
                     var item = GameManager.Instance.DropItem_1Pool.GetFromPool(dropPosition, Quaternion.identity);
                     item.SetItemCls(RandomItem(index));
+                    item.Id = id_index;
+                    id_index++;
                 }
                 break;
             case "성유물":
@@ -22,6 +96,8 @@ public class ItemDropManager : Singleton<ItemDropManager>
                     // 성유물 아이템을 오브젝트 풀로 불출
                     var item = GameManager.Instance.DropItem_2Pool.GetFromPool(dropPosition, Quaternion.identity);
                     item.SetItemCls(RandomItem(index));
+                    item.Id = id_index;
+                    id_index++;
                 }
                 break;
 
