@@ -15076,7 +15076,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 963194227}
-  printCanvas: {fileID: 238076343}
   dropItemCrollView: {fileID: 1514848923}
   itemLayer:
     serializedVersion: 2
@@ -24277,7 +24276,7 @@ Transform:
   m_LocalScale: {x: 10, y: 10, z: 28.086283}
   m_Children: []
   m_Father: {fileID: 966250524}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &860221689
 GameObject:
@@ -26885,8 +26884,8 @@ Transform:
   - {fileID: 1515426769}
   - {fileID: 323559876}
   - {fileID: 776099233}
-  - {fileID: 851400706}
   - {fileID: 1920355681}
+  - {fileID: 851400706}
   - {fileID: 1750337444}
   - {fileID: 1090165242}
   - {fileID: 1790552153}
@@ -47984,7 +47983,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 966250524}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1922360041
 GameObject:

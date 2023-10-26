@@ -57,8 +57,9 @@ public class ItemDropManager : Singleton<ItemDropManager>
                         uiObj.Text.text = itemComponent.GetItemCls().GetName();
                         uiObj.Id = itemComponent.Id;
                         uiObj.Button.onClick.RemoveAllListeners();  // 기존의 버튼 리스너 해제
+                        uiObj.ItemCls = itemComponent.GetItemCls();
                         // 버튼 리스너 연결
-
+                        uiObj.Button.onClick.AddListener(() => DropItemGet(uiObj,itemComponent));
                         dropUI_list.Add(uiObj);
                     }
                 }
@@ -121,6 +122,7 @@ public class ItemDropManager : Singleton<ItemDropManager>
                     {
                         int randomIndex = Random.Range(0, weapons.Count);
                         data = weapons[randomIndex];
+                        GameManager.Instance.WeaponItemStatusSet(data);
                     }
                 }
                 break;
@@ -145,6 +147,8 @@ public class ItemDropManager : Singleton<ItemDropManager>
                     {
                         int randomIndex = Random.Range(0, artifacts.Count);
                         data = artifacts[randomIndex];
+                        GameManager.Instance.EquipStatusRandomSelector(data as WeaponAndEquipCls);
+                        GameManager.Instance.EquipItemStatusSet(data);
                     }
                 }
                 break;
@@ -167,5 +171,37 @@ public class ItemDropManager : Singleton<ItemDropManager>
         }
 
         return dropPosition;
+    }
+
+    private void DropItemGet(DropItem_UI itemUi, DropItem dropItem)
+    {
+        string tag = itemUi.ItemCls.GetTag();
+        // 무기를 주웠을 경우
+        if (tag.Equals("무기"))
+        {
+            // 무기 추가
+            var userHadWeapons = GameManager.Instance.GetUserClass().GetHadWeaponList();
+            userHadWeapons.Add(itemUi.ItemCls);
+
+            // 획득한 데이터 제거 및 객체 리턴
+            dropUI_list.Remove(itemUi);
+            GameManager.Instance.DropItem_1Pool.ReturnToPool(dropItem);
+            GameManager.Instance.DropItemUI_Pool.ReturnToPool(itemUi);
+        }
+        // 성유물을 주웠을 경우
+        else if(tag == "성배" || tag == "꽃" || tag == "깃털" || tag == "모래" || tag == "왕관")
+        {
+            var userHadEquips = GameManager.Instance.GetUserClass().GetHadEquipmentList();
+            userHadEquips.Add(itemUi.ItemCls);
+
+            dropUI_list.Remove(itemUi);
+            GameManager.Instance.DropItem_2Pool.ReturnToPool(dropItem);
+            GameManager.Instance.DropItemUI_Pool.ReturnToPool(itemUi);
+        }
+        else
+        {
+
+        }
+        
     }
 }

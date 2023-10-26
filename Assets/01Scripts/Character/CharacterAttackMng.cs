@@ -133,6 +133,8 @@ public class CharacterAttackMng : Subject, Observer
 
     public void AttackSkillStart()
     {
+        if (darkCurtain.activeSelf == true)
+            return;
         darkCurtain.SetActive(true);
         characMng.SetIsBattle(true);
         Element.e_Element element = characMng.GetElement();
@@ -140,6 +142,7 @@ public class CharacterAttackMng : Subject, Observer
 
         // 공격 레벨 변경을 알림
         NotifyAtkLevel((e_AttackLevel)nAtkLevel);
+
         // 캐릭터의 상태를 공격 상태로 설정
         characMng.GetCharacterClass().SetState(eCharactgerState.e_ATTACK);
     }

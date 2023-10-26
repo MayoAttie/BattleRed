@@ -1495,6 +1495,7 @@ public class UI_Manager : EnergyBarManager
 
                 // 리스트에 데이터 추가 및 exp 증가
                 dic_ItemClsForUpgrade.Add(tmp, selectBtnCls);
+                nWeaponUpgradeExp += selecWeapon.GetGrade() * 50;
                 nWeaponUpgradeExp += selecWeapon.GetCurrentExp();
                 cls.SetSelectBtnSpriteOn(true); // 선택했음을 UI로 표현
                 NeededCostForUpgrade(nWeaponUpgradeExp, needExp, ref nWeaponUpgradeCost, txt_NeedMora,txt_CurrentHaveMora, img_ExpBar);
@@ -1518,6 +1519,7 @@ public class UI_Manager : EnergyBarManager
 
                     // 선택한 데이터 추가
                     dic_ItemClsForUpgrade.Add(tmp, data);
+                    nWeaponUpgradeExp += selecWeapon.GetGrade() * 50;
                     nWeaponUpgradeExp += selecWeapon.GetCurrentExp();
                     cls.SetSelectBtnSpriteOn(true);
                     NeededCostForUpgrade(nWeaponUpgradeExp, needExp, ref nWeaponUpgradeCost, txt_NeedMora,txt_CurrentHaveMora, img_ExpBar);
@@ -1539,6 +1541,7 @@ public class UI_Manager : EnergyBarManager
             {
                 WeaponAndEquipCls existCls = selectBtnCls.GetItemClass() as WeaponAndEquipCls;
                 // 선택한 객체가 기존의 데이터와 동일한 객체일 경우에는 제외한다.
+                nWeaponUpgradeExp -= existCls.GetGrade() * 50;
                 nWeaponUpgradeExp -= existCls.GetCurrentExp();
                 dic_ItemClsForUpgrade.Remove(selectBtnCls.GetItemClass());
 
@@ -1554,6 +1557,7 @@ public class UI_Manager : EnergyBarManager
                     if (item.GetItemcls() == cls.GetItemcls())
                     {
                         WeaponAndEquipCls existCls = item.GetItemcls() as WeaponAndEquipCls;
+                        nWeaponUpgradeExp -= existCls.GetGrade() * 50;
                         nWeaponUpgradeExp -= existCls.GetCurrentExp();
                         var btnObj = dic_ItemClsForUpgrade[item.GetItemcls()];
                         SelectButtonToDefault(btnObj);
@@ -1689,6 +1693,7 @@ public class UI_Manager : EnergyBarManager
                     var weaponData = item as WeaponAndEquipCls;
                     // 선택한 데이터 추가
                     dic_ItemClsForUpgrade.Add(item, btn);
+                    nWeaponUpgradeExp += weaponData.GetGrade() * 50;
                     nWeaponUpgradeExp += weaponData.GetCurrentExp();
 
                     // 버튼 객체의 UI 작업
@@ -2886,6 +2891,7 @@ public class UI_Manager : EnergyBarManager
 
                 // 리스트에 데이터 추가 및 exp 증가
                 dic_ItemClsForUpgrade.Add(tmp, selectBtnCls);
+                nWeaponUpgradeExp += selecWeapon.GetGrade() * 50;
                 nWeaponUpgradeExp += selecWeapon.GetCurrentExp();
                 cls.SetSelectBtnSpriteOn(true); // 선택했음을 UI로 표현
                 NeededCostForUpgrade(nWeaponUpgradeExp, needExp, ref nWeaponUpgradeCost, txt_NeedMora, txt_CurrentHaveMora, img_ExpBar);
@@ -2909,6 +2915,7 @@ public class UI_Manager : EnergyBarManager
 
                     // 선택한 데이터 추가
                     dic_ItemClsForUpgrade.Add(tmp, data);
+                    nWeaponUpgradeExp += selecWeapon.GetGrade() * 50;
                     nWeaponUpgradeExp += selecWeapon.GetCurrentExp();
                     cls.SetSelectBtnSpriteOn(true);
                     NeededCostForUpgrade(nWeaponUpgradeExp, needExp, ref nWeaponUpgradeCost, txt_NeedMora, txt_CurrentHaveMora, img_ExpBar);
@@ -2930,6 +2937,7 @@ public class UI_Manager : EnergyBarManager
             {
                 WeaponAndEquipCls existCls = selectBtnCls.GetItemClass() as WeaponAndEquipCls;
                 // 선택한 객체가 기존의 데이터와 동일한 객체일 경우에는 제외한다.
+                nWeaponUpgradeExp -= existCls.GetGrade() * 50;
                 nWeaponUpgradeExp -= existCls.GetCurrentExp();
                 dic_ItemClsForUpgrade.Remove(selectBtnCls.GetItemClass());
 
@@ -2945,6 +2953,7 @@ public class UI_Manager : EnergyBarManager
                     if (item.GetItemcls() == cls.GetItemcls())
                     {
                         WeaponAndEquipCls existCls = item.GetItemcls() as WeaponAndEquipCls;
+                        nWeaponUpgradeExp -= existCls.GetGrade() * 50;
                         nWeaponUpgradeExp -= existCls.GetCurrentExp();
                         var btnObj = dic_ItemClsForUpgrade[item.GetItemcls()];
                         SelectButtonToDefault(btnObj);
