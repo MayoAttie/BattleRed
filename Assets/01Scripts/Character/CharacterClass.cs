@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
@@ -29,6 +30,7 @@ public class CharacterClass : Objects
     private Dictionary<int, int> itemAddHp = new Dictionary<int, int>();
     private Dictionary<int, int> itemAddAttack = new Dictionary<int, int>();
     private Dictionary<int, int> itemAddDefense = new Dictionary<int, int>();
+    private Dictionary<Tuple<string, int>, float> equipSetApplied = new Dictionary<Tuple<string, int>, float>();
     int nLevel;
     int nMaxLevel;
     int nElementNum;
@@ -120,6 +122,20 @@ public class CharacterClass : Objects
         }
         return 0;
     }
+    // 세트 효과 딕셔너리의 킷값에 해당하는 값 반환
+    public float GetEquipSetApplied(string setName, int setNum)
+    {
+        var key = new Tuple<string,int>(setName, setNum);
+        if(equipSetApplied.TryGetValue(key, out float value))
+        {
+            return value;   
+        }
+        return 0;
+    }
+    public Dictionary<Tuple<string,int>,float> GetEquipSetAppliedDictionary()
+    {
+        return equipSetApplied; 
+    }
 
     public void SetState(eCharactgerState state){eCharacState = state;}
     public void SetEncountElement(Element encountElement){eEncountElement = encountElement;}
@@ -141,6 +157,7 @@ public class CharacterClass : Objects
         if(defense != 0) itemAddDefense[itemIndex] = defense;
     }
 
+
     public void RemoveItemEffect(int itemIndex)
     {
         if (itemAddHp.ContainsKey(itemIndex))
@@ -149,6 +166,21 @@ public class CharacterClass : Objects
             itemAddAttack.Remove(itemIndex);
         if(itemAddDefense.ContainsKey(itemIndex))
             itemAddDefense.Remove(itemIndex);
+    }
+
+    // 현재 장착 중인 세트 효과를 저장하는 딕셔너리 초기화
+    public void AddEquipSetApplied(string setName, int setNum, float effectValue)
+    {
+        // 튜플을 키로 사용하기 위해 ValueTuple.Create를 사용
+        var key = new Tuple<string, int>(setName, setNum);
+        equipSetApplied[key] = effectValue;
+    }
+    // 장착한 세트 효과를 딕셔너리에서 제거
+    public void RemoveEquipSetApplied(string setName, int setNum)
+    {
+        var key = new Tuple<string, int>(setName, setNum);
+        if (equipSetApplied.ContainsKey(key))
+            equipSetApplied.Remove(key);
     }
 
     #endregion

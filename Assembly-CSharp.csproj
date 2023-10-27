@@ -63,6 +63,7 @@
     <Compile Include="Assets\01Scripts\Character\CharacterControlMng.cs" />
     <Compile Include="Assets\01Scripts\Character\CharacterManager.cs" />
     <Compile Include="Assets\01Scripts\Character\CharacterUpgradeManager.cs" />
+    <Compile Include="Assets\01Scripts\Character\EquipmentSetSynergyMng.cs" />
     <Compile Include="Assets\01Scripts\Character\SwordFunction.cs" />
     <Compile Include="Assets\01Scripts\EffectManager.cs" />
     <Compile Include="Assets\01Scripts\Element\Element.cs" />

@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
-
+using static EquipmentSetSynergyMng;
 public class CharacterUpgradeManager
 {
     // 돌파 상태 도달 시, true 반환
@@ -306,6 +307,7 @@ public class CharacterUpgradeManager
             }
         }
     }
+    //착용한 성유물의 스탯을 캐릭터에 반영
     public static void CharacterDataReviseToEquipment(int index)
     {
         CharacterClass characterCls = GameManager.Instance.GetUserClass().GetUserCharacter();
@@ -383,9 +385,8 @@ public class CharacterUpgradeManager
                 default: break;
             }
         }
-
     }
-
+    // 장착 해제한 성유물의 데이터를 캐릭터에서 해제
     public static void CharacterDataReviseWhenEquipmentTakeOff(int index)
     {
         CharacterClass characterCls = GameManager.Instance.GetUserClass().GetUserCharacter();
@@ -465,6 +466,131 @@ public class CharacterUpgradeManager
                 default: break;
             }
         }
+    }
 
+    // 기본 스테이터스를 변경하는 세트 효과 적용 함수
+    public static void EquipmentSetSynergyApplyer()
+    {
+        var equips = GameManager.Instance.GetUserClass().GetUserEquippedEquipment();
+        Dictionary<string, int> sets = new Dictionary<string, int>();
+        // 착용한 장비를 순회하며, 세트 개수를 저장
+        foreach (var equip in equips) 
+        {
+            if(equip == null)
+                continue;
+
+            // 딕셔너리에 세트의 개수를 저장
+            if (!sets.ContainsKey(equip.GetSet()))
+                sets[equip.GetSet()] = 0;
+            sets[equip.GetSet()]++;
+        }
+        //  딕셔너리를 순회하며, 세트에 따라, 유저 캐릭터 데이터 수정
+        foreach(var set in sets)
+        {
+            string setName = set.Key;
+            var userClass = GameManager.Instance.GetUserClass().GetUserCharacter();
+            if(set.Value>=4)    // 세트의 숫자가 4 이상일 경우
+            {
+                switch (setName)
+                {
+                    case "행자의 마음":
+                        if(userClass.GetEquipSetApplied(setName,2) ==0)
+                            Hangja_Heart_2(userClass,true);
+                        break;
+                    case "전투광":
+                        if (userClass.GetEquipSetApplied(setName, 2) == 0)
+                            JeonjaengGwang_2(userClass,true);
+                        break;
+                    case "피에 물든 기사도":
+                        if (userClass.GetEquipSetApplied(setName, 2) == 0)
+                            BloodKnightChivalry_2(userClass, true);
+                        break;
+                }
+
+            }
+            else if(set.Value>=2)   // 세트의 숫자가 2 이상일 경우
+            {
+                switch (setName)
+                {
+                    case "행자의 마음":
+                        if (userClass.GetEquipSetApplied(setName, 2) == 0)
+                            Hangja_Heart_2(userClass, true);
+                        break;
+                    case "전투광":
+                        if (userClass.GetEquipSetApplied(setName, 2) == 0)
+                            JeonjaengGwang_2(userClass, true);
+                        break;
+                    case "피에 물든 기사도":
+                        if (userClass.GetEquipSetApplied(setName, 2) == 0)
+                            BloodKnightChivalry_2(userClass, true);
+                        break;
+                }
+            }
+        }
+    }
+
+    public static void EquipmentSetSynergyUnApplyer()
+    {
+        var equips = GameManager.Instance.GetUserClass().GetUserEquippedEquipment();
+        Dictionary<string, int> sets = new Dictionary<string, int>();
+        var userClass = GameManager.Instance.GetUserClass().GetUserCharacter();
+
+        // 착용한 장비를 순회하며, 세트 개수를 저장
+        foreach (var equip in equips)
+        {
+            if(equip == null)
+                continue;
+
+            // 딕셔너리에 세트의 개수를 저장
+            if (!sets.ContainsKey(equip.GetSet()))
+                sets[equip.GetSet()] = 0;
+            sets[equip.GetSet()]++;
+        }
+        var curAppliedSet = userClass.GetEquipSetAppliedDictionary();
+        var itemsToRemove = new List<KeyValuePair<Tuple<string, int>, float>>();
+
+        // 기존의 시너지 효과 중에서 해제된 것을 데이터에서 제거
+        foreach (var item in curAppliedSet)   // 기존 시너지 효과 딕셔너리를 순회
+        {
+            bool isHave = false;
+            foreach (var set in sets)   // 착용한 장비를 순회
+            {
+                if(userClass.GetEquipSetApplied(set.Key,set.Value)!=0 && set.Key==item.Key.Item1 && set.Value == item.Key.Item2)
+                {
+                    isHave = true;
+                    break;
+                }
+            }
+
+            // 착용 중인 시너지 효과가 아닐 경우에는, 관리 딕셔너리에서 데이터 제거 및 캐릭터 데이터 수정
+            if(isHave==false)
+            {
+                // 캐릭터의 강화 데이터 제거
+                switch(item.Key.Item1)
+                {
+                    case "행자의 마음":
+                        if (item.Key.Item2 == 2)
+                            Hangja_Heart_2(userClass, false);
+                        break;
+                    case "전투광":
+                        if (item.Key.Item2 == 2)
+                            JeonjaengGwang_2(userClass, false);
+                        break;
+                    case "피에 물든 기사도":
+                        if (item.Key.Item2 == 2)
+                            BloodKnightChivalry_2(userClass, false);
+                        break;
+                }
+
+                // 제거할 아이템을 기록
+                itemsToRemove.Add(item);
+            }
+        }
+        // 컬렉션에서 제거할 아이템들을 한 번에 제거
+        foreach (var itemToRemove in itemsToRemove)
+        {
+            Tuple<string, int> key = new Tuple<string, int>(itemToRemove.Key.Item1, itemToRemove.Key.Item2);
+            curAppliedSet.Remove(key);
+        }
     }
 }

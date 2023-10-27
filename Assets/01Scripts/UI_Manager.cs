@@ -264,6 +264,9 @@ public class UI_Manager : EnergyBarManager
                         CharacterDataReviseToEquipment(4);
                         break;
                 }
+                // 세트 효과 반영 갱신
+                EquipmentSetSynergyUnApplyer();
+                EquipmentSetSynergyApplyer();
             }
 
             // 해당 객체 활성화
@@ -2494,6 +2497,10 @@ public class UI_Manager : EnergyBarManager
 
             // 선택한 아이템의 세트 효과 출력
             EquipUI_SetSynergyPrint(reCls);
+
+            // 세트 효과 반영 갱신
+            EquipmentSetSynergyUnApplyer();
+            EquipmentSetSynergyApplyer();
         }
         else if(equipedEquipList[index] == null)
         {
@@ -2514,6 +2521,10 @@ public class UI_Manager : EnergyBarManager
 
             // 선택한 아이템의 세트 효과 출력
             EquipUI_SetSynergyPrint(reCls);
+
+            // 세트 효과 반영 갱신
+            EquipmentSetSynergyUnApplyer();
+            EquipmentSetSynergyApplyer();
         }
         else
         {
@@ -2532,6 +2543,8 @@ public class UI_Manager : EnergyBarManager
             inImageColor.a = 0f;
             inImage.color = inImageColor;
 
+            // 세트 효과 반영 갱신
+            EquipmentSetSynergyUnApplyer();
             // 아이템 세트 효과 지우기
             EquipUI_SetSynergyPrint(null);
         }
