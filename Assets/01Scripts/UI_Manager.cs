@@ -8,6 +8,7 @@ using static UI_UseToolClass;
 using static GameManager;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Data;
 
 public class UI_Manager : EnergyBarManager
 {
@@ -824,14 +825,14 @@ public class UI_Manager : EnergyBarManager
         InfoPrintTypeButtonUnActive();
 
         Transform content = obj.GetChild(0).GetChild(0).GetChild(0).GetComponent<Transform>();
-        TextMeshProUGUI[] statusTexts = new TextMeshProUGUI[8];
+        TextMeshProUGUI[] statusTexts = new TextMeshProUGUI[11];
 
         // 데이터 출력을 위한 TextMeshPro 배열에 저장
         for(int i=0; i<5; i++)
         {
             statusTexts[i] = content.GetChild(1 + i).GetChild(2).GetComponent<TextMeshProUGUI>();
         }
-        for(int i=0; i<3; i++)
+        for(int i=0; i<6; i++)
         {
             statusTexts[5+i] = content.GetChild(8 + i).GetChild(2).GetComponent<TextMeshProUGUI>();
         }
@@ -844,6 +845,9 @@ public class UI_Manager : EnergyBarManager
         statusTexts[5].text = datas.GetCriticalPercentage().ToString() + "%";
         statusTexts[6].text = datas.GetCriticalDamage().ToString();
         statusTexts[7].text = datas.GetElementCharge().ToString();
+        statusTexts[8].text = datas.GetIncreased_NormalAttackDamage().ToString();
+        statusTexts[9].text = datas.GetIncrease_SkillAttackDamage().ToString();
+        statusTexts[10].text = datas.GetIncrease_Damage().ToString();
     }
 
     #region 속성(Status) 프레임, 데이터 출력
@@ -2257,13 +2261,13 @@ public class UI_Manager : EnergyBarManager
         obj.gameObject.SetActive(true);
 
         Transform content = obj.GetChild(0).GetChild(0).GetChild(0).GetComponent<Transform>();
-        TextMeshProUGUI[] statusTexts = new TextMeshProUGUI[7];
+        TextMeshProUGUI[] statusTexts = new TextMeshProUGUI[11];
         // 데이터 출력을 위한 TextMeshPro 배열에 저장
         for (int i = 0; i < 5; i++)
         {
             statusTexts[i] = content.GetChild(1 + i).GetChild(2).GetComponent<TextMeshProUGUI>();
         }
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 6; i++)
         {
             statusTexts[5 + i] = content.GetChild(8 + i).GetChild(2).GetComponent<TextMeshProUGUI>();
         }
@@ -2283,6 +2287,10 @@ public class UI_Manager : EnergyBarManager
         int element = (int)equipDatas[3];
         float criticalRate = equipDatas[4];
         float criticalDamage = equipDatas[5];
+        float elementCharge = 0;
+        float normalAtkDamage = 0;
+        float skillAtkDamage = 0;
+        float damageIncrease = 0;
         int stamina = 0;
 
 
@@ -2297,15 +2305,15 @@ public class UI_Manager : EnergyBarManager
                 var db = GameManager.Instance.GetList_EquipmentSetSynergyData();
                 var dbItem1 = db.Find(tmp => tmp.EQUIPMENT_SET_NAME.Equals(set) && tmp.EQUIPMENT_SET_NUMBER == 2);
                 var dbItem2 = db.Find(tmp => tmp.EQUIPMENT_SET_NAME.Equals(set) && tmp.EQUIPMENT_SET_NUMBER == 4);
-                ApplyEquipmentEffect(dbItem1, ref atk, ref def, ref hp, ref element, ref criticalRate, ref criticalDamage);
-                ApplyEquipmentEffect(dbItem2, ref atk, ref def, ref hp, ref element, ref criticalRate, ref criticalDamage);
+                ApplyEquipmentEffect(dbItem1, ref atk, ref def, ref hp, ref element, ref criticalRate, ref criticalDamage, ref elementCharge, ref normalAtkDamage, ref skillAtkDamage, ref damageIncrease);
+                ApplyEquipmentEffect(dbItem2, ref atk, ref def, ref hp, ref element, ref criticalRate, ref criticalDamage, ref elementCharge, ref normalAtkDamage, ref skillAtkDamage, ref damageIncrease);
                 break;
             }
             else if (count >= 2)
             {
                 var db = GameManager.Instance.GetList_EquipmentSetSynergyData();
                 var dbItem = db.Find(tmp => tmp.EQUIPMENT_SET_NAME.Equals(set) && tmp.EQUIPMENT_SET_NUMBER == 2);
-                ApplyEquipmentEffect(dbItem, ref atk, ref def, ref hp, ref element, ref criticalRate, ref criticalDamage);
+                ApplyEquipmentEffect(dbItem, ref atk, ref def, ref hp, ref element, ref criticalRate, ref criticalDamage, ref elementCharge, ref normalAtkDamage, ref skillAtkDamage, ref damageIncrease);
                 continue;
             }
         }
@@ -2317,6 +2325,11 @@ public class UI_Manager : EnergyBarManager
         statusTexts[4].text = stamina.ToString();
         statusTexts[5].text = criticalRate.ToString() + "%";
         statusTexts[6].text = criticalDamage.ToString();
+        statusTexts[7].text = elementCharge.ToString();
+        statusTexts[8].text = normalAtkDamage.ToString();
+        statusTexts[9].text = skillAtkDamage.ToString();
+        statusTexts[10].text = damageIncrease.ToString();
+
     }
 
     #endregion

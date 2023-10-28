@@ -318,6 +318,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 042a25c0c807df64082373f2cad559ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isViewRangeActive: 0
   viewRadius: 9
   viewAngle: 160
   targetMask:
@@ -364,6 +365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37e5cf05de685f94abe582bfa38c81ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isViewRangeActive: 0
   viewRadius: 1.4
   viewAngle: 50
   targetMask:

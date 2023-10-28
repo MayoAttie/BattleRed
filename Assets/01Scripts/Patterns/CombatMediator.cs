@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Element_Interaction;
 using static HandlePauseTool;
+using static EquipmentSetSynergyMng;
 // ConcreteMediator 클래스
 // 옵저버 패턴 활용을 위한 Subject 상속
 public class CombatMediator : Subject ,ICombatMediator
@@ -26,6 +27,9 @@ public class CombatMediator : Subject ,ICombatMediator
     // 캐릭터 평타 공격 판정 함수
     public void Mediator_CharacterAttack(CharacterClass character, CharacterManager characMng, MonsterManager targetMonster)
     {
+        var mobMng = targetMonster.GetMonsterClass();
+        SetSynergyCheckStarterAtPlaying(true, character, targetMonster,0); // 전투 페이즈 시작 단계의 시너지 탐색 함수
+
         // 몬스터 체력 감소 UI표시를 위한 함수 호출
         var mobHpMng = targetMonster.GetMonsterHPMng();
         mobHpMng.HpBarFill_Init(targetMonster.GetMonsterClass().GetMonsterCurrentHp());
@@ -34,7 +38,6 @@ public class CombatMediator : Subject ,ICombatMediator
         float criticalPercentage = character.GetCriticalPercentage();
         int attackPower = character.GetAttack();
 
-        var mobMng = targetMonster.GetMonsterClass();
 
         int mobDef = mobMng.GetMonsterDef();
         int mobCurrentHp = mobMng.GetMonsterCurrentHp();
@@ -61,6 +64,7 @@ public class CombatMediator : Subject ,ICombatMediator
         int tmp = mobCurrentHp - damage;
         mobMng.SetMonsterCurrentHP(tmp);
 
+
         // 피격당한 몬스터의 플레이어 추적
         targetMonster.WhenHittedChaseToTarget(characMng);
         // 스턴치 누적
@@ -68,6 +72,8 @@ public class CombatMediator : Subject ,ICombatMediator
 
         // 몬스터 체력 감소 UI 마무리 함수 호출
         mobHpMng.HpBarFill_End(mobMaxHp, tmp, false);
+
+        SetSynergyCheckStarterAtPlaying(false, character, targetMonster, damage);  // 전투페이즈 종료 단계의 시너지 탐색 함수
     }
 
     // 공격용 스킬 함수
@@ -75,6 +81,9 @@ public class CombatMediator : Subject ,ICombatMediator
     {
         var mobHpMng = mobManager.GetMonsterHPMng();
         var targetMonster = mobManager.GetMonsterClass();
+
+        SetSynergyCheckStarterAtPlaying(true, character, mobManager, 0);     // 전투 페이즈 시작 단계의 성유물 세트 시너지 탐색 함수 호출
+
         Transform characTransform = characMng.GetComponent<Transform>();        // 캐릭터의 위치좌표
         Element element = character.GetCurrnetElement();                        // 캐릭터의 현재 원소 상태
         Element.e_Element mobElement = targetMonster.GetMonsterHittedElement().GetElement();    //몹의 피격 원소 상태
@@ -95,6 +104,8 @@ public class CombatMediator : Subject ,ICombatMediator
                         int revisionHp = mobHp - damage;
                         targetMonster.SetMonsterCurrentHP(revisionHp);
                         mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
+
+                        SetSynergyCheckStarterAtPlaying(false, character, mobManager, damage);
                     }
                     else if(mobElement == Element.e_Element.Plant)  // 캐릭터 원소 == 불 / 적부착 풀
                     {
@@ -125,6 +136,8 @@ public class CombatMediator : Subject ,ICombatMediator
                         targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
                         // Hp바 반영
                         mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
+
+                        SetSynergyCheckStarterAtPlaying(false, character, mobManager, damage);
                     }
                     if(damage != -1)
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.red);
@@ -137,6 +150,8 @@ public class CombatMediator : Subject ,ICombatMediator
                     targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
                     // Hp바 반영
                     mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
+                    SetSynergyCheckStarterAtPlaying(false, character, mobManager, damage);
+
 
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.red);
                 }
@@ -154,6 +169,8 @@ public class CombatMediator : Subject ,ICombatMediator
                         int revisionHp = mobHp - damage;
                         targetMonster.SetMonsterCurrentHP(revisionHp);
                         mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
+
+                        SetSynergyCheckStarterAtPlaying(false, character, mobManager, damage);
                     }
                     else if (mobElement == Element.e_Element.Plant)  // 캐릭터 원소 == 물 / 적부착 풀
                     {
@@ -182,6 +199,7 @@ public class CombatMediator : Subject ,ICombatMediator
                         targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
                         // Hp바 반영
                         mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
+                        SetSynergyCheckStarterAtPlaying(false, character, mobManager, damage);
                     }
                     if(damage != -1)
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.blue);
@@ -194,7 +212,7 @@ public class CombatMediator : Subject ,ICombatMediator
                     targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
                     // Hp바 반영
                     mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
-
+                    SetSynergyCheckStarterAtPlaying(false, character, mobManager, damage);
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.blue);
                 }
                 break;
@@ -234,6 +252,7 @@ public class CombatMediator : Subject ,ICombatMediator
                         targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
                         // Hp바 반영
                         mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
+                        SetSynergyCheckStarterAtPlaying(false, character, mobManager, damage);
                         DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.green);
                     }
 
@@ -246,7 +265,7 @@ public class CombatMediator : Subject ,ICombatMediator
                     targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
                     // Hp바 반영
                     mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
-
+                    SetSynergyCheckStarterAtPlaying(false, character, mobManager, damage);
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.green);
 
                 }
@@ -284,7 +303,7 @@ public class CombatMediator : Subject ,ICombatMediator
                         targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
                         // Hp바 반영
                         mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
-
+                        SetSynergyCheckStarterAtPlaying(false, character, mobManager, damage);
                         DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), new Color(0.5f, 0f, 0.5f));
 
                     }
@@ -297,7 +316,7 @@ public class CombatMediator : Subject ,ICombatMediator
                     targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
                     // Hp바 반영
                     mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
-
+                    SetSynergyCheckStarterAtPlaying(false, character, mobManager, damage);
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), new Color(0.5f, 0f, 0.5f));
 
                 }
@@ -348,7 +367,7 @@ public class CombatMediator : Subject ,ICombatMediator
                     targetMonster.SetMonsterCurrentHP(revisionHp);  // 데미지로 체력 감소
                     // Hp바 반영
                     mobHpMng.HpBarFill_End(mobMaxHp, revisionHp, false);
-
+                    SetSynergyCheckStarterAtPlaying(false, character,mobManager,damage);
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobManager.GetMonsterHeadPosition(), Color.cyan);
                 }
                 break;
@@ -389,6 +408,8 @@ public class CombatMediator : Subject ,ICombatMediator
 
             // 체력감소에 따른 HP바 반영
             monHpMng.HpBarFill_End(rangeMob.GetMonsterMaxHp(), rangeMob.GetMonsterCurrentHp(), false);
+
+            SetSynergyCheckStarterAtPlaying(false, CharacterManager.Instance.GetCharacterClass(), monMng, attackPower);    // 데미지 계산 엔드페이즈 세트 시너지 탐색 함수 호출
 
             var monPos = monMng.GetMonsterHeadPosition();
 

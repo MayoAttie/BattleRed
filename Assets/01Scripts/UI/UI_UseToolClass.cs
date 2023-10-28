@@ -944,7 +944,7 @@ public class UI_UseToolClass
             element += (int)dbItem.EQUIPMENT_SET_EFFECT_VALUE;
         //Debug.Log("pluser :: => " + pluser);
     }
-    public static void ApplyEquipmentEffect(GameManager.EQUIPMENT_SET_SYNERGY_DATA_BASE dbItem, ref int atk, ref int def, ref int hp, ref int element, ref float citicalRate, ref float criticalDamage)
+    public static void ApplyEquipmentEffect(GameManager.EQUIPMENT_SET_SYNERGY_DATA_BASE dbItem, ref int atk, ref int def, ref int hp, ref int element, ref float citicalRate, ref float criticalDamage, ref float elementCharge, ref float normalAtkDamgage, ref float skillAtkDamage, ref float damageIncrease)
     {
         float mul = dbItem.EQUIPMENT_SET_EFFECT_VALUE * 0.01f;
         int pluser = 0;
@@ -970,6 +970,14 @@ public class UI_UseToolClass
             citicalRate += dbItem.EQUIPMENT_SET_EFFECT_VALUE;
         else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("치명타 데미지"))
             criticalDamage += dbItem.EQUIPMENT_SET_EFFECT_VALUE;
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("원소 충전"))
+            elementCharge += dbItem.EQUIPMENT_SET_EFFECT_VALUE;
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("일반 공격"))
+            normalAtkDamgage += dbItem.EQUIPMENT_SET_EFFECT_VALUE;
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("스킬 공격"))
+            skillAtkDamage += dbItem.EQUIPMENT_SET_EFFECT_VALUE;
+        else if (dbItem.EQUIPMENT_SET_EFFECT_ELEMENT.Equals("피해량"))
+            damageIncrease += dbItem.EQUIPMENT_SET_EFFECT_VALUE;
     }
 
     // 정렬 리스트 버튼, 기능 함수 => (희귀도, 레벨, 기초경험치)

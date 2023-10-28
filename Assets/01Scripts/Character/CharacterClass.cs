@@ -27,6 +27,9 @@ public class CharacterClass : Objects
     int nMaxExp;
     int nAttack;
     int nDefense;
+    float Increase_Damage;
+    float Increased_NormalAttackDamage;
+    float Increased_SkillAttackDamage;
     private Dictionary<int, int> itemAddHp = new Dictionary<int, int>();
     private Dictionary<int, int> itemAddAttack = new Dictionary<int, int>();
     private Dictionary<int, int> itemAddDefense = new Dictionary<int, int>();
@@ -46,7 +49,7 @@ public class CharacterClass : Objects
 
     
 
-    public CharacterClass(int nCurrentHp, int nMaxHp, int nCurrentExp, int nMaxExp, int nAttack, int nDefense, int nLevel, int nMaxLevel, float fSpeed, eCharactgerState eCharacState, int nElementNum, float fCriticalDamage, float fCriticalPercentage, string sTag, string sName, int nGrade, bool isActive, int nStamina, float elementcharge) : base(sTag, sName, nGrade, isActive)
+    public CharacterClass(int nCurrentHp, int nMaxHp, int nCurrentExp, int nMaxExp, int nAttack, int nDefense, int nLevel, int nMaxLevel, float fSpeed, eCharactgerState eCharacState, int nElementNum, float fCriticalDamage, float fCriticalPercentage, string sTag, string sName, int nGrade, bool isActive, int nStamina, float elementcharge, float normalAtkDamage, float skillAtkDamage, float Increase_Damage) : base(sTag, sName, nGrade, isActive)
     {
         this.nCurrentHp = nCurrentHp;
         this.nMaxHp = nMaxHp;
@@ -64,6 +67,9 @@ public class CharacterClass : Objects
         this.fCriticalDamage = fCriticalDamage;
         this.fCriticalPercentage = fCriticalPercentage;
         this.fElementCharge = elementcharge;
+        this.Increased_NormalAttackDamage = normalAtkDamage;
+        this.Increased_SkillAttackDamage = skillAtkDamage;
+        this.Increase_Damage = Increase_Damage;
 
         ChildElement = new Element[5];
         for (int i = 0; i < ChildElement.Length; i++)
@@ -96,6 +102,9 @@ public class CharacterClass : Objects
     public int GetStamina() { return nStamina;}
     public int GetMaxLevel() { return nMaxLevel;}
     public float GetElementCharge() { return fElementCharge; }
+    public float GetIncreased_NormalAttackDamage() { return Increased_NormalAttackDamage; }
+    public float GetIncrease_SkillAttackDamage() { return Increased_SkillAttackDamage; }
+    public float GetIncrease_Damage() { return Increase_Damage; }
     public int GetItemAddHp(int itemIndex)
     {
         if (itemAddHp.TryGetValue(itemIndex, out int value))
@@ -149,6 +158,9 @@ public class CharacterClass : Objects
     public void SetElementCharge(float elementCharge) { this.fElementCharge = elementCharge; }
     public void SetCriticalPersentage(float ciriticalPercentage) { this.fCriticalPercentage = ciriticalPercentage; }
     public void SetDeffense(int nDefense) { this.nDefense= nDefense; }
+    public void SetIncreased_NormalAttackDamage(float damage) { this.Increased_NormalAttackDamage= damage; }
+    public void SetIncreased_SkillAttackDamage(float damage) { this.Increased_NormalAttackDamage= damage; }
+    public void SetIncrease_Damage(float damage) { this.Increase_Damage= damage; }  
 
     public void AddItemEffect(int itemIndex, int hp, int attack, int defense)
     {

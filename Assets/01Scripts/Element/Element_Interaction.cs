@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using static HandlePauseTool;
-
+using static EquipmentSetSynergyMng;
 public class Element_Interaction : Singleton<Element_Interaction>
 {
     [SerializeField] private GameObject plantElement;
@@ -168,8 +168,10 @@ public class Element_Interaction : Singleton<Element_Interaction>
             //hp바 반영
             mobHpMng.HpBarFill_End(maxHp, hp, false);
 
+            SetSynergyCheckStarterAtPlaying(false, CharacterManager.Instance.GetCharacterClass(), mobMng, damage); // 세트 시너지 탐색 함수 호출
+
             // 데미지 플로팅
-            switch(element)
+            switch (element)
             {
                 case Element.e_Element.Fire:
                     DamageTextManager.Instance.CreateFloatingText(damage.ToString(), mobMng.GetMonsterHeadPosition(), Color.red);
@@ -345,6 +347,9 @@ public class Element_Interaction : Singleton<Element_Interaction>
                 
                 mobCls.SetMonsterCurrentHP(mobHp - damage);  // 몬스터 체력 감소
                 mobHpMng.HpBarFill_End(mobCls.GetMonsterMaxHp(), mobHp - damage, false);    //Hp바 반영
+
+                SetSynergyCheckStarterAtPlaying(false, chCls, mobMng, damage);
+
 
                 var mobPos = mobMng.GetMonsterHeadPosition();
                 // 데미지 플로팅

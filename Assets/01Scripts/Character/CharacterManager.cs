@@ -44,7 +44,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
     private void Start()
     {
-        clsCharacter = GameManager.Instance.characterCls;           // 캐릭터 클래스 초기화
+        clsCharacter = GameManager.Instance.GetUserClass().GetUserCharacter();           // 캐릭터 클래스 초기화
         UI_Manager.Instance.HpBarFill_Init(clsCharacter.GetCurrentHp());
         UI_Manager.Instance.HpBarFill_End(clsCharacter.GetMaxHp(), clsCharacter.GetCurrentHp(), true);
         element = clsCharacter.GetCurrnetElement().GetElement();    // 캐릭터 클래스 - 현재 원소 초기화
@@ -70,7 +70,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         elementGetActive = clsCharacter.GetCurrnetElement().GetIsActive();
         characterHp = clsCharacter.GetCurrentHp();  // 테스트용
         clsState = clsCharacter.GetState();         // 테스트용
-        clsCharacter = GameManager.Instance.characterCls;       // 데이터 처리를 위한 캐릭터 클래스 최신화
+        clsCharacter = GameManager.Instance.GetUserClass().GetUserCharacter();       // 데이터 처리를 위한 캐릭터 클래스 최신화
         CharacterStateActor();                                  // 애니메이션 제어
         FloatAnimatorValueFunc();                               // 애니메이터 xz_flaot 변수 변경
         SatelliteParticleColorSwitch();                         // 원소 변경

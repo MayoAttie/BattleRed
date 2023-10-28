@@ -30,7 +30,8 @@ public class EnergyBarManager : MonoBehaviour
         if (currentHP == targetHp)
             UpdateHpBar(maxHp, targetHp);
         if (gameObject.activeSelf)
-        { 
+        {
+            changeRate = maxHp * 0.05f;
             // 회복 코루틴 호출
             StartCoroutine(UpdateHpOverTime(maxHp, targetHp, isRecovery));
         }

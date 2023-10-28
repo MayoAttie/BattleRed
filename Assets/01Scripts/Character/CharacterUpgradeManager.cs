@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using UnityEngine;
 using static EquipmentSetSynergyMng;
 public class CharacterUpgradeManager
@@ -385,6 +386,9 @@ public class CharacterUpgradeManager
                 default: break;
             }
         }
+        UI_Manager.Instance.HpBarFill_Init(characterCls.GetCurrentHp());
+        UI_Manager.Instance.HpBarFill_End(characterCls.GetMaxHp(), characterCls.GetCurrentHp(), true);
+
     }
     // 장착 해제한 성유물의 데이터를 캐릭터에서 해제
     public static void CharacterDataReviseWhenEquipmentTakeOff(int index)
@@ -466,6 +470,8 @@ public class CharacterUpgradeManager
                 default: break;
             }
         }
+        UI_Manager.Instance.HpBarFill_Init(characterCls.GetCurrentHp());
+        UI_Manager.Instance.HpBarFill_End(characterCls.GetMaxHp(), characterCls.GetCurrentHp(), true);
     }
 
     // 기본 스테이터스를 변경하는 세트 효과 적용 함수
@@ -494,14 +500,20 @@ public class CharacterUpgradeManager
                 switch (setName)
                 {
                     case "행자의 마음":
-                        if(userClass.GetEquipSetApplied(setName,2) ==0)
+                        if (userClass.GetEquipSetApplied(setName, 4) == 0)
+                            Hangja_Heart_4(userClass, null, 0, false);
+                        if (userClass.GetEquipSetApplied(setName,2) ==0)
                             Hangja_Heart_2(userClass,true);
                         break;
                     case "전투광":
+                        if (userClass.GetEquipSetApplied(setName, 4) == 0)
+                            JeonjaengGwang_4(userClass, false,false);
                         if (userClass.GetEquipSetApplied(setName, 2) == 0)
                             JeonjaengGwang_2(userClass,true);
                         break;
                     case "피에 물든 기사도":
+                        if (userClass.GetEquipSetApplied(setName, 4) == 0)
+                            BloodKnightChivalry_4(userClass, true);
                         if (userClass.GetEquipSetApplied(setName, 2) == 0)
                             BloodKnightChivalry_2(userClass, true);
                         break;
@@ -548,14 +560,20 @@ public class CharacterUpgradeManager
         }
         var curAppliedSet = userClass.GetEquipSetAppliedDictionary();
         var itemsToRemove = new List<KeyValuePair<Tuple<string, int>, float>>();
+        Dictionary<Tuple<string, int>, float> copiedSynergyData = new Dictionary<Tuple<string, int>, float>(curAppliedSet);
 
         // 기존의 시너지 효과 중에서 해제된 것을 데이터에서 제거
-        foreach (var item in curAppliedSet)   // 기존 시너지 효과 딕셔너리를 순회
+        foreach (var item in copiedSynergyData)   // 기존 시너지 효과 딕셔너리를 순회
         {
             bool isHave = false;
             foreach (var set in sets)   // 착용한 장비를 순회
             {
-                if(userClass.GetEquipSetApplied(set.Key,set.Value)!=0 && set.Key==item.Key.Item1 && set.Value == item.Key.Item2)
+                int offset = 0;
+                if (set.Value == 4 || set.Value == 5)
+                    offset = 4;
+                if (set.Value == 3 || set.Value == 2)
+                    offset = 2;
+                if(userClass.GetEquipSetApplied(set.Key,offset)!=0 && set.Key==item.Key.Item1 && offset == item.Key.Item2)
                 {
                     isHave = true;
                     break;
@@ -573,24 +591,20 @@ public class CharacterUpgradeManager
                             Hangja_Heart_2(userClass, false);
                         break;
                     case "전투광":
+                        if (item.Key.Item2 == 4)
+                            JeonjaengGwang_4(userClass, false, true);
                         if (item.Key.Item2 == 2)
                             JeonjaengGwang_2(userClass, false);
                         break;
                     case "피에 물든 기사도":
+                        if (item.Key.Item2 == 4)
+                            BloodKnightChivalry_4(userClass, false);
                         if (item.Key.Item2 == 2)
                             BloodKnightChivalry_2(userClass, false);
                         break;
                 }
-
-                // 제거할 아이템을 기록
-                itemsToRemove.Add(item);
+                curAppliedSet.Remove(item.Key);
             }
-        }
-        // 컬렉션에서 제거할 아이템들을 한 번에 제거
-        foreach (var itemToRemove in itemsToRemove)
-        {
-            Tuple<string, int> key = new Tuple<string, int>(itemToRemove.Key.Item1, itemToRemove.Key.Item2);
-            curAppliedSet.Remove(key);
         }
     }
 }
