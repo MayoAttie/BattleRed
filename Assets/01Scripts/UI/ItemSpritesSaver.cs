@@ -60,6 +60,7 @@ public class ItemSpritesSaver : Singleton<ItemSpritesSaver>
     /*  기타 스프라이트 모음
      *  0 - Back 스프라이트
      *  1 - Close 스프라이트
+     *  2 - Plus 스프라이트
      */
     [Header("기타 스프라이트")]
     public Sprite[] SpritesSet;

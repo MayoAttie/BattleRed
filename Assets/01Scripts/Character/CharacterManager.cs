@@ -13,21 +13,22 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     private CharacterControlMng.e_BlinkPos blinkValue;      // 회피기 방향 변수
     [SerializeField]private Element.e_Element element;      // 선택한 원소 변수
 
-    private float xPos;                         // 캐릭터 애니메이션 플로트 변수
-    private float zPos;                         // 캐릭터 애니메이션 플로트 변수
-    private float runX;                         // 캐릭터 애니메이션 플로트 변수
-    private float runZ;                         // 캐릭터 애니메이션 플로트 변수
-    [SerializeField] GameObject SatelliteObj;   // 원소 체크용 위성 객체
-    bool isClickedCoolCheck;                    // 버튼 쿨타임 코루틴 객체
-    bool isMonsterSpwan;                        // 스폰 제어 플래그
-    private float timer;                        // 스폰 타이머
-    private float updateInterval;               // 스폰 타이머
+    private float xPos;                               // 캐릭터 애니메이션 플로트 변수
+    private float zPos;                               // 캐릭터 애니메이션 플로트 변수
+    private float runX;                               // 캐릭터 애니메이션 플로트 변수
+    private float runZ;                               // 캐릭터 애니메이션 플로트 변수
+    [SerializeField] GameObject SatelliteObj;         // 원소 체크용 위성 객체
+    bool isClickedCoolCheck;                          // 버튼 쿨타임 코루틴 객체
+    bool isMonsterSpwan;                              // 스폰 제어 플래그
+    private float timer;                              // 스폰 타이머
+    private float updateInterval;                     // 스폰 타이머
+    private List<InteractionObject> printUI_List;     // 상호작용 오브젝트 출력 리스트
 
     public List<Transform> targetsListIn10Range;       // 범위 내 몬스터 객체 리스트
-
-    public int characterHp;                             //테스트용
-    public CharacterClass.eCharactgerState clsState;    //테스트 확인용
+    public int characterHp;                             // 테스트용
+    public CharacterClass.eCharactgerState clsState;    // 테스트 확인용
     public bool elementGetActive;
+    public Transform sideUI_ObjPrintTransform;          // 상호작용 오브젝트 UI 출력용 스크롤뷰
     #endregion
 
     private void Awake()
@@ -35,9 +36,10 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         isBattle = false;
 
         targetsListIn10Range = new List<Transform>();
+        printUI_List = new List<InteractionObject>();
         gameObject.GetComponent<CharacterAttackMng>().Attach(this);     // 옵저버패턴 부착
         gameObject.GetComponent<CharacterControlMng>().Attach(this);    // 옵저버패턴 부착
-        gameObject.GetComponent<CharacterViewRange>().Attach(this);
+        gameObject.GetComponent<CharacterViewRange>().Attach(this);     // 옵저버 패턴 부착
         aniController = gameObject.GetComponent<Animator>();            // 애니메이터 초기화
         SatelliteObj.gameObject.SetActive(false);                       // 원소 상태 표시용 위성 SetFalse
     }
@@ -82,7 +84,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
             timer += Time.fixedDeltaTime;
             if (timer >= updateInterval)
             {
-                World_InCharacterCheck();
+                World_InCharacterCheck_ForMonster();
+                World_InteractionObjCheck();
                 timer = 0.0f; // 타이머 초기화
             }
         }
@@ -254,7 +257,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
     #region 캐릭터 월드 Range 체크
 
-    void World_InCharacterCheck()
+    void World_InCharacterCheck_ForMonster()
     {
         if(isMonsterSpwan==false)
         {
@@ -267,6 +270,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
                 // 탐색범위 10
                 Collider[] colliders = Physics.OverlapSphere(transform.position, 10, 1 << SpwanPoint);
                 Collider[] Mobcolliders = Physics.OverlapSphere(transform.position, 10, 1 << monsterLayer);
+                
+
                 if (Mobcolliders.Length > 0)
                 {
                     isMonsterSpwan = false;
@@ -284,8 +289,56 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
             isMonsterSpwan = false;
         }
+    }
 
-        
+    void World_InteractionObjCheck()
+    {
+        if (targetsListIn10Range.Count > 0)
+        {
+            int interactionLayer = LayerMask.NameToLayer("InteractionObj");
+
+            Collider[] InteractionObjs = Physics.OverlapSphere(transform.position, 3, 1 << interactionLayer);
+
+            // 상호작용 오브젝트 탐색
+            if (InteractionObjs.Length > 0)
+            {
+                foreach(Collider collider in InteractionObjs)
+                {
+                    bool isCreate = true;
+                    var data = collider.GetComponent<InteractionObject>();
+
+                    foreach(var tmp in printUI_List)
+                    {
+                        if (tmp.Equals(data))
+                        {
+                            isCreate = false;
+                            break;
+                        }
+                    }
+
+                    if(isCreate)
+                    {
+                        data.ObjectSetInit(sideUI_ObjPrintTransform);
+                        ObjectManager.Instance.FunctionConnecter(data);
+                        printUI_List.Add(data);
+                    }
+                }
+            }
+        }
+        else
+        {
+            List<InteractionObject> copyList = new List<InteractionObject>(printUI_List);
+            foreach (var tmp in copyList)
+            {
+                printUI_List.Remove(tmp);
+                GameManager.Instance.DropItemUI_Pool.ReturnToPool(tmp.GetDropItem_UI());
+            }
+        }
+    }
+
+    public void InteractionObjReturnCall(InteractionObject obj)
+    {
+        printUI_List.Remove(obj);
     }
         
     //레거시   

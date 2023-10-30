@@ -29,6 +29,7 @@ public class GameManager : Singleton<GameManager>
     public ObjectPool<DropItem> DropItem_2Pool;
     public ObjectPool<DropItem> DropItem_3Pool;
     public ObjectPool<DropItem_UI> DropItemUI_Pool;
+    public ObjectPool<DropItem_UI> InterectionObjUI_Pool;
 
 
     // 캔버스
@@ -140,6 +141,7 @@ public class GameManager : Singleton<GameManager>
         DropItem_2Pool = new ObjectPool<DropItem>(DropItemObject[1],3,objectPoolSavePos);
         DropItem_3Pool = new ObjectPool<DropItem>(DropItemObject[2],3,objectPoolSavePos);
         DropItemUI_Pool = new ObjectPool<DropItem_UI>(DropItem_UI, 5, objectPoolSavePos);
+        InterectionObjUI_Pool = new ObjectPool<DropItem_UI>(DropItem_UI, 3, objectPoolSavePos);
 
         #region 디폴트 아이템 데이터 DB 테이블 채우기
         ItemDataList = new List<ItemClass>
@@ -873,7 +875,7 @@ public class GameManager : Singleton<GameManager>
 
 
         // 유저 게임 데이터 초기화
-        characterCls = new CharacterClass(10, 300, 0, 100, 50,20, 1, 20, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true, 100,20,0,0,0);
+        characterCls = new CharacterClass(300, 300, 0, 100, 50,20, 1, 20, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true, 100,20,0,0,0);
         playerData.SetUserCharacter(characterCls);
         playerData.SetMora(156000);
         List<ItemClass> weaponList = new List<ItemClass>

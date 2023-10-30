@@ -94,6 +94,15 @@ public class UI_Manager : EnergyBarManager
     #endregion
 
 
+    #region 오브젝트 관련 변수
+
+    [Header("인벤토리 관련(Inventory's Values)")]
+    public GameObject interactionObjectScreen;      // 합성대 UI 오브젝트
+
+
+    #endregion
+
+
     #endregion
 
     #region 구조체
@@ -155,6 +164,9 @@ public class UI_Manager : EnergyBarManager
         isWeaponChangeBtnClicked = false;   // 무기 전환 제어 변수
         nWeaponUpgradeExp = 0;
         dic_ItemClsForUpgrade = new Dictionary<ItemClass, SelectButtonScript>();
+
+        // 오브젝트 관련
+        interactionObjectScreen.gameObject.SetActive(false);
 
     }
     private void Update()
@@ -594,6 +606,8 @@ public class UI_Manager : EnergyBarManager
 
     #region PlayerInfoScreen 오브젝트 스크립트
 
+    #region 기본 함수
+
     // 인포 인덱스 값에 따라서, Active할 UI 프레임 분기
     private void CharaceterInfoPrint()
     {
@@ -656,8 +670,6 @@ public class UI_Manager : EnergyBarManager
         // 캐릭터 속성 정보 디폴트로 출력
         info_Index = e_InfoButtonSelected.Status;
         CharaceterInfoPrint();
-
-
 
         GameManager.Instance.PauseManager();
     }
@@ -785,12 +797,12 @@ public class UI_Manager : EnergyBarManager
             infoSelectButtons[i].gameObject.SetActive(true);
         }
     }
+    #endregion
 
-
-    // 캐릭터 데이터 출력
     #region 캐릭터 인포 UI 관리
+    // 캐릭터 데이터 출력
 
-
+    #region 출력
 
     // 플레이어 캐릭터 정보 출력
     void PlayerDataPrint()
@@ -850,13 +862,15 @@ public class UI_Manager : EnergyBarManager
         statusTexts[10].text = datas.GetIncrease_Damage().ToString();
     }
 
+    #endregion
+
     #region 속성(Status) 프레임, 데이터 출력
 
 
 
     #endregion
-    #endregion
 
+    #endregion
 
     #region 무기 UI 관리
 
@@ -2091,7 +2105,6 @@ public class UI_Manager : EnergyBarManager
 
     #endregion
 
-
     #region 성유물 UI 관리
 
     #region 기본 데이터 출력
@@ -3041,17 +3054,14 @@ public class UI_Manager : EnergyBarManager
 
     #endregion
 
-
     #region 운명의 별자리 UI 관리
 
 
     #endregion
 
-
     #region 특성 UI 관리
 
     #endregion
-
 
     #endregion
 
@@ -3131,9 +3141,31 @@ public class UI_Manager : EnergyBarManager
     //            break;
     //    }
     //}
+
     #endregion
 
     public e_InventoryTypeSelected GetnSelectedInvenIdx(){return invenType_Index; }
+
+    #endregion
+
+
+
+    #region 오브젝트 관련 함수
+
+    public void SynthesisObjectFunc_UI_Print()
+    {
+        GameManager.Instance.PauseManager();
+        interactionObjectScreen.gameObject.SetActive(true);
+         
+        
+    }
+    public void SynthesisObjectFunc_UI_PrintOff()
+    {
+        GameManager.Instance.PauseManager();
+        interactionObjectScreen.gameObject.SetActive(false);
+
+    }
+
 
     #endregion
 }
