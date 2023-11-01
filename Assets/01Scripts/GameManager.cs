@@ -48,6 +48,9 @@ public class GameManager : Singleton<GameManager>
     private List<Tuple<string, List<WEAPON_EQUIP_LIMIT_BREAK_RESOURCE_DATA>>> list_WeaponAndEquipLimitBreakResourceData;
     private List<Tuple<string, List<WEAPON_EQUIP_EFFECT_DATA_BASE>>> list_WeaponAndEquipReforgeGradeData;
     private List<EQUIPMENT_SET_SYNERGY_DATA_BASE> list_EquipmentSetSynergyData;
+    public List<SYNTHESIS_DATA_BASE> list_WeaponSynthesisData;
+    public List<SYNTHESIS_DATA_BASE> list_EquipSynthesisData;
+    public List<SYNTHESIS_DATA_BASE> list_EtcSynthesisData;
 
     // 기타
     [SerializeField] Transform objectPoolSavePos;
@@ -102,7 +105,7 @@ public class GameManager : Singleton<GameManager>
             EFFECT_TEXT = eFFECT_TEXT;
         }
     }
-    public struct EQUIPMENT_SET_SYNERGY_DATA_BASE
+    public struct EQUIPMENT_SET_SYNERGY_DATA_BASE       // 성유물 세트 효과 테이블
     {
         public string EQUIPMENT_SET_NAME;
         public int EQUIPMENT_SET_NUMBER;
@@ -117,6 +120,22 @@ public class GameManager : Singleton<GameManager>
             EQUIPMENT_SET_EFFECT_TEXT = eQUIPMENT_SET_EFFECT_TEXT;
             EQUIPMENT_SET_EFFECT_ELEMENT = eQUIPMENT_SET_EFFECT_ELEMENT;
             EQUIPMENT_SET_EFFECT_VALUE = eQUIPMENT_SET_EFFECT_VALUE;
+        }
+    }
+    public struct SYNTHESIS_DATA_BASE
+    {
+        public string MATERIAL_1;
+        public string MATERIAL_2;
+        public int MATERIAL_1_NUM;
+        public int MATERIAL_2_NUM;
+        public string COMPLETE_iTEM;
+        public SYNTHESIS_DATA_BASE(string material1, string material2, int material1Num, int material2Num, string completeItem)
+        {
+            MATERIAL_1 = material1;
+            MATERIAL_2 = material2;
+            MATERIAL_1_NUM = material1Num;
+            MATERIAL_2_NUM = material2Num;
+            COMPLETE_iTEM = completeItem;
         }
     }
     #endregion
@@ -146,24 +165,24 @@ public class GameManager : Singleton<GameManager>
         #region 디폴트 아이템 데이터 DB 테이블 채우기
         ItemDataList = new List<ItemClass>
         { 
-            new ItemClass("육성 아이템","칼바람 울프의 젖니",1,false,1,500,0,"늑대 무리는 그의 축복을 받은 근위병이다. 새끼 늑대의 젖니라도 상당한 저력을 가지고 있다.\n과거의 신들은 인간을 사랑한다는 책임을 짊어지고 있었다. 따라서, 늑대 무리를 인솔하지만 버림받은 아이를 입양하고 방랑자들을 받아들인 「안드리우스」는 아주 이상하다",""),
-            new ItemClass("육성 아이템","칼바람 울프의 이빨",3,false,1,1000,0,"늑대의 삶엔 전투가 끊이지 않아 뼈가 부서지는 사투도 적지 않다.\n「안드리우스」는 인간은 실망만을 안겨다 줄 뿐이지만 순진한 아이들은 죄가 없다고 여겼다. 늑대 무리가 아이를 선택했고 아이 또한 늑대를 선택했다. 그렇게 그들은 「루피카」-운명의 가족이 되었다",""),
-            new ItemClass("육성 아이템","칼바람 울프의 부서진 이빨",4,false,1,2000,0,"늑대 무리는 인간에게 같은 무리가 없으면 고독함을 느낄 것이란 걸 충분히 이해하고 있다. 명예로운 부서진 이빨은 늑대들의 이별 선물로 몸을 보호해주는 마력이 있다고 한다.\n머나먼 세계에는 어머니 늑대가 위대한 쌍둥이를 입양했다는 전설이 있다. 늑대와 사람들이 함께 산 「집」은 「늑대의 동굴」 즉 「루페르카」로 불렸고 이는 이 세계의 「루피카」라는 뜻이다",""),
-            new ItemClass("육성 아이템","지맥의 낡은 가지",1,false,1,500,0,"지하 깊은 곳의 마른 나뭇가지. 오랜 세월이 지났지만 알록달록한 나무껍질에서 내재된 힘을 느낄 수 있다",""),
-            new ItemClass("육성 아이템","지맥의 마른 잎",3,false,1,1000,0,"지하 깊은 곳에서 자라는 식물의 가지. 줄기에서 멀리 떨어져 있지만 여전히 요동치는 힘이 희미하게 남아있다",""),
-            new ItemClass("육성 아이템","지맥의 새싹",4,false,1,2000,0,"세계 각지에 뿌리를 내린 거목이 있다고 한다.\n이 가지는 그 거목의 일부라고 한다. 누군가에게 꺾여 멀리 이동한 적이 없는 듯하며, 왕성한 생명력으로 새잎이 자랐다",""),
-            new ItemClass("육성 아이템","슬라임 응축액",1,false,1,500,0,"슬라임을 덮고 있는 걸쭉한 액체. 각지의 원소 공방에서 가장 흔히 보이는 원료이다",""),
-            new ItemClass("육성 아이템","슬라임청",3,false,1,1000,0,"정제된 슬라임의 분비물. 피부에 닿으면 해로우니 반드시 피해야 한다",""),
-            new ItemClass("육성 아이템","슬라임 원액",4,false,1,2000,0,"슬라임 농축 원액. 가만히 두면 불규칙하게 움직인다",""),
-            new ItemClass("육성 아이템","라이언 투사의 족쇄",1,false,1,500,0,"사람들은 늘 영웅의 이야기를 과장한다. 심지어 과거 영웅을 속박했던 족쇄도 자유의 적으로 승화됐다.\r\n때문에 이 족쇄도 비범한 힘을 지니게 되었다",""),
-            new ItemClass("육성 아이템","라이언 투사의 쇠사슬",3,false,1,1000,0,"무기에 돌파의 힘을 부여하는 재료.\n과거 대영웅 바네사가 찼던 족쇄—또는 그 시대의 모든 검투사들은 수갑을 찼다. 라이언 투사 또한 그 일원 중 한 명일 뿐이다",""),
-            new ItemClass("육성 아이템","라이언 투사의 수갑",4,false,1,2000,0,"무기에 돌파의 힘을 부여하는 재료.\n바네사는 족쇄 또는 수갑에 묶여있던 게 아니다. 그녀가 빠져나올 마음만 먹었다면 언제든지 몬드의 평범한 금속으로 만든 족쇄를 파괴할 수 있었다. 몬드는 우수한 광석도 고향의 신의 불꽃도 없으니까….\n그녀를 막은 건 오직 부족민을 보호해야 한다는 책임감뿐이다",""),
-            new ItemClass("육성 아이템","혼돈의 장치",1,false,1,500,0,"멈춰버린 고대 유적에서 나온 구조체. 몸체의 균형을 잡아주던 부분으로 정교한 공학적 감각이 돋보인다",""),
-            new ItemClass("육성 아이템","혼돈의 회로",3,false,1,1000,0,"멈춰버린 고대 유적에서 나온 구조체. 이전에 논리 회로였던 부분으로, 아무도 해제할 수 없는 위대한 기술이 담겨있다",""),
-            new ItemClass("육성 아이템","혼돈의 노심",4,false,1,2000,0,"멈춰버린 고대 유적에서 나온 구조체. 이전에 에너지의 핵심이었던 부분으로, 이렇게 신비로운 기술을 이해하고 재구성할 수 있다면 이 세계를 바꿀 수 있을지도 모른다",""),
-            new ItemClass("육성 아이템","이능 두루마리",1,false,1,500,0,"어떤 마법에 관한 두루마리의 남은 조각인 듯하다. 이상한 기운과 불길한 온기를 은은하게 내뿜고 있다",""),
-            new ItemClass("육성 아이템","봉마의 두루마리",3,false,1,1000,0,"대충 만들어진 난해한 고서 단편. 몇몇 마물은 단편에 있는 인물의 형상을 모방해 마법의 기적을 조금은 재현해 낼 수 있다",""),
-            new ItemClass("육성 아이템","금주의 두루마리",4,false,1,2000,0,"고대 형식으로 제작된 고서 초본. 해독할 수 있는 사람이 드물다. 그 의미를 알아버린 학자는 결국 미쳐버린다고 한다",""),
+            new ItemClass("육성 아이템","칼바람 울프의 젖니"         ,1,false,1,500,0,"늑대 무리는 그의 축복을 받은 근위병이다. 새끼 늑대의 젖니라도 상당한 저력을 가지고 있다.\n과거의 신들은 인간을 사랑한다는 책임을 짊어지고 있었다. 따라서, 늑대 무리를 인솔하지만 버림받은 아이를 입양하고 방랑자들을 받아들인 「안드리우스」는 아주 이상하다",""),
+            new ItemClass("육성 아이템","칼바람 울프의 이빨"         ,3,false,1,1000,0,"늑대의 삶엔 전투가 끊이지 않아 뼈가 부서지는 사투도 적지 않다.\n「안드리우스」는 인간은 실망만을 안겨다 줄 뿐이지만 순진한 아이들은 죄가 없다고 여겼다. 늑대 무리가 아이를 선택했고 아이 또한 늑대를 선택했다. 그렇게 그들은 「루피카」-운명의 가족이 되었다",""),
+            new ItemClass("육성 아이템","칼바람 울프의 부서진 이빨" ,4,false,1,2000,0,"늑대 무리는 인간에게 같은 무리가 없으면 고독함을 느낄 것이란 걸 충분히 이해하고 있다. 명예로운 부서진 이빨은 늑대들의 이별 선물로 몸을 보호해주는 마력이 있다고 한다.\n머나먼 세계에는 어머니 늑대가 위대한 쌍둥이를 입양했다는 전설이 있다. 늑대와 사람들이 함께 산 「집」은 「늑대의 동굴」 즉 「루페르카」로 불렸고 이는 이 세계의 「루피카」라는 뜻이다",""),
+            new ItemClass("육성 아이템","지맥의 낡은 가지"             ,1,false,1,500,0,"지하 깊은 곳의 마른 나뭇가지. 오랜 세월이 지났지만 알록달록한 나무껍질에서 내재된 힘을 느낄 수 있다",""),
+            new ItemClass("육성 아이템","지맥의 마른 잎"              ,3,false,1,1000,0,"지하 깊은 곳에서 자라는 식물의 가지. 줄기에서 멀리 떨어져 있지만 여전히 요동치는 힘이 희미하게 남아있다",""),
+            new ItemClass("육성 아이템","지맥의 새싹"               ,4,false,1,2000,0,"세계 각지에 뿌리를 내린 거목이 있다고 한다.\n이 가지는 그 거목의 일부라고 한다. 누군가에게 꺾여 멀리 이동한 적이 없는 듯하며, 왕성한 생명력으로 새잎이 자랐다",""),
+            new ItemClass("육성 아이템","슬라임 응축액"               ,1,false,1,500,0,"슬라임을 덮고 있는 걸쭉한 액체. 각지의 원소 공방에서 가장 흔히 보이는 원료이다",""),
+            new ItemClass("육성 아이템","슬라임청"                ,3,false,1,1000,0,"정제된 슬라임의 분비물. 피부에 닿으면 해로우니 반드시 피해야 한다",""),
+            new ItemClass("육성 아이템","슬라임 원액"               ,4,false,1,2000,0,"슬라임 농축 원액. 가만히 두면 불규칙하게 움직인다",""),
+            new ItemClass("육성 아이템","라이언 투사의 족쇄"         ,1,false,1,500,0,"사람들은 늘 영웅의 이야기를 과장한다. 심지어 과거 영웅을 속박했던 족쇄도 자유의 적으로 승화됐다.\r\n때문에 이 족쇄도 비범한 힘을 지니게 되었다",""),
+            new ItemClass("육성 아이템","라이언 투사의 쇠사슬"     ,3,false,1,1000,0,"무기에 돌파의 힘을 부여하는 재료.\n과거 대영웅 바네사가 찼던 족쇄—또는 그 시대의 모든 검투사들은 수갑을 찼다. 라이언 투사 또한 그 일원 중 한 명일 뿐이다",""),
+            new ItemClass("육성 아이템","라이언 투사의 수갑"         ,4,false,1,2000,0,"무기에 돌파의 힘을 부여하는 재료.\n바네사는 족쇄 또는 수갑에 묶여있던 게 아니다. 그녀가 빠져나올 마음만 먹었다면 언제든지 몬드의 평범한 금속으로 만든 족쇄를 파괴할 수 있었다. 몬드는 우수한 광석도 고향의 신의 불꽃도 없으니까….\n그녀를 막은 건 오직 부족민을 보호해야 한다는 책임감뿐이다",""),
+            new ItemClass("육성 아이템","혼돈의 장치"              ,1,false,1,500,0,"멈춰버린 고대 유적에서 나온 구조체. 몸체의 균형을 잡아주던 부분으로 정교한 공학적 감각이 돋보인다",""),
+            new ItemClass("육성 아이템","혼돈의 회로"              ,3,false,1,1000,0,"멈춰버린 고대 유적에서 나온 구조체. 이전에 논리 회로였던 부분으로, 아무도 해제할 수 없는 위대한 기술이 담겨있다",""),
+            new ItemClass("육성 아이템","혼돈의 노심"              ,4,false,1,2000,0,"멈춰버린 고대 유적에서 나온 구조체. 이전에 에너지의 핵심이었던 부분으로, 이렇게 신비로운 기술을 이해하고 재구성할 수 있다면 이 세계를 바꿀 수 있을지도 모른다",""),
+            new ItemClass("육성 아이템","이능 두루마리"            ,1,false,1,500,0,"어떤 마법에 관한 두루마리의 남은 조각인 듯하다. 이상한 기운과 불길한 온기를 은은하게 내뿜고 있다",""),
+            new ItemClass("육성 아이템","봉마의 두루마리"           ,3,false,1,1000,0,"대충 만들어진 난해한 고서 단편. 몇몇 마물은 단편에 있는 인물의 형상을 모방해 마법의 기적을 조금은 재현해 낼 수 있다",""),
+            new ItemClass("육성 아이템","금주의 두루마리"           ,4,false,1,2000,0,"고대 형식으로 제작된 고서 초본. 해독할 수 있는 사람이 드물다. 그 의미를 알아버린 학자는 결국 미쳐버린다고 한다",""),
 
             new ItemClass("광물", "철광석", 1, false, 1, 600, 1, "철광석. 뛰어난 대장장이에게 가면 빛을 발할 수 있다", ""),
             new ItemClass("광물", "백철", 3, false, 1, 1500, 1, "하얀색 철광석. 뛰어난 대장장이에게 가면 빛을 발할 수 있다", ""),
@@ -195,7 +214,7 @@ public class GameManager : Singleton<GameManager>
             new WeaponAndEquipCls("깃털", "피에 물든 검은 깃털", 5, false, 1, 67000, 1, 20, "기사의 망토에 붙어 있던 까마귀 깃털.\n검은 피에 반복적으로 물들어 완전히 검은색으로 변했다", "피에 물든 기사도", "", 1,510,18,0,400),
             new WeaponAndEquipCls("왕관", "피에 물든 철가면", 5, true, 1, 55000, 1, 20, "기사가 자신의 얼굴을 가릴 때 사용하던 철가면.\n가면 아래의 얼굴은 수많은 사람들이 상상의 나래를 펼치게 했다", "피에 물든 기사도", "", 1,36,10,0,400),
             new WeaponAndEquipCls("꽃", "피에 물든 강철 심장", 5, false, 1, 51000, 1, 20, "피에 검게 물들어 강철과 같은 강도를 가지게 될 정도로 말라버린 꽃.\n과거 이 꽃의 주인에겐 일종의 기념품이지 않았을까", "피에 물든 기사도", "", 1,660,18,0,400),
-            new WeaponAndEquipCls("모래", "피에 물든 기사의 술잔", 5, false, 1, 55000, 1, 20, "핏빛 기사가 지닌 어두운 금속 잔.\n겉은 검은 연기와 굳어버린 피로 인해 밤처럼 새까맣다", "피에 물든 기사도", "", 1,35,20,0,400)
+            new WeaponAndEquipCls("모래", "피에 물든 기사의 시계", 5, false, 1, 55000, 1, 20, "기사가 과거에 사용했던 시계. 안의 액체가 모두 굳어 시계의 기능을 상실했다", "피에 물든 기사도", "", 1,35,20,0,400)
 
         };
         #endregion
@@ -873,6 +892,48 @@ public class GameManager : Singleton<GameManager>
         };
         #endregion
 
+        #region 합성 DB 채우기
+        list_WeaponSynthesisData = new List<SYNTHESIS_DATA_BASE>()
+        {
+            new SYNTHESIS_DATA_BASE("","철광석",0,40,"여명신검"),
+            new SYNTHESIS_DATA_BASE("여명신검","백철",3,15,"제례검"),
+            new SYNTHESIS_DATA_BASE("제례검","수정덩이",3,15,"천공의 검"),
+        };
+        list_EquipSynthesisData = new List<SYNTHESIS_DATA_BASE>()
+        {
+            new SYNTHESIS_DATA_BASE("","철광석",0,25,"이국의 술잔"),
+            new SYNTHESIS_DATA_BASE("","철광석",0,25,"귀향의 깃털"),
+            new SYNTHESIS_DATA_BASE("","철광석",0,25,"이별의 모자"),
+            new SYNTHESIS_DATA_BASE("","철광석",0,25,"옛 벗의 마음"),
+            new SYNTHESIS_DATA_BASE("","철광석",0,25,"빛을 좆는 돌"),
+            new SYNTHESIS_DATA_BASE("이국의 술잔", "백철",3,10,"전투광의 해골잔"),
+            new SYNTHESIS_DATA_BASE("귀향의 깃털", "백철",3,10,"전투광의 깃털"),
+            new SYNTHESIS_DATA_BASE("이별의 모자", "백철",3,10,"전투광의 귀면"),
+            new SYNTHESIS_DATA_BASE("옛 벗의 마음", "백철",3,10,"전투광의 장미"),
+            new SYNTHESIS_DATA_BASE("빛을 좆는 돌","백철",3,10,"전투광의 시계"),
+            new SYNTHESIS_DATA_BASE("전투광의 해골잔","수정덩이",3,10,"피에 물든 기사의 술잔"),
+            new SYNTHESIS_DATA_BASE("전투광의 깃털", "수정덩이",3,10,"피에 물든 검은 깃털"),
+            new SYNTHESIS_DATA_BASE("전투광의 귀면","수정덩이",3,10,"피에 물든 철가면"),
+            new SYNTHESIS_DATA_BASE("전투광의 장미","수정덩이",3,10,"피에 물든 강철 심장"),
+            new SYNTHESIS_DATA_BASE("전투광의 시계","수정덩이",3,10,"피에 물든 기사의 시계")
+        };
+        list_EtcSynthesisData = new List<SYNTHESIS_DATA_BASE>()
+        {
+            new SYNTHESIS_DATA_BASE("칼바람 울프의 젖니","모라",5,4000,"칼바람 울프의 이빨"),
+            new SYNTHESIS_DATA_BASE("칼바람 울프의 이빨","모라",5,10000,"칼바람 울프의 부서진 이빨"),
+            new SYNTHESIS_DATA_BASE("라이언 투사의 족쇄","모라",5,4000,"라이언 투사의 쇠사슬"),
+            new SYNTHESIS_DATA_BASE("라이언 투사의 쇠사슬","모라",5,10000,"라이언 투사의 수갑"),
+            new SYNTHESIS_DATA_BASE("지맥의 낡은 가지","모라",5,2000,"지맥의 마른 잎"),
+            new SYNTHESIS_DATA_BASE("지맥의 마른 잎","모라",5,5000,"지맥의 새싹"),
+            new SYNTHESIS_DATA_BASE("슬라임 응축액","모라",5,2000,"슬라임청"),
+            new SYNTHESIS_DATA_BASE("슬라임청","모라",5,5000,"슬라임 원액"),
+            new SYNTHESIS_DATA_BASE("혼돈의 장치","모라",5,2000,"혼돈의 회로"),
+            new SYNTHESIS_DATA_BASE("혼돈의 회로","모라",5,5000,"혼돈의 노심"),
+            new SYNTHESIS_DATA_BASE("이능 두루마리","모라",5,2000,"봉마의 두루마리"),
+            new SYNTHESIS_DATA_BASE("봉마의 두루마리","모라",5,2000,"금주의 두루마리"),
+        };
+        #endregion
+
 
         // 유저 게임 데이터 초기화
         characterCls = new CharacterClass(300, 300, 0, 100, 50,20, 1, 20, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true, 100,20,0,0,0);
@@ -918,7 +979,7 @@ public class GameManager : Singleton<GameManager>
         {
             new ItemClass("광물", "철광석", 1, false, 1, 600, 1, "철광석. 뛰어난 대장장이에게 가면 빛을 발할 수 있다", ""),
             new ItemClass("광물", "백철", 3, false, 1, 1500, 1, "하얀색 철광석. 뛰어난 대장장이에게 가면 빛을 발할 수 있다", ""),
-            new ItemClass("광물", "수정덩이", 4, false, 1, 4000, 1, "가공되지 않은 결정체. 세공을 해야 진정한 가치를 알 수 있다", ""),
+            new ItemClass("광물", "수정덩이", 4, false, 20, 4000, 1, "가공되지 않은 결정체. 세공을 해야 진정한 가치를 알 수 있다", ""),
         };
         playerData.SetHadGemList(gemList);
 
@@ -1453,6 +1514,10 @@ public class GameManager : Singleton<GameManager>
         return list_EquipmentSetSynergyData;
     }
     public List<WeaponAndEquipCls> GetWeaponAndEquipmentDataList() { return WeaponAndEquipmentDataList; }
+    public List<ItemClass> GetItemDataList() { return ItemDataList; }
+    public List<SYNTHESIS_DATA_BASE> GetWeaponSynthesisData() { return list_WeaponSynthesisData; }
+    public List<SYNTHESIS_DATA_BASE> GetEquipSynthesisData() { return list_EquipSynthesisData; }
+    public List<SYNTHESIS_DATA_BASE> GetEtcSynthesisData() { return list_EtcSynthesisData; }
 
     #endregion
 

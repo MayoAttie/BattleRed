@@ -141,6 +141,12 @@ public class UI_UseToolClass
         foreach (var obj in objList)
         {
             obj.SetIsActive(false);
+            
+            // 알파값 최대
+            Color aa = obj.GetTopItemImage().color;
+            aa.a = 1.0f;
+            obj.GetTopItemImage().color = aa;
+            
             //if (obj.gameObject.activeSelf == false) continue;
             Button btn = obj.GetButton();
             if (btn != null)

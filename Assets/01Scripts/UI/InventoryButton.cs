@@ -71,6 +71,8 @@ public class InventoryButton : MonoBehaviour
                 break;
         }
     }
-
+    public void SetClickActive(bool isClicked) { isclicked = isClicked; }
     public bool GetClickActive(){return isclicked;}
+    public Button GetButton() { return button; }
+    public UI_Manager.e_InventoryTypeSelected GetSelectType() { return objectIndex; }
 }

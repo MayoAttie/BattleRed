@@ -9,6 +9,7 @@ using static GameManager;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Data;
+using System.Linq;
 
 public class UI_Manager : EnergyBarManager
 {
@@ -27,8 +28,6 @@ public class UI_Manager : EnergyBarManager
     private InventoryButton[] invenButtons;                             // 인벤토리 아이템 타입 선택 버튼들(0-웨폰,1-장비,2-광물,3-음식)
     [SerializeField]
     private Transform scrollContent;                                    // 인벤토리 스크롤뷰 콘텐츠의 Transform
-    [SerializeField]
-    private GameObject scrollViewObj;                                   // 스크롤뷰 콘텐츠에 부착될 컴포넌트 프리팹
     [SerializeField]
     private GameObject ExpressFrame;                                    // 특정 아이템 선택시 아이템 정보 출력창
     [SerializeField]
@@ -96,9 +95,13 @@ public class UI_Manager : EnergyBarManager
 
     #region 오브젝트 관련 변수
 
-    [Header("인벤토리 관련(Inventory's Values)")]
-    public GameObject interactionObjectScreen;      // 합성대 UI 오브젝트
-
+    [Header("합성대 (Synthesis's Values)")]
+    public GameObject SynthesisObjectScreen;                                    // 합성대 UI 오브젝트
+    [SerializeField]
+    private InventoryButton[] SynthesisTypeButtons;                             // 인벤토리 아이템 타입 선택 버튼들(0- 성유물 합성,1- 무기 합성, 2-기타 합성)
+    private e_InventoryTypeSelected synthesisType_Index;                        // 인벤토리 타입 인덱스
+    private Transform sythesisPrintScroll;
+    private TextMeshProUGUI moraText;
 
     #endregion
 
@@ -112,7 +115,8 @@ public class UI_Manager : EnergyBarManager
         Weapon =0,
         Equipment,
         Gem,
-        Food
+        Food,
+        Etc
     }
     // 정렬 우선순위 구조체
     public enum e_SortingOrder
@@ -166,7 +170,7 @@ public class UI_Manager : EnergyBarManager
         dic_ItemClsForUpgrade = new Dictionary<ItemClass, SelectButtonScript>();
 
         // 오브젝트 관련
-        interactionObjectScreen.gameObject.SetActive(false);
+        SynthesisObjectScreen.gameObject.SetActive(false);
 
     }
     private void Update()
@@ -3155,14 +3159,237 @@ public class UI_Manager : EnergyBarManager
     public void SynthesisObjectFunc_UI_Print()
     {
         GameManager.Instance.PauseManager();
-        interactionObjectScreen.gameObject.SetActive(true);
-         
-        
+        SynthesisObjectScreen.gameObject.SetActive(true);
+        synthesisType_Index = e_InventoryTypeSelected.Weapon;
+        sythesisPrintScroll = SynthesisObjectScreen.transform.GetChild(5).GetChild(0).GetChild(0);
+
+        moraText = SynthesisObjectScreen.transform.GetChild(6).GetComponentInChildren<TextMeshProUGUI>();
+        moraText.text = GameManager.Instance.GetUserClass().GetMora().ToString();
+
+        foreach (var tmp in SynthesisTypeButtons)
+        {
+            tmp.GetButton().onClick.RemoveAllListeners();
+            tmp.GetButton().onClick.AddListener(() => tmp.ButtonUIColorSet());
+            tmp.GetButton().onClick.AddListener(() => SynthesisIndexChange(tmp));
+        }
+
+        SynthesisTypeButtons[0].SetClickActive(false);
+        SynthesisTypeButtons[0].ButtonUIColorSet();
+        SynthesisPrintDataDevider();
     }
     public void SynthesisObjectFunc_UI_PrintOff()
     {
         GameManager.Instance.PauseManager();
-        interactionObjectScreen.gameObject.SetActive(false);
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);
+        SynthesisObjectScreen.gameObject.SetActive(false);
+
+    }
+
+    private void SynthesisIndexChange(InventoryButton btn)
+    {
+        // 선택된 버튼을 제외한 나머지 객체들의 UI 수정
+        foreach(var tmp in SynthesisTypeButtons) 
+        {
+            if (tmp == btn)
+                continue;
+            if(tmp.GetClickActive() == true)
+                tmp.ButtonUIColorSet();
+        }
+
+        // 인덱스 수정
+        synthesisType_Index = btn.GetSelectType();
+
+        // 데이터 출력
+        SynthesisPrintDataDevider();
+    }
+
+    void SynthesisPrintDataDevider()
+    {
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Equip);
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Gem);
+
+        switch (synthesisType_Index)
+        {
+            case e_InventoryTypeSelected.Weapon:
+                PrintSynthesisWeapon();
+                break;
+            case e_InventoryTypeSelected.Equipment:
+                PrintSynthesisEquip();
+                break;
+            case e_InventoryTypeSelected.Etc:
+                PrintSynthesisEtc();
+                break;
+        }
+    }
+
+    // 무기 프린트 출력
+    void PrintSynthesisWeapon()
+    {
+        
+        var datas = GameManager.Instance.GetWeaponSynthesisData();
+        GameManager.Instance.ItemToObjPool(datas.Count, e_PoolItemType.Weapon, sythesisPrintScroll);
+        var poolUIs = GameManager.Instance.WeaponItemPool.GetPoolList();
+
+        HaveItemCompareToDataBase_ForSynthesis(datas,e_PoolItemType.Weapon,poolUIs);
+    }
+    void PrintSynthesisEquip()
+    {
+        var datas = GameManager.Instance.GetEquipSynthesisData();
+        GameManager.Instance.ItemToObjPool(datas.Count, e_PoolItemType.Equip, sythesisPrintScroll);
+        var poolUIs = GameManager.Instance.EquipItemPool.GetPoolList();
+
+        HaveItemCompareToDataBase_ForSynthesis(datas, e_PoolItemType.Equip, poolUIs);
+    }
+    void PrintSynthesisEtc()
+    {
+        var datas = GameManager.Instance.GetEtcSynthesisData();
+        GameManager.Instance.ItemToObjPool(datas.Count, e_PoolItemType.Gem, sythesisPrintScroll);
+        var poolUIs = GameManager.Instance.GemItemPool.GetPoolList();
+
+        HaveItemCompareToDataBase_ForSynthesis(datas, e_PoolItemType.Gem, poolUIs);
+    }
+
+    void HaveItemCompareToDataBase_ForSynthesis(List<SYNTHESIS_DATA_BASE> dbList, e_PoolItemType dataType, List<InvenItemObjClass> poolDatas)
+    {
+        List<ItemClass> haveItems_1 = new List<ItemClass>();
+        List<ItemClass> haveItems_2 = new List<ItemClass>();
+        if(dataType == e_PoolItemType.Weapon)
+        {
+            haveItems_1 = GameManager.Instance.GetUserClass().GetHadWeaponList();   // 무기
+            haveItems_2 = GameManager.Instance.GetUserClass().GetHadGemList();      // 광석
+        }
+        if(dataType == e_PoolItemType.Equip)
+        {
+            haveItems_1 = GameManager.Instance.GetUserClass().GetHadEquipmentList();    // 성유물
+            haveItems_2 = GameManager.Instance.GetUserClass().GetHadGemList();          // 광석
+        }
+        if(dataType == e_PoolItemType.Gem)
+        {
+            haveItems_1 = GameManager.Instance.GetUserClass().GetHadGrowMaterialList(); // 성장재료
+        }
+        // DB 순회하며, 데이터 탐색 및 UI 수정
+        for(int i=0; i<dbList.Count; i++)
+        {
+            string material_1 = dbList[i].MATERIAL_1;
+            string material_2 = dbList[i].MATERIAL_2;
+            int material_1_num = dbList[i].MATERIAL_1_NUM;
+            int material_2_num = dbList[i].MATERIAL_2_NUM;
+            string completeItem = dbList[i].COMPLETE_iTEM;
+
+            bool isPossible = true;
+
+            if (material_1 != "")
+            {
+                if(dataType == e_PoolItemType.Weapon || dataType == e_PoolItemType.Equip) 
+                {
+                    var finds_1 = haveItems_1.Where(item => item.GetName().Equals(material_1)).ToList();
+
+                    if (finds_1 == null)
+                        isPossible = false;
+
+                    if (finds_1 !=null && finds_1.Count < material_1_num)
+                        isPossible = false;
+                }
+                else if(dataType == e_PoolItemType.Gem)
+                {
+                    var find_1 = haveItems_1.Find(item => item.GetName().Equals(material_1));
+
+                    if (find_1 == null)
+                        isPossible = false;
+
+                    if (find_1 != null && find_1.GetNumber() < material_1_num)
+                        isPossible = false;
+                }
+            }
+            if(material_2 != "")
+            {
+                if(material_2 == "모라")
+                {
+                    // 모라 확인
+                    if (GameManager.Instance.GetUserClass().GetMora() < material_2_num)
+                        isPossible = false;
+                }
+                else
+                {
+                    var find_2 = haveItems_2.Find(tmp => tmp.GetName().Equals(material_2));
+
+                    if(find_2 == null)
+                        isPossible = false;
+
+                    if (find_2 != null && find_2.GetNumber() < material_2_num)
+                        isPossible = false;
+                }
+            }
+
+            // 플레이어가 보유한 데이터가 조건을 모두 만족할 경우
+            if(isPossible == true)
+            {
+                if(dataType == e_PoolItemType.Weapon)
+                {
+                    var defaultDatas = GameManager.Instance.GetWeaponAndEquipmentDataList();
+                    var target = defaultDatas.Find(tmp => tmp.GetName().Equals(completeItem));
+
+                    WeaponKindDivider(target, poolDatas[i].GetTopItemImage());
+                    poolDatas[i].SetItemColor(target.GetGrade());
+                }
+                if(dataType == e_PoolItemType.Equip)
+                {
+                    var defaultDatas = GameManager.Instance.GetWeaponAndEquipmentDataList();
+                    var target = defaultDatas.Find(tmp => tmp.GetName().Equals(completeItem));
+
+                    EquipmentKindDivider(target, poolDatas[i].GetTopItemImage());
+                    poolDatas[i].SetItemColor(target.GetGrade());
+
+                }
+                if(dataType == e_PoolItemType.Gem)
+                {
+                    var defaultDatas = GameManager.Instance.GetItemDataList();
+                    var target = defaultDatas.Find(tmp => tmp.GetName().Equals(completeItem));
+
+                    poolDatas[i].SetItemSprite(WeaponAndEquipLimitBreak_UI_Dvider(target));
+                    poolDatas[i].SetItemColor(target.GetGrade());
+                }
+                poolDatas[i].SetIsActive(true);
+                poolDatas[i].SetItemText(completeItem);
+            }
+            // 만족하지 못 할 경우
+            else
+            {
+                if (dataType == e_PoolItemType.Weapon)
+                {
+                    var defaultDatas = GameManager.Instance.GetWeaponAndEquipmentDataList();
+                    var target = defaultDatas.Find(tmp => tmp.GetName().Equals(completeItem));
+                    
+                    WeaponKindDivider(target, poolDatas[i].GetTopItemImage());
+                }
+                if (dataType == e_PoolItemType.Equip)
+                {
+                    var defaultDatas = GameManager.Instance.GetWeaponAndEquipmentDataList();
+                    var target = defaultDatas.Find(tmp => tmp.GetName().Equals(completeItem));
+
+                    EquipmentKindDivider(target, poolDatas[i].GetTopItemImage());
+                }
+                if(dataType == e_PoolItemType.Gem)
+                {
+                    var defaultDatas = GameManager.Instance.GetItemDataList();
+                    var target = defaultDatas.Find(tmp => tmp.GetName().Equals(completeItem));
+                    poolDatas[i].SetItemSprite(WeaponAndEquipLimitBreak_UI_Dvider(target));
+                }
+
+                poolDatas[i].SetItemColor(0);
+                poolDatas[i].SetIsActive(false);
+                poolDatas[i].SetItemText(completeItem);
+                Color aa = poolDatas[i].GetTopItemImage().color;
+                aa.a = 0.6f;
+                poolDatas[i].GetTopItemImage().color = aa;  // 알파값 수정
+
+                // 스크롤뷰 상에서 뒤쪽으로 보내기
+                poolDatas[i].transform.SetParent(sythesisPrintScroll);
+                poolDatas[i].transform.SetAsLastSibling();
+            }
+            
+        }
 
     }
 
