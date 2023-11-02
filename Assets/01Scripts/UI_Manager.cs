@@ -3388,10 +3388,10 @@ public class UI_Manager : EnergyBarManager
                 poolDatas[i].transform.SetParent(sythesisPrintScroll);
                 poolDatas[i].transform.SetAsLastSibling();
             }
-            
         }
-
     }
+
+    
 
 
     #endregion
