@@ -184,7 +184,7 @@ public class CharacterControlMng : Subject, Observer
     {
         // 캐릭터가 지면에 있는지를 확인하고 결과를 isGrounded 변수에 저장.
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-        Debug.Log(nameof(isGrounded) + ":" + isGrounded);
+        //Debug.Log(nameof(isGrounded) + ":" + isGrounded);
 
         // 만약 캐릭터가 지면에 있고(isGrounded가 true) 점프를 시도할 수 있는(isJump가 true) 상태라면
         if (isGrounded && isJump)

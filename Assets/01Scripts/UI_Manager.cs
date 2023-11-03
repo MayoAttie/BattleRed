@@ -100,8 +100,9 @@ public class UI_Manager : EnergyBarManager
     [SerializeField]
     private InventoryButton[] SynthesisTypeButtons;                             // 인벤토리 아이템 타입 선택 버튼들(0- 성유물 합성,1- 무기 합성, 2-기타 합성)
     private e_InventoryTypeSelected synthesisType_Index;                        // 인벤토리 타입 인덱스
-    private Transform sythesisPrintScroll;
-    private TextMeshProUGUI moraText;
+    private Transform sythesisPrintScroll;                                      // 아이템 출력용 스크롤뷰 콘텐트
+    private TextMeshProUGUI moraText;                                           // 모라 텍스트
+    private ItemClass selectedItem_sythesis;                                             // 선택된 아이템 객체
 
     #endregion
 
@@ -3162,7 +3163,7 @@ public class UI_Manager : EnergyBarManager
         SynthesisObjectScreen.gameObject.SetActive(true);
         synthesisType_Index = e_InventoryTypeSelected.Weapon;
         sythesisPrintScroll = SynthesisObjectScreen.transform.GetChild(5).GetChild(0).GetChild(0);
-
+        selectedItem_sythesis = null;
         moraText = SynthesisObjectScreen.transform.GetChild(6).GetComponentInChildren<TextMeshProUGUI>();
         moraText.text = GameManager.Instance.GetUserClass().GetMora().ToString();
 
@@ -3181,6 +3182,8 @@ public class UI_Manager : EnergyBarManager
     {
         GameManager.Instance.PauseManager();
         ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Equip);
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Gem);
         SynthesisObjectScreen.gameObject.SetActive(false);
 
     }
@@ -3212,13 +3215,22 @@ public class UI_Manager : EnergyBarManager
         switch (synthesisType_Index)
         {
             case e_InventoryTypeSelected.Weapon:
+                SynthesisObjectScreen.transform.GetChild(8).gameObject.SetActive(true);
+                SynthesisObjectScreen.transform.GetChild(7).gameObject.SetActive(false);
                 PrintSynthesisWeapon();
+                SynthesisPrintEquipsObjects();
                 break;
             case e_InventoryTypeSelected.Equipment:
+                SynthesisObjectScreen.transform.GetChild(8).gameObject.SetActive(true);
+                SynthesisObjectScreen.transform.GetChild(7).gameObject.SetActive(false);
                 PrintSynthesisEquip();
+                SynthesisPrintEquipsObjects();
                 break;
             case e_InventoryTypeSelected.Etc:
+                SynthesisObjectScreen.transform.GetChild(8).gameObject.SetActive(false); 
+                SynthesisObjectScreen.transform.GetChild(7).gameObject.SetActive(true);
                 PrintSynthesisEtc();
+                SynthesisPrintEtcObjects();
                 break;
         }
     }
@@ -3332,6 +3344,14 @@ public class UI_Manager : EnergyBarManager
 
                     WeaponKindDivider(target, poolDatas[i].GetTopItemImage());
                     poolDatas[i].SetItemColor(target.GetGrade());
+                    poolDatas[i].SetItemcls(target);
+
+                    // 버튼 세팅
+                    var btn = poolDatas[i].GetButton();
+                    int index = i; // i 값을 별도의 변수에 할당
+                    btn.onClick.RemoveAllListeners();
+                    btn.onClick.AddListener(() => poolDatas[index].ClickedUIApply());
+                    btn.onClick.AddListener(() => SynthesisButtonSelect(target,dataType));
                 }
                 if(dataType == e_PoolItemType.Equip)
                 {
@@ -3340,7 +3360,15 @@ public class UI_Manager : EnergyBarManager
 
                     EquipmentKindDivider(target, poolDatas[i].GetTopItemImage());
                     poolDatas[i].SetItemColor(target.GetGrade());
+                    poolDatas[i].SetItemcls(target);
 
+
+                    // 버튼 세팅
+                    var btn = poolDatas[i].GetButton();
+                    int index = i; // i 값을 별도의 변수에 할당
+                    btn.onClick.RemoveAllListeners();
+                    btn.onClick.AddListener(() => poolDatas[index].ClickedUIApply());
+                    btn.onClick.AddListener(() => SynthesisButtonSelect(target, dataType));
                 }
                 if(dataType == e_PoolItemType.Gem)
                 {
@@ -3349,6 +3377,15 @@ public class UI_Manager : EnergyBarManager
 
                     poolDatas[i].SetItemSprite(WeaponAndEquipLimitBreak_UI_Dvider(target));
                     poolDatas[i].SetItemColor(target.GetGrade());
+                    poolDatas[i].SetItemcls(target);
+
+
+                    // 버튼 세팅
+                    var btn = poolDatas[i].GetButton();
+                    int index = i; // i 값을 별도의 변수에 할당
+                    btn.onClick.RemoveAllListeners();
+                    btn.onClick.AddListener(() => poolDatas[index].ClickedUIApply());
+                    btn.onClick.AddListener(() => SynthesisButtonSelect(target, dataType));
                 }
                 poolDatas[i].SetIsActive(true);
                 poolDatas[i].SetItemText(completeItem);
@@ -3387,11 +3424,110 @@ public class UI_Manager : EnergyBarManager
                 // 스크롤뷰 상에서 뒤쪽으로 보내기
                 poolDatas[i].transform.SetParent(sythesisPrintScroll);
                 poolDatas[i].transform.SetAsLastSibling();
+
+                int index = i;
+                var btn = poolDatas[index].GetButton();
+                btn.onClick.RemoveAllListeners();
             }
         }
     }
 
-    
+    void SynthesisPrintEtcObjects()
+    {
+        Transform parents = SynthesisObjectScreen.transform.GetChild(7).transform;
+        Image[] resourceSet_img = new Image[3]; // 재료 이미지 출력
+        for(int i=0; i<3; i++)
+            resourceSet_img[i] = parents.GetChild(0).GetChild(0).GetChild(1+i).GetComponent<Image>();
+        FillBar_Script fillingBar = parents.GetChild(1).GetChild(1).GetComponent<FillBar_Script>(); // 필링바
+        Transform makeTargetPos = parents.GetChild(1).GetChild(2).GetComponent<Transform>();        // 합성할 객체 출력 위치
+        TextMeshProUGUI curText = parents.GetChild(1).GetChild(3).GetComponent<TextMeshProUGUI>();  // 최소치 텍스트
+        TextMeshProUGUI maxText = parents.GetChild(1).GetChild(4).GetComponent<TextMeshProUGUI>();  // 최대치 텍스트
+        ButtonClass2 plusBtn = parents.GetChild(1).GetChild(5).GetComponent<ButtonClass2>();        // 생성 개수 추가 버튼
+        ButtonClass2 minusBtn = parents.GetChild(1).GetChild(6).GetComponent<ButtonClass2>();       // 생성 개수 감소 버튼
+
+        ResetToSelectButtonScriptPoolDatas();
+        // 선택한 버튼 객체가 있을 경우,
+        if (selectedItem_sythesis == null)
+        {
+            // 각 객체 초기화
+            foreach (var tmp in resourceSet_img)
+                tmp.sprite = null;
+            curText.text = "";
+            maxText.text = "";
+            plusBtn.GetButton().onClick.RemoveAllListeners();
+            minusBtn.GetButton().onClick.RemoveAllListeners();
+            ButtonClass2_Reset(plusBtn);
+            ButtonClass2_Reset(minusBtn);
+        }
+        else
+        {
+            curText.text = "0";
+            maxText.text = "";
+            // 버튼 초기화 후 이벤트 리스너 연결
+            plusBtn.GetButton().onClick.RemoveAllListeners();
+            minusBtn.GetButton().onClick.RemoveAllListeners();
+            ButtonClass2_Reset(plusBtn);
+            ButtonClass2_Reset(minusBtn);
+            plusBtn.GetButton().onClick.AddListener(() => SynthesisEtc_PlusButtonEvent(fillingBar));
+            minusBtn.GetButton().onClick.AddListener(() => SynthesisEtc_MinusButtonEvent(fillingBar));
+        }
+    }
+    void SynthesisEtc_PlusButtonEvent(FillBar_Script obj)
+    {
+        var dbData = GameManager.Instance.GetEtcSynthesisData();
+        var findResourceData = dbData.Find(tmp => tmp.COMPLETE_iTEM.Equals(selectedItem_sythesis));
+
+
+
+    }
+    void SynthesisEtc_MinusButtonEvent(FillBar_Script obj)
+    {
+        var dbData = GameManager.Instance.GetEtcSynthesisData();
+        var findResourceData = dbData.Find(tmp => tmp.COMPLETE_iTEM.Equals(selectedItem_sythesis));
+
+    }
+    void SynthesisPrintEquipsObjects()
+    {
+        // 선택한 버튼 객체가 있을 경우,
+        if(selectedItem_sythesis == null)
+        {
+
+        }
+        else
+        {
+
+        }
+    }
+
+    void SynthesisButtonSelect(ItemClass selected, e_PoolItemType type)
+    {
+        selectedItem_sythesis = selected;
+        Debug.Log(selectedItem_sythesis.GetName());
+
+        List<InvenItemObjClass> pools = new List<InvenItemObjClass>();
+
+        switch(type)
+        {
+            case e_PoolItemType.Weapon:
+                pools = GameManager.Instance.WeaponItemPool.GetPoolList();
+                break;
+            case e_PoolItemType.Equip:
+                pools = GameManager.Instance.EquipItemPool.GetPoolList();
+                break;
+            case e_PoolItemType.Gem:
+                pools = GameManager.Instance.GemItemPool.GetPoolList();
+                break;
+        }
+
+        // 다른 버튼 활성화 취소
+        foreach(var tmp in pools)
+        {
+            if (tmp.GetIsActive() == true && tmp.GetItemcls() != selected && tmp.GetButtonClicked() == true)
+                tmp.ClickedUIApply();
+        }
+    }
+
+
 
 
     #endregion
