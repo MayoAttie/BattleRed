@@ -103,7 +103,6 @@
     <Compile Include="Assets\01Scripts\UI\ButtonClass.cs" />
     <Compile Include="Assets\01Scripts\UI\ButtonClass2.cs" />
     <Compile Include="Assets\01Scripts\UI\ButtonRotateSetCls.cs" />
-    <Compile Include="Assets\01Scripts\UI\FillBar_Script.cs" />
     <Compile Include="Assets\01Scripts\UI\InvenItemObjClass.cs" />
     <Compile Include="Assets\01Scripts\UI\InventoryButton.cs" />
     <Compile Include="Assets\01Scripts\UI\InventorySortSelectButton.cs" />
@@ -111,6 +110,7 @@
     <Compile Include="Assets\01Scripts\UI\PlayerInfoUI_Button.cs" />
     <Compile Include="Assets\01Scripts\UI\PopUpScreenClass.cs" />
     <Compile Include="Assets\01Scripts\UI\SelectButtonScript.cs" />
+    <Compile Include="Assets\01Scripts\UI\SliderController.cs" />
     <Compile Include="Assets\01Scripts\UI\UI_UseToolClass.cs" />
     <Compile Include="Assets\01Scripts\UI_Manager.cs" />
     <Compile Include="Assets\01Scripts\UserClass.cs" />

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UI_Manager;
 
 public class ObjectManager : Singleton<ObjectManager>
 {
@@ -22,7 +23,8 @@ public class ObjectManager : Singleton<ObjectManager>
 
     void SynthesisObjectFunction()
     {
-        UI_Manager.Instance.SynthesisObjectFunc_UI_Print();
+        Synthesis synthesisInstance = UI_Manager.Instance.synthesis; // Synthesis 클래스의 인스턴스 생성
+        synthesisInstance.SynthesisObjectFunc_UI_Print();           // Synthesis 클래스의 메서드 호출
     }
 
 }

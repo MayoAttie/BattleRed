@@ -826,6 +826,12 @@ public class UI_UseToolClass
         btnCls.GetButton().onClick.AddListener(btnCls.OnButtonDown);
         btnCls.GetButton().onClick.AddListener(btnCls.OnButtonUp);
     }
+    public static void ButtonClass_Reset(ButtonClass btnCls)
+    {
+        btnCls.GetButton().onClick.AddListener(btnCls.OnClick);
+        btnCls.GetButton().onClick.AddListener(btnCls.OnButtonDown);
+        btnCls.GetButton().onClick.AddListener(btnCls.OnButtonUp);
+    }
 
     /// <summary>
     /// 성유물 UI tools

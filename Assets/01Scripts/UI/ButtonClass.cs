@@ -65,7 +65,7 @@ public class ButtonClass : MonoBehaviour
         }
     }
 
-    private void OnClick()
+    public void OnClick()
     {
         // 버튼이 눌릴 때 호출되는 이벤트
         onPressed.Invoke();
@@ -99,4 +99,5 @@ public class ButtonClass : MonoBehaviour
             inside.fillAmount = fillAmount;
         }
     }
+    public Button GetButton(){ return button; }
 }
