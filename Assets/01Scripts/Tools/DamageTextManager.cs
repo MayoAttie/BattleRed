@@ -11,7 +11,7 @@ public class DamageTextManager : Singleton<DamageTextManager>
     public Camera _camera;
 
 
-    private List<FloatingTextData> textQueue = new List<FloatingTextData>(); // 텍스트 데이터 큐
+    private List<FloatingTextData> textList = new List<FloatingTextData>(); // 텍스트 데이터 리스트
 
 
     private void Start()
@@ -21,9 +21,9 @@ public class DamageTextManager : Singleton<DamageTextManager>
 
     private void Update()
     {
-        if (textQueue.Count > 0)
+        if (textList.Count > 0)
         {
-            foreach(var text in textQueue)
+            foreach(var text in textList)
             {
                 text.obj.SetPosition(text.position, _camera, this.transform);
             }
@@ -40,8 +40,8 @@ public class DamageTextManager : Singleton<DamageTextManager>
         floatingTextComponent.SetColor(textColor);
         floatingTextComponent.SetPosition(position, _camera, transform);
 
-        // 필요한 데이터를 큐에 추가
-        textQueue.Add(new FloatingTextData(instance.GetComponent<FloatingText>(),position));
+        // 필요한 데이터를 리스트에 추가
+        textList.Add(new FloatingTextData(instance.GetComponent<FloatingText>(),position));
 
     }
 
@@ -93,12 +93,12 @@ public class DamageTextManager : Singleton<DamageTextManager>
 
     public void GetAnimationEnd(FloatingText floatingText)
     {
-        // textQueue에서 해당 FloatingText 객체를 제거
-        for (int i = 0; i < textQueue.Count; i++)
+        // textList에서 해당 FloatingText 객체를 제거
+        for (int i = 0; i < textList.Count; i++)
         {
-            if (textQueue[i].obj == floatingText)
+            if (textList[i].obj == floatingText)
             {
-                textQueue.RemoveAt(i);
+                textList.RemoveAt(i);
                 break;
             }
         }

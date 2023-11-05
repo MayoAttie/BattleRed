@@ -7,6 +7,7 @@ using static CharacterUpgradeManager;
 using static UI_UseToolClass;
 using static GameManager;
 using System.Linq;
+using JetBrains.Annotations;
 
 public class UI_Manager : EnergyBarManager
 {
@@ -107,6 +108,7 @@ public class UI_Manager : EnergyBarManager
     // 인벤토리 UI 창 - 아이템 타입 구조체
     public enum e_InventoryTypeSelected
     {
+        None = -1,
         Weapon =0,
         Equipment,
         Gem,
@@ -3086,7 +3088,7 @@ public class UI_Manager : EnergyBarManager
                 btn.onClick.AddListener(() => obj.OnClickEventListener());
             }
         }
-        GameManager.Instance.WeaponItemPool.AllReturnToPool();  // 웨폰 UI 오브젝트풀 리턴
+        //GameManager.Instance.WeaponItemPool.AllReturnToPool();  // 웨폰 UI 오브젝트풀 리턴
     }
     private void ScrollViewOpenButtonClickEvent(SelectButtonScript clickedBtn, Transform mainobj, e_PoolItemType type)
     {
@@ -3180,6 +3182,12 @@ public class UI_Manager : EnergyBarManager
             ButtonClass closeButtn = SynthesisObjectScreen.transform.GetChild(3).GetComponent<ButtonClass>();
             closeButtn.GetButton().onClick.RemoveAllListeners();
             closeButtn.GetButton().onClick.AddListener(SynthesisObjectFunc_UI_PrintOff);
+
+            // 사용버튼 함수 연결
+            ButtonClass2 userButton = SynthesisObjectScreen.transform.GetChild(4).GetComponent<ButtonClass2>();
+            userButton.GetButton().onClick.RemoveAllListeners();
+            ButtonClass2_Reset(userButton);
+            userButton.GetButton().onClick.AddListener(UseButtonFunc);
 
             // 데이터 세팅
             instance.SynthesisObjectScreen.gameObject.SetActive(true);
@@ -3475,12 +3483,14 @@ public class UI_Manager : EnergyBarManager
             // 선택한 버튼 객체가 있을 경우,
             if (selectedItem_sythesis == null)
             {
-                curNumText.text = "";
-                maxNumText.text = "";
+                fillingBar.SetFillProgress(0);
                 plusBtn.GetButton().onClick.RemoveAllListeners();
                 minusBtn.GetButton().onClick.RemoveAllListeners();
                 ButtonClass_Reset(plusBtn);
                 ButtonClass_Reset(minusBtn);
+                curNumText.text = "";
+                maxNumText.text = "";
+                GameManager.Instance.SelectButtonScriptPool.AllReturnToPool();
             }
             else
             {
@@ -3655,8 +3665,60 @@ public class UI_Manager : EnergyBarManager
                     tmp.ClickedUIApply();
             }
         }
+        void UseButtonFunc()
+        {
+            if (selectedItem_sythesis == null || synthesisType_Index == default)
+                return;
+            if (currentNum == 0)
+                return;
+
+            if(synthesisType_Index == e_InventoryTypeSelected.Weapon || synthesisType_Index == e_InventoryTypeSelected.Equipment)
+            {
+
+            }
+            else if(synthesisType_Index == e_InventoryTypeSelected.Etc)   
+            {
+                var items = GameManager.Instance.GetUserClass().GetHadGrowMaterialList();
+                ItemClass removeItem = items.Find(tmp=>tmp.GetName().Equals(selected_synthesisData.MATERIAL_1));
+                int removeNums = currentNum * selected_synthesisData.MATERIAL_1_NUM;
+                int removeMora = currentNum * selected_synthesisData.MATERIAL_2_NUM;
+
+                // 소모할 개수가 
+                if(removeItem.GetNumber() <= removeNums)
+                {
+                    items.Remove(removeItem);
+                    //var pools = GameManager.Instance.GemItemPool.GetPoolList();
+                    //foreach(var tmp in pools)
+                    //{
+                    //    if(tmp.GetItemcls().Equals(removeItem))
+                    //    {
+                    //        ResetIndividualObject(tmp);
+                    //        GameManager.Instance.GemItemPool.ReturnToPool(tmp);
+                    //        break;
+                    //    }    
+                    //}
+                }
+                else
+                    removeItem.SetNumber(removeItem.GetNumber() - removeNums);
+
+                int curMora= GameManager.Instance.GetUserClass().GetMora();
+                GameManager.Instance.GetUserClass().SetMora(curMora - removeMora);
+                moraText.text = (curMora - removeMora).ToString();
+
+                var db = GameManager.Instance.GetItemDataList();
+                ItemClass target = db.Find(tmp => tmp.GetName().Equals(selected_synthesisData.COMPLETE_iTEM));
+                target.SetNumber(currentNum);
+                GameManager.Instance.GetUserClass().GetHadGrowMaterialList().Add(target);
+            }
+            currentNum = 0;
+            selectedItem_sythesis = null;
+            selected_synthesisData = default;
+            SynthesisPrintDataDevider();
+        }
 
     }
+
+
 
 
 

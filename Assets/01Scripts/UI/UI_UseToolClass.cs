@@ -174,6 +174,27 @@ public class UI_UseToolClass
                 break;
         }
     }
+    public static void ResetIndividualObject(InvenItemObjClass obj)
+    {
+        if (obj != null)
+        {
+            obj.SetIsActive(false);
+
+            // 알파값 최대
+            Color aa = obj.GetTopItemImage().color;
+            aa.a = 1.0f;
+            obj.GetTopItemImage().color = aa;
+
+            Button btn = obj.GetButton();
+            if (btn != null)
+            {
+                // 모든 이벤트 리스너를 제거하고, 기존의 이벤트 리스너를 다시 부착한다.
+                btn.onClick.RemoveAllListeners();
+                btn.onClick.AddListener(() => obj.OnClickEventer());
+                btn.onClick.AddListener(() => obj.ClickedUIApply());
+            }
+        }
+    }
 
     // 게임매니저의 데이터를 참조하여, 무기들을 스크롤뷰 콘텐츠에 출력 <ObjectPool<InvenItemObjClass> WeaponItemPool <- 웨폰 데이터 출력>
     public static void WeaponPrintAtScroll(Transform content, e_SortingOrder selected_SortOrder, bool isAscending, List<InvenItemObjClass> openUI_ItemList)

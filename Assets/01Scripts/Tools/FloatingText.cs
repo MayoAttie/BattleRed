@@ -61,12 +61,12 @@ public class FloatingText : MonoBehaviour
         }
 
         var localPos = Vector2.zero;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(rectParent, screenPos, _camera, out localPos); // 스크린 좌표를 다시 체력바 UI 캔버스 좌표로 변환
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(rectParent, screenPos, _camera, out localPos); // 스크린 좌표를 다시 객체 UI 캔버스 좌표로 변환
 
         // Y좌표를 70에서 90 사이로 보정
         localPos.y = Mathf.Clamp(localPos.y, 70, 90);
 
-        rectTransform.localPosition = localPos; // 체력바 위치 조정
+        rectTransform.localPosition = localPos; // 객체 위치 조정
                                                 // 스케일을 항상 (1, 1, 1)로 설정
         rectTransform.localScale = Vector3.one;
 
