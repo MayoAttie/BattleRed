@@ -2721,8 +2721,8 @@ public class UI_Manager : EnergyBarManager
         // 강화/정보 출력을 담당하는 UI 객체 인스턴스화 및 활성화
         var mainObj = printInfoDataField[2].transform.GetChild(7).GetComponent<Transform>();
         mainObj.gameObject.SetActive(true);
-        mainObj.GetChild(2).gameObject.SetActive(false);    // 상세정보 창은 우선 SetFalse
-        mainObj.GetChild(3).gameObject.SetActive(false);    // 강화 창은 우선 SetFalse
+        mainObj.GetChild(3).gameObject.SetActive(false);    // 상세정보 창은 우선 SetFalse
+        mainObj.GetChild(4).gameObject.SetActive(false);    // 강화 창은 우선 SetFalse
 
         isEquipUpgradeDetailObjClicked = new bool[2] { false,false };
         string[] texts = { "상세", "강화" };
@@ -2764,14 +2764,14 @@ public class UI_Manager : EnergyBarManager
         if (isEquipUpgradeDetailObjClicked[0] == true)
             return;
         typeBtnObj.OnOffSpriteSetting();
-        ClickedButtonsSetActiveReset(typeBtnObj, mainObj, 2, new int[2] { 2, 4 });
+        ClickedButtonsSetActiveReset(typeBtnObj, mainObj, 3, new int[2] { 3, 5 });
 
-        ButtonClass2 useButton = mainObj.GetChild(4).GetComponent<ButtonClass2>();
+        ButtonClass2 useButton = mainObj.GetChild(2).GetComponent<ButtonClass2>();
         useButton.gameObject.SetActive(false);
 
 
         // 객체 인스턴스화 및 데이터 출력
-        Transform content = mainObj.GetChild(2).GetChild(0).GetChild(0).GetComponent<Transform>();
+        Transform content = mainObj.GetChild(3).GetChild(0).GetChild(0).GetComponent<Transform>();
         
         WeaponAndEquipCls itemCls = GameManager.Instance.GetUserClass().GetUserEquippedEquipment()[nSelected_EquipIndex] as WeaponAndEquipCls;
 
@@ -2820,12 +2820,12 @@ public class UI_Manager : EnergyBarManager
         if (isEquipUpgradeDetailObjClicked[1] == true)
             return;
         typeBtnObj.OnOffSpriteSetting();
-        ClickedButtonsSetActiveReset(typeBtnObj, parent, 3, new int[2] { 2, 4 });
+        ClickedButtonsSetActiveReset(typeBtnObj, parent, 4, new int[2] { 3, 5 });
 
-        Transform mainObj = parent.GetChild(3).GetComponent<Transform>();
+        Transform mainObj = parent.GetChild(4).GetComponent<Transform>();
 
         // 강화 버튼 이벤트 리스너 연결
-        ButtonClass2 useButton = parent.GetChild(4).GetComponent<ButtonClass2>();
+        ButtonClass2 useButton = parent.GetChild(2).GetComponent<ButtonClass2>();
         useButton.gameObject.SetActive(true);
         useButton.GetButton().onClick.RemoveAllListeners();
         useButton.GetButton().onClick.AddListener(() => EquipLevelUpClickEventListener(mainObj));
@@ -3166,13 +3166,19 @@ public class UI_Manager : EnergyBarManager
         private TextMeshProUGUI moraText;                                           // 모라 텍스트
         private ItemClass selectedItem_sythesis;                                             // 선택된 아이템 객체
         private SYNTHESIS_DATA_BASE selected_synthesisData;
-        SliderController fillingBar;
-        private int currentNum;
-        private int maxNum;
-        TextMeshProUGUI curNumText;
-        TextMeshProUGUI maxNumText;
-        TextMeshProUGUI resourceText_1;
-        TextMeshProUGUI resourceText_2;
+        // ETC
+        SliderController etc_fillingBar;
+        private int etc_currentNum;
+        private int etc_maxNum;
+        TextMeshProUGUI etc_curNumText;
+        TextMeshProUGUI etc_maxNumText;
+        TextMeshProUGUI etc_resourceText_1;
+        TextMeshProUGUI etc_resourceText_2;
+        // Equipment and Weapons
+        TextMeshProUGUI equips_contentText;
+        TextMeshProUGUI equips_needGemText;
+        int equips_currentNum;
+        int equips_maxNum;
 
         public void SynthesisObjectFunc_UI_Print()
         {
@@ -3193,15 +3199,20 @@ public class UI_Manager : EnergyBarManager
             instance.SynthesisObjectScreen.gameObject.SetActive(true);
             synthesisType_Index = e_InventoryTypeSelected.Weapon;
             sythesisPrintScroll = SynthesisObjectScreen.transform.GetChild(5).GetChild(0).GetChild(0);
-            fillingBar = SynthesisObjectScreen.transform.GetChild(7).GetChild(1).GetChild(1).GetComponent<SliderController>();
             selectedItem_sythesis = null;
             selected_synthesisData = default;
-            currentNum = 0;
-            maxNum = 0;
-            curNumText = SynthesisObjectScreen.transform.GetChild(7).GetChild(1).GetChild(3).GetComponent<TextMeshProUGUI>();  // 현재 텍스트
-            maxNumText = SynthesisObjectScreen.transform.GetChild(7).GetChild(1).GetChild(4).GetComponent<TextMeshProUGUI>();  // 최대치 텍스트
+            // 모라 텍스트 인스턴스화 및 데이터 출력
             moraText = SynthesisObjectScreen.transform.GetChild(6).GetComponentInChildren<TextMeshProUGUI>();
             moraText.text = GameManager.Instance.GetUserClass().GetMora().ToString();
+            // 기타 합성 필요 변수 인스턴스화
+            etc_fillingBar = SynthesisObjectScreen.transform.GetChild(7).GetChild(1).GetChild(1).GetComponent<SliderController>();
+            etc_currentNum = 0;
+            etc_maxNum = 0;
+            etc_curNumText = SynthesisObjectScreen.transform.GetChild(7).GetChild(1).GetChild(3).GetComponent<TextMeshProUGUI>();  // 현재 텍스트
+            etc_maxNumText = SynthesisObjectScreen.transform.GetChild(7).GetChild(1).GetChild(4).GetComponent<TextMeshProUGUI>();  // 최대치 텍스트
+            // 장비 합성 필요 변수 인스턴스화
+            equips_contentText = SynthesisObjectScreen.transform.GetChild(8).GetChild(0).GetChild(3).GetChild(3).GetComponent<TextMeshProUGUI>();
+            equips_needGemText = SynthesisObjectScreen.transform.GetChild(8).GetChild(2).GetChild(1).GetComponent<TextMeshProUGUI>();
 
             foreach (var tmp in SynthesisTypeButtons)
             {
@@ -3220,6 +3231,7 @@ public class UI_Manager : EnergyBarManager
             ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);
             ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Equip);
             ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Gem);
+            ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Food);
             SynthesisObjectScreen.gameObject.SetActive(false);
 
         }
@@ -3247,7 +3259,8 @@ public class UI_Manager : EnergyBarManager
             ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);
             ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Equip);
             ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Gem);
-            currentNum = 0;
+            ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Food);
+            etc_currentNum = 0;
             switch (synthesisType_Index)
             {
                 case e_InventoryTypeSelected.Weapon:
@@ -3483,13 +3496,13 @@ public class UI_Manager : EnergyBarManager
             // 선택한 버튼 객체가 있을 경우,
             if (selectedItem_sythesis == null)
             {
-                fillingBar.SetFillProgress(0);
+                etc_fillingBar.SetFillProgress(0);
                 plusBtn.GetButton().onClick.RemoveAllListeners();
                 minusBtn.GetButton().onClick.RemoveAllListeners();
                 ButtonClass_Reset(plusBtn);
                 ButtonClass_Reset(minusBtn);
-                curNumText.text = "";
-                maxNumText.text = "";
+                etc_curNumText.text = "";
+                etc_maxNumText.text = "";
                 GameManager.Instance.SelectButtonScriptPool.AllReturnToPool();
             }
             else
@@ -3507,11 +3520,11 @@ public class UI_Manager : EnergyBarManager
                     haveNum_2 = GameManager.Instance.GetUserClass().GetMora();
 
                 // 최대 생성 가능 횟수 계산
-                maxNum = Math.Min((haveNum_1 / needNum_1), (haveNum_2 / needNum_2));
+                etc_maxNum = Math.Min((haveNum_1 / needNum_1), (haveNum_2 / needNum_2));
 
 
-                curNumText.text = currentNum.ToString();
-                maxNumText.text = maxNum.ToString();
+                etc_curNumText.text = etc_currentNum.ToString();
+                etc_maxNumText.text = etc_maxNum.ToString();
                 // 버튼 초기화 후 이벤트 리스너 연결
                 plusBtn.GetButton().onClick.RemoveAllListeners();
                 minusBtn.GetButton().onClick.RemoveAllListeners();
@@ -3521,8 +3534,8 @@ public class UI_Manager : EnergyBarManager
                 minusBtn.GetButton().onClick.AddListener(() => SynthesisEtc_MinusButtonEvent());
 
                 // 슬라이더 함수 연결
-                fillingBar.GetSlider().onValueChanged.RemoveAllListeners();
-                fillingBar.GetSlider().onValueChanged.AddListener(SynthesisSlideValueGetNotify);
+                etc_fillingBar.GetSlider().onValueChanged.RemoveAllListeners();
+                etc_fillingBar.GetSlider().onValueChanged.AddListener(SynthesisSlideValueGetNotify);
 
                 // 합성할 객체를 출력
                 var targetItemUI = GameManager.Instance.SelectButtonScriptPool.GetFromPool(Vector3.zero, Quaternion.identity, makeTargetPos);
@@ -3546,8 +3559,8 @@ public class UI_Manager : EnergyBarManager
                     resource_1.SetItemColor(haveItem.GetGrade());
                     resource_1.SetItemSprite(WeaponAndEquipLimitBreak_UI_Dvider(haveItem));
                     resource_1.SetItemText(needNum_1.ToString());
-                    resourceText_1 = resource_1.GetItemTxt();
-                    resourceText_1.text = "0";
+                    etc_resourceText_1 = resource_1.GetItemTxt();
+                    etc_resourceText_1.text = "0";
 
                     // 2번 재료 - 모라
                     var resource_2 = GameManager.Instance.SelectButtonScriptPool.GetFromPool(Vector2.zero, Quaternion.identity, resourceSet_img[1]);
@@ -3558,8 +3571,8 @@ public class UI_Manager : EnergyBarManager
                     resource_2.SetItemColor(3);
                     resource_2.SetItemSprite(ItemSpritesSaver.Instance.SpritesSet[3]);
                     resource_2.SetItemText(needNum_2.ToString());
-                    resourceText_2 = resource_2.GetItemTxt();
-                    resourceText_2.text = "0";
+                    etc_resourceText_2 = resource_2.GetItemTxt();
+                    etc_resourceText_2.text = "0";
 
                 }
                 else
@@ -3574,9 +3587,9 @@ public class UI_Manager : EnergyBarManager
             float closestValue = float.MaxValue; // 초기값 설정
             int closestNum = 0;
 
-            for (int i = 0; i <= maxNum; i++)
+            for (int i = 0; i <= etc_maxNum; i++)
             {
-                float currentValue = (float)i / maxNum;
+                float currentValue = (float)i / etc_maxNum;
                 float diff = Mathf.Abs(currentValue - value);
 
                 if (diff < closestValue)
@@ -3586,53 +3599,136 @@ public class UI_Manager : EnergyBarManager
                 }
             }
 
-            float finalValue = (float)closestNum / maxNum;
+            float finalValue = (float)closestNum / etc_maxNum;
 
-            fillingBar.SetFillProgress(finalValue);
-            currentNum = closestNum;
-            curNumText.text = currentNum.ToString();
+            etc_fillingBar.SetFillProgress(finalValue);
+            etc_currentNum = closestNum;
+            etc_curNumText.text = etc_currentNum.ToString();
 
-            resourceText_1.text = (selected_synthesisData.MATERIAL_1_NUM * currentNum).ToString();
-            resourceText_2.text = (selected_synthesisData.MATERIAL_2_NUM * currentNum).ToString();
+            etc_resourceText_1.text = (selected_synthesisData.MATERIAL_1_NUM * etc_currentNum).ToString();
+            etc_resourceText_2.text = (selected_synthesisData.MATERIAL_2_NUM * etc_currentNum).ToString();
         }
         void SynthesisEtc_PlusButtonEvent()
         {
-            if (currentNum + 1 > maxNum) return;
-            currentNum += 1;
-            float divideValue = (float)currentNum/ (float)maxNum;
-            fillingBar.SetFillProgress(divideValue);
+            if (etc_currentNum + 1 > etc_maxNum) return;
+            etc_currentNum += 1;
+            float divideValue = (float)etc_currentNum / (float)etc_maxNum;
+            etc_fillingBar.SetFillProgress(divideValue);
 
-            curNumText.text = currentNum.ToString();
+            etc_curNumText.text = etc_currentNum.ToString();
             SynthesisPrintEtcObjects();
 
-            resourceText_1.text = (selected_synthesisData.MATERIAL_1_NUM * currentNum).ToString();
-            resourceText_2.text = (selected_synthesisData.MATERIAL_2_NUM * currentNum).ToString();
+            etc_resourceText_1.text = (selected_synthesisData.MATERIAL_1_NUM * etc_currentNum).ToString();
+            etc_resourceText_2.text = (selected_synthesisData.MATERIAL_2_NUM * etc_currentNum).ToString();
         }
+        // 기타 합성
         void SynthesisEtc_MinusButtonEvent()
         {
-            if (currentNum - 1 < 0) return;
-            currentNum -= 1;
-            float divideValue = (float)currentNum / (float)maxNum;
-            fillingBar.SetFillProgress(divideValue);
+            if (etc_currentNum - 1 < 0) return;
+            etc_currentNum -= 1;
+            float divideValue = (float)etc_currentNum / (float)etc_maxNum;
+            etc_fillingBar.SetFillProgress(divideValue);
 
-            curNumText.text = currentNum.ToString();
+            etc_curNumText.text = etc_currentNum.ToString();
             SynthesisPrintEtcObjects();
 
 
-            resourceText_1.text = (selected_synthesisData.MATERIAL_1_NUM * currentNum).ToString();
-            resourceText_2.text = (selected_synthesisData.MATERIAL_2_NUM * currentNum).ToString();
+            etc_resourceText_1.text = (selected_synthesisData.MATERIAL_1_NUM * etc_currentNum).ToString();
+            etc_resourceText_2.text = (selected_synthesisData.MATERIAL_2_NUM * etc_currentNum).ToString();
         }
+        // 장비 합성
         void SynthesisPrintEquipsObjects()
         {
+            Transform parents = SynthesisObjectScreen.transform.GetChild(8).transform;
+            Transform scrollTransform = parents.GetChild(0).GetChild(0).GetChild(0).GetComponent<Transform>();
+            Transform targetPos = parents.GetChild(1).GetChild(1).GetComponent<Transform>();
+            TextMeshProUGUI targetNumeText = parents.GetChild(1).GetChild(2).GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI synthesisContentText = parents.GetChild(1).GetChild(3).GetComponent<TextMeshProUGUI>();
+            Image img_needGem = parents.GetChild(2).GetChild(0).GetComponent<Image>();
+            Transform materialsPrintObj = parents.GetChild(3).GetComponent<Transform>();
+
+
+            // 선택 버튼 오브젝트풀 초기화
+            instance.ResetToSelectButtonScriptPoolDatas();
+            GameManager.Instance.SelectButtonScriptPool.AllReturnToPool();
+
+
+            // 재료 선택 스크롤뷰 출력용 오브젝트 초기화
+            ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Food);
+            materialsPrintObj.gameObject.SetActive(false);  // 재료 출력용 오브젝트는 기본 SetFalse
+            
             // 선택한 버튼 객체가 있을 경우,
             if (selectedItem_sythesis == null)
             {
-
+                img_needGem.enabled = false;
+                equips_needGemText.text = "";
+                equips_contentText.text = "0/3";
+                synthesisContentText.text = "장비 합성을 통해서 N개의 장비 제조";
+                targetNumeText.text = "합성";
+                // 스크롤뷰에 선택 버튼 객체 세팅
+                GameManager.Instance.ItemToObjPool_SelectButton(15, scrollTransform);
             }
             else
             {
+                // 목표 객체 출력 및 데이터 초기화
+                var forMakeEquip = GameManager.Instance.GetWeaponAndEquipmentDataList().Find(tmp => tmp.GetName().Equals(selected_synthesisData.COMPLETE_iTEM));
+                var targetItemUI = GameManager.Instance.SelectButtonScriptPool.GetFromPool(Vector2.zero, Quaternion.identity, targetPos);
+                targetItemUI.transform.SetParent(targetPos);
+                targetItemUI.transform.localPosition = Vector3.zero;
+                targetItemUI.SetItemText(forMakeEquip.GetName());
+                targetItemUI.SetItemColor(forMakeEquip.GetGrade());
 
+                // 필요 광물 이미지 세팅
+                if (selected_synthesisData.MATERIAL_2 == "철광석")
+                    img_needGem.sprite = ItemSpritesSaver.Instance.GemSprites[0];
+                else if (selected_synthesisData.MATERIAL_2 == "백철")
+                    img_needGem.sprite = ItemSpritesSaver.Instance.GemSprites[1];
+                else if(selected_synthesisData.MATERIAL_2 == "수정덩이")
+                    img_needGem.sprite = ItemSpritesSaver.Instance.GemSprites[2];
+                img_needGem.enabled = true;
+                // 필요 광물 수치 표시
+                equips_needGemText.text = (equips_currentNum * selected_synthesisData.MATERIAL_2_NUM).ToString();
+
+                // 스크롤뷰에 선택 버튼 객체 세팅
+                GameManager.Instance.ItemToObjPool_SelectButton(15, scrollTransform);
+
+                // 현재 선택된 재료 개수와 필요한 재료 객체 개수 출력
+                equips_contentText.text = equips_currentNum.ToString() + "/" + CalculateMaxValue(equips_currentNum).ToString();
+
+                // 생성할 장비의 개수 텍스트 출력
+                synthesisContentText.text = "장비 합성을 통해서 " + (equips_currentNum/3).ToString() + "개의 장비 제조";
+
+                // 선택한 객체가 무기일 때,
+                if (selectedItem_sythesis.GetTag() == "무기")
+                {
+                    WeaponKindDivider(forMakeEquip, targetItemUI.GetItemImage());   // 목표 객체 이미지 세팅
+                    targetNumeText.text = "무기 합성 : " + forMakeEquip.GetName();
+                }
+                else    // 무기가 아닐때,
+                {
+                    EquipmentKindDivider(forMakeEquip,targetItemUI.GetItemImage()); // 목표 객체 이미지 세팅
+                    targetNumeText.text = "성유물 합성 : " + forMakeEquip.GetName();
+
+
+                }
             }
+        }
+
+        int CalculateMaxValue(int currentNumber)
+        {
+            // 현재 수를 3으로 나눈 나머지를 계산
+            int remainder = currentNumber % 3;
+
+            // 현재 수가 3의 배수라면 맥스값은 현재 수 그대로
+            if (remainder == 0)
+            {
+                return currentNumber;
+            }
+
+            // 현재 수가 3의 배수가 아니라면, 다음 3의 배수를 계산
+            int value = (currentNumber / 3 + 1) * 3;
+
+            return value;
         }
 
         void SynthesisButtonSelect(ItemClass selected, e_PoolItemType type, SYNTHESIS_DATA_BASE selectData)
@@ -3640,8 +3736,8 @@ public class UI_Manager : EnergyBarManager
             selectedItem_sythesis = selected;
             selected_synthesisData = selectData;
             Debug.Log(selectedItem_sythesis.GetName());
-            currentNum = 0;
-            fillingBar.SetFillProgress(0);
+            etc_currentNum = 0;
+            etc_fillingBar.SetFillProgress(0);
             List<InvenItemObjClass> pools = new List<InvenItemObjClass>();
 
             switch (type)
@@ -3669,7 +3765,7 @@ public class UI_Manager : EnergyBarManager
         {
             if (selectedItem_sythesis == null || synthesisType_Index == default)
                 return;
-            if (currentNum == 0)
+            if (etc_currentNum == 0)
                 return;
 
             if(synthesisType_Index == e_InventoryTypeSelected.Weapon || synthesisType_Index == e_InventoryTypeSelected.Equipment)
@@ -3680,24 +3776,12 @@ public class UI_Manager : EnergyBarManager
             {
                 var items = GameManager.Instance.GetUserClass().GetHadGrowMaterialList();
                 ItemClass removeItem = items.Find(tmp=>tmp.GetName().Equals(selected_synthesisData.MATERIAL_1));
-                int removeNums = currentNum * selected_synthesisData.MATERIAL_1_NUM;
-                int removeMora = currentNum * selected_synthesisData.MATERIAL_2_NUM;
+                int removeNums = etc_currentNum * selected_synthesisData.MATERIAL_1_NUM;
+                int removeMora = etc_currentNum * selected_synthesisData.MATERIAL_2_NUM;
 
                 // 소모할 개수가 
                 if(removeItem.GetNumber() <= removeNums)
-                {
                     items.Remove(removeItem);
-                    //var pools = GameManager.Instance.GemItemPool.GetPoolList();
-                    //foreach(var tmp in pools)
-                    //{
-                    //    if(tmp.GetItemcls().Equals(removeItem))
-                    //    {
-                    //        ResetIndividualObject(tmp);
-                    //        GameManager.Instance.GemItemPool.ReturnToPool(tmp);
-                    //        break;
-                    //    }    
-                    //}
-                }
                 else
                     removeItem.SetNumber(removeItem.GetNumber() - removeNums);
 
@@ -3707,10 +3791,10 @@ public class UI_Manager : EnergyBarManager
 
                 var db = GameManager.Instance.GetItemDataList();
                 ItemClass target = db.Find(tmp => tmp.GetName().Equals(selected_synthesisData.COMPLETE_iTEM));
-                target.SetNumber(currentNum);
+                target.SetNumber(etc_currentNum);
                 GameManager.Instance.GetUserClass().GetHadGrowMaterialList().Add(target);
             }
-            currentNum = 0;
+            etc_currentNum = 0;
             selectedItem_sythesis = null;
             selected_synthesisData = default;
             SynthesisPrintDataDevider();
