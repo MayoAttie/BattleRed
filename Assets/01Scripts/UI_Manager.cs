@@ -170,8 +170,11 @@ public class UI_Manager : EnergyBarManager
         SynthesisObjectScreen.gameObject.SetActive(false);
 
     }
+   
     private void Start()
     {
+        
+        Debug.Log("컴퓨터 변경 테스트");
         synthesis = new Synthesis();
     }
     private void Update()
