@@ -197,18 +197,23 @@ public class UI_UseToolClass
     }
 
     // 게임매니저의 데이터를 참조하여, 무기들을 스크롤뷰 콘텐츠에 출력 <ObjectPool<InvenItemObjClass> WeaponItemPool <- 웨폰 데이터 출력>
-    public static void WeaponPrintAtScroll(Transform content, e_SortingOrder selected_SortOrder, bool isAscending, List<InvenItemObjClass> openUI_ItemList)
+    public static void WeaponPrintAtScroll(Transform content, e_SortingOrder selected_SortOrder, bool isAscending, List<InvenItemObjClass> openUI_ItemList, List<InvenItemObjClass> listObj = null)
     {
         var itemClses = GameManager.Instance.GetUserClass().GetHadWeaponList();      // 저장된 아이템 목록
         openUI_ItemList.Clear();
         SortingItemList(itemClses, selected_SortOrder, isAscending);
 
-
+        List<InvenItemObjClass> datas = null;
         // 오브젝트 풀로, UI객체 생성
-        GameManager.Instance.ItemToObjPool(itemClses.Count, GameManager.e_PoolItemType.Weapon, content);
-        // 오브젝트 풀에 저장된 리스트 인스턴스화
+        if (listObj == null)
+        {
+            GameManager.Instance.ItemToObjPool(itemClses.Count, GameManager.e_PoolItemType.Weapon, content);
+            // 오브젝트 풀에 저장된 리스트 인스턴스화
+            datas = GameManager.Instance.WeaponItemPool.GetPoolList();
+        }
+        else
+            datas = listObj;
 
-        var datas = GameManager.Instance.WeaponItemPool.GetPoolList();
 
 
         foreach (ItemClass data in itemClses)
@@ -234,18 +239,23 @@ public class UI_UseToolClass
         }
     }
     // 게임매니저의 데이터를 참조하여, 장비들을 스크롤뷰 콘텐츠에 출력
-    public static void EquipPrintAtScroll(Transform content, e_SortingOrder selected_SortOrder, bool isAscending, List<InvenItemObjClass> openUI_ItemList = null)
+    public static void EquipPrintAtScroll(Transform content, e_SortingOrder selected_SortOrder, bool isAscending, List<InvenItemObjClass> openUI_ItemList = null, List<InvenItemObjClass> listObj = null)
     {
         var itemClses = GameManager.Instance.GetUserClass().GetHadEquipmentList();      // 저장된 아이템 목록
 
         SortingItemList(itemClses, selected_SortOrder, isAscending);
 
 
+        List<InvenItemObjClass> datas = null;
         // 오브젝트 풀로, UI객체 생성
-        GameManager.Instance.ItemToObjPool(itemClses.Count, GameManager.e_PoolItemType.Equip, content);
-        // 오브젝트 풀에 저장된 리스트 인스턴스화
-
-        var datas = GameManager.Instance.EquipItemPool.GetPoolList();
+        if (listObj == null)
+        {
+            GameManager.Instance.ItemToObjPool(itemClses.Count, GameManager.e_PoolItemType.Equip, content);
+            // 오브젝트 풀에 저장된 리스트 인스턴스화
+            datas = GameManager.Instance.WeaponItemPool.GetPoolList();
+        }
+        else
+            datas = listObj;
 
 
         foreach (ItemClass data in itemClses)
@@ -638,6 +648,19 @@ public class UI_UseToolClass
                     topFrameImage.sprite = ItemSpritesSaver.Instance.GradationSprite[3];
                     break;
             }
+        }
+    }
+    public static void SelectButtonToDefault(List<SelectButtonScript>cls)
+    {
+        foreach(var tmp in cls)
+        {
+            tmp.SetItemSprite(null);
+            tmp.GetItemTxt().color = Color.black;
+            tmp.GetItemImage().enabled = false;
+            tmp.SetIsActive(false);
+            tmp.SetItemColor(1);
+            tmp.SetItemText("-");
+            tmp.SetItemCls(null);
         }
     }
 

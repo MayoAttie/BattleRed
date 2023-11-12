@@ -144,6 +144,7 @@ public class UI_Manager : EnergyBarManager
         }
         else
         {
+            
             Destroy(gameObject); // 이미 인스턴스가 있다면 이 오브젝트는 파괴
         }
 
@@ -168,6 +169,7 @@ public class UI_Manager : EnergyBarManager
 
         // 오브젝트 관련
         SynthesisObjectScreen.gameObject.SetActive(false);
+        
 
     }
    
@@ -1400,14 +1402,23 @@ public class UI_Manager : EnergyBarManager
         PrintDataAtScrollViewForUpMaterials(slectBtnCls,type);
     }
 
-    private void PrintDataAtScrollViewForUpMaterials(SelectButtonScript slectBtnCls, e_PoolItemType type)
+    private void PrintDataAtScrollViewForUpMaterials(SelectButtonScript slectBtnCls, e_PoolItemType type,List<InvenItemObjClass> listObj = null)
     {
         if(type == e_PoolItemType.Weapon)
         {
+            List<InvenItemObjClass> datas = null;
             // 스크롤뷰 데이터 출력
-            WeaponPrintAtScroll(scrollForUpgradeMaterials, list_ForItemUpgradeResourceSortOrder, isList_ForUpgradeResourceSortOrderAscending, openUI_ItemList);
+            if (listObj == null)
+            {
+                WeaponPrintAtScroll(scrollForUpgradeMaterials, list_ForItemUpgradeResourceSortOrder, isList_ForUpgradeResourceSortOrderAscending, openUI_ItemList);
+                datas = GameManager.Instance.WeaponItemPool.GetPoolList();
+            }
+            else
+            {
+                WeaponPrintAtScroll(scrollForUpgradeMaterials, list_ForItemUpgradeResourceSortOrder, isList_ForUpgradeResourceSortOrderAscending, openUI_ItemList, listObj);
+                datas = listObj;
+            }
 
-            var datas = GameManager.Instance.WeaponItemPool.GetPoolList();
 
             // 스크롤뷰 버튼 오브젝트 순회하며, 이벤트 리스너 연결 및 UI 데이터 초기화
             foreach (var tmp in datas)
@@ -1436,8 +1447,17 @@ public class UI_Manager : EnergyBarManager
         }
         else
         {
-            EquipPrintAtScroll(scrollForUpgradeMaterials, list_ForItemUpgradeResourceSortOrder, isList_ForUpgradeResourceSortOrderAscending, openUI_ItemList);
-            var datas = GameManager.Instance.EquipItemPool.GetPoolList();
+            List<InvenItemObjClass> datas = null;
+            if (listObj == null)
+            {
+                EquipPrintAtScroll(scrollForUpgradeMaterials, list_ForItemUpgradeResourceSortOrder, isList_ForUpgradeResourceSortOrderAscending, openUI_ItemList);
+                datas = GameManager.Instance.EquipItemPool.GetPoolList(); 
+            }
+            else
+            {
+                EquipPrintAtScroll(scrollForUpgradeMaterials, list_ForItemUpgradeResourceSortOrder, isList_ForUpgradeResourceSortOrderAscending, openUI_ItemList, listObj);
+                datas = listObj;
+            }
             // 스크롤뷰 버튼 오브젝트 순회하며, 이벤트 리스너 연결 및 UI 데이터 초기화
             foreach (var tmp in datas)
             {
@@ -3168,7 +3188,7 @@ public class UI_Manager : EnergyBarManager
         private Transform sythesisPrintScroll;                                      // 아이템 출력용 스크롤뷰 콘텐트
         private TextMeshProUGUI moraText;                                           // 모라 텍스트
         private ItemClass selectedItem_sythesis;                                             // 선택된 아이템 객체
-        private SYNTHESIS_DATA_BASE selected_synthesisData;
+        private SYNTHESIS_DATA_BASE selected_synthesisData;                                  // 선택된 아이템의 DB 데이터
         // ETC
         SliderController etc_fillingBar;
         private int etc_currentNum;
@@ -3250,6 +3270,9 @@ public class UI_Manager : EnergyBarManager
                     tmp.ButtonUIColorSet();
             }
 
+            selectedItem_sythesis = null;
+            selected_synthesisData = default;
+
             // 인덱스 수정
             synthesisType_Index = btn.GetSelectType();
 
@@ -3264,6 +3287,7 @@ public class UI_Manager : EnergyBarManager
             ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Gem);
             ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Food);
             etc_currentNum = 0;
+            equips_currentNum = 0;
             switch (synthesisType_Index)
             {
                 case e_InventoryTypeSelected.Weapon:
@@ -3584,6 +3608,7 @@ public class UI_Manager : EnergyBarManager
                 }
             }
         }
+        // 슬라이드 바, 값 Notifyed Getter
         void SynthesisSlideValueGetNotify(float value)
         {
 
@@ -3611,6 +3636,7 @@ public class UI_Manager : EnergyBarManager
             etc_resourceText_1.text = (selected_synthesisData.MATERIAL_1_NUM * etc_currentNum).ToString();
             etc_resourceText_2.text = (selected_synthesisData.MATERIAL_2_NUM * etc_currentNum).ToString();
         }
+        // 기타 합성 _ 합성 횟수 증가 버튼이벤트
         void SynthesisEtc_PlusButtonEvent()
         {
             if (etc_currentNum + 1 > etc_maxNum) return;
@@ -3624,7 +3650,7 @@ public class UI_Manager : EnergyBarManager
             etc_resourceText_1.text = (selected_synthesisData.MATERIAL_1_NUM * etc_currentNum).ToString();
             etc_resourceText_2.text = (selected_synthesisData.MATERIAL_2_NUM * etc_currentNum).ToString();
         }
-        // 기타 합성
+        // 기타 합성 _ 합성 횟수 감소 버튼이벤트
         void SynthesisEtc_MinusButtonEvent()
         {
             if (etc_currentNum - 1 < 0) return;
@@ -3639,7 +3665,8 @@ public class UI_Manager : EnergyBarManager
             etc_resourceText_1.text = (selected_synthesisData.MATERIAL_1_NUM * etc_currentNum).ToString();
             etc_resourceText_2.text = (selected_synthesisData.MATERIAL_2_NUM * etc_currentNum).ToString();
         }
-        // 장비 합성
+
+        // 장비 합성 출력
         void SynthesisPrintEquipsObjects()
         {
             Transform parents = SynthesisObjectScreen.transform.GetChild(8).transform;
@@ -3670,16 +3697,25 @@ public class UI_Manager : EnergyBarManager
                 targetNumeText.text = "합성";
                 // 스크롤뷰에 선택 버튼 객체 세팅
                 GameManager.Instance.ItemToObjPool_SelectButton(15, scrollTransform);
+                SelectButtonToDefault(GameManager.Instance.SelectButtonScriptPool.GetPoolList());
             }
             else
             {
+                // 스크롤뷰에 선택 버튼 객체 세팅
+                GameManager.Instance.ItemToObjPool_SelectButton(15, scrollTransform);
+
                 // 목표 객체 출력 및 데이터 초기화
                 var forMakeEquip = GameManager.Instance.GetWeaponAndEquipmentDataList().Find(tmp => tmp.GetName().Equals(selected_synthesisData.COMPLETE_iTEM));
                 var targetItemUI = GameManager.Instance.SelectButtonScriptPool.GetFromPool(Vector2.zero, Quaternion.identity, targetPos);
                 targetItemUI.transform.SetParent(targetPos);
+                List<SelectButtonScript> selectBtnPool_list = GameManager.Instance.SelectButtonScriptPool.GetPoolList();
+                SelectButtonToDefault(selectBtnPool_list);
+                
                 targetItemUI.transform.localPosition = Vector3.zero;
                 targetItemUI.SetItemText(forMakeEquip.GetName());
                 targetItemUI.SetItemColor(forMakeEquip.GetGrade());
+                targetItemUI.GetItemImage().enabled = true;
+                targetItemUI.SetIsActive(true);
 
                 // 필요 광물 이미지 세팅
                 if (selected_synthesisData.MATERIAL_2 == "철광석")
@@ -3692,8 +3728,6 @@ public class UI_Manager : EnergyBarManager
                 // 필요 광물 수치 표시
                 equips_needGemText.text = (equips_currentNum * selected_synthesisData.MATERIAL_2_NUM).ToString();
 
-                // 스크롤뷰에 선택 버튼 객체 세팅
-                GameManager.Instance.ItemToObjPool_SelectButton(15, scrollTransform);
 
                 // 현재 선택된 재료 개수와 필요한 재료 객체 개수 출력
                 equips_contentText.text = equips_currentNum.ToString() + "/" + CalculateMaxValue(equips_currentNum).ToString();
@@ -3706,13 +3740,32 @@ public class UI_Manager : EnergyBarManager
                 {
                     WeaponKindDivider(forMakeEquip, targetItemUI.GetItemImage());   // 목표 객체 이미지 세팅
                     targetNumeText.text = "무기 합성 : " + forMakeEquip.GetName();
+
+                    foreach(var tmp in selectBtnPool_list)
+                    {
+                        if (tmp == targetItemUI)
+                            continue;
+                        Button tmpBtn = tmp.GetButton();
+                        tmpBtn.onClick.RemoveAllListeners();
+                        tmpBtn.onClick.AddListener(tmp.OnClickEventListener);
+                        tmpBtn.onClick.AddListener(() => SynthesisSelectButtonClick_ForMaterial(e_PoolItemType.Weapon, tmp));
+                    }
                 }
                 else    // 무기가 아닐때,
                 {
                     EquipmentKindDivider(forMakeEquip,targetItemUI.GetItemImage()); // 목표 객체 이미지 세팅
                     targetNumeText.text = "성유물 합성 : " + forMakeEquip.GetName();
 
-
+                    foreach (var tmp in selectBtnPool_list)
+                    {
+                        if (tmp == targetItemUI)
+                            continue;
+                        Button btn = tmp.GetButton();
+                        btn.onClick.RemoveAllListeners();
+                        btn.onClick.AddListener(() => tmp.OnClickEventListener());
+                        btn.onClick.AddListener(() => instance.ScrollViewOpenButtonClickEvent(tmp, materialsPrintObj, e_PoolItemType.Equip));
+                        btn.onClick.AddListener(() => instance.WeaponSelectForUpgradeBtnClickEventListener(tmp, materialsPrintObj, e_PoolItemType.Equip));
+                    }
                 }
             }
         }
@@ -3722,16 +3775,39 @@ public class UI_Manager : EnergyBarManager
             // 현재 수를 3으로 나눈 나머지를 계산
             int remainder = currentNumber % 3;
 
+            // 현재 수가 0인 경우 3을 반환
+            if (currentNumber == 0)
+                return 3;
+
             // 현재 수가 3의 배수라면 맥스값은 현재 수 그대로
             if (remainder == 0)
-            {
                 return currentNumber;
-            }
 
             // 현재 수가 3의 배수가 아니라면, 다음 3의 배수를 계산
             int value = (currentNumber / 3 + 1) * 3;
 
             return value;
+        }
+        void SynthesisSelectButtonClick_ForMaterial(e_PoolItemType type, SelectButtonScript selectBtn)
+        {
+            Transform materialsPrintObj = SynthesisObjectScreen.transform.GetChild(8).GetChild(3).GetComponent<Transform>();
+            materialsPrintObj.gameObject.SetActive(true);
+            if (type == e_PoolItemType.Weapon)
+            {
+                // 무기 => 성유물 pool로 스크롤뷰 채우기 구현해야함.
+
+                ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Equip);
+                // 스크롤뷰 데이터 출력 함수 호출
+                instance.WeaponSelectForUpgradeBtnClickEventListener(selectBtn, materialsPrintObj, e_PoolItemType.Weapon);
+
+            }
+            else if(type == e_PoolItemType.Equip)
+            {
+                ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);
+                // 스크롤뷰 데이터 출력 함수 호출
+                instance.WeaponSelectForUpgradeBtnClickEventListener(selectBtn, materialsPrintObj, e_PoolItemType.Equip);
+
+            }
         }
 
         void SynthesisButtonSelect(ItemClass selected, e_PoolItemType type, SYNTHESIS_DATA_BASE selectData)
@@ -3747,9 +3823,11 @@ public class UI_Manager : EnergyBarManager
             {
                 case e_PoolItemType.Weapon:
                     pools = GameManager.Instance.WeaponItemPool.GetPoolList();
+                    SynthesisPrintEquipsObjects();
                     break;
                 case e_PoolItemType.Equip:
                     pools = GameManager.Instance.EquipItemPool.GetPoolList();
+                    SynthesisPrintEquipsObjects();
                     break;
                 case e_PoolItemType.Gem:
                     pools = GameManager.Instance.GemItemPool.GetPoolList();
