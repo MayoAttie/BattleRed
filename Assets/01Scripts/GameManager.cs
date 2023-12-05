@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using static HandlePauseTool;
 using static CharacterUpgradeManager;
+using static UI_UseToolClass;
 public class GameManager : Singleton<GameManager>
 {
     #region 변수
@@ -15,6 +16,7 @@ public class GameManager : Singleton<GameManager>
     public GameObject SelectButton;
     public GameObject[] DropItemObject;
     public GameObject DropItem_UI;
+    public GameObject PlayerbleCharacter;
 
     // 오브젝트 풀
     public ObjectPool<MonsterManager> CactusPool;
@@ -48,12 +50,17 @@ public class GameManager : Singleton<GameManager>
     private List<Tuple<string, List<WEAPON_EQUIP_LIMIT_BREAK_RESOURCE_DATA>>> list_WeaponAndEquipLimitBreakResourceData;
     private List<Tuple<string, List<WEAPON_EQUIP_EFFECT_DATA_BASE>>> list_WeaponAndEquipReforgeGradeData;
     private List<EQUIPMENT_SET_SYNERGY_DATA_BASE> list_EquipmentSetSynergyData;
+    private Monster[] arr_MonsterData;
     public List<SYNTHESIS_DATA_BASE> list_WeaponSynthesisData;
     public List<SYNTHESIS_DATA_BASE> list_EquipSynthesisData;
     public List<SYNTHESIS_DATA_BASE> list_EtcSynthesisData;
 
+
     // 기타
     [SerializeField] Transform objectPoolSavePos;
+
+    // 전역변수
+    static int nIdValue;
 
     #endregion
 
@@ -188,15 +195,15 @@ public class GameManager : Singleton<GameManager>
             new ItemClass("광물", "백철", 3, false, 1, 1500, 1, "하얀색 철광석. 뛰어난 대장장이에게 가면 빛을 발할 수 있다", ""),
             new ItemClass("광물", "수정덩이", 4, false, 1, 4000, 1, "가공되지 않은 결정체. 세공을 해야 진정한 가치를 알 수 있다", ""),
 
-            new ItemClass("음식", "달콤달콤 닭고기 스튜", 3, false, 1, 1500, 1, "꿀에 버무려 구운 새고기. 탱탱한 새고기에 넘쳐흐르는 육즙, 게다가 아삭아삭한 달콤달콤꽃까지 정말 맛있다", ""),
-            new ItemClass("음식", "무스프", 1, false, 3, 700, 1, "무를 주재료로 만든 야채수프. 여유로운 오후처럼 싱그럽고 소박한 농촌의 향기를 풍긴다.", ""),
+            new ItemClass("음식", "달콤달콤 닭고기 스튜", 1, false, 1, 1500, 1, "꿀에 버무려 구운 새고기. 탱탱한 새고기에 넘쳐흐르는 육즙, 게다가 아삭아삭한 달콤달콤꽃까지 정말 맛있다", ""),
+            new ItemClass("음식", "무스프", 1, false, 1, 700, 1, "무를 주재료로 만든 야채수프. 여유로운 오후처럼 싱그럽고 소박한 농촌의 향기를 풍긴다.", ""),
 
         };
         WeaponAndEquipmentDataList = new List<WeaponAndEquipCls>
         {
-            new WeaponAndEquipCls("무기", "천공의 검", 5, false, 1, 100000, 1,20, "풍룡의 영광을 상징하는 기사검.\n잃어버렸다가 오늘날 되찾았다.\n현재 검에 바람 신의 축복이 깃들어 있으며, 푸른 하늘과 바람의 힘을 지니고 있다","" ,"치명타 확률이 <color=#00FFFF>4%</color> 증가한다. 원소폭발 발동 시 파공의 기세를 획득한다: 이동 속도 +10%, 공격 속도 +10% 일반 공격과 강공격이 명중 시 추가로 공격력 <color=#00FFFF>20%</color>의 피해를 준다. 지속 시간: 12초",1,560,12,0,700),
-            new WeaponAndEquipCls("무기", "제례검", 4, false, 1, 65000, 1,20, "기나긴 세월을 거쳐 석화한 검은 의례적인 장식이 여전히 선명하게 보인다.\n시간의 바람에 씻긴 축복의 힘을 보유하고 있다", "","원소 전투 스킬로 피해를 줄 때 <color=#00FFFF>40%</color>의 확률로 해당 스킬의 재발동 대기시간이 초기화된다. 해당 효과는 <color=#00FFFF>30초</color>마다 1번 발동한다",1,470,13.3f,0,600),
-            new WeaponAndEquipCls("무기", "여명신검", 3, false, 1, 30000, 1,20, "오래전 아침 햇살처럼 빛나던 보검. 이 검을 가진 자는 근거 없는 자신감에 가득 차게 된다. 검신의 빛나던 발광 재료는 이미 사라졌다", "","HP가 90% 초과 시 치명타 확률이 <color=#00FFFF>14%</color> 증가한다.",1,266,10f,0,500),
+            new WeaponAndEquipCls("무기", "천공의 검", 5, false, 1, 100000, 1,20, "풍룡의 영광을 상징하는 기사검.\n잃어버렸다가 오늘날 되찾았다.\n현재 검에 바람 신의 축복이 깃들어 있으며, 푸른 하늘과 바람의 힘을 지니고 있다","" ,"치명타 확률이 <color=#00FFFF>4%</color> 증가한다. 원소폭발 발동 시 파공의 기세를 획득한다: 이동 속도 +10%, 공격 속도 +10% 일반 공격과 강공격이 명중 시 추가로 공격력 <color=#00FFFF>20%</color>의 피해를 준다. 지속 시간: 12초",1,46,12,0,700),
+            new WeaponAndEquipCls("무기", "제례검", 4, false, 1, 65000, 1,20, "기나긴 세월을 거쳐 석화한 검은 의례적인 장식이 여전히 선명하게 보인다.\n시간의 바람에 씻긴 축복의 힘을 보유하고 있다", "","원소 전투 스킬로 피해를 줄 때 <color=#00FFFF>40%</color>의 확률로 해당 스킬의 재발동 대기시간이 초기화된다. 해당 효과는 <color=#00FFFF>30초</color>마다 1번 발동한다",1,41,13.3f,0,600),
+            new WeaponAndEquipCls("무기", "여명신검", 3, false, 1, 30000, 1,20, "오래전 아침 햇살처럼 빛나던 보검. 이 검을 가진 자는 근거 없는 자신감에 가득 차게 된다. 검신의 빛나던 발광 재료는 이미 사라졌다", "","HP가 90% 초과 시 치명타 확률이 <color=#00FFFF>14%</color> 증가한다.",1,39,10f,0,500),
 
             new WeaponAndEquipCls("성배", "이국의 술잔", 3, false, 1, 9000, 1,20, "한때 이 소박한 백자 술잔엔 기쁨의 술이 가득 차 있었다", "행자의 마음","",1,40,15,0,200),
             new WeaponAndEquipCls("깃털", "귀향의 깃털", 3, false, 1, 10000, 1,20, "푸른색 화살 깃 위에 나그네의 저 멀리 떠나가는 미련이 서려 있다", "행자의 마음","",1,400,9,0,200),
@@ -869,7 +876,7 @@ public class GameManager : Singleton<GameManager>
                 new WEAPON_EQUIP_EFFECT_DATA_BASE(4,"원소 전투 스킬로 피해를 줄 때 <color=#00FFFF>70%</color>의 확률로 해당 스킬의 재발동 대기시간이 초기화된다. 해당 효과는 <color=#00FFFF>19초</color>마다 1번 발동한다"),
                 new WEAPON_EQUIP_EFFECT_DATA_BASE(5,"원소 전투 스킬로 피해를 줄 때 <color=#00FFFF>80%</color>의 확률로 해당 스킬의 재발동 대기시간이 초기화된다. 해당 효과는 <color=#00FFFF>16초</color>마다 1번 발동한다")
             }),
-            new Tuple<string, List<WEAPON_EQUIP_EFFECT_DATA_BASE>>("여멍신검",new List<WEAPON_EQUIP_EFFECT_DATA_BASE>
+            new Tuple<string, List<WEAPON_EQUIP_EFFECT_DATA_BASE>>("여명신검",new List<WEAPON_EQUIP_EFFECT_DATA_BASE>
             {
                 new WEAPON_EQUIP_EFFECT_DATA_BASE(1,"HP가 90% 초과 시 치명타 확률이 <color=#00FFFF>14%</color> 증가한다."),
                 new WEAPON_EQUIP_EFFECT_DATA_BASE(2,"HP가 90% 초과 시 치명타 확률이 <color=#00FFFF>17.5%</color> 증가한다."),
@@ -934,9 +941,30 @@ public class GameManager : Singleton<GameManager>
         };
         #endregion
 
+        #region 몬스터 DB 채우기
+        arr_MonsterData = new Monster[]
+        {
+            //0
+            new Monster("몬스터", "Cactus", 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence,
+                1100, 1100, 10, 15, 15, 1.8f, 100f, Element.e_Element.None, 1.5f, 20),
+            //1
+            new Monster("몬스터", "Cactus", 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence,
+                1100, 1100, 10, 15, 15, 1.8f, 100f, Element.e_Element.None, 1.5f, 20),
+            //2
+            new Monster("몬스터", "Cactus", 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence,
+                1100, 1100, 10, 15, 15, 1.8f, 100f, Element.e_Element.None, 1.5f, 20),
+            //3
+            new Monster("몬스터", "MushroomAngry", 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence,
+                1000, 1000, 10, 25, 15, 1.8f, 100f, Element.e_Element.None, 1.5f, 20),
+            //4
+            new Monster("몬스터", "MushroomAngry", 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence,
+                1000, 1000, 10, 25, 15, 1.8f, 100f, Element.e_Element.None, 1.5f, 20),
+        };
+        #endregion
+
 
         // 유저 게임 데이터 초기화
-        characterCls = new CharacterClass(300, 300, 0, 100, 50,20, 1, 20, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,"플레이어","Knight",0,true, 100,20,0,0,0);
+        characterCls = new CharacterClass(300, 300, 0, 100, 50,20, 1, 20, 3.0f, CharacterClass.eCharactgerState.e_NONE,50,120,50,2.8f,"플레이어","Knight",0,true, 100,20,0,0,0);
         playerData.SetUserCharacter(characterCls);
         playerData.SetMora(156000);
         List<ItemClass> weaponList = new List<ItemClass>
@@ -948,6 +976,7 @@ public class GameManager : Singleton<GameManager>
             new WeaponAndEquipCls("무기", "여명신검", 3, false, 1, 30000, 10,20, "오래전 아침 햇살처럼 빛나던 보검. 이 검을 가진 자는 근거 없는 자신감에 가득 차게 된다. 검신의 빛나던 발광 재료는 이미 사라졌다", "","HP가 90% 초과 시 치명타 확률이 <color=#00FFFF>14%</color> 증가한다.",1,266,10f,990,1208)
         };
         playerData.SetHadWeaponList(weaponList);
+        Item_Id_Generator(weaponList);
         WeaponItemStatusSet(weaponList);
 
         List<ItemClass> equipList = new List<ItemClass>
@@ -956,6 +985,9 @@ public class GameManager : Singleton<GameManager>
             new WeaponAndEquipCls("깃털", "귀향의 깃털", 3, false, 1, 10000, 1,20, "푸른색 화살 깃 위에 나그네의 저 멀리 떠나가는 미련이 서려 있다", "행자의 마음","",1,400,9,100,400),
             new WeaponAndEquipCls("왕관", "이별의 모자", 3, false, 1, 8000, 3,20, "봄바람의 기운을 발산하는 버드나무 왕관", "행자의 마음","",1,25,5,500,1000),
             new WeaponAndEquipCls("꽃", "옛 벗의 마음", 3, false, 1, 7000, 1, 20, "푸른빛의 작은 꽃. 꽃줄기에 오래된 누군가의 리본이 묶여있다", "행자의 마음", "", 1,555,15,150,400),
+            new WeaponAndEquipCls("모래", "빛을 좆는 돌", 3, false, 1, 8000, 1, 20, "산전수전 다 겪은 돌시계는 언제나 고요 속에서 일월순환을 기록한다", "행자의 마음", "", 1,30,10,390,400),
+            new WeaponAndEquipCls("모래", "빛을 좆는 돌", 3, false, 1, 8000, 1, 20, "산전수전 다 겪은 돌시계는 언제나 고요 속에서 일월순환을 기록한다", "행자의 마음", "", 1,30,10,390,400),
+            new WeaponAndEquipCls("모래", "빛을 좆는 돌", 3, false, 1, 8000, 1, 20, "산전수전 다 겪은 돌시계는 언제나 고요 속에서 일월순환을 기록한다", "행자의 마음", "", 1,30,10,390,400),
             new WeaponAndEquipCls("모래", "빛을 좆는 돌", 3, false, 1, 8000, 1, 20, "산전수전 다 겪은 돌시계는 언제나 고요 속에서 일월순환을 기록한다", "행자의 마음", "", 1,30,10,390,400),
 
             new WeaponAndEquipCls("성배", "전투광의 해골잔", 4, true, 1, 30000, 1,20, "이름 모를 거대한 짐승의 뼈로 만든 컵이다.\n사냥으로 얻은 전리품이다", "전투광","",1,46,20,200,400),
@@ -972,15 +1004,17 @@ public class GameManager : Singleton<GameManager>
         };
         EquipStatusRandomSelector(equipList);
         EquipItemStatusSet(equipList);
+        Item_Id_Generator(equipList);
         playerData.SetHadEquipmentList(equipList);
 
 
         List<ItemClass> gemList = new List<ItemClass>
         {
             new ItemClass("광물", "철광석", 1, false, 1, 600, 1, "철광석. 뛰어난 대장장이에게 가면 빛을 발할 수 있다", ""),
-            new ItemClass("광물", "백철", 3, false, 1, 1500, 1, "하얀색 철광석. 뛰어난 대장장이에게 가면 빛을 발할 수 있다", ""),
+            new ItemClass("광물", "백철", 3, false, 100, 1500, 1, "하얀색 철광석. 뛰어난 대장장이에게 가면 빛을 발할 수 있다", ""),
             new ItemClass("광물", "수정덩이", 4, false, 20, 4000, 1, "가공되지 않은 결정체. 세공을 해야 진정한 가치를 알 수 있다", ""),
         };
+        Item_Id_Generator(gemList);
         playerData.SetHadGemList(gemList);
 
         List<ItemClass> foodList = new List<ItemClass>
@@ -988,6 +1022,7 @@ public class GameManager : Singleton<GameManager>
             new ItemClass("음식", "달콤달콤 닭고기 스튜", 3, false, 1, 1500, 1, "꿀에 버무려 구운 새고기. 탱탱한 새고기에 넘쳐흐르는 육즙, 게다가 아삭아삭한 달콤달콤꽃까지 정말 맛있다", ""),
             new ItemClass("음식", "무스프", 1, false, 3, 700, 1, "무를 주재료로 만든 야채수프. 여유로운 오후처럼 싱그럽고 소박한 농촌의 향기를 풍긴다.", ""),
         };
+        Item_Id_Generator(foodList);
         playerData.SetHadFoodList(foodList);
 
         List<ItemClass> growList = new List<ItemClass>
@@ -996,6 +1031,7 @@ public class GameManager : Singleton<GameManager>
             new ItemClass("육성 아이템","슬라임 응축액",1,false,5,500,0,"슬라임을 덮고 있는 걸쭉한 액체. 각지의 원소 공방에서 가장 흔히 보이는 원료이다",""),
             new ItemClass("육성 아이템","지맥의 낡은 가지",1,false,6,500,0,"지하 깊은 곳의 마른 나뭇가지. 오랜 세월이 지났지만 알록달록한 나무껍질에서 내재된 힘을 느낄 수 있다",""),
         };
+        Item_Id_Generator(growList);
         playerData.SetHadGrowMaterialList(growList);
 
         playerData.SetUserEquippedWeapon(playerData.GetHadWeaponList().Find(item => item.GetIsActive() == true));
@@ -1008,7 +1044,10 @@ public class GameManager : Singleton<GameManager>
 
     void Start()
     {
-
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Equip);
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Gem);
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Food);
 
     }
 
@@ -1044,36 +1083,32 @@ public class GameManager : Singleton<GameManager>
         GameObject spawnObj = point.gameObject;
         string objName = spawnObj.name;
         string remainingCharacters = objName.Substring(12);
-
+        int index = int.Parse(remainingCharacters);             // DB참조와 데이터 분류를 위한 인덱스 형변환
         // 탐색한 콜라이더 내의 몬스터 이름들을 저장하는 리스트 생성.
         Collider[] colliders = Physics.OverlapSphere(point.position, 20, 1 << LayerMask.NameToLayer("Monster"));
 
         string monsterName;
 
         // 분류한 번호에 따라, 분기하여 해당하는 몬스터를 생성.
-        switch (remainingCharacters)
+        switch (index)
         {
-            case "1":
-            case "2":
-            case "3":
+            case 1:
+            case 2:
+            case 3:
                 monsterName = "Cactus";
                 for (int i = 0; i < 2; i++)
                 {
                     Vector3 spawnPosition = point.position + new Vector3(i * 2, 0, 0);
-                    int extraHealth = characterCls.GetLeveL() * 100;
-                    int extraAttack = 0;
-                    SpawnMonster(colliders, monsterName, spawnPosition, extraHealth, extraAttack);
+                    SpawnMonster(index,colliders, monsterName, spawnPosition);
                 }
                 break;
-            case "4":
-            case "5":
+            case 4:
+            case 5:
                 monsterName = "MushroomAngry";
                 for (int i = 0; i < 2; i++)
                 {
                     Vector3 spawnPosition = point.position + new Vector3(i * 2, 0, 0);
-                    int extraHealth = 0;
-                    int extraAttack = characterCls.GetLeveL() * 10; ;
-                    SpawnMonster(colliders, monsterName, spawnPosition, extraHealth, extraAttack);
+                    SpawnMonster(index,colliders, monsterName, spawnPosition);
                 }
                 break;
         }
@@ -1118,7 +1153,7 @@ public class GameManager : Singleton<GameManager>
     }
 
     // 몬스터 생성 함수
-    private void SpawnMonster(Collider[] colliders, string monsterName, Vector3 spawnPosition, int extraHealth, int extraAttack)
+    private void SpawnMonster(int index, Collider[] colliders, string monsterName, Vector3 spawnPosition)
     {
         foreach(Collider collider in colliders)
         {
@@ -1127,8 +1162,8 @@ public class GameManager : Singleton<GameManager>
                 return;
         }
 
-        Monster monsterCls = new Monster("몬스터", monsterName, 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Precedence, 
-            1000 + extraHealth, 1000 + extraHealth, 10 + extraAttack, 15, 15, 1.8f, 100f, Element.e_Element.None, 1.5f,20);
+        // DB를 참조하여, 몬스터 클래스 초기화
+        Monster monsterCls = arr_MonsterData[index - 1].Clone();
 
         MonsterManager monsterManager = null;
 
@@ -1153,12 +1188,98 @@ public class GameManager : Singleton<GameManager>
         monsterHpMng.HpBarFill_End(monsterCls.GetMonsterMaxHp(), monsterCls.GetMonsterCurrentHp(), false);
     }
 
+    // 구역 세팅 몬스터 생성 함수
+    public MonsterManager SpawnMonster_StaticSet(Vector3 spawnPos, string name, Monster monsterCls, MonsterManager.MonsterControl_Info controlInfo = default, Transform monsters = null)
+    {
+
+        MonsterManager monsterManager = null;
+
+        switch (name)
+        {
+            case "Cactus":
+                if (monsters != null)
+                    monsterManager = CactusPool.GetFromPool(spawnPos, Quaternion.identity, monsters);
+                else
+                    monsterManager = CactusPool.GetFromPool(spawnPos, Quaternion.identity);
+                break;
+            case "MushroomAngry":
+                if (monsters != null)
+                    monsterManager = MushroomAngryPool.GetFromPool(spawnPos, Quaternion.identity, monsters);
+                else
+                    monsterManager = MushroomAngryPool.GetFromPool(spawnPos, Quaternion.identity);
+                break;
+        }
+
+        // 오브젝트 풀로 hp바 생성
+        MonsterHp monsterHpMng = MonsterHpBarPool.GetFromPool(spawnPos, Quaternion.identity, BottomCanvas.transform);
+
+        // 필요한 데이터 초기화
+        monsterManager.SetMonsterHPMng(monsterHpMng);
+        monsterManager.SetMonsterClass(monsterCls);
+        monsterManager.SetStaticFixed(true);
+
+        // 데이터가 디폴트 값이 아닐 경우에, 제어용 변수 셋.
+        if (controlInfo.idleTime != default || controlInfo.patrolTime != default || controlInfo.chaseRange != default || controlInfo.moveRange != default)
+        {
+            monsterManager.SetMonsterControlInfo(controlInfo);
+        }
+
+        monsterHpMng.HpBarFill_Init(monsterCls.GetMonsterCurrentHp());
+        monsterHpMng.HpBarFill_End(monsterCls.GetMonsterMaxHp(), monsterCls.GetMonsterCurrentHp(), false);
+
+        return monsterManager;
+    }
+    //public void SpawnMonster_StaticSet(Vector3 spawnPos, string name, Monster monsterCls, MonsterManager.MonsterControl_Info controlInfo = default , Transform monsters = null)
+    //{
+
+    //    MonsterManager monsterManager = null;
+
+    //    switch (name)
+    //    {
+    //        case "Cactus":
+    //            if (monsters != null)
+    //                monsterManager = CactusPool.GetFromPool(spawnPos, Quaternion.identity, monsters);
+    //            else
+    //                monsterManager = CactusPool.GetFromPool(spawnPos, Quaternion.identity);
+    //            break;
+    //        case "MushroomAngry":
+    //            if (monsters != null)
+    //                monsterManager = MushroomAngryPool.GetFromPool(spawnPos, Quaternion.identity, monsters);
+    //            else
+    //                monsterManager = MushroomAngryPool.GetFromPool(spawnPos, Quaternion.identity);
+    //            break;
+    //    }
+
+    //    // 오브젝트 풀로 hp바 생성
+    //    MonsterHp monsterHpMng = MonsterHpBarPool.GetFromPool(spawnPos, Quaternion.identity, BottomCanvas.transform);
+
+    //    // 필요한 데이터 초기화
+    //    monsterManager.SetMonsterHPMng(monsterHpMng);
+    //    monsterManager.SetMonsterClass(monsterCls);
+    //    monsterManager.SetStaticFixed(true);
+
+    //    // 데이터가 디폴트 값이 아닐 경우에, 제어용 변수 셋.
+    //    if(controlInfo.idleTime!=default || controlInfo.patrolTime !=default || controlInfo.chaseRange !=default || controlInfo.moveRange != default)
+    //    {
+    //        monsterManager.SetMonsterControlInfo(controlInfo);
+    //    }
+
+    //    monsterHpMng.HpBarFill_Init(monsterCls.GetMonsterCurrentHp());
+    //    monsterHpMng.HpBarFill_End(monsterCls.GetMonsterMaxHp(), monsterCls.GetMonsterCurrentHp(), false);
+    //}
+
+
     #endregion
 
 
     #region 몬스터 제거
     public void RangeOutMonsterPoolReturn(MonsterManager mobMng, MonsterHp mobHpMng)
     {
+        var images = mobHpMng.GetImages();
+
+        foreach (var tmp in images)
+            tmp.enabled = true;
+
         MonsterHpBarPool.ReturnToPool(mobHpMng);
 
         string mobName = mobMng.GetMonsterClass().GetName();
@@ -1233,6 +1354,59 @@ public class GameManager : Singleton<GameManager>
     //    }
     //}
     #endregion
+    #endregion
+
+    #region 기타 함수
+    // 아이템 아이디 값 생성기
+    public void Item_Id_Generator<T>(T item) where T : ItemClass
+    {
+        item.SetId(nIdValue);
+        nIdValue += 1;
+    }
+    public void Item_Id_Generator<T>(List<T> item) where T : ItemClass
+    {
+        foreach (var tmp in item)
+        {
+            tmp.SetId(nIdValue);
+            nIdValue += 1;
+        }
+    }
+    public List<T> Item_Id_Generator_Copied<T>(List<T> item) where T : WeaponAndEquipCls
+    {
+        List<T> result = new List<T>();
+
+        foreach (var tmp in item)
+        {
+            T newItem = Activator.CreateInstance<T>();
+            newItem.CopyFrom(tmp);
+            newItem.SetId(nIdValue);
+            nIdValue += 1;
+
+            result.Add(newItem);
+        }
+
+        return result;
+    }
+    public int GetItem_Id_value() { return nIdValue; }
+    public void Item_Id_value_Upper() { nIdValue += 1; }
+
+    public void ChangeSceneManaging()
+    {
+        Transform startPos = null;
+        GameObject startPointObject = GameObject.FindGameObjectWithTag("StartPoint");
+        if (startPointObject == null)
+            return;
+        startPos = startPointObject.transform;
+        var obj = Instantiate(PlayerbleCharacter, startPos);
+        ItemDropManager.Instance.SetCamera();
+        obj.GetComponent<CharacterManager>().CharacterManagerConrollerBtnSet();
+        obj.GetComponent<CharacterControlMng>().CharacterControlMng_ControllerSet();
+        obj.GetComponent<CharacterAttackMng>().CharacterAttackMng_ControllerSet();
+
+        UI_Manager.Instance.UI_Manager_ControllerSet();
+        ObjectManager.Instance.ObjectFindSetter();
+    }
+
     #endregion
 
 
@@ -1518,6 +1692,7 @@ public class GameManager : Singleton<GameManager>
     public List<SYNTHESIS_DATA_BASE> GetWeaponSynthesisData() { return list_WeaponSynthesisData; }
     public List<SYNTHESIS_DATA_BASE> GetEquipSynthesisData() { return list_EquipSynthesisData; }
     public List<SYNTHESIS_DATA_BASE> GetEtcSynthesisData() { return list_EtcSynthesisData; }
+    public Monster[] GetMonsterData() { return arr_MonsterData; }
 
     #endregion
 

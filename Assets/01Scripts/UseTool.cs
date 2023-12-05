@@ -1,0 +1,33 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class UseTool
+{
+    // 애니메이션의 길이를 얻는 함수
+    public static float GetAnimationLength(Animator animator, string clipName)
+    {
+        AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
+
+        foreach (AnimationClip clip in clips)
+        {
+            if (clip.name == clipName)
+            {
+                return clip.length;
+            }
+        }
+
+        return 0f;
+    }
+
+    public static void AddItemToList_CopyData(string itemName, List<ItemClass> itemList)
+    {
+        ItemClass item = GameManager.Instance.GetItemDataList().Find(tmp => tmp.GetName().Equals(itemName));
+        if (item != null)
+        {
+            ItemClass copy = new ItemClass();
+            copy.CopyFrom(item);
+            itemList.Add(copy);
+        }
+    }
+}

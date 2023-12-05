@@ -7,5 +7,6 @@ public interface Observer
     void GetEnemyFindNotify(List<Transform> findList);
     void AttackSkillStartNotify();
     void AttackSkillEndNotify();
+    void CheckPoint_PlayerPassNotify(int num);
 }
 

@@ -5,6 +5,14 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ground
+  - StartPoint
+  - SideView_Scroll
+  - TouchPad
+  - Controller
+  - TopCanvas
+  - DungeonSpwanPoint
+  - BottomCanvas
+  - CheckPoint
   layers:
   - Default
   - TransparentFX

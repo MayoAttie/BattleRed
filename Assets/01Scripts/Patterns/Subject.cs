@@ -58,4 +58,13 @@ public abstract class Subject : MonoBehaviour
             tmp.AttackSkillEndNotify();
         }
     }
+
+    public void NotifyCheckPoint_PlayerPass(int num)
+    {
+        foreach (Observer tmp in _observers)
+        {
+
+            tmp.CheckPoint_PlayerPassNotify(num);
+        }
+    }
 }
