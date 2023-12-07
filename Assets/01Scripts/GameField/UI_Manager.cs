@@ -3609,6 +3609,7 @@ public class UI_Manager : EnergyBarManager
                 targetItemUI.SetItemColor(selectedItem_sythesis.GetGrade());
                 targetItemUI.SetItemSprite(WeaponAndEquipLimitBreak_UI_Dvider(selectedItem_sythesis));
                 targetItemUI.SetItemText(selectedItem_sythesis.GetName());
+                targetItemUI.GetItemImage().enabled = true;
                 targetItemUI.SetIsActive(true);
 
                 // 합성할 객체의 재료 출력
@@ -3623,6 +3624,7 @@ public class UI_Manager : EnergyBarManager
                     resource_1.SetItemColor(haveItem.GetGrade());
                     resource_1.SetItemSprite(WeaponAndEquipLimitBreak_UI_Dvider(haveItem));
                     resource_1.SetItemText(needNum_1.ToString());
+                    resource_1.GetItemImage().enabled = true;
                     etc_resourceText_1 = resource_1.GetItemTxt();
                     etc_resourceText_1.text = "0";
 
@@ -3635,6 +3637,7 @@ public class UI_Manager : EnergyBarManager
                     resource_2.SetItemColor(3);
                     resource_2.SetItemSprite(ItemSpritesSaver.Instance.SpritesSet[3]);
                     resource_2.SetItemText(needNum_2.ToString());
+                    resource_2.GetItemImage().enabled = true;
                     etc_resourceText_2 = resource_2.GetItemTxt();
                     etc_resourceText_2.text = "0";
 

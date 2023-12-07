@@ -33,7 +33,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     int characterHp;                                    // 테스트용
     CharacterClass.eCharactgerState clsState;           // 테스트 확인용
     bool elementGetActive;
-    Transform sideUI_ObjPrintTransform;                 // 상호작용 오브젝트 UI 출력용 스크롤뷰
+    Drop_Item_ScrolViewMng sideUI_ObjPrintTransformObject;
+    //Transform sideUI_ObjPrintTransform;                 // 상호작용 오브젝트 UI 출력용 스크롤뷰
 
     //싱글턴
     ObjectManager objMng_instance;
@@ -65,8 +66,10 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         ///씬 전환 간에 원활한 객체 생성 불가.
         ///방법1 : DontDestroy객체를 List에 저장하여 보관.
 
+        sideUI_ObjPrintTransformObject = GameObject.Find("Drop_Item_ScrolView").GetComponent<Drop_Item_ScrolViewMng>();
+        //sideUI_ObjPrintTransform = DataPrintScreenScrollManager.Instance.GetReturnToContentScroll();
+        //sideUI_ObjPrintTransform = GameObject.Find("DataPrintScreenScroll").transform.GetChild(1).GetChild(0);
 
-        sideUI_ObjPrintTransform = GameObject.Find("DataPrintScreenScroll").transform.GetChild(1).GetChild(0);
         // 필요 레이어를 저장
         SpwanPoint = LayerMask.NameToLayer("SpwanPoint");
         monsterLayer = LayerMask.NameToLayer("Monster");
@@ -86,8 +89,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     private void OnDisable()
     {
         StopCoroutine("CheckCollidersPeriodically");
-        Transform parentTransform = sideUI_ObjPrintTransform.parent.parent;
-        parentTransform.gameObject.SetActive(true);
+        //DataPrintScreenScrollManager.Instance.GetReturnToMainObject().SetActive(false);
         // 게임매니저의 이벤트 구독 해제
         GameManager.OnPauseStateChanged -= HandlePauseStateChanged;
     }
@@ -344,10 +346,10 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
                             break;
                         }
                     }
-
+                    // 중복되는 객체X => 객체 생성
                     if (isCreate)
                     {
-                        // 클릭 여부 제어 플래그가 true인지 확인 후에 dropObj 객체를 생성.
+                        // 반복/상호작용 여부 제어 플래그 확인
                         var arr = objMng_instance.objectArray;
                         for (int j=0; j<arr.Count; j++)
                         {
@@ -357,8 +359,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
                                     break;
                             }
                         }
-
-                        data.ObjectSetInit(sideUI_ObjPrintTransform);
+                        // 객체를 생성하고 함수 연결, 이후 관리용 딕셔너리에 Add
+                        data.ObjectSetInit(sideUI_ObjPrintTransformObject.GetScrollObject());
                         objMng_instance.FunctionConnecter(data);
                         dic_dropAndInterObj.Add(data, data.GetDropItem_UI());
                     }
@@ -386,7 +388,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
             }
         }
         else
-        {
+        {   // 주위에 상호작용 오브젝트가 없을 경우에는, 오브젝트풀을 Return
             Dictionary<InteractionObject, DropItem_UI> copyList = new Dictionary<InteractionObject, DropItem_UI>(dic_dropAndInterObj);
             foreach (var pair in copyList)
             {
@@ -414,20 +416,15 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         if (!shouldSetActive)
         {
             // sideUI_ObjPrintTransform의 부모 객체를 찾아서 비활성화
-            Transform parentTransform = sideUI_ObjPrintTransform.parent.parent;
-            if (parentTransform != null)
-            {
-                parentTransform.gameObject.SetActive(false);
-            }
+            sideUI_ObjPrintTransformObject.GetMainObject().gameObject.SetActive(false);
+            //DataPrintScreenScrollManager.Instance.GetReturnToMainObject().SetActive(false);
+
         }
         else
         {
             // sideUI_ObjPrintTransform의 부모 객체를 찾아서 활성화
-            Transform parentTransform = sideUI_ObjPrintTransform.parent.parent;
-            if (parentTransform != null)
-            {
-                parentTransform.gameObject.SetActive(true);
-            }
+            sideUI_ObjPrintTransformObject.GetMainObject().gameObject.SetActive(true);
+            //DataPrintScreenScrollManager.Instance.GetReturnToMainObject().SetActive(true);
         }
     }
 

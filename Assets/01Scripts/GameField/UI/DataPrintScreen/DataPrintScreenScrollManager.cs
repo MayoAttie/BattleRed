@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using static UI_UseToolClass;
-public class DataPrintScreenScrollManager : MonoBehaviour
+public class DataPrintScreenScrollManager : Singleton<DataPrintScreenScrollManager>
 {
+    GameObject mianObject;
     Transform contentTransform;
     TextMeshProUGUI label_text;
     Dictionary<ItemClass, SelectButtonScript> dic_uiAnditem = new Dictionary<ItemClass,SelectButtonScript>();
@@ -14,17 +15,21 @@ public class DataPrintScreenScrollManager : MonoBehaviour
 
     private void Awake()
     {
-        contentTransform = gameObject.transform.GetChild(1).GetChild(0).GetComponent<Transform>();
-        label_text = gameObject.transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
-        gameObject.transform.GetChild(4).GetComponent<Button>().onClick.AddListener(() => SkipButtonEvent());
-        gameObject.SetActive(false);
+        mianObject = gameObject.transform.GetChild(0).gameObject;
+        contentTransform = mianObject.transform.GetChild(1).GetChild(0).GetComponent<Transform>();
+        label_text = mianObject.transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
+        mianObject.transform.GetChild(4).GetComponent<Button>().onClick.AddListener(() => SkipButtonEvent());
     }
-
+    private void Start()
+    {
+        mianObject.SetActive(false);
+    }
+    #region 획득 아이템 출력
     // 아이템 출력
     public void GetItemPrint(ItemClass item)
     {
-        if (gameObject.activeSelf == false)
-            gameObject.SetActive(true);
+        if (mianObject.activeSelf == false)
+            mianObject.SetActive(true);
 
         var obj = GameManager.Instance.SelectButtonScriptPool.GetFromPool(Vector3.zero, Quaternion.identity, contentTransform);
         ResetToSelectButton(obj);
@@ -43,37 +48,38 @@ public class DataPrintScreenScrollManager : MonoBehaviour
         obj.SetItemColor(item.GetGrade());
         obj.SetItemText(item.GetName());
 
-        if(item.GetTag()=="무기")
+        if (item.GetTag() == "무기")
         {
             WeaponKindDivider(item as WeaponAndEquipCls, obj.GetItemImage());
         }
-        else if(item.GetTag() == "꽃" || item.GetTag()=="성배" || item.GetTag()=="왕관" || item.GetTag()=="모래" || item.GetTag()=="깃털")
+        else if (item.GetTag() == "꽃" || item.GetTag() == "성배" || item.GetTag() == "왕관" || item.GetTag() == "모래" || item.GetTag() == "깃털")
         {
             EquipmentKindDivider(item as WeaponAndEquipCls, obj.GetItemImage());
         }
-        else if(item.GetTag()=="광물")
+        else if (item.GetTag() == "광물")
         {
             GemKindDivider(item, obj.GetItemImage());
         }
-        else if(item.GetTag()=="음식")
+        else if (item.GetTag() == "음식")
         {
             FoodKindDivider(item, obj.GetItemImage());
         }
-        else if(item.GetTag()== "육성 아이템")
+        else if (item.GetTag() == "육성 아이템")
         {
             obj.SetItemSprite(WeaponAndEquipLimitBreak_UI_Dvider(item));
         }
         obj.SetIsActive(true);
+        obj.GetItemImage().enabled = true;
         dic_uiAnditem.Add(item, obj);
 
-        if(itemList == null || itemList.Count<=0)
+        if (itemList == null || itemList.Count <= 0)
             StartCoroutine(OffCanvasAndDataReset());
     }
     // 오버로딩을 통한 리스트 데이터 출력
     public void GetItemPrint(List<ItemClass> itemList)
     {
         this.itemList = itemList;
-        gameObject.SetActive(true);
+        mianObject.SetActive(true);
         StartCoroutine(SequentialOutput());
     }
     // 시간차를 두고, 아이템 데이터 출력
@@ -93,6 +99,8 @@ public class DataPrintScreenScrollManager : MonoBehaviour
         }
         StartCoroutine(OffCanvasAndDataReset());
     }
+    #endregion
+
     // 데이터 리셋 및 객체 Off
     IEnumerator OffCanvasAndDataReset()
     {
@@ -111,7 +119,7 @@ public class DataPrintScreenScrollManager : MonoBehaviour
         }
         isPrintSkip = false;
         dic_uiAnditem.Clear();
-        gameObject.SetActive(false);
+        mianObject.SetActive(false);
     }
     // 스킵버튼 연결
     void SkipButtonEvent()
@@ -119,4 +127,6 @@ public class DataPrintScreenScrollManager : MonoBehaviour
         isPrintSkip = true;
     }
 
+    public GameObject GetReturnToMainObject() { return mianObject; }
+    public Transform GetReturnToContentScroll() { return contentTransform; }
 }

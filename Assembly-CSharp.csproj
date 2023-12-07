@@ -79,6 +79,7 @@
     <Compile Include="Assets\01Scripts\GameField\EnergyBarManager.cs" />
     <Compile Include="Assets\01Scripts\GameField\Item\DropItem.cs" />
     <Compile Include="Assets\01Scripts\GameField\Item\DropItem_UI.cs" />
+    <Compile Include="Assets\01Scripts\GameField\Item\Drop_Item_ScrolViewMng.cs" />
     <Compile Include="Assets\01Scripts\GameField\Item\ItemClass.cs" />
     <Compile Include="Assets\01Scripts\GameField\Item\ItemDropManager.cs" />
     <Compile Include="Assets\01Scripts\GameField\Item\WeaponAndEquipCls.cs" />

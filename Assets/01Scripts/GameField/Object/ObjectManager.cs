@@ -10,7 +10,7 @@ public class ObjectManager : Singleton<ObjectManager>
      * 
      */
     public List<InteractionObject> objectArray;
-    public DataPrintScreenScrollManager dpsScrollManager;
+    //public DataPrintScreenScrollManager dpsScrollManager;
     private List<bool> isOpenIng;
 
     private void Awake()
@@ -146,7 +146,7 @@ public class ObjectManager : Singleton<ObjectManager>
         Destroy(box);
         yield return new WaitForSeconds(0.5f);
 
-        dpsScrollManager.GetItemPrint(item_list);
+        DataPrintScreenScrollManager.Instance.GetItemPrint(item_list);
     }
     // 보물상자1
     void TreasureBox_1()
