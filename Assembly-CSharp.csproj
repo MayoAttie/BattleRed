@@ -59,6 +59,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\01Scripts\Algorithm\A_Star_Grid.cs" />
+    <Compile Include="Assets\01Scripts\Algorithm\A_Star_PathFinding.cs" />
+    <Compile Include="Assets\01Scripts\Algorithm\Heap.cs" />
     <Compile Include="Assets\01Scripts\Algorithm\Node.cs" />
     <Compile Include="Assets\01Scripts\CustomTool\ECNaming.cs" />
     <Compile Include="Assets\01Scripts\CustomTool\ECTransformObject.cs" />

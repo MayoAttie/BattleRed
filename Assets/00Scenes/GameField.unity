@@ -20383,6 +20383,7 @@ GameObject:
   - component: {fileID: 776099232}
   - component: {fileID: 776099231}
   - component: {fileID: 776099234}
+  - component: {fileID: 776099235}
   m_Layer: 8
   m_Name: Terrain
   m_TagString: Ground
@@ -20464,11 +20465,25 @@ MonoBehaviour:
   unWalableMask:
     serializedVersion: 2
     m_Bits: 65536
-  Ground:
+  groundMask:
     serializedVersion: 2
-    m_Bits: 272
+    m_Bits: 0
   gridWorldSize: {x: 100, y: 100}
   nodeRadius: 0.5
+--- !u!114 &776099235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776099230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10d6843422b7d124c94a48cc057cb6c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  seeker: {fileID: 0}
+  target: {fileID: 0}
 --- !u!1 &781706231
 GameObject:
   m_ObjectHideFlags: 0

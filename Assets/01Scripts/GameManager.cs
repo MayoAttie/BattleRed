@@ -1410,9 +1410,11 @@ public class GameManager : Singleton<GameManager>
         foreach (var i in groundObjs)
         {
             var grid = i.GetComponent<A_Star_Grid>();
+            var grid2 = i.GetComponent<A_Star_PathFinding>();
             if(grid != null)
             {
                 grid.InitBakeGride();
+                grid2.Seeker = obj.transform.GetChild(0);   
             }
         }
     }
