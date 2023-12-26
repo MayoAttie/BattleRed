@@ -36,6 +36,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     Drop_Item_ScrolViewMng sideUI_ObjPrintTransformObject;
     //Transform sideUI_ObjPrintTransform;                 // 상호작용 오브젝트 UI 출력용 스크롤뷰
 
+    PathFinder pathFinder;                              // 캐릭터가 보유한 패스파인더 객체
+
     //싱글턴
     ObjectManager objMng_instance;
     #endregion
@@ -51,6 +53,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         aniController = gameObject.GetComponent<Animator>();            // 애니메이터 초기화
         SatelliteObj.gameObject.SetActive(false);                       // 원소 상태 표시용 위성 SetFalse
         objMng_instance = ObjectManager.Instance;
+        pathFinder = gameObject.GetComponent<PathFinder>();
         dic_dropAndInterObj = new Dictionary<InteractionObject, DropItem_UI>();
     }
 
@@ -76,6 +79,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         interactionLayer = LayerMask.NameToLayer("InteractionObj");
 
         StartCoroutine("CheckCollidersPeriodically");
+
+        pathFinder.FindPathStart(objMng_instance.objectArray[1].transform.position);      // To Test
 
     }
     private void OnEnable()
@@ -103,6 +108,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         CharacterStateActor();                                  // 애니메이션 제어
         FloatAnimatorValueFunc();                               // 애니메이터 xz_flaot 변수 변경
         SatelliteParticleColorSwitch();                         // 원소 변경
+
     }
     private void FixedUpdate()
     {

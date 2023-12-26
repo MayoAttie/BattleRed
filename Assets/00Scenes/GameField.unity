@@ -20382,8 +20382,6 @@ GameObject:
   - component: {fileID: 776099233}
   - component: {fileID: 776099232}
   - component: {fileID: 776099231}
-  - component: {fileID: 776099234}
-  - component: {fileID: 776099235}
   m_Layer: 8
   m_Name: Terrain
   m_TagString: Ground
@@ -20449,41 +20447,6 @@ Transform:
   m_Father: {fileID: 966250524}
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &776099234
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 776099230}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71b90664bf58ea1448302aa5151fe95b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  unWalableMask:
-    serializedVersion: 2
-    m_Bits: 65536
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 0
-  gridWorldSize: {x: 100, y: 100}
-  nodeRadius: 0.5
---- !u!114 &776099235
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 776099230}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10d6843422b7d124c94a48cc057cb6c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  seeker: {fileID: 0}
-  target: {fileID: 0}
 --- !u!1 &781706231
 GameObject:
   m_ObjectHideFlags: 0
@@ -50361,18 +50324,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3114434648573880518, guid: 29c774dacdcc73240b0c71228fdc6f2c,
         type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3114434648573880518, guid: 29c774dacdcc73240b0c71228fdc6f2c,
+        type: 3}
       propertyPath: m_LocalPosition.x
-      value: 32.710945
+      value: 32.52
       objectReference: {fileID: 0}
     - target: {fileID: 3114434648573880518, guid: 29c774dacdcc73240b0c71228fdc6f2c,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.0645168
+      value: 2.78
       objectReference: {fileID: 0}
     - target: {fileID: 3114434648573880518, guid: 29c774dacdcc73240b0c71228fdc6f2c,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 42.269997
+      value: 42.27
       objectReference: {fileID: 0}
     - target: {fileID: 3114434648573880518, guid: 29c774dacdcc73240b0c71228fdc6f2c,
         type: 3}

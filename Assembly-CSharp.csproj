@@ -58,16 +58,11 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\01Scripts\Algorithm\A_Star_Grid.cs" />
-    <Compile Include="Assets\01Scripts\Algorithm\A_Star_PathFinding.cs" />
-    <Compile Include="Assets\01Scripts\Algorithm\Heap.cs" />
-    <Compile Include="Assets\01Scripts\Algorithm\Node.cs" />
+    <Compile Include="Assets\01Scripts\CustomTool\ECNHierarchyWondow_BoxColliderFinder.cs" />
+    <Compile Include="Assets\01Scripts\CustomTool\ECNHierarchyWondow_ScriptFinder.cs" />
+    <Compile Include="Assets\01Scripts\CustomTool\ECN_AnimationSetupWindow.cs" />
     <Compile Include="Assets\01Scripts\CustomTool\ECNaming.cs" />
     <Compile Include="Assets\01Scripts\CustomTool\ECTransformObject.cs" />
-    <Compile Include="Assets\01Scripts\Dungeon_1\CheckPointNotify.cs" />
-    <Compile Include="Assets\01Scripts\Dungeon_1\DungeonManager.cs" />
-    <Compile Include="Assets\01Scripts\Dungeon_1\DungeonMng_1.cs" />
-    <Compile Include="Assets\01Scripts\Dungeon_1\WaterCheck.cs" />
     <Compile Include="Assets\01Scripts\GameField\CameraController.cs" />
     <Compile Include="Assets\01Scripts\GameField\Character\CharacterAttackMng.cs" />
     <Compile Include="Assets\01Scripts\GameField\Character\CharacterClass.cs" />
@@ -75,7 +70,12 @@
     <Compile Include="Assets\01Scripts\GameField\Character\CharacterManager.cs" />
     <Compile Include="Assets\01Scripts\GameField\Character\CharacterUpgradeManager.cs" />
     <Compile Include="Assets\01Scripts\GameField\Character\EquipmentSetSynergyMng.cs" />
+    <Compile Include="Assets\01Scripts\GameField\Character\PathFinder.cs" />
     <Compile Include="Assets\01Scripts\GameField\Character\SwordFunction.cs" />
+    <Compile Include="Assets\01Scripts\GameField\Dungeon_1\CheckPointNotify.cs" />
+    <Compile Include="Assets\01Scripts\GameField\Dungeon_1\DungeonManager.cs" />
+    <Compile Include="Assets\01Scripts\GameField\Dungeon_1\DungeonMng_1.cs" />
+    <Compile Include="Assets\01Scripts\GameField\Dungeon_1\WaterCheck.cs" />
     <Compile Include="Assets\01Scripts\GameField\EffectManager.cs" />
     <Compile Include="Assets\01Scripts\GameField\Element\Element.cs" />
     <Compile Include="Assets\01Scripts\GameField\Element\Element_Interaction.cs" />
@@ -190,6 +190,7 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
     <None Include="Assets\02Assets\Female Knight\model\shader\Toon2side-Lighted.shader" />
     <None Include="Assets\02Assets\Hovl Studio\Sword slash VFX\Demo scene\HDRP and URP.txt" />
+    <None Include="Assets\02Assets\VolumetricLines\BuiltInRenderPipeline\Shaders\_LineStripShader.cginc" />
     <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Water_Shader_WebGl.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
     <None Include="Assets\02Assets\CactusPack\Readme.txt" />
@@ -211,11 +212,13 @@
     <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Vegetation_Opaque_Shader_VS.shader" />
     <None Include="Assets\02Assets\Hovl Studio\HSFiles\Shaders\Blend_CenterGlow.shader" />
     <None Include="Assets\Particle Attractor by Moonflower Carnivore\Particle Attractor documentation.txt" />
+    <None Include="Assets\02Assets\VolumetricLines\BuiltInRenderPipeline\Shaders\LineStrip-TextureAlphaBlended.shader" />
     <None Include="Assets\05Textures\Noelle\noel\使用规则.txt" />
     <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Vegetation_Opaque_Shader.shader" />
     <None Include="Assets\donjon\Standard Assets\Water (Pro Only)\Water4\Sources\Shaders\FX-Water4.shader" />
     <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Vegetation_Foliage_Shader.shader" />
     <None Include="Assets\02Assets\Hovl Studio\Sword slash VFX\Demo scene\Readme.txt" />
+    <None Include="Assets\02Assets\VolumetricLines\BuiltInRenderPipeline\Shaders\SingleLine-TextureAdditive.shader" />
     <None Include="Assets\02Assets\CactusPack\Shaders\VertexBlend.shader" />
     <None Include="Assets\donjon\greenDungeonReadMe.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
@@ -226,6 +229,8 @@
     <None Include="Assets\02Assets\Hovl Studio\HSFiles\Shaders\Lightning.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
+    <None Include="Assets\02Assets\VolumetricLines\BuiltInRenderPipeline\Shaders\_SingleLineShader.cginc" />
+    <None Include="Assets\02Assets\VolumetricLines\BuiltInRenderPipeline\Shaders\LineStrip-TextureAdditive.shader" />
     <None Include="Assets\donjon\Standard Assets\ParticleSystems\ParticleSystemsGuidelines.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
     <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Water_Shader.shader" />
@@ -237,10 +242,13 @@
     <None Include="Assets\02Assets\Hovl Studio\HSFiles\Shaders\BlendDistort.shader" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
     <None Include="Assets\02Assets\Hovl Studio\HSFiles\Shaders\Scroll.shader" />
+    <None Include="Assets\02Assets\VolumetricLines\BuiltInRenderPipeline\Shaders\SingleLine-TextureAlphaBlended.shader" />
     <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Vegetation_Flowers_Shader_VS.shader" />
     <None Include="Assets\donjon\Standard Assets\Water (Pro Only)\Sources\Shaders\FX-Water.shader" />
+    <None Include="Assets\02Assets\VolumetricLines\BuiltInRenderPipeline\Shaders\LineStrip-LightSaber.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
     <None Include="Assets\09Open_Source\ParticleEffectForUGUI-main\ParticleEffectForUGUI-main\Shaders\UIAdditive.shader" />
+    <None Include="Assets\02Assets\VolumetricLines\BuiltInRenderPipeline\Shaders\SingleLine-LightSaber.shader" />
     <None Include="Assets\02Assets\Hovl Studio\HSFiles\Shaders\Add_CenterGlow.shader" />
     <None Include="Assets\Polytope Studio\Lowpoly_Environments\Sources\Shaders\PT_Rock_Shader.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />

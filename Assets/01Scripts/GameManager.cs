@@ -1405,18 +1405,6 @@ public class GameManager : Singleton<GameManager>
 
         UI_Manager.Instance.UI_Manager_ControllerSet();
         ObjectManager.Instance.ObjectFindSetter();
-
-        GameObject[] groundObjs = GameObject.FindGameObjectsWithTag("Ground");
-        foreach (var i in groundObjs)
-        {
-            var grid = i.GetComponent<A_Star_Grid>();
-            var grid2 = i.GetComponent<A_Star_PathFinding>();
-            if(grid != null)
-            {
-                grid.InitBakeGride();
-                grid2.Seeker = obj.transform.GetChild(0);   
-            }
-        }
     }
 
     #endregion
