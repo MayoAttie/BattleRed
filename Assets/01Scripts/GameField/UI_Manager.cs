@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
+using UnityEngine.SceneManagement;
 using static CharacterUpgradeManager;
 using static UI_UseToolClass;
 using static GameManager;
-using System.Linq;
 using JetBrains.Annotations;
 
 public class UI_Manager : EnergyBarManager
@@ -88,6 +89,12 @@ public class UI_Manager : EnergyBarManager
     private bool isUpgrade_Info_Open;                       // 성유물 업그레이드 버튼 클릭 변수
     private bool[] isEquipUpgradeDetailObjClicked;          // 성유물 업글 창_상세창 제어 플래그
 
+    #endregion
+
+    #region 기타
+    [Header("기타(Etc)")]
+    [SerializeField] GetResourcePrintUI getResourcePrintUI;             // 재료 획득처 출력 객체
+    
     #endregion
 
 
@@ -1221,15 +1228,21 @@ public class UI_Manager : EnergyBarManager
             btnObjArr[1] = GameManager.Instance.SelectButtonScriptPool.GetFromPool(Vector3.zero,Quaternion.identity,SelectButtonPos_2);
             btnObjArr[2] = GameManager.Instance.SelectButtonScriptPool.GetFromPool(Vector3.zero,Quaternion.identity,SelectButtonPos_3);
 
+            foreach (var i in btnObjArr)
+                SelectButtonToDefault(i);
+
             // 각 버튼에 재료 UI 세팅
             WeaponLimitBreakResourcePrintUI(btnObjArr, equippedWeapon);
-
+            
             // 원하는 위치로 이동하려면 Anchors 및 Pivot 조정
             for (int i = 0; i < btnObjArr.Length; i++)
             {
                 // 버튼 클릭 이벤트 함수 연결
-                btnObjArr[i].GetComponentInChildren<Button>().onClick.AddListener(() => WeaponLimitBreakResourcePrintButtonClickLeitener(btnObjArr[i]));
-                RectTransform btnObjRectTransform = btnObjArr[i].GetComponent<RectTransform>();
+                int index = i;
+                btnObjArr[index].GetButton().onClick.RemoveAllListeners();
+                btnObjArr[index].GetButton().onClick.AddListener(() => btnObjArr[index].OnClickEventListener());
+                btnObjArr[index].GetButton().onClick.AddListener(() => WeaponLimitBreakResourcePrintButtonClickLeitener(btnObjArr[index]));
+                RectTransform btnObjRectTransform = btnObjArr[index].GetComponent<RectTransform>();
                 btnObjRectTransform.anchoredPosition = new Vector2(70f, -80f);
                 btnObjRectTransform.pivot = new Vector2(0.5f, 0.5f); // Pivot을 UI 요소 중심으로 설정
             }
@@ -1836,16 +1849,17 @@ public class UI_Manager : EnergyBarManager
 
         for(int i=0; i< btnUIs.Length; i++)
         {
-            var itemCls = dataList[i].RESOURCE_ITEM;
-            int num = dataList[i].RESOURCE_NUMBER;
+            int index = i;
+            var itemCls = dataList[index].RESOURCE_ITEM;
+            int num = dataList[index].RESOURCE_NUMBER;
             Sprite spriteImg = WeaponAndEquipLimitBreak_UI_Dvider(itemCls);
 
-            btnUIs[i].SetIsActive(true);
-            btnUIs[i].SetItemCls(itemCls);                   // 클래스 세팅
-            btnUIs[i].SetItemSprite(spriteImg);              // 아이템 이미지 세팅
-            btnUIs[i].SetItemColor(itemCls.GetGrade());      // 색상 변환
-            btnUIs[i].SetItemText(num.ToString());           // 개수 출력
-            btnUIs[i].GetItemImage().enabled= true;
+            btnUIs[index].SetIsActive(true);
+            btnUIs[index].SetItemCls(itemCls);                   // 클래스 세팅
+            btnUIs[index].SetItemSprite(spriteImg);              // 아이템 이미지 세팅
+            btnUIs[index].SetItemColor(itemCls.GetGrade());      // 색상 변환
+            btnUIs[index].SetItemText(num.ToString());           // 개수 출력
+            btnUIs[index].GetItemImage().enabled= true;
 
             // 보유 여부 및 개수 판단으로 돌파 가능 여부 검사
             var userData = GameManager.Instance.GetUserClass().GetHadGrowMaterialList().Find(tmp => tmp.GetName().Equals(itemCls.GetName()));
@@ -1855,16 +1869,19 @@ public class UI_Manager : EnergyBarManager
                 if (haveNum < num)
                 {
                     isLimitBreakPossible = false;
-                    btnUIs[i].GetItemTxt().color = Color.red;
+                    btnUIs[index].GetItemTxt().color = Color.red;
                 }
-                btnUIs[i].GetItemTxt().color = Color.green;
+                else
+                {
+                    btnUIs[index].GetItemTxt().color = Color.green;
+                }
                 // 등급에 비례해서 요구 가격 계산
                 nWeaponUpgradeCost += (int)(haveNum * userData.GetGrade() * 1000);
             }
             else
             {
                 isLimitBreakPossible = false;
-                btnUIs[i].GetItemTxt().color = Color.red;
+                btnUIs[index].GetItemTxt().color = Color.red;
             }
         }
     }
@@ -1872,7 +1889,11 @@ public class UI_Manager : EnergyBarManager
     // 무기 돌파 재료 출력 버튼 클릭 함수
     private void WeaponLimitBreakResourcePrintButtonClickLeitener(SelectButtonScript btnCls)
     {
-        
+        // 돌파재료가 모자란 경우,
+        if(btnCls.GetItemTxt().color == Color.red)
+        {
+            getResourcePrintUI.Scroll_Start(btnCls.GetItemClass());
+        }
     }
 
 
@@ -2132,6 +2153,7 @@ public class UI_Manager : EnergyBarManager
     #endregion
 
     #endregion
+
 
     #region 성유물 UI 관리
 
@@ -3088,10 +3110,12 @@ public class UI_Manager : EnergyBarManager
 
     #endregion
 
+
     #region 운명의 별자리 UI 관리
 
 
     #endregion
+
 
     #region 특성 UI 관리
 
@@ -3512,6 +3536,14 @@ public class UI_Manager : EnergyBarManager
                         var target = defaultDatas.Find(tmp => tmp.GetName().Equals(completeItem));
 
                         WeaponKindDivider(target, poolDatas[i].GetTopItemImage());
+
+                        // 버튼 세팅
+                        var btn = poolDatas[i].GetButton();
+                        int index = i; // i 값을 별도의 변수에 할당
+                        btn.onClick.RemoveAllListeners();
+                        btn.onClick.AddListener(() => poolDatas[index].ClickedUIApply());
+                        btn.onClick.AddListener(() => SynthesisButtonSelect_DontHaveItem(target));
+
                     }
                     if (dataType == e_PoolItemType.Equip)
                     {
@@ -3519,12 +3551,26 @@ public class UI_Manager : EnergyBarManager
                         var target = defaultDatas.Find(tmp => tmp.GetName().Equals(completeItem));
 
                         EquipmentKindDivider(target, poolDatas[i].GetTopItemImage());
+
+                        // 버튼 세팅
+                        var btn = poolDatas[i].GetButton();
+                        int index = i; // i 값을 별도의 변수에 할당
+                        btn.onClick.RemoveAllListeners();
+                        btn.onClick.AddListener(() => poolDatas[index].ClickedUIApply());
+                        btn.onClick.AddListener(() => SynthesisButtonSelect_DontHaveItem(target));
                     }
                     if (dataType == e_PoolItemType.Gem)
                     {
                         var defaultDatas = GameManager.Instance.GetItemDataList();
                         var target = defaultDatas.Find(tmp => tmp.GetName().Equals(completeItem));
                         poolDatas[i].SetItemSprite(WeaponAndEquipLimitBreak_UI_Dvider(target));
+
+                        // 버튼 세팅
+                        var btn = poolDatas[i].GetButton();
+                        int index = i; // i 값을 별도의 변수에 할당
+                        btn.onClick.RemoveAllListeners();
+                        btn.onClick.AddListener(() => poolDatas[index].ClickedUIApply());
+                        btn.onClick.AddListener(() => SynthesisButtonSelect_DontHaveItem(target));
                     }
 
                     poolDatas[i].SetItemColor(0);
@@ -3538,9 +3584,6 @@ public class UI_Manager : EnergyBarManager
                     poolDatas[i].transform.SetParent(sythesisPrintScroll);
                     poolDatas[i].transform.SetAsLastSibling();
 
-                    int index = i;
-                    var btn = poolDatas[index].GetButton();
-                    btn.onClick.RemoveAllListeners();
                 }
             }
         }
@@ -3617,6 +3660,8 @@ public class UI_Manager : EnergyBarManager
                 {
                     // 1번 재료
                     var resource_1 = GameManager.Instance.SelectButtonScriptPool.GetFromPool(Vector2.zero, Quaternion.identity, resourceSet_img[0]);
+                    ResetToSelectButton(resource_1);
+                    
                     resource_1.SetIsActive(true);
                     resource_1.transform.SetParent(resourceSet_img[0]);
                     resource_1.transform.localPosition = Vector3.zero;
@@ -3628,8 +3673,14 @@ public class UI_Manager : EnergyBarManager
                     etc_resourceText_1 = resource_1.GetItemTxt();
                     etc_resourceText_1.text = "0";
 
+                    // 재료 파밍 위치 구하기
+                    var data = GameManager.Instance.GetItemDataList().Find(tmp => tmp.GetName().Equals(selected_synthesisData.MATERIAL_1));
+                    resource_1.GetButton().onClick.AddListener(() => NavigateResourceClickEvent(data));
+
                     // 2번 재료 - 모라
                     var resource_2 = GameManager.Instance.SelectButtonScriptPool.GetFromPool(Vector2.zero, Quaternion.identity, resourceSet_img[1]);
+                    ResetToSelectButton(resource_2);
+                    
                     resource_2.SetIsActive(true);
                     resource_2.transform.SetParent(resourceSet_img[1]);
                     resource_2.transform.localPosition = Vector3.zero;
@@ -3648,6 +3699,12 @@ public class UI_Manager : EnergyBarManager
                 }
             }
         }
+        // 재료 파밍위치 안내 함수
+        void NavigateResourceClickEvent(ItemClass item)
+        {
+            instance.getResourcePrintUI.Scroll_Start(item);
+        }
+
         // 슬라이드 바, 값 Notifyed Getter
         void SynthesisSlideValueGetNotify(float value)
         {
@@ -3915,7 +3972,7 @@ public class UI_Manager : EnergyBarManager
             TextMeshProUGUI targetNumeText = SynthesisObjectScreen.transform.GetChild(8).GetChild(1).GetChild(3).GetComponent<TextMeshProUGUI>();
             targetNumeText.text = "장비 합성을 통해서 " + etc_currentNum.ToString() + "개의 장비 제조";
         }
-
+        // 합성할 개체를 선택하여 호출되는 이벤트 리스너
         void SynthesisButtonSelect(ItemClass selected, e_PoolItemType type, SYNTHESIS_DATA_BASE selectData)
         {
 
@@ -3952,6 +4009,12 @@ public class UI_Manager : EnergyBarManager
                     tmp.ClickedUIApply();
             }
         }
+        // 성유물 선택시 호출함수(보유 객체가 아닐때.)
+        void SynthesisButtonSelect_DontHaveItem(ItemClass target)
+        {
+            instance.getResourcePrintUI.Scroll_Start(target);
+        }
+
         void EquipIndexSetter() //성유물의 인덱스 설정
         {
             switch(selectedItem_sythesis.GetTag())
@@ -3973,6 +4036,8 @@ public class UI_Manager : EnergyBarManager
                     break;
             }
         }
+
+        // 사용버튼 클릭 이벤트 리스너
         void UseButtonFunc()
         {
             Debug.Log(nameof(instance.dic_ItemClsForUpgrade.Count)+instance.dic_ItemClsForUpgrade.Count);

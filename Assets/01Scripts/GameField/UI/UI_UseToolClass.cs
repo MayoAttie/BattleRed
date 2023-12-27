@@ -199,8 +199,10 @@ public class UI_UseToolClass
     {
         Button btn = btnObj.GetButton();
         // 액티브는 비활성화
-        btnObj.SetIsActive(false);
-        btnObj.SetItemCls(null);
+        //btnObj.SetIsActive(false);
+        //btnObj.SetItemCls(null);
+        //btnObj.GetItemTxt().color = Color.black;
+        SelectButtonToDefault(btnObj);
         if (btn != null)
         {
             // 모든 이벤트 리스너를 제거하고, 기존의 이벤트 리스너를 다시 부착한다.

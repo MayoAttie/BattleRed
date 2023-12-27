@@ -80,7 +80,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
         StartCoroutine("CheckCollidersPeriodically");
 
-        pathFinder.FindPathStart(objMng_instance.objectArray[1].transform.position);      // To Test
+        //pathFinder.FindPathStart(objMng_instance.objectArray[1].transform.position);      // To Test
 
     }
     private void OnEnable()
@@ -473,6 +473,10 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     public CharacterClass GetCharacterClass(){return clsCharacter;}
     public CharacterAttackMng.e_AttackLevel GetCharacterAtkLevel() { return atkLevel; }
     public void SetCharacterClass(CharacterClass cls){clsCharacter = cls;}
+    public PathFinder _PathFinder
+    {
+        get { return pathFinder; }
+    }
     
     
     public void SetIsBattle(bool b) { isBattle = b; }

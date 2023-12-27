@@ -110,6 +110,7 @@
     <Compile Include="Assets\01Scripts\GameField\UI\ButtonClass2.cs" />
     <Compile Include="Assets\01Scripts\GameField\UI\ButtonRotateSetCls.cs" />
     <Compile Include="Assets\01Scripts\GameField\UI\DataPrintScreen\DataPrintScreenScrollManager.cs" />
+    <Compile Include="Assets\01Scripts\GameField\UI\GetResourcePrintUI.cs" />
     <Compile Include="Assets\01Scripts\GameField\UI\InvenItemObjClass.cs" />
     <Compile Include="Assets\01Scripts\GameField\UI\InventoryButton.cs" />
     <Compile Include="Assets\01Scripts\GameField\UI\InventorySortSelectButton.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="Assets\01Scripts\GameField\UI\PopUpScreenClass.cs" />
     <Compile Include="Assets\01Scripts\GameField\UI\SelectButtonScript.cs" />
     <Compile Include="Assets\01Scripts\GameField\UI\SliderController.cs" />
+    <Compile Include="Assets\01Scripts\GameField\UI\TextLongButton.cs" />
     <Compile Include="Assets\01Scripts\GameField\UI\UI_UseToolClass.cs" />
     <Compile Include="Assets\01Scripts\GameField\UI_Manager.cs" />
     <Compile Include="Assets\01Scripts\GameField\UserClass.cs" />

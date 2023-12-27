@@ -62,6 +62,8 @@ public class ItemSpritesSaver : Singleton<ItemSpritesSaver>
      *  1 - Close 스프라이트
      *  2 - Plus 스프라이트
      *  3 - 모라
+     *  4 - 합성마크
+     *  5 - 보물상자
      */
     [Header("기타 스프라이트")]
     public Sprite[] SpritesSet;

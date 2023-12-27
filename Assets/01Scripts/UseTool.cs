@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class UseTool
 {
     // 애니메이션의 길이를 얻는 함수
@@ -29,5 +29,15 @@ public class UseTool
             copy.CopyFrom(item);
             itemList.Add(copy);
         }
+    }
+
+    public static bool IsCurrentSceneNameCorrect(string name)
+    {
+        string currentSceneName = SceneManager.GetActiveScene().name;
+
+        if (currentSceneName.Equals(name))
+            return true;
+        else
+            return false;
     }
 }
