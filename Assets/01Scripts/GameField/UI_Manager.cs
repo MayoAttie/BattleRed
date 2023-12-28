@@ -94,6 +94,7 @@ public class UI_Manager : EnergyBarManager
     #region 기타
     [Header("기타(Etc)")]
     [SerializeField] GetResourcePrintUI getResourcePrintUI;             // 재료 획득처 출력 객체
+    [SerializeField] WorldMap_Manager wolrdMap_manager;                 // 월드맵 매니저 객체
     
     #endregion
 
@@ -3125,7 +3126,6 @@ public class UI_Manager : EnergyBarManager
 
     #region 기타 및 툴
 
-
     private void ResetToSelectButtonScriptPoolDatas()
     {
         // 오브젝트 풀로 가져온 각 버튼에 Button이벤트를 Remove함
@@ -3192,6 +3192,12 @@ public class UI_Manager : EnergyBarManager
     }
 
 
+    public void WorldMapOpenButtonClick()
+    {
+        wolrdMap_manager.WorldMapOpenClick();
+    }
+
+
     #region 정렬 레거시
 
     //void SortingItemList(List<ItemClass> clsList)
@@ -3223,9 +3229,16 @@ public class UI_Manager : EnergyBarManager
 
     #endregion
 
+
+    #region 게터세터
     public e_InventoryTypeSelected GetnSelectedInvenIdx(){return invenType_Index; }
+    
+    public WorldMap_Manager GetWorldMap_Manager{ get { return wolrdMap_manager; } }
 
     #endregion
+
+    #endregion
+
 
 
 

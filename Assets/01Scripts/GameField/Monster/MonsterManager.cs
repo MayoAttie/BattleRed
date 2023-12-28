@@ -7,7 +7,7 @@ using UnityEngine.AI;
 using static Monster;
 using static HandlePauseTool;
 
-public class MonsterManager : MonoBehaviour, Observer
+public class MonsterManager : Subject, Observer
 {
 
     #region 변수
@@ -713,6 +713,10 @@ public class MonsterManager : MonoBehaviour, Observer
     public void AttackSkillEndNotify(){}
 
     public void CheckPoint_PlayerPassNotify(int num){}
+
+    public void WorldMapOpenNotify(){}
+
+    public void WorldMapCloseNotify(){}
 
     #endregion
 

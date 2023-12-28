@@ -123,6 +123,7 @@
     <Compile Include="Assets\01Scripts\GameField\UI\UI_UseToolClass.cs" />
     <Compile Include="Assets\01Scripts\GameField\UI_Manager.cs" />
     <Compile Include="Assets\01Scripts\GameField\UserClass.cs" />
+    <Compile Include="Assets\01Scripts\GameField\WorldMap_Manager.cs" />
     <Compile Include="Assets\01Scripts\GameManager.cs" />
     <Compile Include="Assets\01Scripts\Patterns\CombatMediator.cs" />
     <Compile Include="Assets\01Scripts\Patterns\ICombatMediator.cs" />

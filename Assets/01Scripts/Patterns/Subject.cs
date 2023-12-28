@@ -67,4 +67,20 @@ public abstract class Subject : MonoBehaviour
             tmp.CheckPoint_PlayerPassNotify(num);
         }
     }
+    public void WorldMapOpenNotify()
+    {
+        foreach(Observer tmp in _observers)
+        {
+            tmp.WorldMapOpenNotify();
+        }
+    }
+
+    public void WorldMapCloseNotify()
+    {
+        foreach(Observer tmp in _observers)
+        {
+            tmp.WorldMapCloseNotify();
+        }
+    }
+
 }

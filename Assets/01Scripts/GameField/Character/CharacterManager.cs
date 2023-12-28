@@ -514,6 +514,10 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
     public void CheckPoint_PlayerPassNotify(int num){}
 
+    public void WorldMapOpenNotify(){}
+
+    public void WorldMapCloseNotify(){}
+
 
 
     #endregion

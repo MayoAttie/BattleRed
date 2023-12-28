@@ -58,6 +58,13 @@ public class CameraController : MonoBehaviour, Observer
     private float rotationX = 0.0f;
     public TouchPadController touchPad;
 
+    [Tooltip("카메라 컨트롤러 상태")]
+    CameraControllerState cameraState;
+
+    private float miniMapSize = 8f; // 월드맵 크기를 나타내는 변수
+
+    public Transform mainMapPos;
+
 
     #endregion
 
@@ -82,6 +89,15 @@ public class CameraController : MonoBehaviour, Observer
         [Tooltip("Layers the camera collide with")]
         public LayerMask CollisionMask;
     }
+
+
+    // 카메라 컨트롤러 상태
+    public enum CameraControllerState
+    {
+        ToTarget,
+        WorldMap
+    }
+
     #endregion
     
     private float _pitch;
@@ -92,11 +108,12 @@ public class CameraController : MonoBehaviour, Observer
 
     public void Awake()
     {
+        cameraState = CameraControllerState.ToTarget;
     }
 
     public void Start()
     {
-
+        UI_Manager.Instance.GetWorldMap_Manager.Attach(this);
         _pitch = Mathf.DeltaAngle(0, -transform.localEulerAngles.x);
         _distance = Distance;
 
@@ -104,14 +121,35 @@ public class CameraController : MonoBehaviour, Observer
 
     public void Update()
     {
-        SetTarget();
+        switch(cameraState)
+        {
+            case CameraControllerState.ToTarget:
+                SetTarget();
+                RotateCamera();
+                break;
+            case CameraControllerState.WorldMap:
+                break;
+        }
 
-        RotateCamera();
     }
 
 
     public void LateUpdate()
     {
+        switch(cameraState)
+        {
+            case CameraControllerState.ToTarget:
+                ToTargetChase();
+                break;
+            case CameraControllerState.WorldMap:
+                break;
+        }
+    }
+
+    // 타겟 추적 함수
+    private void ToTargetChase()
+    {
+
         if (Target == null) return;
 
         float characterYaw = Target.eulerAngles.y;
@@ -153,12 +191,15 @@ public class CameraController : MonoBehaviour, Observer
         }
 
         // 미니맵 카메라 위치 설정
-        if(MiniMapCamera!= null)
+        if (MiniMapCamera != null)
         {
             Vector3 miniMapPosition = new Vector3(Target.transform.position.x, MiniMapCamera.transform.position.y, Target.transform.position.z);
             MiniMapCamera.transform.position = miniMapPosition;
+
+            FixMiniMapSize();
         }
     }
+
 
     // 시작점(startPos)과 끝점(endPos) 사이에 레이를 발사하여 충돌 감지를 수행하는 메서드
     private bool RayCast(Vector3 start, Vector3 end, ref Vector3 result, float thickness)
@@ -193,6 +234,16 @@ public class CameraController : MonoBehaviour, Observer
         }
     }
 
+    // 미니맵 사이즈 조절
+    private void FixMiniMapSize()
+    {
+        if (MiniMapCamera != null)
+        {
+            MiniMapCamera.orthographicSize = miniMapSize; 
+        }
+    }
+
+    // 카메라 회전 함수() (타겟 추적 중),
     private void RotateCamera()
     {
         e_TouchSlideDic touchDic;
@@ -222,6 +273,7 @@ public class CameraController : MonoBehaviour, Observer
         }
     }
 
+    // 타겟 세팅
     void SetTarget()
     {
         if (!isFindTarget && Target == null)
@@ -239,6 +291,8 @@ public class CameraController : MonoBehaviour, Observer
             isFindTarget = false;
         }
     }
+
+
 
 
     #region 옵저버
@@ -260,5 +314,32 @@ public class CameraController : MonoBehaviour, Observer
     }
 
     public void CheckPoint_PlayerPassNotify(int num){}
+
+    public void WorldMapOpenNotify()
+    {
+
+        cameraState = CameraControllerState.WorldMap;
+        miniMapSize = 35f;
+        MiniMapCamera.transform.position = mainMapPos.position;
+        FixMiniMapSize();
+    }
+
+    public void WorldMapCloseNotify()
+    {
+        cameraState = CameraControllerState.ToTarget;
+        miniMapSize = 8f;
+
+    }
+
+
+    #endregion
+
+
+    #region 게터세터
+    public float MiniMapSize
+    {
+        get { return miniMapSize; }
+        set { miniMapSize = value; }
+    }
     #endregion
 }

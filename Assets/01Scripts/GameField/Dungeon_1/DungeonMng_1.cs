@@ -182,5 +182,10 @@ public class DungeonMng_1 : DungeonManager, Observer
         CheckPointPassRespawn(num);
     }
 
+    public void WorldMapOpenNotify(){}
+
+    public void WorldMapCloseNotify(){}
+
+
     #endregion
 }

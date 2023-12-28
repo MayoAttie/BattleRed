@@ -8,5 +8,7 @@ public interface Observer
     void AttackSkillStartNotify();
     void AttackSkillEndNotify();
     void CheckPoint_PlayerPassNotify(int num);
+    void WorldMapOpenNotify();
+    void WorldMapCloseNotify();
 }
 

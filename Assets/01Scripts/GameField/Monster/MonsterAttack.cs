@@ -228,10 +228,13 @@ public class MonsterAttack : MonoBehaviour, Observer
 
     public void AttackSkillEndNotify(){}
 
-    public void CheckPoint_PlayerPassNotify(int num)
-    {
-        throw new System.NotImplementedException();
-    }
+    public void CheckPoint_PlayerPassNotify(int num){}
+
+    public void WorldMapOpenNotify(){}
+
+    public void WorldMapCloseNotify(){}
+
+
 
     #endregion
 

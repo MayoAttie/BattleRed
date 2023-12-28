@@ -1759,7 +1759,7 @@ PrefabInstance:
     - target: {fileID: 6170907400950854278, guid: 0e650828895f9fb46ae7e7bf18db2813,
         type: 3}
       propertyPath: m_RootOrder
-      value: 27
+      value: 26
       objectReference: {fileID: 0}
     - target: {fileID: 6170907400950854278, guid: 0e650828895f9fb46ae7e7bf18db2813,
         type: 3}
@@ -6246,6 +6246,7 @@ MonoBehaviour:
   minRotationX: -90
   maxRotationX: 90
   touchPad: {fileID: 1577411562}
+  mainMapPos: {fileID: 0}
 --- !u!4 &1908583811 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400006, guid: 55a646fd6dfe81b4faac91455288e8e4,
@@ -72508,8 +72509,8 @@ Transform:
   - {fileID: 7344745918584720591}
   - {fileID: 1232385705}
   - {fileID: 7344745917734383834}
-  - {fileID: 656116714}
   - {fileID: 677527799}
+  - {fileID: 656116714}
   - {fileID: 2002149703}
   - {fileID: 491073079}
   m_Father: {fileID: 0}
