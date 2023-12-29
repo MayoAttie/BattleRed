@@ -13,7 +13,6 @@ TagManager:
   - DungeonSpwanPoint
   - BottomCanvas
   - CheckPoint
-  - MinimapCamera
   layers:
   - Default
   - TransparentFX
@@ -32,7 +31,7 @@ TagManager:
   - SpawnPosImage
   - Item
   - InteractionObj
-  - 
+  - InaccessibleObject
   - 
   - 
   - 

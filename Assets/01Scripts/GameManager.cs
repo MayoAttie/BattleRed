@@ -1406,9 +1406,11 @@ public class GameManager : Singleton<GameManager>
         UI_Manager.Instance.UI_Manager_ControllerSet();
         ObjectManager.Instance.ObjectFindSetter();
 
-        GameObject mini = GameObject.FindGameObjectWithTag("MinimapCamera");
-        UI_Manager.Instance.GetWorldMap_Manager.MinimapCamera = mini.GetComponent<Camera>();
-
+        GameObject mini = GameObject.FindGameObjectWithTag("MainCamera");
+        var cameraMng = mini.GetComponent<CameraController>();
+        UI_Manager.Instance.GetWorldMap_Manager.MinimapCamera = cameraMng.MiniMapCamera;
+        UI_Manager.Instance.GetWorldMap_Manager.CameraFarSize = cameraMng.MiniMapSize;
+        UI_Manager.Instance.GetWorldMap_Manager._cameraController = cameraMng;
     }
 
     #endregion

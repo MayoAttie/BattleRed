@@ -61,7 +61,6 @@ public class CameraController : MonoBehaviour, Observer
     [Tooltip("카메라 컨트롤러 상태")]
     CameraControllerState cameraState;
 
-    private float miniMapSize = 8f; // 월드맵 크기를 나타내는 변수
 
     public Transform mainMapPos;
 
@@ -100,6 +99,7 @@ public class CameraController : MonoBehaviour, Observer
 
     #endregion
     
+    private float miniMapSize = 8f; // 월드맵 크기를 나타내는 변수
     private float _pitch;
     private float _distance;
     private Vector3 _jumpStartPos;
