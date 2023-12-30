@@ -6,7 +6,6 @@ using UnityEngine.UI;
 using UnityEngine.AI;
 using static Monster;
 using static HandlePauseTool;
-
 public class MonsterManager : Subject, Observer
 {
 
@@ -30,6 +29,7 @@ public class MonsterManager : Subject, Observer
     public float fElapsedTime;                          // 시간 변수
     Vector3 v3_startPos;                                // 몬스터 처음 위치
     MonsterAttack.e_MonsterAttackLevel monsterAtkLevel; // 몬스터 어택 단계 변수
+    MonsterAniControl monsterConroller;                 // 몬스터 애니메이션 컨트롤러 변수
     MonsterHp monsterHPMng;                             // 몬스터 HpBar 매니저 함수
     Image[] monsterHpbar_img;
     int playerrLayer;
@@ -136,7 +136,7 @@ public class MonsterManager : Subject, Observer
         hp = monster.GetMonsterCurrentHp(); // 몬스터 hp 체크
         state = monster.GetMonsterState();  // 몬스터 상태 반영
         Monster_AI_Process();               // AI 종합 제어 함수
-        MonsterAnimationController();       // 몬스터 애니메이션 컨틀롤러
+        monsterConroller.MonsterAnimationController(ref fPosZ, ref fPosX, ref monsterAtkLevel);       // 몬스터 애니메이션 컨틀롤러
         if(isDead)
             StartCoroutine(WaitForDeadAnimation()); // 사망 함수
 
@@ -471,71 +471,71 @@ public class MonsterManager : Subject, Observer
     #endregion
 
     #region 애니메이션 관리
-    void MonsterAnimationController()
-    {
-        switch (monster.GetMonsterState())
-        {
-            case Monster.e_MonsterState.Idle:               // 정지
-                MobAnimator.SetInteger("Controller", 0);
-                MobAnimator.SetFloat("zPos", fPosZ);
-                MobAnimator.SetFloat("xPos", fPosX);
-                break;
-            case Monster.e_MonsterState.Walk:               // 이동
-                MobAnimator.SetInteger("Controller", -1);
-                MobAnimator.SetFloat("zPos", fPosZ);
-                MobAnimator.SetFloat("xPos", fPosX);
-                break;
-            case Monster.e_MonsterState.Attack:             // 공격
-                if(monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel.Chase)
-                {
-                    MobAnimator.SetInteger("Controller", -1);
-                    MobAnimator.SetFloat("zPos", fPosZ);
-                    MobAnimator.SetFloat("xPos", fPosX);
-                }
-                else if(monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel._1st)
-                {
-                    MobAnimator.SetFloat("zPos", fPosZ);
-                    MobAnimator.SetFloat("xPos", fPosX);
-                    MobAnimator.SetInteger("Controller", 11);
-                }
-                else if (monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel._2rd)
-                {
-                    MobAnimator.SetFloat("zPos", fPosZ);
-                    MobAnimator.SetFloat("xPos", fPosX);
-                    MobAnimator.SetInteger("Controller", 12);
-                }
-                else if (monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel._3th)
-                {
-                    MobAnimator.SetFloat("zPos", fPosZ);
-                    MobAnimator.SetFloat("xPos", fPosX);
-                    MobAnimator.SetInteger("Controller", 13);
-                }
-                else if (monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel._4th)
-                {
-                    MobAnimator.SetFloat("zPos", fPosZ);
-                    MobAnimator.SetFloat("xPos", fPosX);
-                    MobAnimator.SetInteger("Controller", 14);
-                }
-                break;
-            case Monster.e_MonsterState.LookAround:
-                MobAnimator.SetInteger("Controller", 1);
-                break;
-            case Monster.e_MonsterState.Hit:
-                MobAnimator.SetInteger("Controller", 2);
-                MobAnimator.SetFloat("zPos", 0);
-                MobAnimator.SetFloat("xPos", 0);
-                break;
-            case Monster.e_MonsterState.Sturn:
-                MobAnimator.SetInteger("Controller", 3);
-                break;
-            case Monster.e_MonsterState.Die:
-                MobAnimator.SetInteger("Controller", 4);
-                MobAnimator.SetFloat("zPos", 0);
-                MobAnimator.SetFloat("xPos", 0);
-                break;
-            default: break;
-        }
-    }
+    //void MonsterAnimationController()
+    //{   
+    //    switch (monster.GetMonsterState())
+    //    {
+    //        case Monster.e_MonsterState.Idle:               // 정지
+    //            MobAnimator.SetInteger("Controller", 0);
+    //            MobAnimator.SetFloat("zPos", fPosZ);
+    //            MobAnimator.SetFloat("xPos", fPosX);
+    //            break;
+    //        case Monster.e_MonsterState.Walk:               // 이동
+    //            MobAnimator.SetInteger("Controller", -1);
+    //            MobAnimator.SetFloat("zPos", fPosZ);
+    //            MobAnimator.SetFloat("xPos", fPosX);
+    //            break;
+    //        case Monster.e_MonsterState.Attack:             // 공격
+    //            if(monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel.Chase)
+    //            {
+    //                MobAnimator.SetInteger("Controller", -1);
+    //                MobAnimator.SetFloat("zPos", fPosZ);
+    //                MobAnimator.SetFloat("xPos", fPosX);
+    //            }
+    //            else if(monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel._1st)
+    //            {
+    //                MobAnimator.SetFloat("zPos", fPosZ);
+    //                MobAnimator.SetFloat("xPos", fPosX);
+    //                MobAnimator.SetInteger("Controller", 11);
+    //            }
+    //            else if (monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel._2rd)
+    //            {
+    //                MobAnimator.SetFloat("zPos", fPosZ);
+    //                MobAnimator.SetFloat("xPos", fPosX);
+    //                MobAnimator.SetInteger("Controller", 12);
+    //            }
+    //            else if (monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel._3th)
+    //            {
+    //                MobAnimator.SetFloat("zPos", fPosZ);
+    //                MobAnimator.SetFloat("xPos", fPosX);
+    //                MobAnimator.SetInteger("Controller", 13);
+    //            }
+    //            else if (monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel._4th)
+    //            {
+    //                MobAnimator.SetFloat("zPos", fPosZ);
+    //                MobAnimator.SetFloat("xPos", fPosX);
+    //                MobAnimator.SetInteger("Controller", 14);
+    //            }
+    //            break;
+    //        case Monster.e_MonsterState.LookAround:
+    //            MobAnimator.SetInteger("Controller", 1);
+    //            break;
+    //        case Monster.e_MonsterState.Hit:
+    //            MobAnimator.SetInteger("Controller", 2);
+    //            MobAnimator.SetFloat("zPos", 0);
+    //            MobAnimator.SetFloat("xPos", 0);
+    //            break;
+    //        case Monster.e_MonsterState.Sturn:
+    //            MobAnimator.SetInteger("Controller", 3);
+    //            break;
+    //        case Monster.e_MonsterState.Die:
+    //            MobAnimator.SetInteger("Controller", 4);
+    //            MobAnimator.SetFloat("zPos", 0);
+    //            MobAnimator.SetFloat("xPos", 0);
+    //            break;
+    //        default: break;
+    //    }
+    //}
     #endregion
 
     #region 기타함수
@@ -552,15 +552,20 @@ public class MonsterManager : Subject, Observer
                 // 새로운 MobCactusAttack 컴포넌트 추가
                 monsterAtk = gameObject.AddComponent<MobCactusAttack>();
                 monsterAtk.SetMonsetrCls(monster);
-                monsterAtk.SetNavMeshAgent(navMeshController);
+                    monsterAtk.SetNavMeshAgent(navMeshController);
                 if (monsterControl_info.chaseRange == default)
                     monsterAtk.SetChaseRange(fChaseRange);
                 else
                     monsterAtk.SetChaseRange(monsterControl_info.chaseRange);
                 monsterAtk.SetAtkColliderBox(atkColliderBox);
+                // 애니컨트롤러 추가
+                monsterConroller = gameObject.AddComponent<MonsterAniControl_type1>();
+                monsterConroller._Monster = monster;
+                monsterConroller._MobAnimator = MobAnimator;
                 break;
             case "MushroomAngry":
                 monsterAtk = gameObject.AddComponent<MobAngryMushroomAttack>();
+                monsterConroller = gameObject.AddComponent<MonsterAniControl_type1>();
                 monsterAtk.SetMonsetrCls(monster);
                 monsterAtk.SetNavMeshAgent(navMeshController);
                 if (monsterControl_info.chaseRange == default)
@@ -568,6 +573,10 @@ public class MonsterManager : Subject, Observer
                 else
                     monsterAtk.SetChaseRange(monsterControl_info.chaseRange);
                 monsterAtk.SetAtkColliderBox(atkColliderBox);
+                // 애니컨트롤러 추가
+                monsterConroller = gameObject.AddComponent<MonsterAniControl_type1>();
+                monsterConroller._Monster = monster;
+                monsterConroller._MobAnimator = MobAnimator;
                 break;
             default: break;
         }
