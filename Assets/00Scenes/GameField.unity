@@ -31634,6 +31634,7 @@ MonoBehaviour:
   Monsters:
   - {fileID: 964687776520508719, guid: 9b8ee25e0eccb044b87fed4f690344e3, type: 3}
   - {fileID: 669637969409564130, guid: a82e107712a1f0c488bf3fa75cfe5d75, type: 3}
+  - {fileID: 9133251259607482230, guid: d7059029bcb566343b39dbb9d4ddae9a, type: 3}
   MonsterHpBar: {fileID: 8504971004382151705, guid: 89969b93843c64942b422f988c5b2e3e,
     type: 3}
   InventoryItemObj: {fileID: 88944795263965683, guid: 0a89c898cb0b69f4f9ce2ed47f1e2f9a,

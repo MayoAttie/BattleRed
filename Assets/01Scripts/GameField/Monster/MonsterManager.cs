@@ -99,7 +99,7 @@ public class MonsterManager : Subject, Observer
         isDeadFlag = false;
         monsterAtkLevel = MonsterAttack.e_MonsterAttackLevel.None;
         v3_startPos = this.gameObject.transform.position;
-        navMeshController.ResetPath();
+        navMeshController.ResetPath();  
 
 
 
@@ -231,6 +231,9 @@ public class MonsterManager : Subject, Observer
                 ItemDropManager.Instance.ItemDrop(this.transform, "성유물");   // 성유물 드랍
                 GameManager.Instance.MushroomAngryPool.ReturnToPool(monsterManager);
                 break;
+            case "Golem_Boss":
+
+                break;
             default: break;
         }
         GameManager.Instance.MonsterHpBarPool.ReturnToPool(monsterHPMng);
@@ -259,9 +262,6 @@ public class MonsterManager : Subject, Observer
                 isBattle = false;
             }
         }
-
-
-
     }
 
     public void WhenHittedChaseToTarget(CharacterManager userManager)
@@ -276,28 +276,7 @@ public class MonsterManager : Subject, Observer
     //히트 시, 경직 누적 함수
     public void HitStrunPointAccumulate(float fPoint)
     {
-        float maxSturnPoint = monster.GetMonsterSturnPoint();
-        float currentSturnPoint = monster.GetCurrentSturnPoint();
-        float tmp = fPoint + currentSturnPoint;
-
-        // 경직도 계산
-        if (tmp > maxSturnPoint)
-        {
-            monster.SetCurrentSturnPoint(0);
-
-            // Random.Range를 사용하여 0부터 1 사이의 랜덤한 값(실수) 생성
-            float randomValue = Random.Range(0f, 1f);
-
-            // 50% 확률로 isHit 또는 isSturn 설정
-            if (randomValue <= 0.5f)
-                isHit = true;
-            else
-                isSturn = true;
-        }
-        else
-        {
-            monster.SetCurrentSturnPoint(tmp);
-        }
+        monsterConroller.HitStrunAccumulate(fPoint, ref isHit, ref isSturn);
     }
 
 
@@ -565,7 +544,6 @@ public class MonsterManager : Subject, Observer
                 break;
             case "MushroomAngry":
                 monsterAtk = gameObject.AddComponent<MobAngryMushroomAttack>();
-                monsterConroller = gameObject.AddComponent<MonsterAniControl_type1>();
                 monsterAtk.SetMonsetrCls(monster);
                 monsterAtk.SetNavMeshAgent(navMeshController);
                 if (monsterControl_info.chaseRange == default)
@@ -577,6 +555,21 @@ public class MonsterManager : Subject, Observer
                 monsterConroller = gameObject.AddComponent<MonsterAniControl_type1>();
                 monsterConroller._Monster = monster;
                 monsterConroller._MobAnimator = MobAnimator;
+                break;
+            case "Golem_Boss":
+                monsterAtk = gameObject.AddComponent<MobGolemBossAttack>();
+                monsterAtk.SetMonsetrCls(monster);
+                monsterAtk.SetNavMeshAgent(navMeshController);
+                if (monsterControl_info.chaseRange == default)
+                    monsterAtk.SetChaseRange(fChaseRange);
+                else
+                    monsterAtk.SetChaseRange(monsterControl_info.chaseRange);
+                monsterAtk.SetAtkColliderBox(atkColliderBox);
+                // 애니컨트롤러 추가
+                monsterConroller = gameObject.AddComponent<MonsterAniControl_type2>();
+                monsterConroller._Monster = monster;
+                monsterConroller._MobAnimator = MobAnimator;
+
                 break;
             default: break;
         }
@@ -705,7 +698,7 @@ public class MonsterManager : Subject, Observer
     public void GetEnemyFindNotify(List<Transform> findList)
     {
         // 선공형일 경우, 범위 내에 적이 포착된 경우 공격 모드로 전환
-        if(monster.GetMonsterType() == e_MonsterType.Precedence)
+        if(monster.GetMonsterType() != e_MonsterType.Counter    )
         {
             if(findList != null && findList.Count>0)
             {

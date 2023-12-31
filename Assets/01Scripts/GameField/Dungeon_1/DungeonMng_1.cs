@@ -87,6 +87,14 @@ public class DungeonMng_1 : DungeonManager, Observer
                     // 1차 웨이브 포인트 저장
                     list_wave_1.Add(tmp);
                     break;
+                case "Boss":    
+                    {
+                        Monster monsterCls = new Monster("몬스터", "Golem_Boss", 1, true, Monster.e_MonsterState.None, Monster.e_MonsterType.Boss,
+                20000, 20000, 250, 40, 25, 1.8f, 100f, Element.e_Element.None, 1.5f, 60);
+
+                        GameManager.Instance.SpawnMonster_StaticSet(tmp.transform.position, "Golem_Boss", monsterCls);
+                    }
+                    break;
             }
         }
     }

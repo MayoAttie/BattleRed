@@ -99,7 +99,7 @@ public class CameraController : MonoBehaviour, Observer
 
     #endregion
     
-    private float miniMapSize = 8f; // 월드맵 크기를 나타내는 변수
+    private float miniMapSize; // 월드맵 크기를 나타내는 변수
     private float _pitch;
     private float _distance;
     private Vector3 _jumpStartPos;
@@ -109,6 +109,7 @@ public class CameraController : MonoBehaviour, Observer
     public void Awake()
     {
         cameraState = CameraControllerState.ToTarget;
+        miniMapSize = 8f;
     }
 
     public void Start()

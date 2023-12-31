@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class MonsterAniControl_type1 : MonsterAniControl
 {
+    public MonsterAniControl_type1()
+    {
+    }
+
     public override void MonsterAnimationController(ref float fPosZ, ref float fPosX, ref MonsterAttack.e_MonsterAttackLevel monsterAtkLevel)
     {
         switch (_Monster.GetMonsterState())
@@ -70,5 +74,31 @@ public class MonsterAniControl_type1 : MonsterAniControl
         }
     }
 
+
+    public override void HitStrunAccumulate(float fPoint, ref bool isHit, ref bool isSturn)
+    {
+        float maxSturnPoint = _Monster.GetMonsterSturnPoint();
+        float currentSturnPoint = _Monster.GetCurrentSturnPoint();
+        float tmp = fPoint + currentSturnPoint;
+
+        // 경직도 계산
+        if (tmp > maxSturnPoint)
+        {
+            _Monster.SetCurrentSturnPoint(0);
+
+            // Random.Range를 사용하여 0부터 1 사이의 랜덤한 값(실수) 생성
+            float randomValue = Random.Range(0f, 1f);
+
+            // 50% 확률로 isHit 또는 isSturn 설정
+            if (randomValue <= 0.5f)
+                isHit = true;
+            else
+                isSturn = true;
+        }
+        else
+        {
+            _Monster.SetCurrentSturnPoint(tmp);
+        }
+    }
 
 }

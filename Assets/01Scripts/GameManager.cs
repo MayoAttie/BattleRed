@@ -21,6 +21,7 @@ public class GameManager : Singleton<GameManager>
     // 오브젝트 풀
     public ObjectPool<MonsterManager> CactusPool;
     public ObjectPool<MonsterManager> MushroomAngryPool;
+    public ObjectPool<MonsterManager> GolemBossPool;
     public ObjectPool<MonsterHp> MonsterHpBarPool;
     public ObjectPool<InvenItemObjClass> WeaponItemPool;
     public ObjectPool<InvenItemObjClass> EquipItemPool;
@@ -157,6 +158,7 @@ public class GameManager : Singleton<GameManager>
         // 오브젝트 풀 초기화
         CactusPool = new ObjectPool<MonsterManager>(Monsters[0],10, objectPoolSavePos);
         MushroomAngryPool = new ObjectPool<MonsterManager>(Monsters[1],10, objectPoolSavePos);
+        GolemBossPool = new ObjectPool<MonsterManager>(Monsters[2], 1, objectPoolSavePos);
         MonsterHpBarPool = new ObjectPool<MonsterHp>(MonsterHpBar, 15, objectPoolSavePos);
         WeaponItemPool = new ObjectPool<InvenItemObjClass>(InventoryItemObj, 5, objectPoolSavePos);
         EquipItemPool = new ObjectPool<InvenItemObjClass>(InventoryItemObj, 5, objectPoolSavePos);
@@ -1207,6 +1209,12 @@ public class GameManager : Singleton<GameManager>
                     monsterManager = MushroomAngryPool.GetFromPool(spawnPos, Quaternion.identity, monsters);
                 else
                     monsterManager = MushroomAngryPool.GetFromPool(spawnPos, Quaternion.identity);
+                break;
+            case "Golem_Boss":
+                if (monsters != null)
+                    monsterManager = GolemBossPool.GetFromPool(spawnPos, Quaternion.identity, monsters);
+                else
+                    monsterManager = GolemBossPool.GetFromPool(spawnPos, Quaternion.identity);
                 break;
         }
 

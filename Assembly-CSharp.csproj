@@ -94,6 +94,7 @@
     <Compile Include="Assets\01Scripts\GameField\Monster\Monster.cs" />
     <Compile Include="Assets\01Scripts\GameField\Monster\MonsterAniControl.cs" />
     <Compile Include="Assets\01Scripts\GameField\Monster\MonsterAniControl_type1.cs" />
+    <Compile Include="Assets\01Scripts\GameField\Monster\MonsterAniControl_type2.cs" />
     <Compile Include="Assets\01Scripts\GameField\Monster\MonsterAtkColliderMng.cs" />
     <Compile Include="Assets\01Scripts\GameField\Monster\MonsterAttack.cs" />
     <Compile Include="Assets\01Scripts\GameField\Monster\MonsterHp.cs" />

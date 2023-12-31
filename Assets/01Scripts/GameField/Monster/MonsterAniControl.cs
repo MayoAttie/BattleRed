@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MonsterAniControl : MonoBehaviour
 {
+    
     Monster monster;
     Animator MobAnimator;
     public Monster _Monster
@@ -18,6 +19,11 @@ public class MonsterAniControl : MonoBehaviour
     }
 
     public virtual void MonsterAnimationController(ref float fPosZ, ref float fPosX, ref MonsterAttack.e_MonsterAttackLevel monsterAtkLevel)
+    {
+
+    }
+
+    public virtual void HitStrunAccumulate(float fPoint, ref bool isHit, ref bool isSturn)
     {
 
     }
