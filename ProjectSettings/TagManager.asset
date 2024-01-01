@@ -32,7 +32,7 @@ TagManager:
   - Item
   - InteractionObj
   - InaccessibleObject
-  - 
+  - WeaponDontDetect
   - 
   - 
   - 

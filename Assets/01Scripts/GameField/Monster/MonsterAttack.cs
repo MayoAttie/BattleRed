@@ -15,6 +15,7 @@ public class MonsterAttack : MonoBehaviour, Observer
     public bool isTargetInRange;               // 공격 범위 내, 적 접근 시 활성화
     public bool isBattle;                      // 전투 중임을 체크하는 변수
     float fSetChaseRange;                      // 최대 추격 기동 범위 - 몬스터 매니저에서 받음
+    MonsterManager monsterMng;                  // 몬스터 매니저 변수
     
     protected NavMeshAgent navAgent;                // 추적용 navMesh 에이전트
     protected e_MonsterAttackLevel attackLevel;     // attackLevel 변수
@@ -105,9 +106,8 @@ public class MonsterAttack : MonoBehaviour, Observer
         if (!isChase)   // 추적이 중지일 경우에는 전투를 해제.
         {
             isBattle = false;
-            MonsterManager mng = gameObject.GetComponent<MonsterManager>();
-            mng.GetMonsterClass().SetMonsterState(Monster.e_MonsterState.None);     // 몬스터 매니저에 전투 중지를 알림
-            mng.SetBattleActive(false);                                             // 몬스터 매니저에 전투 중지를 알림
+            monsterMng.GetMonsterClass().SetMonsterState(Monster.e_MonsterState.None);     // 몬스터 매니저에 전투 중지를 알림
+            monsterMng.SetBattleActive(false);                                             // 몬스터 매니저에 전투 중지를 알림
             gameObject.GetComponent<AttackRange>().Detach(this);                    // 옵저버 패턴 해제
         }
         else
@@ -131,8 +131,7 @@ public class MonsterAttack : MonoBehaviour, Observer
             if (isTargetInRange)
             {
                 navAgent.isStopped = true;
-                MonsterManager mng = GetComponent<MonsterManager>();
-                mng.SetAnimatorFloatValue(0, 0);
+                monsterMng.SetAnimatorFloatValue(0, 0);
                 return;
             }
 
@@ -156,10 +155,9 @@ public class MonsterAttack : MonoBehaviour, Observer
 
             // 이동 방향에 따라 fPosZ와 fPosX 값 할당
             Vector3 velocity = navAgent.velocity;
-            MonsterManager mng2 = GetComponent<MonsterManager>();
-            mng2.GetComponent<MonsterManager>().SetAnimatorFloatValue(velocity.x, velocity.z);
+            monsterMng.SetAnimatorFloatValue(velocity.x, velocity.z);
             attackLevel = e_MonsterAttackLevel.Chase;
-            mng2.SetMonsterAttackLevel(attackLevel);
+            monsterMng.SetMonsterAttackLevel(attackLevel);
         }
     }
 
@@ -189,9 +187,8 @@ public class MonsterAttack : MonoBehaviour, Observer
     public void SetAttackLevel(e_MonsterAttackLevel attackLevel)
     {
         this.attackLevel = attackLevel;
-        MonsterManager mng = GetComponent<MonsterManager>();
-        mng.SetAnimatorFloatValue(0, 0);
-        mng.GetComponent<MonsterManager>().SetMonsterAttackLevel(attackLevel);
+        monsterMng.SetAnimatorFloatValue(0, 0);
+        monsterMng.SetMonsterAttackLevel(attackLevel);
     }
     public void SetBattleActive(bool isBattle){this.isBattle = isBattle;}
     public void SetNavMeshAgent(NavMeshAgent navAgent){this.navAgent = navAgent;}
@@ -205,6 +202,12 @@ public class MonsterAttack : MonoBehaviour, Observer
     public bool GetTargetInRange(){return isTargetInRange;}
     public bool GetBattleActive(){return isBattle;}
     public GameObject GetAtkColliderBox(){return colliderBox;}
+
+    public MonsterManager _MonsterMng
+    {
+        get { return monsterMng; }
+        set { monsterMng = value; }
+    }
 
     #endregion
 

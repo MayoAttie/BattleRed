@@ -31,9 +31,10 @@ public class MonsterManager : Subject, Observer
     MonsterAttack.e_MonsterAttackLevel monsterAtkLevel; // 몬스터 어택 단계 변수
     MonsterAniControl monsterConroller;                 // 몬스터 애니메이션 컨트롤러 변수
     MonsterHp monsterHPMng;                             // 몬스터 HpBar 매니저 함수
-    Image[] monsterHpbar_img;
-    int playerrLayer;
-    Coroutine MonsterInitCoroutine;
+    Image[] monsterHpbar_img;                           // 몬스터 hp바 이미지
+    int playerrLayer;                                   // 플레이어 Layer 번호
+    Coroutine MonsterInitCoroutine;                     // 코루틴 제어용 코루틴변수
+    private Rigidbody rigidbody;                                        // rigdBody컴포넌트
 
     [SerializeField] GameObject atkColliderBox;         // 몬스터 공격 충돌체크용 콜라이더박스
     public float fPatrolTimeNumber;        // 순찰 시간 변수
@@ -76,6 +77,7 @@ public class MonsterManager : Subject, Observer
 
     private void Awake()
     {
+        rigidbody = gameObject.GetComponent<Rigidbody>();
         playerrLayer = LayerMask.NameToLayer("Player");
         atkColliderBox.SetActive(false);
         MobAnimator = gameObject.GetComponent<Animator>();
@@ -537,6 +539,7 @@ public class MonsterManager : Subject, Observer
                 else
                     monsterAtk.SetChaseRange(monsterControl_info.chaseRange);
                 monsterAtk.SetAtkColliderBox(atkColliderBox);
+                monsterAtk._MonsterMng = this;
                 // 애니컨트롤러 추가
                 monsterConroller = gameObject.AddComponent<MonsterAniControl_type1>();
                 monsterConroller._Monster = monster;
@@ -551,6 +554,7 @@ public class MonsterManager : Subject, Observer
                 else
                     monsterAtk.SetChaseRange(monsterControl_info.chaseRange);
                 monsterAtk.SetAtkColliderBox(atkColliderBox);
+                monsterAtk._MonsterMng = this;
                 // 애니컨트롤러 추가
                 monsterConroller = gameObject.AddComponent<MonsterAniControl_type1>();
                 monsterConroller._Monster = monster;
@@ -565,6 +569,7 @@ public class MonsterManager : Subject, Observer
                 else
                     monsterAtk.SetChaseRange(monsterControl_info.chaseRange);
                 monsterAtk.SetAtkColliderBox(atkColliderBox);
+                monsterAtk._MonsterMng = this;
                 // 애니컨트롤러 추가
                 monsterConroller = gameObject.AddComponent<MonsterAniControl_type2>();
                 monsterConroller._Monster = monster;
@@ -660,6 +665,10 @@ public class MonsterManager : Subject, Observer
     public bool GetDetectedActive() { return isDetected;}
     public bool GetIsHit() { return isHit;}
     public bool GetStaticFixed() { return isStaticFixed; }
+    public Rigidbody _Rigidbody
+    {
+        get { return rigidbody; }
+    }
 
     public Vector3 GetMonsterHeadPosition()
     {
@@ -678,6 +687,7 @@ public class MonsterManager : Subject, Observer
     }
     public void SetMonsterControlInfo(MonsterControl_Info info) { monsterControl_info = info; }
     public MonsterControl_Info GetMonsterControl_Info() { return monsterControl_info; }
+
 
 
 

@@ -1,5 +1,49 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6512048273137985240
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2960565814794868895}
+  - component: {fileID: 1039833033511326648}
+  m_Layer: 18
+  m_Name: BossBody
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2960565814794868895
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6512048273137985240}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 9129836266748085908}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1039833033511326648
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6512048273137985240}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.9, y: 4, z: 1.7}
+  m_Center: {x: 0, y: 2, z: 0}
 --- !u!1 &9131098281100952912
 GameObject:
   m_ObjectHideFlags: 0
@@ -537,6 +581,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9132201514174667375}
   - component: {fileID: 9132201514174667374}
+  - component: {fileID: 4590281621255544450}
   m_Layer: 0
   m_Name: atkCollider
   m_TagString: Untagged
@@ -571,6 +616,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2, y: 3, z: 1.9}
   m_Center: {x: 0, y: 1.5, z: 0}
+--- !u!114 &4590281621255544450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9132201514174667360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60b1b216eacc1c442a5c6b5f60375710, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9133203689552160818
 GameObject:
   m_ObjectHideFlags: 0
@@ -702,6 +759,7 @@ Transform:
   - {fileID: 2451841406097545525}
   - {fileID: 2451841406958202962}
   - {fileID: 9132201514174667375}
+  - {fileID: 2960565814794868895}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

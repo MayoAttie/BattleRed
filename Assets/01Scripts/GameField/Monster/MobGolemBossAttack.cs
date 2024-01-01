@@ -30,6 +30,8 @@ public class MobGolemBossAttack : MonsterAttack
 
         AttackProcessAI();
         EndPageChaseCheck();
+        _MonsterMng._Rigidbody.velocity = Vector3.zero;
+        _MonsterMng._Rigidbody.angularVelocity = Vector3.zero;
     }
 
 
