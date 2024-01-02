@@ -14,6 +14,7 @@ public class MonsterAttack : MonoBehaviour, Observer
     public bool isChase;                       // 추격 중임을 체크하는 변수
     public bool isTargetInRange;               // 공격 범위 내, 적 접근 시 활성화
     public bool isBattle;                      // 전투 중임을 체크하는 변수
+    bool isChageReturn;                         // 특수 행동으로 인한, 추적 종료.
     float fSetChaseRange;                      // 최대 추격 기동 범위 - 몬스터 매니저에서 받음
     MonsterManager monsterMng;                  // 몬스터 매니저 변수
     
@@ -46,6 +47,7 @@ public class MonsterAttack : MonoBehaviour, Observer
         isChase = false;
         isTargetInRange = false;
         isBattle = false;
+        isChageReturn = false;
         attackLevel = e_MonsterAttackLevel.None;
         isAtkAnimationConrolFlag = false;
         target = null;
@@ -122,6 +124,9 @@ public class MonsterAttack : MonoBehaviour, Observer
 
     void TargetChaseMove()
     {
+        if (isChageReturn == true)
+            return;
+
         if (target != null && isBattle)
         {
             
@@ -207,6 +212,11 @@ public class MonsterAttack : MonoBehaviour, Observer
     {
         get { return monsterMng; }
         set { monsterMng = value; }
+    }
+    public bool IsChageReturn
+    {
+        get { return isChageReturn; }
+        set { isChageReturn = value; }
     }
 
     #endregion

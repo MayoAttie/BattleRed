@@ -11229,6 +11229,7 @@ MonoBehaviour:
   - {fileID: 100000, guid: 792c6eb23ed248d4b82190c619a396d2, type: 3}
   - {fileID: 1475198933509334, guid: e6befcf183056214bbc7cb055f062e04, type: 3}
   - {fileID: 100000, guid: 96bf5eda8915add439d4ae00da116416, type: 3}
+  - {fileID: 2433282508537954060, guid: 3ef3ae421f71c5c4e97fe12dc2fc6312, type: 3}
   ui_effect:
   - {fileID: 1475198933509334, guid: 62c6c37a4e7dee34e82b619754510a5d, type: 3}
   - {fileID: 1397402549733478, guid: 7aea6ce0aab33ef489a8b9ea1db32afb, type: 3}

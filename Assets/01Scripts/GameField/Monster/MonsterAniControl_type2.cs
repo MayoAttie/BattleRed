@@ -32,6 +32,10 @@ public class MonsterAniControl_type2 : MonsterAniControl
                 {
                     _MobAnimator.SetInteger("Controller", 13);
                 }
+                else if (monsterAtkLevel == MonsterAttack.e_MonsterAttackLevel._4th)            // 대기
+                {
+                    _MobAnimator.SetInteger("Controller", 0);
+                }
                 break;
             case Monster.e_MonsterState.Hit:
                 _MobAnimator.SetInteger("Controller", 2);

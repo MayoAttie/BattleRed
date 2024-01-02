@@ -7,9 +7,14 @@ public class MonsterAtkColliderMng : CombatMediator
 {
     MonsterManager mobMng;
     Monster monster;
+    Collider myCollider;
+
+    // 공격력 보정치(곱연산 후 덧셈)
+    public float ATK_offset = 0;
 
     private void Awake()
     {
+        myCollider = GetComponent<Collider>();
         mobMng = GetComponentInParent<MonsterManager>();
     }
     private void OnEnable()
@@ -33,10 +38,23 @@ public class MonsterAtkColliderMng : CombatMediator
             if (player.GetState() == CharacterClass.eCharactgerState.e_AVOID)
                 return;
 
+            if (ATK_offset != 0)
+            {
+                int curAtk = monster.GetMonsterAtkPower();
+                float corredtedAtk = curAtk * ATK_offset;
+                int finalAtk = (int)(curAtk + corredtedAtk);
+                monster.SetMonsterAtkPower(finalAtk);
+            }
+
             Mediator_MonsterAttack(monster, player);
 
             EffectManager.Instance.EffectCreate(transform, 1);
             gameObject.SetActive(false);
         }
+    }
+
+    public Collider MyCollider
+    {
+        get { return myCollider; }
     }
 }

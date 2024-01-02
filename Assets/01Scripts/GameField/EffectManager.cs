@@ -10,6 +10,7 @@ public class EffectManager : Singleton<EffectManager>
     // 0번 : 청색 발광
     // 1번 : 무색 폭죽
     // 2번 : 붉은 발광
+    // 3번 : 폭발
     [SerializeField] GameObject[] effects;
     [SerializeField] GameObject[] ui_effect;
 
