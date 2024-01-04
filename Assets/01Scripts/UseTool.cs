@@ -40,4 +40,12 @@ public class UseTool
         else
             return false;
     }
+
+    public static bool IsTagEquips(ItemClass tmp)
+    {
+        if (tmp.GetTag() == "꽃" || tmp.GetTag() == "성배" || tmp.GetTag() == "왕관" || tmp.GetTag() == "모래" || tmp.GetTag() == "깃털")
+            return true;
+        else
+            return false;
+    }
 }

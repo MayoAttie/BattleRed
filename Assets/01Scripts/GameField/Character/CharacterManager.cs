@@ -362,13 +362,19 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
                             if(arr[i].Equals(data))
                             {
                                 if (objMng_instance.GetIsOpeningList()[i] == true)
+                                {
+                                    isCreate = false;
                                     break;
+                                }
                             }
                         }
-                        // 객체를 생성하고 함수 연결, 이후 관리용 딕셔너리에 Add
-                        data.ObjectSetInit(sideUI_ObjPrintTransformObject.GetScrollObject());
-                        objMng_instance.FunctionConnecter(data);
-                        dic_dropAndInterObj.Add(data, data.GetDropItem_UI());
+                        if(isCreate)
+                        {
+                            // 객체를 생성하고 함수 연결, 이후 관리용 딕셔너리에 Add
+                            data.ObjectSetInit(sideUI_ObjPrintTransformObject.GetScrollObject());
+                            objMng_instance.FunctionConnecter(data);
+                            dic_dropAndInterObj.Add(data, data.GetDropItem_UI());
+                        }
                     }
                 }
             }

@@ -12,7 +12,8 @@ public class MonsterManager : Subject, Observer
     #region 변수
     Monster monster;            // 몬스터 데이터 클래스파일
     Animator MobAnimator;       // 애니메이터
-    MonsterAttack monsterAtk;   // 몬스터 공격 제어 함수
+    MonsterAttack monsterAtk;                           // 몬스터 공격 제어 함수
+    MonsterAniControl monsterController;                 // 몬스터 애니메이션 컨트롤러 함수
     float fPosX;                // 이동제어 용 실수 변수
     float fPosZ;                // 이동제어 용 실수 변수
     bool isBattle;              // 전투 체크 변수
@@ -29,7 +30,6 @@ public class MonsterManager : Subject, Observer
     public float fElapsedTime;                          // 시간 변수
     Vector3 v3_startPos;                                // 몬스터 처음 위치
     MonsterAttack.e_MonsterAttackLevel monsterAtkLevel; // 몬스터 어택 단계 변수
-    MonsterAniControl monsterConroller;                 // 몬스터 애니메이션 컨트롤러 변수
     MonsterHp monsterHPMng;                             // 몬스터 HpBar 매니저 함수
     Image[] monsterHpbar_img;                           // 몬스터 hp바 이미지
     int playerrLayer;                                   // 플레이어 Layer 번호
@@ -95,6 +95,7 @@ public class MonsterManager : Subject, Observer
         fPosZ = 0;
         isBattle = false;
         isStaticFixed = false;
+        isSturn = false;
         isHit = false;
         isDead = false;
         isIdle = false;
@@ -138,7 +139,8 @@ public class MonsterManager : Subject, Observer
         hp = monster.GetMonsterCurrentHp(); // 몬스터 hp 체크
         state = monster.GetMonsterState();  // 몬스터 상태 반영
         Monster_AI_Process();               // AI 종합 제어 함수
-        monsterConroller.MonsterAnimationController(ref fPosZ, ref fPosX, ref monsterAtkLevel);       // 몬스터 애니메이션 컨틀롤러
+        monsterController._Monster = monster;                                                           // 컨트롤러의 몬스터 클래스 재세팅
+        monsterController.MonsterAnimationController(ref fPosZ, ref fPosX, ref monsterAtkLevel);       // 몬스터 애니메이션 컨틀롤러
         if(isDead)
             StartCoroutine(WaitForDeadAnimation()); // 사망 함수
 
@@ -278,7 +280,7 @@ public class MonsterManager : Subject, Observer
     //히트 시, 경직 누적 함수
     public void HitStrunPointAccumulate(float fPoint)
     {
-        monsterConroller.HitStrunAccumulate(fPoint, ref isHit, ref isSturn);
+        monsterController.HitStrunAccumulate(fPoint, ref isHit, ref isSturn);
     }
 
 
@@ -541,9 +543,9 @@ public class MonsterManager : Subject, Observer
                 monsterAtk.SetAtkColliderBox(atkColliderBox);
                 monsterAtk._MonsterMng = this;
                 // 애니컨트롤러 추가
-                monsterConroller = gameObject.AddComponent<MonsterAniControl_type1>();
-                monsterConroller._Monster = monster;
-                monsterConroller._MobAnimator = MobAnimator;
+                monsterController = gameObject.AddComponent<MonsterAniControl_type1>();
+                monsterController._Monster = monster;
+                monsterController._MobAnimator = MobAnimator;
                 break;
             case "MushroomAngry":
                 monsterAtk = gameObject.AddComponent<MobAngryMushroomAttack>();
@@ -556,9 +558,9 @@ public class MonsterManager : Subject, Observer
                 monsterAtk.SetAtkColliderBox(atkColliderBox);
                 monsterAtk._MonsterMng = this;
                 // 애니컨트롤러 추가
-                monsterConroller = gameObject.AddComponent<MonsterAniControl_type1>();
-                monsterConroller._Monster = monster;
-                monsterConroller._MobAnimator = MobAnimator;
+                monsterController = gameObject.AddComponent<MonsterAniControl_type1>();
+                monsterController._Monster = monster;
+                monsterController._MobAnimator = MobAnimator;
                 break;
             case "Golem_Boss":
                 monsterAtk = gameObject.AddComponent<MobGolemBossAttack>();
@@ -571,9 +573,9 @@ public class MonsterManager : Subject, Observer
                 monsterAtk.SetAtkColliderBox(atkColliderBox);
                 monsterAtk._MonsterMng = this;
                 // 애니컨트롤러 추가
-                monsterConroller = gameObject.AddComponent<MonsterAniControl_type2>();
-                monsterConroller._Monster = monster;
-                monsterConroller._MobAnimator = MobAnimator;
+                monsterController = gameObject.AddComponent<MonsterAniControl_type2>();
+                monsterController._Monster = monster;
+                monsterController._MobAnimator = MobAnimator;
 
                 break;
             default: break;

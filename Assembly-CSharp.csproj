@@ -1018,10 +1018,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Coffee.UIParticle.csproj">
-      <Project>{59069D3A-68EB-756D-8B7A-2BA3992E2E6B}</Project>
-      <Name>Coffee.UIParticle</Name>
-    </ProjectReference>
     <ProjectReference Include="CFXRRuntime.csproj">
       <Project>{CC542831-1790-86EE-DB41-F56C311572E5}</Project>
       <Name>CFXRRuntime</Name>
@@ -1045,6 +1041,10 @@
     <ProjectReference Include="CFXR.WelcomeScreen.csproj">
       <Project>{D9FA04B4-8928-4690-8F41-8A866D0B277A}</Project>
       <Name>CFXR.WelcomeScreen</Name>
+    </ProjectReference>
+    <ProjectReference Include="Coffee.UIParticle.csproj">
+      <Project>{59069D3A-68EB-756D-8B7A-2BA3992E2E6B}</Project>
+      <Name>Coffee.UIParticle</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

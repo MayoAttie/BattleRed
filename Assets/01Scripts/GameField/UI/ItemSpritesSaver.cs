@@ -64,6 +64,8 @@ public class ItemSpritesSaver : Singleton<ItemSpritesSaver>
      *  3 - 모라
      *  4 - 합성마크
      *  5 - 보물상자
+     *  6 - 선인장 몬스터
+     *  7 - 버섯 몬스터
      */
     [Header("기타 스프라이트")]
     public Sprite[] SpritesSet;

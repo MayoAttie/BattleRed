@@ -111,7 +111,7 @@ public class ObjectManager : Singleton<ObjectManager>
         {
             if (tmp.GetTag() == "무기")
                 userCls.GetHadWeaponList().Add(tmp);
-            else if (tmp.GetTag() == "꽃" || tmp.GetTag() == "성배" || tmp.GetTag() == "왕관" || tmp.GetTag() == "모래" || tmp.GetTag() == "깃털")
+            else if (IsTagEquips(tmp))
                 userCls.GetHadEquipmentList().Add(tmp);
             else if (tmp.GetTag() == "광물")
             {

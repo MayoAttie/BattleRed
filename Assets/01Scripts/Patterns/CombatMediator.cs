@@ -471,7 +471,7 @@ public class CombatMediator : Subject ,ICombatMediator
 
     #endregion
 
-
+        
     #region 몬스터
 
     // 몬스터 공격 판정함수
@@ -597,6 +597,151 @@ public class CombatMediator : Subject ,ICombatMediator
                 if (damage < 0) // 방어력 감쇄로 데미지가 음수 값일 경우, 1보정.
                     damage = 1;
             }
+
+            //캐릭터 피깎
+            int tmp = characHp - damage;
+            targetCharacter.SetCurrentHp(tmp);
+            // UI HP바 표기
+            UI_Manager.Instance.HpBarFill_End(targetCharacter.GetMaxHp(), targetCharacter.GetCurrentHp(), false);
+
+
+            // 원소 공격 유무 액티브 활성화
+            isElementAttackActive = true;
+        }
+
+        return isElementAttackActive;
+    }
+
+
+    // 몬스터 공격 판정함수
+    public bool Mediator_MonsterAttack(Monster monster, CharacterClass targetCharacter, int fOffset)
+    {
+        UI_Manager.Instance.HpBarFill_Init(targetCharacter.GetCurrentHp());
+
+        bool isElementAttackActive = false;
+        int atkPower = monster.GetMonsterAtkPower();
+        int characHp = targetCharacter.GetCurrentHp();
+        int characDef = targetCharacter.GetDeffense();
+        Element elementMng = monster.GetMonsterHaveElement();
+        int damage = 0;
+
+        if (elementMng.GetElement() == Element.e_Element.None || elementMng.GetIsActive() == false)
+        {
+            // 공격력 - 방어력
+            damage = atkPower - characDef;
+            if (damage <= 0) // 방어력 감쇄로 데미지가 음수 값일 경우, 1보정.
+                damage = 1;
+
+            // 보정값 더하기
+            damage += fOffset;
+
+            // 캐릭터 피깎
+            int tmp = characHp - damage;
+            Debug.Log(damage);
+            targetCharacter.SetCurrentHp(tmp);
+            // UI HP바 표기
+            UI_Manager.Instance.HpBarFill_End(targetCharacter.GetMaxHp(), targetCharacter.GetCurrentHp(), false);
+        }
+        else
+        {
+            // 캐릭터의 부착용 원소 객체를 인스턴스화
+            Element characElement = targetCharacter.GetEncountElement();
+
+            // 캐릭터의 현재 원소 적용 상태에 따라서 분기
+            switch (characElement.GetElement())
+            {
+                case Element.e_Element.None:
+                    // 캐릭터에게 원소 상태를 부착.
+                    characElement.SetElement(elementMng.GetElement());
+                    characElement.SetIsActive(true);
+                    break;
+                case Element.e_Element.Fire:   // 플레이어 == 불 타입 + N원소
+                    if (elementMng.GetElement() == Element.e_Element.Water)
+                    {
+                        damage = m_FireToWater(monster, targetCharacter);
+                    }
+                    else if (elementMng.GetElement() == Element.e_Element.Plant)
+                    {
+                        damage = m_FireToPlant(monster, targetCharacter);
+                    }
+                    else if (elementMng.GetElement() == Element.e_Element.Lightning)
+                    {
+                        damage = m_FireToLightning(monster, targetCharacter);
+                    }
+                    break;
+                case Element.e_Element.Water:   // 플레이어 == 물 타입 + N원소
+                    if (elementMng.GetElement() == Element.e_Element.Fire)
+                    {
+                        damage = m_WaterToFire(monster, targetCharacter);
+                    }
+                    else if (elementMng.GetElement() == Element.e_Element.Plant)
+                    {
+                        damage = m_WaterToPlant(monster, targetCharacter);
+                    }
+                    else if (elementMng.GetElement() == Element.e_Element.Lightning)
+                    {
+                        damage = m_WaterToLightning(monster, targetCharacter);
+                    }
+                    break;
+                case Element.e_Element.Plant:   // 플레이어 == 풀 타입 + N원소
+                    if (elementMng.GetElement() == Element.e_Element.Water)
+                    {
+                        damage = m_PlantToWater(monster, targetCharacter);
+
+                    }
+                    else if (elementMng.GetElement() == Element.e_Element.Fire)
+                    {
+                        damage = m_PlantToFire(monster, targetCharacter);
+                    }
+                    else if (elementMng.GetElement() == Element.e_Element.Lightning)
+                    {
+                        damage = m_PlantToLightning(monster, targetCharacter);
+                    }
+                    break;
+                case Element.e_Element.Lightning:   // 플레이어 == 라이트닝 타입 + N원소
+                    if (elementMng.GetElement() == Element.e_Element.Water)
+                    {
+                        damage = m_LightningToWater(monster, targetCharacter);
+                    }
+                    else if (elementMng.GetElement() == Element.e_Element.Plant)
+                    {
+                        damage = m_LightningToPlant(monster, targetCharacter);
+                    }
+                    else if (elementMng.GetElement() == Element.e_Element.Fire)
+                    {
+                        damage = m_LightningToFire(monster, targetCharacter);
+                    }
+                    break;
+                case Element.e_Element.Wind:   // 플레이어 == 바람 타입 + N원소
+                    if (elementMng.GetElement() == Element.e_Element.Water)
+                    {
+                        damage = m_WindToWater(monster, targetCharacter);
+                    }
+                    else if (elementMng.GetElement() == Element.e_Element.Plant)
+                    {
+                        damage = m_WindToPlant(monster, targetCharacter);
+                    }
+                    else if (elementMng.GetElement() == Element.e_Element.Fire)
+                    {
+                        damage = m_WindToFire(monster, targetCharacter);
+                    }
+                    else if (elementMng.GetElement() == Element.e_Element.Lightning)
+                    {
+                        damage = m_WindToLightning(monster, targetCharacter);
+                    }
+                    break;
+            }
+            // 동일 속성 간 원소 중첩이기에, 데미지 수식을 벗어남
+            if (damage <= 0)   // 원소 변화 없이, 데미지만 계산
+            {
+                // 공격력 - 방어력
+                damage = atkPower - characDef;
+                if (damage < 0) // 방어력 감쇄로 데미지가 음수 값일 경우, 1보정.
+                    damage = 1;
+            }
+
+            // 보정값 더하기
+            damage += fOffset;
 
             //캐릭터 피깎
             int tmp = characHp - damage;

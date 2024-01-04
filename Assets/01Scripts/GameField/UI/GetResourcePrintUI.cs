@@ -50,6 +50,14 @@ public class GetResourcePrintUI : MonoBehaviour
         {
             GemKindDivider(findTarget, itemImage);
         }
+        else if(findTarget.GetTag() == "무기")
+        {
+            WeaponKindDivider(findTarget as WeaponAndEquipCls, itemImage);
+        }
+        else if (IsTagEquips(findTarget))
+        {
+            EquipmentKindDivider(findTarget as WeaponAndEquipCls, itemImage);
+        }
 
 
         //아이템 획득처 세팅
@@ -121,6 +129,69 @@ public class GetResourcePrintUI : MonoBehaviour
     }
     #endregion
 
+    #region 월드 좌표 연결
+    void ToEquipAndWeapon(int index)
+    {
+        TextLongButton obj = longbuttonsPool.GetFromPool(Vector3.zero, Quaternion.identity);
+        activedLongButtonList.Add(obj);
+        obj.transform.localScale = Vector3.one;
+        if(index>=1 && index<4)
+            obj.MySymbolImage = ItemSpritesSaver.Instance.SpritesSet[6];                                // 선인장 스프라이트 초기화
+        else if(index>=3 && index <6)
+            obj.MySymbolImage = ItemSpritesSaver.Instance.SpritesSet[7];                                // 버섯 스프라이트 초기화
+
+        obj.MyText = "필드 몬스터를 사냥하여, 아이템 획득 가능";
+
+        obj.MyButton.onClick.RemoveAllListeners();      // 버튼 이벤트 리스너 초기화
+        obj.MyButton.onClick.AddListener(() => EquipAndWeapon_GameField_GetPositionPath(index));
+    }
+    void EquipAndWeapon_GameField_GetPositionPath(int index)
+    {
+        if (IsCurrentSceneNameCorrect("GameField") == false)
+        {
+
+        }
+        else    // 게임 필드일 경우,
+        {
+            switch(index)
+            {
+                case 1:
+                    {
+                        Vector3 pos = GameManager.Instance.List_SpawnPoint[0];
+                        CharacterManager.Instance._PathFinder.FindPathStart(pos);
+                    }
+                    break;
+                case 2:
+                    {
+                        Vector3 pos = GameManager.Instance.List_SpawnPoint[1];
+                        CharacterManager.Instance._PathFinder.FindPathStart(pos);
+                    }
+                    break;
+                case 3:
+                    {
+                        Vector3 pos = GameManager.Instance.List_SpawnPoint[2];
+                        CharacterManager.Instance._PathFinder.FindPathStart(pos);
+                    }
+                    break;
+                case 4:
+                    {
+                        Vector3 pos = GameManager.Instance.List_SpawnPoint[3];
+                        CharacterManager.Instance._PathFinder.FindPathStart(pos);
+                    }
+                    break;
+                case 5:
+                    {
+                        Vector3 pos = GameManager.Instance.List_SpawnPoint[4];
+                        CharacterManager.Instance._PathFinder.FindPathStart(pos);
+                    }
+                    break;
+            }
+        }
+        ObjectOutButtonEvent();
+    }
+    
+    #endregion
+
 
 
     // 아이템 획득처 출력 함수
@@ -184,6 +255,106 @@ public class GetResourcePrintUI : MonoBehaviour
                 case "금주의 두루마리":                  // 3티어 ***
                     SynthesisTransformFind();
                     break;
+            }
+        }
+        else if(targetItem.GetTag() == "무기")
+        {
+            switch(targetItem.GetName())
+            {
+                case "천공의 검":
+                    ToEquipAndWeapon(1);
+                    ToEquipAndWeapon(2);
+                    ToEquipAndWeapon(3);
+                    SynthesisTransformFind();
+                    break;
+                case "제례검":
+                    ToEquipAndWeapon(1);
+                    ToEquipAndWeapon(2);
+                    ToEquipAndWeapon(3);
+                    SynthesisTransformFind();
+                    break;
+                case "여명신검":
+                    ToEquipAndWeapon(1);
+                    ToEquipAndWeapon(2);
+                    ToEquipAndWeapon(3);
+                    break;
+            }
+        }
+        else if(IsTagEquips(targetItem))    // 성유물일 경우
+        {
+            switch(targetItem.GetName())
+            {
+                case "이국의 술잔":
+                    ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(5);
+                    break;
+                case "귀향의 깃털":
+                    ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(5);
+                    break;
+                case "이별의 모자":
+                    ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(5);
+                    break;
+                case "옛 벗의 마음":
+                    ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(5);
+                    break;
+                case "빛을 좆는 돌":
+                    ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(5);
+                    break;
+                case "전투광의 해골잔":
+                    SynthesisTransformFind();
+                    ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(5);
+                    break;
+                case "전투광의 깃털":
+                    SynthesisTransformFind();
+                    ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(5);
+                    break;
+                case "전투광의 귀면":
+                    SynthesisTransformFind();
+                    ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(5);
+                    break;
+                case "전투광의 장미":
+                    SynthesisTransformFind();
+                    ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(5);
+                    break;
+                case "전투광의 시계":
+                    SynthesisTransformFind();
+                    ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(5);
+                    break;
+                case "피에 물든 기사의 술잔":
+                    SynthesisTransformFind();
+                    ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(5);
+                    break;
+                case "피에 물든 검은 깃털":
+                    SynthesisTransformFind();
+                    ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(5);
+                    break;
+                case "피에 물든 철가면":
+                    SynthesisTransformFind();
+                    ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(5);
+                    break;
+                case "피에 물든 강철 심장":
+                    SynthesisTransformFind();
+                    ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(5);
+                    break;
+                case "피에 물든 기사의 시계":
+                    SynthesisTransformFind();
+                                        ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(5);
+                    break;
+                default: break;
             }
         }
     }

@@ -16,8 +16,6 @@ public class MobGolemBossAttack : MonsterAttack
     bool normalAtkFlag = false;
     bool skillAtkFlag = false;
 
-    Coroutine normalAtkCoroutine;
-    Coroutine skillAtkCoroutine;
 
     void Start()
     {
@@ -32,8 +30,6 @@ public class MobGolemBossAttack : MonsterAttack
         isAtkAnimationConrolFlag = false;
         normalAtkFlag = false;
         skillAtkFlag = false;
-        normalAtkCoroutine = null;
-        skillAtkCoroutine = null;
         foreach (var i in floorings)
         {
             i.gameObject.SetActive(false);                   // 장판 객체 비활성화

@@ -12,6 +12,7 @@ public class WaterCheck : MonoBehaviour
             GameManager.Instance.CactusPool.AllReturnToPool();
             GameManager.Instance.MushroomAngryPool.AllReturnToPool();
             GameManager.Instance.MonsterHpBarPool.AllReturnToPool();
+            GameManager.Instance.GolemBossPool.AllReturnToPool();
 
             int hp = GameManager.Instance.GetUserClass().GetUserCharacter().GetCurrentHp();
             int tmp = (int)(hp * 0.7f);

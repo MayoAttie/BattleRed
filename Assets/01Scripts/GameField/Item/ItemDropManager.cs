@@ -40,7 +40,7 @@ public class ItemDropManager : Singleton<ItemDropManager>
             Collider[] colliders = Physics.OverlapSphere(center, radius, itemLayer);
             if (colliders.Length > 0)
             {
-                foreach(var collider in colliders)
+                foreach(var collider in colliders)  
                 {
                     isCreate = true;
                     var itemComponent = collider.GetComponent<DropItem>();
@@ -217,7 +217,7 @@ public class ItemDropManager : Singleton<ItemDropManager>
         }
         
     }
-
+        
    public void SetCamera()
     {
         // MainCamera 태그를 가진 객체를 찾아서 mainCamera에 할당

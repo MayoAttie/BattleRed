@@ -41,14 +41,15 @@ public class MonsterAtkColliderMng : CombatMediator
             if (ATK_offset != 0)
             {
                 int curAtk = monster.GetMonsterAtkPower();
-                float corredtedAtk = curAtk * ATK_offset;
-                int finalAtk = (int)(curAtk + corredtedAtk);
-                monster.SetMonsterAtkPower(finalAtk);
+                int corredtedAtk = (int)(curAtk * ATK_offset);
+                Mediator_MonsterAttack(monster, player, corredtedAtk);
+
+            }
+            else
+            {
+                Mediator_MonsterAttack(monster, player);
             }
 
-            Mediator_MonsterAttack(monster, player);
-
-            EffectManager.Instance.EffectCreate(transform, 1);
             gameObject.SetActive(false);
         }
     }

@@ -47,14 +47,16 @@ public class GameManager : Singleton<GameManager>
     private UserClass playerData;
     private List<ItemClass> ItemDataList;   // 디폴트 아이템 리스트
     private List<WeaponAndEquipCls> WeaponAndEquipmentDataList; // 디폴트 무기/성유물 아이템 리스트
-    private List<Tuple<string,List<WEAPON_EQUIP_STATE_DATA_BASE>>> list_WeaponAndEquipData;
-    private List<Tuple<string, List<WEAPON_EQUIP_LIMIT_BREAK_RESOURCE_DATA>>> list_WeaponAndEquipLimitBreakResourceData;
-    private List<Tuple<string, List<WEAPON_EQUIP_EFFECT_DATA_BASE>>> list_WeaponAndEquipReforgeGradeData;
-    private List<EQUIPMENT_SET_SYNERGY_DATA_BASE> list_EquipmentSetSynergyData;
-    private Monster[] arr_MonsterData;
+    private List<Tuple<string,List<WEAPON_EQUIP_STATE_DATA_BASE>>> list_WeaponAndEquipData;                                     // 무기 성유물 스탯 테이블
+    private List<Tuple<string, List<WEAPON_EQUIP_LIMIT_BREAK_RESOURCE_DATA>>> list_WeaponAndEquipLimitBreakResourceData;        // 무기 성유물 돌파 재료 테이블
+    private List<Tuple<string, List<WEAPON_EQUIP_EFFECT_DATA_BASE>>> list_WeaponAndEquipReforgeGradeData;                       // 무기 성유물 재련 능력치 테이블
+    private List<EQUIPMENT_SET_SYNERGY_DATA_BASE> list_EquipmentSetSynergyData;                                                 // 성유물 세트 효과 테이블
+    private Monster[] arr_MonsterData;                                                                                          // 스폰 포인트 IN 몬스터 클래스 테이블
+    private List<Vector3> list_SpawnPoint;                                                                                      // 스폰 포인트 저장 리스트
     public List<SYNTHESIS_DATA_BASE> list_WeaponSynthesisData;
     public List<SYNTHESIS_DATA_BASE> list_EquipSynthesisData;
     public List<SYNTHESIS_DATA_BASE> list_EtcSynthesisData;
+    
 
 
     // 기타
@@ -154,6 +156,7 @@ public class GameManager : Singleton<GameManager>
         // 변수 초기화
         isPaused = false;
         playerData = new UserClass();
+        list_SpawnPoint = new List<Vector3>();
 
         // 오브젝트 풀 초기화
         CactusPool = new ObjectPool<MonsterManager>(Monsters[0],10, objectPoolSavePos);
@@ -1400,12 +1403,55 @@ public class GameManager : Singleton<GameManager>
 
     public void ChangeSceneManaging()
     {
+        //Transform startPos = null;
+        //GameObject startPointObject = GameObject.FindGameObjectWithTag("StartPoint");
+        //if (startPointObject == null)
+        //    return;
+        //startPos = startPointObject.transform;
+        //var obj = Instantiate(PlayerbleCharacter, startPos);
+        //ItemDropManager.Instance.SetCamera();
+        //obj.GetComponent<CharacterManager>().CharacterManagerConrollerBtnSet();
+        //obj.GetComponent<CharacterControlMng>().CharacterControlMng_ControllerSet();
+        //obj.GetComponent<CharacterAttackMng>().CharacterAttackMng_ControllerSet();
+
+        //UI_Manager.Instance.UI_Manager_ControllerSet();
+        //ObjectManager.Instance.ObjectFindSetter();
+
+        //GameObject mini = GameObject.FindGameObjectWithTag("MainCamera");
+        //var cameraMng = mini.GetComponent<CameraController>();
+        //UI_Manager.Instance.GetWorldMap_Manager.MinimapCamera = cameraMng.MiniMapCamera;
+        //UI_Manager.Instance.GetWorldMap_Manager.CameraFarSize = cameraMng.MiniMapSize;
+        //UI_Manager.Instance.GetWorldMap_Manager._cameraController = cameraMng;
+
+
+        //list_SpawnPoint.Clear();
+        //GameObject[] spawnPos = GameObject.FindGameObjectsWithTag("SpawnPoint");
+        //foreach (GameObject spawnPoint in spawnPos)
+        //{
+        //    list_SpawnPoint.Add(spawnPoint.transform.position);
+        //}
+
         Transform startPos = null;
-        GameObject startPointObject = GameObject.FindGameObjectWithTag("StartPoint");
-        if (startPointObject == null)
+        GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
+
+        // 시작 지점 찾기
+        foreach (GameObject tmp in allObjects)
+        {
+            if (tmp.CompareTag("StartPoint"))
+            {
+                startPos = tmp.transform;
+                break;
+            }
+        }
+
+        // 시작 지점이 없으면 종료
+        if (startPos == null)
             return;
-        startPos = startPointObject.transform;
+
+        // 시작 지점을 이용해 플레이어 생성
         var obj = Instantiate(PlayerbleCharacter, startPos);
+
+        // 기타 작업들
         ItemDropManager.Instance.SetCamera();
         obj.GetComponent<CharacterManager>().CharacterManagerConrollerBtnSet();
         obj.GetComponent<CharacterControlMng>().CharacterControlMng_ControllerSet();
@@ -1414,11 +1460,28 @@ public class GameManager : Singleton<GameManager>
         UI_Manager.Instance.UI_Manager_ControllerSet();
         ObjectManager.Instance.ObjectFindSetter();
 
-        GameObject mini = GameObject.FindGameObjectWithTag("MainCamera");
-        var cameraMng = mini.GetComponent<CameraController>();
-        UI_Manager.Instance.GetWorldMap_Manager.MinimapCamera = cameraMng.MiniMapCamera;
-        UI_Manager.Instance.GetWorldMap_Manager.CameraFarSize = cameraMng.MiniMapSize;
-        UI_Manager.Instance.GetWorldMap_Manager._cameraController = cameraMng;
+        // 카메라 및 미니맵 설정
+        foreach (GameObject tmp in allObjects)
+        {
+            if (tmp.CompareTag("MainCamera"))
+            {
+                var cameraMng = tmp.GetComponent<CameraController>();
+                UI_Manager.Instance.GetWorldMap_Manager.MinimapCamera = cameraMng.MiniMapCamera;
+                UI_Manager.Instance.GetWorldMap_Manager.CameraFarSize = cameraMng.MiniMapSize;
+                UI_Manager.Instance.GetWorldMap_Manager._cameraController = cameraMng;
+                break;
+            }
+        }
+
+        // 스폰 포인트 위치 저장
+        list_SpawnPoint.Clear();
+        foreach (GameObject tmp in allObjects)
+        {
+            if (tmp.CompareTag("SpawnPoint"))
+            {
+                list_SpawnPoint.Add(tmp.transform.position);
+            }
+        }
     }
 
     #endregion
@@ -1707,6 +1770,10 @@ public class GameManager : Singleton<GameManager>
     public List<SYNTHESIS_DATA_BASE> GetEquipSynthesisData() { return list_EquipSynthesisData; }
     public List<SYNTHESIS_DATA_BASE> GetEtcSynthesisData() { return list_EtcSynthesisData; }
     public Monster[] GetMonsterData() { return arr_MonsterData; }
+    public List<Vector3> List_SpawnPoint
+    {
+        get { return list_SpawnPoint; }
+    }
 
     #endregion
 

@@ -16,6 +16,7 @@ public class DungeonMng_1 : DungeonManager, Observer
         is_checkPointSpawn = new bool[1];
         GameManager.Instance.CactusPool.AllReturnToPool();
         GameManager.Instance.MushroomAngryPool.AllReturnToPool();
+        GameManager.Instance.GolemBossPool.AllReturnToPool();
     }
 
     void Start()
@@ -145,14 +146,15 @@ public class DungeonMng_1 : DungeonManager, Observer
         {
             MonsterSpawn();
             isAfterSetting = true;
+            
+            // 체크포인트에 옵저버 패턴 연결
+            GameObject[] checkPoints = GameObject.FindGameObjectsWithTag("CheckPoint");
+            foreach (var tmp in checkPoints)
+            {
+                tmp.GetComponent<CheckPointNotify>().Attach(this);
+            }
         }
 
-        // 체크포인트에 옵저버 패턴 연결
-        GameObject[] checkPoints = GameObject.FindGameObjectsWithTag("CheckPoint");
-        foreach (var tmp in checkPoints)
-        {
-            tmp.GetComponent<CheckPointNotify>().Attach(this);
-        }
     }
 
     // 플레이어 캐릭터가 체크 포인트에 있는지 파악 후, 기능.
@@ -162,6 +164,7 @@ public class DungeonMng_1 : DungeonManager, Observer
     {
         GameManager.Instance.CactusPool.AllReturnToPool();
         GameManager.Instance.MushroomAngryPool.AllReturnToPool();
+        GameManager.Instance.GolemBossPool.AllReturnToPool();
         base.ExitDungeon();
 
     }

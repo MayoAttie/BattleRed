@@ -11,13 +11,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinoBloom.Runtime", "KinoBl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFXRDemo", "CFXRDemo.csproj", "{7F03D1F6-7B26-7476-7710-78F75E721B3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coffee.UIParticle.Editor", "Coffee.UIParticle.Editor.csproj", "{29241D66-8B1D-F257-F9F8-E51EEAEC59AA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFXR.WelcomeScreen", "CFXR.WelcomeScreen.csproj", "{D9FA04B4-8928-4690-8F41-8A866D0B277A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFXREditor", "CFXREditor.csproj", "{E65B68A5-F0FA-529C-2659-4ADB873845CF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToonyColorsPro.Demo.Editor", "ToonyColorsPro.Demo.Editor.csproj", "{82F78FD8-4F26-4F66-6B03-A5ECD0D73BF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coffee.UIParticle.Editor", "Coffee.UIParticle.Editor.csproj", "{29241D66-8B1D-F257-F9F8-E51EEAEC59AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +45,6 @@ Global
 		{7F03D1F6-7B26-7476-7710-78F75E721B3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F03D1F6-7B26-7476-7710-78F75E721B3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F03D1F6-7B26-7476-7710-78F75E721B3B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{29241D66-8B1D-F257-F9F8-E51EEAEC59AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29241D66-8B1D-F257-F9F8-E51EEAEC59AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29241D66-8B1D-F257-F9F8-E51EEAEC59AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29241D66-8B1D-F257-F9F8-E51EEAEC59AA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D9FA04B4-8928-4690-8F41-8A866D0B277A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D9FA04B4-8928-4690-8F41-8A866D0B277A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9FA04B4-8928-4690-8F41-8A866D0B277A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -61,6 +57,10 @@ Global
 		{82F78FD8-4F26-4F66-6B03-A5ECD0D73BF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82F78FD8-4F26-4F66-6B03-A5ECD0D73BF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82F78FD8-4F26-4F66-6B03-A5ECD0D73BF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29241D66-8B1D-F257-F9F8-E51EEAEC59AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29241D66-8B1D-F257-F9F8-E51EEAEC59AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29241D66-8B1D-F257-F9F8-E51EEAEC59AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29241D66-8B1D-F257-F9F8-E51EEAEC59AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
