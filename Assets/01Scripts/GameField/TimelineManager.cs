@@ -25,7 +25,7 @@ public class TimelineManager : MonoBehaviour
         // 인덱스에 따라 프레임 범위 계산
         float startTime = 0;
         float endTime = 0;
-        Debug.Log(index - 1);
+        //Debug.Log(index - 1);
 
         // 프레임 범위에 해당하는 초 계산
         IndexFunction(ref startTime, ref endTime, index);
@@ -77,7 +77,7 @@ public class TimelineManager : MonoBehaviour
     private void OnPlayableDirectorStopped(PlayableDirector director)
     {
         // 타임라인이 종료되면 호출되는 메서드
-        Debug.Log("Timeline Stopped");
+        //Debug.Log("Timeline Stopped");
 
         // 여기에 타임라인 종료 시 수행할 작업을 추가할 수 있음
     }

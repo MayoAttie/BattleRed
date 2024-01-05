@@ -1,0 +1,39 @@
+Dice d6 game ready PBR
+
+- Roll the dice traveler, try your luck.
+
+- **Before you the historically correct numbering of the faces. Cube - A common die. The sum of the numbers on opposite faces is 7.**
+
+- These wonderful bones are only 44 polygons. 
+- Game Ready model with excellent detail.
+- 5 textures in a box.
+- 2k and 512 resolution textures .
+
+One of the models of the set
+
+Included mesh:
+- Lowpoly
+
+2k resolution textures include:
+- Albedo
+- Height
+- AO
+- Metallic
+- Normal
+- Roughness
+
+Included files:
+- Dice_d6.stl (printable)
+- Dice_d6.blend
+- Dice_d6.fbx
+- Dice_d6.obj
+- Dice_d6.mtl
+
+Polygons - 44 Vertices - 24
+
+- If you have any personal wishes about the model, you can contact me by:
+- e-mail: lerrmar@mail.ru
+- Instagram: @lerrmar
+- You can also leave your wishes in the comments.
+
+P.S. Thank you for buying my models.

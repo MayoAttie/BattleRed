@@ -33,6 +33,21 @@ public class SwordFunction : CombatMediator
             }
             gameObject.SetActive(false);
         }
+        else if(other.gameObject.layer == LayerMask.NameToLayer("AttackInteractionObj"))
+        {
+            Transform parents = other.transform.parent;
+            if (parents == null)
+                return;
+
+            // 상호작용 오브젝트의 부모가 퍼즐 오브젝트일 경우,
+            PuzzleObject puzzleCls = parents.GetComponent<PuzzleObject>();
+            if(puzzleCls != null)
+            {
+                puzzleCls.ObjectRotation(other.transform); // 퍼즐 회전
+                gameObject.SetActive(false);
+                return;
+            }
+        }
     }
 
 }

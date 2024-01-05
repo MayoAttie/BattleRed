@@ -101,6 +101,7 @@
     <Compile Include="Assets\01Scripts\GameField\Monster\MonsterManager.cs" />
     <Compile Include="Assets\01Scripts\GameField\Object\InteractionObject.cs" />
     <Compile Include="Assets\01Scripts\GameField\Object\ObjectManager.cs" />
+    <Compile Include="Assets\01Scripts\GameField\Object\PuzzleObject.cs" />
     <Compile Include="Assets\01Scripts\GameField\Objects.cs" />
     <Compile Include="Assets\01Scripts\GameField\TimelineManager.cs" />
     <Compile Include="Assets\01Scripts\GameField\Tools\AttackRange.cs" />
@@ -276,6 +277,7 @@
     <None Include="Assets\02Assets\Hovl Studio\HSFiles\Shaders\Explosion.shader" />
     <None Include="Assets\02Assets\JMO Assets\Cartoon FX Remaster\CFXR Assets\Shaders\CFXR Particle Distortion.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Sprite.shader" />
+    <None Include="Assets\02Assets\Dice_6\Documentation\Readmy.txt" />
     <None Include="Assets\02Assets\Hovl Studio\HSFiles\Shaders\SwordSlash.shader" />
     <None Include="Assets\TextMesh Pro\Examples &amp; Extras\Fonts\Bangers - OFL.txt" />
   </ItemGroup>

@@ -345,7 +345,7 @@ public class CharacterAttackMng : Subject, Observer
     // 막기, 엔드 프레임 호출 함수
     public void GetBrockEndNotify()
     {
-        Debug.Log(nameof(isBrock) + ":" + isBrock);
+        //Debug.Log(nameof(isBrock) + ":" + isBrock);
         isBrock = false;
 
         if (isBattle)

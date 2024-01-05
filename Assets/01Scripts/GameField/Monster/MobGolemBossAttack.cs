@@ -30,9 +30,12 @@ public class MobGolemBossAttack : MonsterAttack
         isAtkAnimationConrolFlag = false;
         normalAtkFlag = false;
         skillAtkFlag = false;
-        foreach (var i in floorings)
+        if(floorings!=null)
         {
-            i.gameObject.SetActive(false);                   // 장판 객체 비활성화
+            foreach (var i in floorings)
+            {
+                i.gameObject.SetActive(false);                   // 장판 객체 비활성화
+            }
         }
     }
     protected override void OnDisable()
