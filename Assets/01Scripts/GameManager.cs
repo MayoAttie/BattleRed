@@ -1403,34 +1403,6 @@ public class GameManager : Singleton<GameManager>
 
     public void ChangeSceneManaging()
     {
-        //Transform startPos = null;
-        //GameObject startPointObject = GameObject.FindGameObjectWithTag("StartPoint");
-        //if (startPointObject == null)
-        //    return;
-        //startPos = startPointObject.transform;
-        //var obj = Instantiate(PlayerbleCharacter, startPos);
-        //ItemDropManager.Instance.SetCamera();
-        //obj.GetComponent<CharacterManager>().CharacterManagerConrollerBtnSet();
-        //obj.GetComponent<CharacterControlMng>().CharacterControlMng_ControllerSet();
-        //obj.GetComponent<CharacterAttackMng>().CharacterAttackMng_ControllerSet();
-
-        //UI_Manager.Instance.UI_Manager_ControllerSet();
-        //ObjectManager.Instance.ObjectFindSetter();
-
-        //GameObject mini = GameObject.FindGameObjectWithTag("MainCamera");
-        //var cameraMng = mini.GetComponent<CameraController>();
-        //UI_Manager.Instance.GetWorldMap_Manager.MinimapCamera = cameraMng.MiniMapCamera;
-        //UI_Manager.Instance.GetWorldMap_Manager.CameraFarSize = cameraMng.MiniMapSize;
-        //UI_Manager.Instance.GetWorldMap_Manager._cameraController = cameraMng;
-
-
-        //list_SpawnPoint.Clear();
-        //GameObject[] spawnPos = GameObject.FindGameObjectsWithTag("SpawnPoint");
-        //foreach (GameObject spawnPoint in spawnPos)
-        //{
-        //    list_SpawnPoint.Add(spawnPoint.transform.position);
-        //}
-
         Transform startPos = null;
         GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
 
@@ -1452,6 +1424,8 @@ public class GameManager : Singleton<GameManager>
         var obj = Instantiate(PlayerbleCharacter, startPos);
 
         // 기타 작업들
+        InterectionObjUI_Pool.AllReturnToPool();   // 상호작용 오브젝트 리턴
+
         ItemDropManager.Instance.SetCamera();
         obj.GetComponent<CharacterManager>().CharacterManagerConrollerBtnSet();
         obj.GetComponent<CharacterControlMng>().CharacterControlMng_ControllerSet();
@@ -1474,13 +1448,24 @@ public class GameManager : Singleton<GameManager>
         }
 
         // 스폰 포인트 위치 저장
-        list_SpawnPoint.Clear();
+        // 조건을 만족하는 GameObject들을 저장할 리스트
+        List<GameObject> spawnPointObjects = new List<GameObject>();
+
         foreach (GameObject tmp in allObjects)
         {
             if (tmp.CompareTag("SpawnPoint"))
             {
-                list_SpawnPoint.Add(tmp.transform.position);
+                spawnPointObjects.Add(tmp);
             }
+        }
+
+        // 13번째 문자부터 오름차순으로 정렬
+        spawnPointObjects.Sort((a, b) => a.name.Substring(12).CompareTo(b.name.Substring(12)));
+
+        // 정렬된 GameObject의 위치를 list_SpawnPoint에 추가
+        foreach (GameObject spawnPointObject in spawnPointObjects)
+        {
+            list_SpawnPoint.Add(spawnPointObject.transform.position);
         }
     }
 

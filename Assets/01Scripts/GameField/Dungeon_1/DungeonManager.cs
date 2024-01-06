@@ -14,7 +14,6 @@ public class DungeonManager : MonoBehaviour
     {
 
         ExitButtonTransfromSet();
-        GameManager.Instance.InterectionObjUI_Pool.AllReturnToPool();   // 던전 진입/ 상호작용 오브젝트 리턴
     }
 
     // Update is called once per frame

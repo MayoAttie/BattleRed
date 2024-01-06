@@ -119,6 +119,10 @@ public class CameraController : MonoBehaviour, Observer
         _distance = Distance;
 
     }
+    private void OnDestroy()
+    {
+        UI_Manager.Instance.GetWorldMap_Manager.Detach(this);
+    }
 
     public void Update()
     {

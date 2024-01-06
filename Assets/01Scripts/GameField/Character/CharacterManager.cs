@@ -356,19 +356,11 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
                     if (isCreate)
                     {
                         // 반복/상호작용 여부 제어 플래그 확인
-                        var arr = objMng_instance.objectArray;
-                        for (int j=0; j<arr.Count; j++)
+                        if (objMng_instance.IsOpenChecker[data] == true)
                         {
-                            if(arr[i].Equals(data))
-                            {
-                                if (objMng_instance.GetIsOpeningList()[i] == true)
-                                {
-                                    isCreate = false;
-                                    break;
-                                }
-                            }
+                            isCreate = false;
                         }
-                        if(isCreate)
+                        if (isCreate)
                         {
                             // 객체를 생성하고 함수 연결, 이후 관리용 딕셔너리에 Add
                             data.ObjectSetInit(sideUI_ObjPrintTransformObject.GetScrollObject());
@@ -385,18 +377,23 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
             foreach (var tmp in copyList)
             {
                 InteractionObject data = tmp.Key;
-                var arr = objMng_instance.objectArray;
-                for (int i = 0; i < arr.Count; i++)
+                if (objMng_instance.IsOpenChecker[data] == true)
                 {
-                    if (arr[i].Equals(data))
-                    {
-                        if (objMng_instance.GetIsOpeningList()[i] == true)
-                        {
-                            dic_dropAndInterObj.Remove(data);
-                            GameManager.Instance.DropItemUI_Pool.ReturnToPool(tmp.Value);
-                        }
-                    }
+                    dic_dropAndInterObj.Remove(data);
+                    GameManager.Instance.DropItemUI_Pool.ReturnToPool(tmp.Value);
                 }
+                //var arr = objMng_instance.objectArray;
+                //for (int i = 0; i < arr.Count; i++)
+                //{
+                //    if (arr[i].Equals(data))
+                //    {
+                //        if (objMng_instance.IsOpenChecker[data] == true)
+                //        {
+                //            dic_dropAndInterObj.Remove(data);
+                //            GameManager.Instance.DropItemUI_Pool.ReturnToPool(tmp.Value);
+                //        }
+                //    }
+                //}
             }
         }
         else

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class InteractionObject : MonoBehaviour
 {
-    public string name;
+    public string Name;
     DropItem_UI item;
     
     public void ObjectSetInit(Transform scrollViewTransform)
@@ -24,7 +24,6 @@ public class InteractionObject : MonoBehaviour
         return item.Button;
     }
     public DropItem_UI GetDropItem_UI() { return item; }
-    public string GetObjName() { return name; }
 
     private void ObjectUICldickEvent()
     {

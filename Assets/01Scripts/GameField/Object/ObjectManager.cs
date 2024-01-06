@@ -11,12 +11,17 @@ public class ObjectManager : Singleton<ObjectManager>
      */
     public List<InteractionObject> objectArray;
     //public DataPrintScreenScrollManager dpsScrollManager;
-    private List<bool> isOpenIng;
+    //private List<bool> isOpenIng;
+    [SerializeField]
+    GameObject treasureBox;
+    
+    private Dictionary<InteractionObject, bool> isOpenChecker;
 
     private void Awake()
     {
+        isOpenChecker = new Dictionary<InteractionObject, bool>();
         objectArray = new List<InteractionObject>();
-        isOpenIng = new List<bool>();
+        //isOpenIng = new List<bool>();
         ObjectFindSetter();
     }
 
@@ -24,22 +29,25 @@ public class ObjectManager : Singleton<ObjectManager>
     public void FunctionConnecter(InteractionObject obj)
     {
         // 합성대 오브젝트 함수 연결
-        switch(obj.name)
+        switch(obj.Name)
         {
             case "합성대":
-                objectArray[0].ObjectClickEventSet().onClick.AddListener(() => SynthesisObjectFunction());
+                obj.ObjectClickEventSet().onClick.AddListener(() => SynthesisObjectFunction());
                 break;
             case "던전1":
-                objectArray[1].ObjectClickEventSet().onClick.AddListener(() => DungeonEntrence(1));
+                obj.ObjectClickEventSet().onClick.AddListener(() => DungeonEntrence(1));
                 break;
             case "던전중간통로":
-                objectArray[0].ObjectClickEventSet().onClick.AddListener(() => DungeonMiddleDoor());
+                obj.ObjectClickEventSet().onClick.AddListener(() => DungeonMiddleDoor(obj));
                 break;
             case "보물상자1":
-                objectArray[1].ObjectClickEventSet().onClick.AddListener(() => TreasureBox_1());
+                obj.ObjectClickEventSet().onClick.AddListener(() => TreasureBox_1(obj));
                 break;
             case "보물상자2":
-                objectArray[2].ObjectClickEventSet().onClick.AddListener(() => TreasureBox_2());
+                obj.ObjectClickEventSet().onClick.AddListener(() => TreasureBox_2(obj));
+                break;
+            case "퍼즐 보물상자1":
+                obj.ObjectClickEventSet().onClick.AddListener(() => Dynamic_TreasureBox_1(obj));
                 break;
         }
     }
@@ -68,11 +76,11 @@ public class ObjectManager : Singleton<ObjectManager>
 
     #region 던전 중간통로
     // 던전 중간통로
-    public void DungeonMiddleDoor()
+    public void DungeonMiddleDoor(InteractionObject obj)
     {
-        isOpenIng[0] = true;
+        isOpenChecker[obj] = true;
 
-        Transform objectTransform = objectArray[0].transform; // objectArray[0]의 트랜스폼 가져오기
+        Transform objectTransform = obj.transform; // objectArray[0]의 트랜스폼 가져오기
 
         // 캐릭터 이동 좌표 초기화
         Vector3 targetPosition = objectTransform.GetChild(5).position;
@@ -149,9 +157,9 @@ public class ObjectManager : Singleton<ObjectManager>
         DataPrintScreenScrollManager.Instance.GetItemPrint(item_list);
     }
     // 보물상자1
-    void TreasureBox_1()
+    void TreasureBox_1(InteractionObject obj)
     {
-        isOpenIng[1] = true;
+        isOpenChecker[obj] = true;
 
         List<ItemClass> getItem_list = new List<ItemClass>();
 
@@ -160,16 +168,16 @@ public class ObjectManager : Singleton<ObjectManager>
         AddItemToList_CopyData("혼돈의 장치", getItem_list);
         AddItemToList_CopyData("이능 두루마리", getItem_list);
 
-        var ani = objectArray[1].GetComponent<Animator>();
+        var ani = obj.GetComponent<Animator>();
         ani.SetBool("isOpen", true);
         float length = GetAnimationLength(ani, "treasure_chest_open");
 
-        StartCoroutine(AniPlayWaitAfterFuncStart(length, getItem_list, objectArray[1].gameObject));
+        StartCoroutine(AniPlayWaitAfterFuncStart(length, getItem_list, obj.gameObject));
     }
     // 보물상자2
-    void TreasureBox_2()
+    void TreasureBox_2(InteractionObject obj)
     {
-        isOpenIng[2] = true;
+        isOpenChecker[obj] = true;
 
         List<ItemClass> getItem_list = new List<ItemClass>();
 
@@ -178,15 +186,34 @@ public class ObjectManager : Singleton<ObjectManager>
         AddItemToList_CopyData("무스프", getItem_list);
         AddItemToList_CopyData("지맥의 낡은 가지", getItem_list);
 
-        var ani = objectArray[2].GetComponent<Animator>();
+        var ani = obj.GetComponent<Animator>();
         ani.SetBool("isOpen", true);
         float length = GetAnimationLength(ani, "treasure_chest_open");
 
-        StartCoroutine(AniPlayWaitAfterFuncStart(length, getItem_list, objectArray[2].gameObject));
+        StartCoroutine(AniPlayWaitAfterFuncStart(length, getItem_list, obj.gameObject));
     }
+    #endregion
 
 
+    #region 동적 보물상자
 
+    void Dynamic_TreasureBox_1(InteractionObject obj)
+    {
+        IsOpenChecker[obj] = true;
+
+        List<ItemClass> getItem_list = new List<ItemClass>();
+
+        AddItemToList_CopyData("백철", getItem_list);
+        AddItemToList_CopyData("지맥의 낡은 가지", getItem_list);
+        AddItemToList_CopyData("이능 두루마리", getItem_list);
+
+
+        var ani = obj.GetComponent<Animator>();
+        ani.SetBool("isOpen", true);
+        float length = GetAnimationLength(ani, "treasure_chest_open");
+
+        StartCoroutine(AniPlayWaitAfterFuncStart(length, getItem_list, obj.gameObject));
+    }
 
 
     #endregion
@@ -200,18 +227,31 @@ public class ObjectManager : Singleton<ObjectManager>
         if (parents == null)
             return;
 
+        IsOpenChecker.Clear();
         InteractionObject[] childObjs = parents.GetComponentsInChildren<InteractionObject>();
 
         // isOpenIng 리스트를 childObjs 배열의 크기만큼 false로 초기화
-        isOpenIng.AddRange(Enumerable.Repeat(false, childObjs.Length));
+        //isOpenIng.AddRange(Enumerable.Repeat(false, childObjs.Length));
+
+        foreach (var i in childObjs)
+        {
+            IsOpenChecker[i] = false;
+        }
 
         foreach (var tmp in childObjs)
             objectArray.Add(tmp);
 
-        for (int i = 0; i < isOpenIng.Count; i++)
-            isOpenIng[i] = false;
+        //for (int i = 0; i < isOpenIng.Count; i++)
+        //    isOpenIng[i] = false;
     }
 
-
-    public List<bool> GetIsOpeningList() { return isOpenIng; }
+    public Dictionary<InteractionObject, bool> IsOpenChecker
+    {
+        get { return isOpenChecker; }
+        set { isOpenChecker = value; }
+    }
+    public GameObject TreasureBox
+    {
+        get { return treasureBox; }
+    }
 }

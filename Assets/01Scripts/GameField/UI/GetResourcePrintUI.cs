@@ -351,7 +351,7 @@ public class GetResourcePrintUI : MonoBehaviour
                     break;
                 case "피에 물든 기사의 시계":
                     SynthesisTransformFind();
-                                        ToEquipAndWeapon(4);
+                    ToEquipAndWeapon(4);
                     ToEquipAndWeapon(5);
                     break;
                 default: break;

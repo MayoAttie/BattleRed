@@ -5,15 +5,23 @@ using UnityEngine;
 public class PuzzleObject : MonoBehaviour
 {
     // 보유한 퍼즐 다이스 자식 객체
-    Rigidbody[] puzzleDice;
+    Rigidbody[] puzzleDice;                     // 퍼즐큐브(자식 객체)
 
     [SerializeField]
-    float[] offset;
-    List<bool> puzzleMovingFlag;
+    float[] offset;                             // 퍼즐 큐브의 각도를 보정하는 오프셋
+    List<bool> puzzleMovingFlag;                // 퍼즐 기믹을 푸는 데 사용되는 플래그
 
+    [SerializeField]
+    Transform rewardPos;                        // 보상용 보물상자 생성 위치
+
+    [SerializeField]
+    string rewardBoxSetName;                    // 보상용 보물상자 세팅 이름
+
+    bool isAnswerCorrect;
 
     private void Awake()
     {
+        isAnswerCorrect = false;
         puzzleDice = transform.GetComponentsInChildren<Rigidbody>();
         puzzleMovingFlag = new List<bool>();
     }
@@ -138,7 +146,20 @@ public class PuzzleObject : MonoBehaviour
 
         if (isAnswer)
         {
-            Debug.Log("정답 맞춤");
+            if(!isAnswerCorrect)
+            {
+                Debug.Log("정답!");
+
+                // 보물상자 생성
+                isAnswerCorrect = true;
+                var box = Instantiate(ObjectManager.Instance.TreasureBox, rewardPos);
+                box.transform.localScale *= 8f;
+
+                // 오브젝트 매니저에 생성한 객체를 추가
+                InteractionObject cls = box.GetComponent<InteractionObject>();
+                cls.Name = rewardBoxSetName;    // 보물상자에 설정된 이름을 초기화. (오브젝트 매니저에서 보상처리할 때 사용)
+                ObjectManager.Instance.IsOpenChecker[cls] = false;
+            }
         }
         else
         {

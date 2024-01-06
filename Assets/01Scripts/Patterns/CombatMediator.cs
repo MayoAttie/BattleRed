@@ -495,7 +495,7 @@ public class CombatMediator : Subject ,ICombatMediator
 
             //캐릭터 피깎
             int tmp = characHp - damage;
-            Debug.Log(damage);
+            //Debug.Log(damage);
             targetCharacter.SetCurrentHp(tmp);
             // UI HP바 표기
             UI_Manager.Instance.HpBarFill_End(targetCharacter.GetMaxHp(), targetCharacter.GetCurrentHp(), false);

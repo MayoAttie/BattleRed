@@ -154,4 +154,9 @@ public class WorldMap_Manager : Subject,IPointerClickHandler, IDragHandler
     {
         set { cameraController = value; }
     }
+    public GameObject WorldMapObject
+    {
+        get { return worldMapObject; }
+        set { worldMapObject = value; }
+    }
 }
