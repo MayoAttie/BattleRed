@@ -13,7 +13,7 @@ public class InteractionObject : MonoBehaviour
     {   // UI 객체인 DropItem_UI를 오브젝트 풀로 활성화. 이후, 데이터 초기화.
         var tmp = GameManager.Instance.InterectionObjUI_Pool.GetFromPool(Vector3.zero, Quaternion.identity, scrollViewTransform);
         tmp.ImgSymbol.sprite = ItemSpritesSaver.Instance.SpritesSet[2];
-        tmp.Text.text = name;
+        tmp.Text.text = Name;
         tmp.ItemCls = null;
         tmp.Button.onClick.RemoveAllListeners();
         tmp.Button.onClick.AddListener(() => ObjectUICldickEvent());

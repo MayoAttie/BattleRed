@@ -78,6 +78,13 @@ public class ObjectManager : Singleton<ObjectManager>
     // 던전 중간통로
     public void DungeonMiddleDoor(InteractionObject obj)
     {
+        var key = GameManager.Instance.GetUserClass().GetHadEtcItemList().Find(item => item.GetName().Equals("열쇠"));
+        if (key == null)
+        {
+            // 키가 없을 경우
+            return;
+        }
+
         isOpenChecker[obj] = true;
 
         Transform objectTransform = obj.transform; // objectArray[0]의 트랜스폼 가져오기
@@ -145,6 +152,12 @@ public class ObjectManager : Singleton<ObjectManager>
                 else
                     isHave.SetNumber(isHave.GetNumber() + tmp.GetNumber());
             }
+            else if(tmp.GetTag() == "기타")
+            {
+                var isHave = userCls.GetHadEtcItemList().Find(item => item.GetName().Equals(tmp.GetName()));
+                if (isHave == null)
+                    userCls.GetHadEtcItemList().Add(tmp);
+            }
         }
 
         EffectManager.Instance.EffectCreate(box.transform, 0,new Vector3(0,0.3f,0), 3);
@@ -206,6 +219,7 @@ public class ObjectManager : Singleton<ObjectManager>
         AddItemToList_CopyData("백철", getItem_list);
         AddItemToList_CopyData("지맥의 낡은 가지", getItem_list);
         AddItemToList_CopyData("이능 두루마리", getItem_list);
+        AddItemToList_CopyData("열쇠", getItem_list);
 
 
         var ani = obj.GetComponent<Animator>();

@@ -57,6 +57,13 @@ public class ItemSpritesSaver : Singleton<ItemSpritesSaver>
     [Header("배경 그라데이션 스프라이트")]
     public Sprite[] GradationSprite;
 
+
+    /*
+     * 0 - 열쇠
+     */
+    [Header("기타 스프라이트")]
+    public Sprite[] EtcSprite;
+
     /*  기타 스프라이트 모음
      *  0 - Back 스프라이트
      *  1 - Close 스프라이트
@@ -67,7 +74,7 @@ public class ItemSpritesSaver : Singleton<ItemSpritesSaver>
      *  6 - 선인장 몬스터
      *  7 - 버섯 몬스터
      */
-    [Header("기타 스프라이트")]
+    [Header("스프라이트 모음")]
     public Sprite[] SpritesSet;
 
 

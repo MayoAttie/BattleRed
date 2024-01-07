@@ -8,7 +8,6 @@ using UnityEngine.SceneManagement;
 using static CharacterUpgradeManager;
 using static UI_UseToolClass;
 using static GameManager;
-using JetBrains.Annotations;
 
 public class UI_Manager : EnergyBarManager
 {
@@ -160,7 +159,7 @@ public class UI_Manager : EnergyBarManager
         Inventory.SetActive(false); // 인벤토리는 기본적으로 Off
         openUI_ItemList = new List<InvenItemObjClass>();                    // 선택한 아이템 리스트
         isAscending = false;
-        invenButtonIsClicked = new bool[] { false, false, false, false };   // 배열 초기화
+        invenButtonIsClicked = new bool[] { false, false, false, false, false };   // 배열 초기화
         selected_SortOrder = e_SortingOrder.GradeOrder;
         invenType_Index = e_InventoryTypeSelected.Weapon;                                              // 선택한 타입 버튼 인덱스, 무기로 초기화
         SortSelectionButtonOnList.SetActive(false);                         // 정렬 리스트 목록 숨김
@@ -183,8 +182,6 @@ public class UI_Manager : EnergyBarManager
    
     private void Start()
     {
-        
-        Debug.Log("컴퓨터 변경 테스트");
         synthesis = new Synthesis();
     }
     private void Update()
@@ -327,6 +324,10 @@ public class UI_Manager : EnergyBarManager
                 selectedObjAndItemCls = null;
             }
         }
+        else if(invenType_Index == e_InventoryTypeSelected.Etc)
+        {
+            return;
+        }
 
         ScrollViewReset();                                   // 스크롤뷰 리셋
         ItemPrintByObj_Index((int)invenType_Index);         // 아이템 출력
@@ -376,19 +377,22 @@ public class UI_Manager : EnergyBarManager
     // ascending == true : 오름차순, false : 내림차순
     private void ItemPrintByObj_Index(int index)
     {
-        switch((GameManager.e_PoolItemType)index)
+        switch((e_InventoryTypeSelected)index)
         {
-            case GameManager.e_PoolItemType.Weapon:    //웨폰
+            case e_InventoryTypeSelected.Weapon:    //웨폰
                 WeaponPrintAtScroll(scrollContent, selected_SortOrder, isAscending, openUI_ItemList);
                 break;
-            case GameManager.e_PoolItemType.Equip:     //장비
+            case e_InventoryTypeSelected.Equipment:     //장비
                 EquipPrintAtScroll(scrollContent, selected_SortOrder, isAscending, openUI_ItemList);
                 break;
-            case GameManager.e_PoolItemType.Gem:       //광물
+            case e_InventoryTypeSelected.Gem:       //광물
                 GemPrintAtScroll();
                 break;
-            case GameManager.e_PoolItemType.Food:      //음식
+            case e_InventoryTypeSelected.Food:      //음식
                 FoodPrintAtScroll();
+                break;
+            case e_InventoryTypeSelected.Etc:       // 기타
+                EtcPrintAtScroll(scrollContent, selected_SortOrder, isAscending, openUI_ItemList);
                 break;
             default:
                 break;
@@ -398,16 +402,12 @@ public class UI_Manager : EnergyBarManager
     // 스크롤뷰 리셋
     private void ScrollViewReset()
     {
-        GameManager.Instance.WeaponItemPool.AllReturnToPool();
-        GameManager.Instance.EquipItemPool.AllReturnToPool();
-        GameManager.Instance.GemItemPool.AllReturnToPool();
-        GameManager.Instance.FoodItemPool.AllReturnToPool();
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Weapon);
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Equip);
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Gem);
+        ResetToWeaponItemObjectPoolDatas(e_PoolItemType.Food);
         openUI_ItemList.Clear();
     }
-    
-
-
-
     
 
     // 게임매니저의 데이터를 참조하여, 광물들을 스크롤뷰 콘텐츠에 출력

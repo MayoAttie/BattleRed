@@ -68,6 +68,10 @@ public class DataPrintScreenScrollManager : Singleton<DataPrintScreenScrollManag
         {
             obj.SetItemSprite(WeaponAndEquipLimitBreak_UI_Dvider(item));
         }
+        else if(item.GetTag() == "기타")
+        {
+            EtcKindDivider(item, obj.GetItemImage());
+        }
         obj.SetIsActive(true);
         obj.GetItemImage().enabled = true;
         dic_uiAnditem.Add(item, obj);

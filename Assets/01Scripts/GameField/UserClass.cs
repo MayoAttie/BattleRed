@@ -14,6 +14,7 @@ public class UserClass
     List<ItemClass> hadGemList;                 // 보유한 광물 리스트
     List<ItemClass> hadFoodList;                // 보유한 음식 리스트
     List<ItemClass> hadGrowMaterialList;        // 보유한 육성 재화 리스트
+    List<ItemClass> hadEtcItemList;
 
     DateTime userLastConnectTime;
 
@@ -22,6 +23,7 @@ public class UserClass
 
     public UserClass() 
     {
+        hadEtcItemList = new List<ItemClass>();
         userEquippedWeapon = new ItemClass();
         userEquippedEquipment = new ItemClass[5];
         nMora = 0;
@@ -70,6 +72,7 @@ public class UserClass
     public void SetEquipedEquipmentList(ItemClass equipEquipment,int index) { this.userEquippedEquipment[index] = equipEquipment; }
     public void SetHadGemList(List<ItemClass> hadGemList) { this.hadGemList = hadGemList; }
     public void SetHadFoodList(List<ItemClass> hadFoodList) { this.hadFoodList= hadFoodList; }
+    public void SetHadEtcItemList(List<ItemClass> hadEtcItemList) { this.hadEtcItemList = hadEtcItemList; }
     public void SetHadGrowMaterialList(List<ItemClass> hadGrowMaterialList) { this.hadGrowMaterialList= hadGrowMaterialList; }
     public void SetUserLastConnectTime(DateTime userLastConnectTime) { this.userLastConnectTime = userLastConnectTime; }
     public void SetMora(int nMora) { this.nMora = nMora; }
@@ -82,6 +85,7 @@ public class UserClass
     public List<ItemClass> GetHadGemList() { return this.hadGemList; }
     public List<ItemClass> GetHadFoodList() { return this.hadFoodList; }
     public List<ItemClass> GetHadGrowMaterialList() { return this.hadGrowMaterialList; }
+    public List<ItemClass> GetHadEtcItemList() { return hadEtcItemList; } 
     public DateTime GetUserLastConnectTime() { return this.userLastConnectTime; }
     public int GetMora() { return this.nMora; }
 

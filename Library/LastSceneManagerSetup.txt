@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/00Scenes/GameField.unity
+- path: Assets/00Scenes/SceneMaster.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0

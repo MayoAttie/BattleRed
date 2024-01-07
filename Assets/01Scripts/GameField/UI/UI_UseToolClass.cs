@@ -336,6 +336,51 @@ public class UI_UseToolClass
         }
     }
 
+    public static void EtcPrintAtScroll(Transform content, e_SortingOrder selected_SortOrder, bool isAscending, List<InvenItemObjClass> openUI_ItemList = null, List<InvenItemObjClass> listObj = null)
+    {
+        var itemClses = GameManager.Instance.GetUserClass().GetHadEtcItemList();  // 저장된 아이템 목록
+        List<ItemClass> fullList = new List<ItemClass>(itemClses);  // itemClses의 복사본 생성
+        fullList.AddRange(GameManager.Instance.GetUserClass().GetHadGrowMaterialList());  // 성장재료 추가
+
+        SortingItemList(fullList, selected_SortOrder, isAscending);
+
+        List<InvenItemObjClass> datas = null;
+        // 오브젝트 풀로, UI객체 생성
+        if (listObj == null)
+        {
+            GameManager.Instance.ItemToObjPool(fullList.Count, GameManager.e_PoolItemType.Food, content);      // Food의 UI, Pool을 사용
+            // 오브젝트 풀에 저장된 리스트 인스턴스화
+            datas = GameManager.Instance.FoodItemPool.GetPoolList();
+        }
+        else
+            datas = listObj;
+
+
+        foreach (ItemClass data in fullList)
+        {
+            foreach (InvenItemObjClass obj in datas)
+            {
+                if (obj.gameObject.activeSelf == false || obj.GetIsActive() == true)
+                    continue;
+
+                if (data.GetTag() == "육성 아이템")
+                    obj.GetTopItemImage().sprite = WeaponAndEquipLimitBreak_UI_Dvider(data);
+                else
+                    EtcKindDivider(data, obj.GetTopItemImage());
+
+
+                obj.SetItemColor(data.GetGrade());
+                obj.SetItemText(data.GetName());
+                obj.SetIsActive(true);
+                obj.SetItemcls(data);
+                if (openUI_ItemList != null)
+                    openUI_ItemList.Add(obj);
+                break;
+            }
+        }
+    }
+
+
     // Select버튼 오브젝트 풀, 무기 출력 <ObjectPool<SelectButtonScript> SelectButtonScriptPool <- 웨폰 데이터 출력>
     public static void WeaponPrintAtScroll_BySelectButton(Transform content, UI_Manager.e_SortingOrder selected_SortOrder, bool isAscending)
     {
@@ -599,6 +644,25 @@ public class UI_UseToolClass
         }
 
         Debug.LogWarning($"Unhandled item name: {itemName}");
+    }
+
+    public static void EtcKindDivider(ItemClass itemCls, Image image)
+    {
+        // 아이템 이름과 해당하는 이미지의 인덱스 매핑
+        Dictionary<string, int> itemNameToSpriteIndex = new Dictionary<string, int>
+        {
+            { "열쇠", 0 },
+        };
+
+        string itemName = itemCls.GetName();
+
+        // 매핑된 아이템이 있다면 해당 이미지를 할당하고 종료
+        if (itemNameToSpriteIndex.TryGetValue(itemName, out int spriteIndex))
+        {
+            image.sprite = ItemSpritesSaver.Instance.EtcSprite[spriteIndex];
+            return;
+        }
+
     }
 
     // 개발자가 입력한 데이터에 따라, 스탯 출력
