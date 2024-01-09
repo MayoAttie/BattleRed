@@ -116,19 +116,30 @@ public class DataPrintScreenScrollManager : Singleton<DataPrintScreenScrollManag
 
         yield return new WaitForSeconds(time);
      
-        foreach (var tmp in dic_uiAnditem)
+        if(dic_uiAnditem.Count>0)
         {
-            ResetToSelectButton(tmp.Value);
-            GameManager.Instance.SelectButtonScriptPool.ReturnToPool(tmp.Value);
+            foreach (var tmp in dic_uiAnditem)
+            {
+                ResetToSelectButton(tmp.Value);
+                GameManager.Instance.SelectButtonScriptPool.ReturnToPool(tmp.Value);
+            }
+            dic_uiAnditem.Clear();
         }
         isPrintSkip = false;
-        dic_uiAnditem.Clear();
         mianObject.SetActive(false);
     }
     // 스킵버튼 연결
     void SkipButtonEvent()
     {
         isPrintSkip = true;
+    }
+
+
+    public void JustTextPrint(string printText)
+    {
+        mianObject.SetActive(true);
+        label_text.text = printText;
+        StartCoroutine(OffCanvasAndDataReset());
     }
 
     public GameObject GetReturnToMainObject() { return mianObject; }

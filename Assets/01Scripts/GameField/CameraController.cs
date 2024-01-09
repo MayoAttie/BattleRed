@@ -14,6 +14,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Collections;
 using static TouchPadController;
 
 public class CameraController : MonoBehaviour, Observer
@@ -62,7 +64,11 @@ public class CameraController : MonoBehaviour, Observer
     CameraControllerState cameraState;
 
 
+    // 맵의 중앙값 좌표
     public Transform mainMapPos;
+
+    // 타겟 지점을 거치는 좌표. (종점은 목표 타겟)
+    public List<Vector3> moveToTarget;    
 
 
     #endregion
@@ -93,8 +99,9 @@ public class CameraController : MonoBehaviour, Observer
     // 카메라 컨트롤러 상태
     public enum CameraControllerState
     {
-        ToTarget,
-        WorldMap
+        ChasePlayer,
+        WorldMap,
+        ToTarget
     }
 
     #endregion
@@ -108,12 +115,15 @@ public class CameraController : MonoBehaviour, Observer
 
     public void Awake()
     {
-        cameraState = CameraControllerState.ToTarget;
+        moveToTarget = new List<Vector3>();
+        cameraState = CameraControllerState.ChasePlayer;
         miniMapSize = 8f;
     }
 
     public void Start()
     {
+
+
         UI_Manager.Instance.GetWorldMap_Manager.Attach(this);
         _pitch = Mathf.DeltaAngle(0, -transform.localEulerAngles.x);
         _distance = Distance;
@@ -128,7 +138,7 @@ public class CameraController : MonoBehaviour, Observer
     {
         switch(cameraState)
         {
-            case CameraControllerState.ToTarget:
+            case CameraControllerState.ChasePlayer:
                 SetTarget();
                 RotateCamera();
                 break;
@@ -143,7 +153,7 @@ public class CameraController : MonoBehaviour, Observer
     {
         switch(cameraState)
         {
-            case CameraControllerState.ToTarget:
+            case CameraControllerState.ChasePlayer:
                 ToTargetChase();
                 break;
             case CameraControllerState.WorldMap:
@@ -278,7 +288,9 @@ public class CameraController : MonoBehaviour, Observer
         }
     }
 
-    // 타겟 세팅
+
+
+    // 플레이어 타겟 세팅
     void SetTarget()
     {
         if (!isFindTarget && Target == null)
@@ -292,9 +304,59 @@ public class CameraController : MonoBehaviour, Observer
                 characMng.Attach(this);
                 // Player 레이어에 속한 객체 찾기
                 Target = playerObject.transform;
+
+
+                Vector3 dir = Target.position - transform.position;
+                Quaternion targetRotation = Quaternion.LookRotation(dir);
+
+                // x축 각도를 8로 보정
+                targetRotation *= Quaternion.Euler(16, 0, 0);
+                transform.rotation = targetRotation;
             }
             isFindTarget = false;
         }
+    }
+
+    // 리스트 내의 좌표들을 순회하며 부드럽게 움직임
+    IEnumerator MoveToTargetByLerp()
+    {
+        if (cameraState != CameraControllerState.ToTarget)
+            yield break;
+
+        int currentIndex = 0;
+        Vector3 lastTarget = moveToTarget[moveToTarget.Count - 1];  // 마지막 목표 지점(항상 바라봄.)
+        while (currentIndex < moveToTarget.Count-1)     // 마지막 타겟을 제외한 나머지, 이동
+        {
+            Vector3 nextTarget = moveToTarget[currentIndex];
+
+            // 현재 위치에서 다음 위치로 부드럽게 이동
+            while (transform.position != nextTarget)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, nextTarget, 8 * Time.deltaTime);
+
+                // 항상 다음 위치 방향을 향하도록 회전
+                Vector3 direction = lastTarget - transform.position;
+                Quaternion toRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, 120 * Time.deltaTime);
+
+                yield return null;
+            }
+
+            currentIndex++;
+        }
+
+        yield return new WaitForSeconds(0.05f);
+
+        Vector3 dir = Target.position - transform.position;
+        Quaternion targetRotation = Quaternion.LookRotation(dir);
+
+        // x축 각도를 8로 보정
+        targetRotation *= Quaternion.Euler(8, 0, 0);
+        transform.rotation = targetRotation;
+
+        // 모든 위치를 돌았으면 움직임을 중지
+        cameraState = CameraControllerState.ChasePlayer;
+        yield break;
     }
 
 
@@ -331,9 +393,18 @@ public class CameraController : MonoBehaviour, Observer
 
     public void WorldMapCloseNotify()
     {
-        cameraState = CameraControllerState.ToTarget;
+        cameraState = CameraControllerState.ChasePlayer;
         miniMapSize = 8f;
 
+    }
+
+    public void ConvertToTargetStateNotify(List<Vector3> listTarget)
+    {
+        moveToTarget = listTarget;
+
+        cameraState = CameraControllerState.ToTarget;
+
+        StartCoroutine(MoveToTargetByLerp());
     }
 
 

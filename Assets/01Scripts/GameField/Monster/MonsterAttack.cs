@@ -247,6 +247,8 @@ public class MonsterAttack : MonoBehaviour, Observer
 
     public void WorldMapCloseNotify(){}
 
+    public void ConvertToTargetStateNotify(List<Vector3> listTarget){}
+
 
 
     #endregion

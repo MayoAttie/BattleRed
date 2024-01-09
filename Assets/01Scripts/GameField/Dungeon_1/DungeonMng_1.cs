@@ -197,6 +197,8 @@ public class DungeonMng_1 : DungeonManager, Observer
 
     public void WorldMapCloseNotify(){}
 
+    public void ConvertToTargetStateNotify(List<Vector3> listTarget){}
+
 
     #endregion
 }

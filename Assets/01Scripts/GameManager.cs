@@ -62,6 +62,7 @@ public class GameManager : Singleton<GameManager>
     // 기타
     [SerializeField] Transform objectPoolSavePos;
 
+
     // 전역변수
     static int nIdValue;
 
@@ -1436,12 +1437,14 @@ public class GameManager : Singleton<GameManager>
         UI_Manager.Instance.UI_Manager_ControllerSet();
         ObjectManager.Instance.ObjectFindSetter();
 
+        CameraController cameraMng = null;
+
         // 카메라 및 미니맵 설정
         foreach (GameObject tmp in allObjects)
         {
             if (tmp.CompareTag("MainCamera"))
             {
-                var cameraMng = tmp.GetComponent<CameraController>();
+                cameraMng = tmp.GetComponent<CameraController>();
                 UI_Manager.Instance.GetWorldMap_Manager.MinimapCamera = cameraMng.MiniMapCamera;
                 UI_Manager.Instance.GetWorldMap_Manager.CameraFarSize = cameraMng.MiniMapSize;
                 UI_Manager.Instance.GetWorldMap_Manager._cameraController = cameraMng;
@@ -1469,6 +1472,18 @@ public class GameManager : Singleton<GameManager>
         {
             list_SpawnPoint.Add(spawnPointObject.transform.position);
         }
+
+        // 카메라를 옵저버 패턴으로 송신하는 객체를 연결.
+        Observer cameraMngObserver = cameraMng.GetComponent<Observer>();
+        foreach (GameObject tmp in allObjects)
+        {
+            if(tmp.tag == "CameraAttachSubjects")
+            {
+                var subject= tmp.GetComponent<Subject>();
+                subject.Attach(cameraMngObserver);
+            }
+        }
+
     }
 
     #endregion

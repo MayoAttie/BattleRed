@@ -10,5 +10,6 @@ public interface Observer
     void CheckPoint_PlayerPassNotify(int num);
     void WorldMapOpenNotify();
     void WorldMapCloseNotify();
+    void ConvertToTargetStateNotify(List<Vector3> listTarget);
 }
 

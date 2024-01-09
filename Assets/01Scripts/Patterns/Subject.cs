@@ -83,4 +83,11 @@ public abstract class Subject : MonoBehaviour
         }
     }
 
+    public void ConvertToTargetStateNotify(List<Vector3> listTarget)
+    {
+        foreach(Observer tmp in _observers)
+        {
+            tmp.ConvertToTargetStateNotify(listTarget);
+        }
+    }
 }

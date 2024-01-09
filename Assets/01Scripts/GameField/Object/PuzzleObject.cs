@@ -59,10 +59,11 @@ public class PuzzleObject : MonoBehaviour
         else
             index3 = index - 1;
 
+        // 인덱스값에 해당하는 퍼즐 객체를 저장
         GameObject puzzle1 = puzzleDice[index2].gameObject;
         GameObject puzzle2 = puzzleDice[index3].gameObject;
 
-
+        // 제어 플래그 확인 후, 큐브 오브젝트가 이동 중이 아니라면. 코루틴 함수를 호출합
         if (puzzleMovingFlag[index] == false && puzzleMovingFlag[index2] == false && puzzleMovingFlag[index3] == false)
         {
             puzzleMovingFlag[index] = true;
@@ -101,15 +102,12 @@ public class PuzzleObject : MonoBehaviour
         }
         else
         {
-            while (currentAngle < 359.9 && currentAngle !=0)
+            while (currentAngle < 359.9 && currentAngle !=0)        // 디버깅으로 확인 후, 회전 예외를 조건문으로 설정.
             {
-                // 부드러운 회전 계산
                 Quaternion newRotation = Quaternion.RotateTowards(obj.transform.rotation, Quaternion.Euler(0f, targetY, 0f), 30f * Time.deltaTime);
 
-                // 부드러운 회전 적용
                 obj.transform.rotation = newRotation;
 
-                // 현재 각도 업데이트
                 currentAngle = obj.transform.eulerAngles.y;
 
                 yield return null;

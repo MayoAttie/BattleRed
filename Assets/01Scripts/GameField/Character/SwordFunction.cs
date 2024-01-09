@@ -47,6 +47,48 @@ public class SwordFunction : CombatMediator
                 gameObject.SetActive(false);
                 return;
             }
+
+            // 자기자신이 상호작용 객체일 경우.
+            InteractionObject attackInteraction = other.GetComponent<InteractionObject>();
+            if(attackInteraction != null)
+            {
+                string Checker = attackInteraction.Name;
+                Debug.Log("Checker : " + Checker);
+
+                if (Checker.Contains("원소비석_"))   // 상호작용 객체에 저장된 Name에 원소비석_가 존재할 경우.
+                {
+                    int index = Checker.IndexOf("_");
+                    string afterUnderscore = Checker.Substring(index + 1);      // 글자 잘라서 확인
+                    Debug.Log("afterUnderscore : " + afterUnderscore);
+                    switch (afterUnderscore)    // 원소비석을 체크하여 올바른 속성이 아니라면 리턴
+                    {
+                        case "불":
+                            if (CharacterManager.Instance.GetCharacterClass().GetCurrnetElement().GetElement() != Element.e_Element.Fire)
+                                return;
+                            break;
+                        case "물":
+                            if (CharacterManager.Instance.GetCharacterClass().GetCurrnetElement().GetElement() != Element.e_Element.Water)
+                                return;
+                            break;
+                        case "바람":
+                            if (CharacterManager.Instance.GetCharacterClass().GetCurrnetElement().GetElement() != Element.e_Element.Wind)
+                                return;
+                            break;
+                        case "번개":
+                            if (CharacterManager.Instance.GetCharacterClass().GetCurrnetElement().GetElement() != Element.e_Element.Lightning)
+                                return;
+                            break;
+                        case "풀":
+                            if (CharacterManager.Instance.GetCharacterClass().GetCurrnetElement().GetElement() != Element.e_Element.Plant)
+                                return;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                ObjectManager.Instance.FunctionConnecter(attackInteraction);    // 오브젝트 매니저의 분류 함수에 연결.
+            }
+
         }
     }
 

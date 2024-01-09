@@ -49,6 +49,14 @@ public class ObjectManager : Singleton<ObjectManager>
             case "퍼즐 보물상자1":
                 obj.ObjectClickEventSet().onClick.AddListener(() => Dynamic_TreasureBox_1(obj));
                 break;
+            case "원소비석_불":
+            case "원소비석_물":
+            case "원소비석_바람":
+            case "원소비석_번개":
+            case "원소비석_풀":
+                ElementRockTrigger(obj);
+                break;
+
         }
     }
     #region 합성대
@@ -81,6 +89,7 @@ public class ObjectManager : Singleton<ObjectManager>
         var key = GameManager.Instance.GetUserClass().GetHadEtcItemList().Find(item => item.GetName().Equals("열쇠"));
         if (key == null)
         {
+            DataPrintScreenScrollManager.Instance.JustTextPrint("열쇠가 필요합니다!!");
             // 키가 없을 경우
             return;
         }
@@ -229,6 +238,26 @@ public class ObjectManager : Singleton<ObjectManager>
         StartCoroutine(AniPlayWaitAfterFuncStart(length, getItem_list, obj.gameObject));
     }
 
+
+    #endregion
+
+    #region 원소비석
+
+    void ElementRockTrigger(InteractionObject obj)
+    {
+        obj.isActive = true;
+        Transform parents = obj.transform.parent;
+
+        // 부모에 ElementRocksObject가 존재한다면 함수 호출
+        ElementRocksObject parentsCls = parents.GetComponent<ElementRocksObject>();
+        if(parentsCls != null)
+            parentsCls.ElementRockOn(obj);
+
+        // 자식 객체중에 파티클 시스템이 있다면, ActiveOn
+        ParticleSystem effect = obj.transform.GetComponentInChildren<ParticleSystem>(true);
+        if(effect != null)
+            effect.gameObject.SetActive(true);
+    }
 
     #endregion
 

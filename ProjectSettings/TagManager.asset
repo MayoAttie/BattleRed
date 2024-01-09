@@ -15,6 +15,7 @@ TagManager:
   - CheckPoint
   - MonsterSkillCollider
   - SpawnPoint
+  - CameraAttachSubjects
   layers:
   - Default
   - TransparentFX

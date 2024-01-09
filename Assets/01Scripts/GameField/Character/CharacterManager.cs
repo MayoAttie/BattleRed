@@ -325,7 +325,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
             isMonsterSpwan = false;
         }
     }
-
+        
     void World_InteractionObjCheck()
     {
         if (targetsListIn10Range.Count > 0)
@@ -382,18 +382,6 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
                     dic_dropAndInterObj.Remove(data);
                     GameManager.Instance.DropItemUI_Pool.ReturnToPool(tmp.Value);
                 }
-                //var arr = objMng_instance.objectArray;
-                //for (int i = 0; i < arr.Count; i++)
-                //{
-                //    if (arr[i].Equals(data))
-                //    {
-                //        if (objMng_instance.IsOpenChecker[data] == true)
-                //        {
-                //            dic_dropAndInterObj.Remove(data);
-                //            GameManager.Instance.DropItemUI_Pool.ReturnToPool(tmp.Value);
-                //        }
-                //    }
-                //}
             }
         }
         else
@@ -520,6 +508,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     public void WorldMapOpenNotify(){}
 
     public void WorldMapCloseNotify(){}
+
+    public void ConvertToTargetStateNotify(List<Vector3> listTarget){}
 
 
 
