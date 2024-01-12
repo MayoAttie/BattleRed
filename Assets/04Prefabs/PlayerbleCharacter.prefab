@@ -7013,7 +7013,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8717780107890442213}
   - component: {fileID: 8717780107890442212}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7222,7 +7222,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8717780108020070155}
   - component: {fileID: 8717780108020070154}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7314,7 +7314,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8717780108034474121}
   - component: {fileID: 8717780108034474120}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Area Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7486,7 +7486,7 @@ GameObject:
   - component: {fileID: 8717780108444500677}
   - component: {fileID: 8717780108444500683}
   - component: {fileID: 8717780108444500676}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: RangeTexture
   m_TagString: Untagged
   m_Icon: {fileID: 0}

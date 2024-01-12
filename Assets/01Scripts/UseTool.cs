@@ -48,4 +48,28 @@ public class UseTool
         else
             return false;
     }
+
+    // 캐릭터의 제어를 잠금 관ㄹ.
+    public static void IsControlLock(bool isLock)
+    {
+        if(isLock)  // 잠금 상태
+        {
+            CharacterManager.Instance.ControlMng.SetControllerFloat(0, 0);
+            CharacterManager.Instance.ControlMng.MyController.enabled = false;
+            CharacterManager.Instance.IsControl = false;
+        }
+        else        // 잠금 상태 해제
+        {
+            CharacterManager.Instance.IsControl = true;
+            CharacterManager.Instance.ControlMng.MyController.enabled = true;
+        }
+    }
+
+    // 포물선을 계산하는 함수
+    public static Vector3 CalculateParabola(Vector3 start, Vector3 middle, Vector3 end, float t)
+    {
+        float mt = 1f - t;
+        return mt * mt * start + 2f * mt * t * middle + t * t * end;
+    }
+
 }

@@ -100,8 +100,11 @@
     <Compile Include="Assets\01Scripts\GameField\Monster\MonsterHp.cs" />
     <Compile Include="Assets\01Scripts\GameField\Monster\MonsterManager.cs" />
     <Compile Include="Assets\01Scripts\GameField\Object\ElementRocksObject.cs" />
+    <Compile Include="Assets\01Scripts\GameField\Object\IObjectTriggerCheckFunc.cs" />
     <Compile Include="Assets\01Scripts\GameField\Object\InteractionObject.cs" />
+    <Compile Include="Assets\01Scripts\GameField\Object\NewBehaviourScript.cs" />
     <Compile Include="Assets\01Scripts\GameField\Object\ObjectManager.cs" />
+    <Compile Include="Assets\01Scripts\GameField\Object\ObjectTriggerEnterCheck.cs" />
     <Compile Include="Assets\01Scripts\GameField\Object\PuzzleObject.cs" />
     <Compile Include="Assets\01Scripts\GameField\Objects.cs" />
     <Compile Include="Assets\01Scripts\GameField\TimelineManager.cs" />

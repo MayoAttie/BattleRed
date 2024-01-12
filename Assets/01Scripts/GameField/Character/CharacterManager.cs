@@ -23,6 +23,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     GameObject SatelliteObj;                           // 원소 체크용 위성 객체
     bool isClickedCoolCheck;                          // 버튼 쿨타임 코루틴 객체
     bool isMonsterSpwan;                              // 스폰 제어 플래그
+    bool isControl;
 
     int SpwanPoint;
     int monsterLayer;
@@ -30,25 +31,30 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
     public List<Transform> targetsListIn10Range;       // 범위 내 몬스터 객체 리스트
     Dictionary<InteractionObject, DropItem_UI> dic_dropAndInterObj; // 상호작용 오브젝트와 ui 묶음
+
+    CharacterControlMng controlMng;
+
     int characterHp;                                    // 테스트용
     CharacterClass.eCharactgerState clsState;           // 테스트 확인용
-    bool elementGetActive;
-    Drop_Item_ScrolViewMng sideUI_ObjPrintTransformObject;
+    bool elementGetActive;                              // 테스트용
     //Transform sideUI_ObjPrintTransform;                 // 상호작용 오브젝트 UI 출력용 스크롤뷰
 
     PathFinder pathFinder;                              // 캐릭터가 보유한 패스파인더 객체
 
-    //싱글턴
+    //매니저 함수
+    Drop_Item_ScrolViewMng sideUI_ObjPrintTransformObject;          // 스크린 객체 매니저 
     ObjectManager objMng_instance;
     #endregion
 
     private void Awake()
     {
+        isControl = true;
         isBattle = false;
         SatelliteObj = transform.GetChild(6).gameObject;
         targetsListIn10Range = new List<Transform>();
+        controlMng = gameObject.GetComponent<CharacterControlMng>();
+        controlMng.Attach(this);                                        // 옵저버패턴 부착
         gameObject.GetComponent<CharacterAttackMng>().Attach(this);     // 옵저버패턴 부착
-        gameObject.GetComponent<CharacterControlMng>().Attach(this);    // 옵저버패턴 부착
         gameObject.GetComponent<CharacterViewRange>().Attach(this);     // 옵저버 패턴 부착
         aniController = gameObject.GetComponent<Animator>();            // 애니메이터 초기화
         SatelliteObj.gameObject.SetActive(false);                       // 원소 상태 표시용 위성 SetFalse
@@ -101,6 +107,8 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
 
     private void Update()
     {
+        if (!isControl)
+            return;
         elementGetActive = clsCharacter.GetCurrnetElement().GetIsActive();
         characterHp = clsCharacter.GetCurrentHp();  // 테스트용
         clsState = clsCharacter.GetState();         // 테스트용
@@ -468,8 +476,17 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     {
         get { return pathFinder; }
     }
-    
-    
+    public CharacterControlMng ControlMng
+    {
+        get { return controlMng; }
+    }
+
+    public bool IsControl
+    {
+        get { return isControl; }
+        set { isControl = value; }
+    }
+
     public void SetIsBattle(bool b) { isBattle = b; }
     public void AnimatorFloatValueSetter(float zPos, float xPos)
     {

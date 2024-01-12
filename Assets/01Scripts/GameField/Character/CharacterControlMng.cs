@@ -85,6 +85,9 @@ public class CharacterControlMng : Subject, Observer
     // Update is called once per frame
     private void Update()
     {
+        if (!characMng.IsControl)
+            return;
+
         isBattle = characMng.GetIsBattle();
         // 코루틴이 실행 중이지 않은 경우에만 코루틴을 시작.
         if (blinkCoolTimeCoroutine == null && nBlinkNumber<=0)
@@ -401,6 +404,20 @@ public class CharacterControlMng : Subject, Observer
         }
     }
 
+
+    #region 게터세터
+    public CharacterController MyController
+    {
+        get { return controller; }
+    }
+    public void SetControllerFloat(float x, float z)
+    {
+        zPos = z;
+        xPos = x;
+        runX = x;
+        runZ = z;
+    }
+    #endregion
 
     #region 옵저버 패턴
 

@@ -77,6 +77,9 @@ public class CharacterAttackMng : Subject, Observer
 
     void Update()
     {
+        if (!characMng.IsControl)
+            return;
+
         isBattle = characMng.GetIsBattle();
         if (!isBattle)
             return;

@@ -324,28 +324,53 @@ public class CameraController : MonoBehaviour, Observer
             yield break;
 
         int currentIndex = 0;
-        Vector3 lastTarget = moveToTarget[moveToTarget.Count - 1];  // 마지막 목표 지점(항상 바라봄.)
-        while (currentIndex < moveToTarget.Count-1)     // 마지막 타겟을 제외한 나머지, 이동
+
+        //Vector3 lastTarget = moveToTarget[moveToTarget.Count - 1];  // 마지막 목표 지점(항상 바라봄.)
+        while (currentIndex < moveToTarget.Count)
         {
             Vector3 nextTarget = moveToTarget[currentIndex];
 
-            // 현재 위치에서 다음 위치로 부드럽게 이동
-            while (transform.position != nextTarget)
+            float totalDistance = Vector3.Distance(transform.position, nextTarget);
+            float segmentDistance = totalDistance / 13f;
+
+            int i = 1;
+
+            while (i <=13)
             {
-                transform.position = Vector3.MoveTowards(transform.position, nextTarget, 8 * Time.deltaTime);
+                float segmentStart = (i - 1) * segmentDistance;
+                float segmentEnd = i * segmentDistance;
 
-                // 항상 다음 위치 방향을 향하도록 회전
-                Vector3 direction = lastTarget - transform.position;
-                Quaternion toRotation = Quaternion.LookRotation(direction);
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, 120 * Time.deltaTime);
+                // 중간 지점 좌표 계산
+                Vector3 middlePoint = Vector3.Lerp(transform.position, nextTarget, (segmentStart + segmentEnd) / (2 * totalDistance));
 
-                yield return null;
+                // 현재 위치에서 중간 지점으로 부드럽게 이동
+                while (Vector3.Distance(transform.position, middlePoint) > 4f)
+                {
+                    float t = Mathf.SmoothStep(0f, 1f, Vector3.Distance(transform.position, nextTarget) / 1);
+
+                    // 거리에 따라 속도 동적 조절
+                    float speed = Mathf.Lerp(2.0f, 10.0f, t); 
+                    if (i == 1 || i == 13)
+                        speed = 0.1f;
+
+                    float step = speed * Time.deltaTime;
+                    transform.position = Vector3.MoveTowards(transform.position, middlePoint, step);
+
+                    // 항상 다음 위치 방향을 향하도록 회전
+                    Vector3 direction = middlePoint - transform.position;
+                    Quaternion toRotation = Quaternion.LookRotation(direction);
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, 60 * Time.deltaTime);
+
+                    yield return null;
+                }
+
+                i++;
             }
 
             currentIndex++;
         }
 
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds(0.1f);
 
         Vector3 dir = Target.position - transform.position;
         Quaternion targetRotation = Quaternion.LookRotation(dir);
