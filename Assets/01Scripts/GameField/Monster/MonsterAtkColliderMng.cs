@@ -38,6 +38,9 @@ public class MonsterAtkColliderMng : CombatMediator
             if (player.GetState() == CharacterClass.eCharactgerState.e_AVOID)
                 return;
 
+            if (monster.GetMonsterType() == Monster.e_MonsterType.Boss)
+                ATK_offset += 0.15f;
+
             if (ATK_offset != 0)
             {
                 int curAtk = monster.GetMonsterAtkPower();

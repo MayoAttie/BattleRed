@@ -10333,6 +10333,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e2f1d0e15f1f7c40ade9f89e99580f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isActive: 0
   Name: "\uD569\uC131\uB300"
 --- !u!1001 &390062469
 PrefabInstance:
@@ -25977,6 +25978,7 @@ MonoBehaviour:
   maxRotationX: 40
   touchPad: {fileID: 276418295}
   mainMapPos: {fileID: 1003240999}
+  moveToTarget: []
 --- !u!1 &966250523
 GameObject:
   m_ObjectHideFlags: 0
@@ -55692,6 +55694,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e2f1d0e15f1f7c40ade9f89e99580f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isActive: 0
   Name: "\uB358\uC8041"
 --- !u!65 &4463566037925444533
 BoxCollider:

@@ -236,7 +236,7 @@ public class MonsterManager : Subject, Observer
                 GameManager.Instance.MushroomAngryPool.ReturnToPool(monsterManager);
                 break;
             case "Golem_Boss":
-
+                GameManager.Instance.GolemBossPool.ReturnToPool(monsterManager);
                 break;
             default: break;
         }

@@ -33,6 +33,7 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     Dictionary<InteractionObject, DropItem_UI> dic_dropAndInterObj; // 상호작용 오브젝트와 ui 묶음
 
     CharacterControlMng controlMng;
+    CharacterAttackMng attackMng;
 
     int characterHp;                                    // 테스트용
     CharacterClass.eCharactgerState clsState;           // 테스트 확인용
@@ -53,8 +54,9 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         SatelliteObj = transform.GetChild(6).gameObject;
         targetsListIn10Range = new List<Transform>();
         controlMng = gameObject.GetComponent<CharacterControlMng>();
+        attackMng = gameObject.GetComponent<CharacterAttackMng>();
         controlMng.Attach(this);                                        // 옵저버패턴 부착
-        gameObject.GetComponent<CharacterAttackMng>().Attach(this);     // 옵저버패턴 부착
+        attackMng.Attach(this);     // 옵저버패턴 부착
         gameObject.GetComponent<CharacterViewRange>().Attach(this);     // 옵저버 패턴 부착
         aniController = gameObject.GetComponent<Animator>();            // 애니메이터 초기화
         SatelliteObj.gameObject.SetActive(false);                       // 원소 상태 표시용 위성 SetFalse
@@ -76,8 +78,6 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         ///방법1 : DontDestroy객체를 List에 저장하여 보관.
 
         sideUI_ObjPrintTransformObject = GameObject.Find("Drop_Item_ScrolView").GetComponent<Drop_Item_ScrolViewMng>();
-        //sideUI_ObjPrintTransform = DataPrintScreenScrollManager.Instance.GetReturnToContentScroll();
-        //sideUI_ObjPrintTransform = GameObject.Find("DataPrintScreenScroll").transform.GetChild(1).GetChild(0);
 
         // 필요 레이어를 저장
         SpwanPoint = LayerMask.NameToLayer("SpwanPoint");
@@ -422,14 +422,12 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
         {
             // sideUI_ObjPrintTransform의 부모 객체를 찾아서 비활성화
             sideUI_ObjPrintTransformObject.GetMainObject().gameObject.SetActive(false);
-            //DataPrintScreenScrollManager.Instance.GetReturnToMainObject().SetActive(false);
 
         }
         else
         {
             // sideUI_ObjPrintTransform의 부모 객체를 찾아서 활성화
             sideUI_ObjPrintTransformObject.GetMainObject().gameObject.SetActive(true);
-            //DataPrintScreenScrollManager.Instance.GetReturnToMainObject().SetActive(true);
         }
     }
 
@@ -480,7 +478,10 @@ public class CharacterManager : Singleton<CharacterManager>, Observer
     {
         get { return controlMng; }
     }
-
+    public CharacterAttackMng AttackMng
+    {
+        get { return attackMng; }
+    }
     public bool IsControl
     {
         get { return isControl; }

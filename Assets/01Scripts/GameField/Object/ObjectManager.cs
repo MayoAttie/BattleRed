@@ -274,8 +274,6 @@ public class ObjectManager : Singleton<ObjectManager>
         InteractionObject[] childObjs = parents.GetComponentsInChildren<InteractionObject>();
 
         // isOpenIng 리스트를 childObjs 배열의 크기만큼 false로 초기화
-        //isOpenIng.AddRange(Enumerable.Repeat(false, childObjs.Length));
-
         foreach (var i in childObjs)
         {
             IsOpenChecker[i] = false;
@@ -283,10 +281,8 @@ public class ObjectManager : Singleton<ObjectManager>
 
         foreach (var tmp in childObjs)
             objectArray.Add(tmp);
-
-        //for (int i = 0; i < isOpenIng.Count; i++)
-        //    isOpenIng[i] = false;
     }
+
 
     public Dictionary<InteractionObject, bool> IsOpenChecker
     {

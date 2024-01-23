@@ -49,7 +49,7 @@ public class UseTool
             return false;
     }
 
-    // 캐릭터의 제어를 잠금 관ㄹ.
+    // 캐릭터의 제어를 잠금 관리.
     public static void IsControlLock(bool isLock)
     {
         if(isLock)  // 잠금 상태

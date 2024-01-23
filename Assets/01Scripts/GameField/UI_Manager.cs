@@ -3133,6 +3133,7 @@ public class UI_Manager : EnergyBarManager
         foreach (var obj in objList)
         {
             //if (obj.gameObject.activeSelf == false) continue;
+            SelectButtonToDefault(obj);
             Button btn = obj.GetButton();
             if (btn != null)
             {

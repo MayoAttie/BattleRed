@@ -102,7 +102,6 @@
     <Compile Include="Assets\01Scripts\GameField\Object\ElementRocksObject.cs" />
     <Compile Include="Assets\01Scripts\GameField\Object\IObjectTriggerCheckFunc.cs" />
     <Compile Include="Assets\01Scripts\GameField\Object\InteractionObject.cs" />
-    <Compile Include="Assets\01Scripts\GameField\Object\NewBehaviourScript.cs" />
     <Compile Include="Assets\01Scripts\GameField\Object\ObjectManager.cs" />
     <Compile Include="Assets\01Scripts\GameField\Object\ObjectTriggerEnterCheck.cs" />
     <Compile Include="Assets\01Scripts\GameField\Object\PuzzleObject.cs" />

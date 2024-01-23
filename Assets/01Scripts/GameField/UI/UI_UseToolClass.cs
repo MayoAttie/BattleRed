@@ -199,9 +199,6 @@ public class UI_UseToolClass
     {
         Button btn = btnObj.GetButton();
         // 액티브는 비활성화
-        //btnObj.SetIsActive(false);
-        //btnObj.SetItemCls(null);
-        //btnObj.GetItemTxt().color = Color.black;
         SelectButtonToDefault(btnObj);
         if (btn != null)
         {

@@ -144,6 +144,8 @@ public class CameraController : MonoBehaviour, Observer
                 break;
             case CameraControllerState.WorldMap:
                 break;
+            case CameraControllerState.ToTarget:
+                break;
         }
 
     }
@@ -157,6 +159,8 @@ public class CameraController : MonoBehaviour, Observer
                 ToTargetChase();
                 break;
             case CameraControllerState.WorldMap:
+                break;
+            case CameraControllerState.ToTarget:
                 break;
         }
     }

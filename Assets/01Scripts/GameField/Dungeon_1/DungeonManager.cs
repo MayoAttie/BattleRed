@@ -19,7 +19,6 @@ public class DungeonManager : MonoBehaviour
     // Update is called once per frame
     protected void Update()
     {
-
     }
 
     // 던전 나가기 버튼 위치 이동

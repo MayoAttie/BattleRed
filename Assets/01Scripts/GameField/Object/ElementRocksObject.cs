@@ -16,35 +16,11 @@ public class ElementRocksObject : Subject, IObjectTriggerCheckFunc
         InteractionObject[] objects = transform.GetComponentsInChildren<InteractionObject>();
         foreach(var tmp in  objects)
         {
-            elementObjs[tmp] = true;
+            elementObjs[tmp] = false;
         }
         ClearActive_circle[0].gameObject.SetActive(false);
         ClearActive_circle[1].gameObject.SetActive(false);
     }
-
-    void Update()
-    {
-        DrawParabola();
-    }
-
-    void DrawParabola()
-    {
-        Vector3 startPosition = ClearActive_circle[0].transform.position;
-        Vector3 endPosition = ClearActive_circle[1].transform.position + new Vector3(0, 2, 0);  // 목표 지점으로 설정
-
-        // 중간 지점 계산
-        Vector3 middlePoint = (startPosition + endPosition) / 2f;
-        middlePoint.y += 100f;  // 중간 지점의 높이를 100으로 설정
-
-        float maxJumpTime = 10f;
-
-        for (float t = 0; t <= 1; t += Time.deltaTime / maxJumpTime)
-        {
-            Vector3 newPosition = CalculateParabola(startPosition, middlePoint, endPosition, t);
-            Debug.DrawLine(newPosition, newPosition + Vector3.up, Color.red, Time.deltaTime);
-        }
-    }
-
 
     public void ElementRockOn(InteractionObject mySelf)
     {

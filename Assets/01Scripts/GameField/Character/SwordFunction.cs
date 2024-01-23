@@ -88,7 +88,6 @@ public class SwordFunction : CombatMediator
                 }
                 ObjectManager.Instance.FunctionConnecter(attackInteraction);    // 오브젝트 매니저의 분류 함수에 연결.
             }
-
         }
     }
 
